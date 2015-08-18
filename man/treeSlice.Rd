@@ -9,7 +9,7 @@ treeSlice(tree, slice, trivial=FALSE, prompt=FALSE, ...)
 	\item{slice}{a real number indicating the height above the root at which to slice the tree.}
 	\item{trivial}{a logical value indicating whether or not to return subtrees with a number of tips less than two (default is \code{FALSE}).}
 	\item{prompt}{logical value indicating whether or not the height of the slice should be given interactively.}
-	\item{...}{for \code{prompt=TRUE}, other arguments to be passed to \code{\link{plotTree}}.}s
+	\item{...}{for \code{prompt=TRUE}, other arguments to be passed to \code{\link{plotTree}}.}
 }
 \description{
 	This function slices a tree at a particular height above the root and returns all subtrees or all non-trivial subtrees (i.e., subtrees with more than 1 taxon). Uses \code{\link{extract.clade}} in the "ape" package.
