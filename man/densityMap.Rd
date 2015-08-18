@@ -1,0 +1,47 @@
+\name{densityMap}
+\alias{densityMap}
+\alias{plot.densityMap}
+\title{Plot posterior density of stochastic mapping on a tree}
+\usage{
+densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
+	legend=NULL, outline=FALSE, type="phylogram", direction="rightwards",
+	plot=TRUE, ...)
+\method{plot}{densityMap}(x, ...)
+}
+\arguments{
+ 	\item{trees}{set of phylogenetic trees in a modified \code{"multiPhylo"} object. Values for a two-state discrete character are mapped on the tree. See \code{\link{make.simmap}} and \code{\link{read.simmap}} for details.}
+	\item{res}{resolution for gradient plotting. Larger numbers indicate a finer (smoother) gradient.}
+	\item{fsize}{relative font size - can be a vector with the second element giving the font size for the legend.}
+	\item{ftype}{font type - see options in \code{\link{plotSimmap}}. As with \code{fsize}, can be a vector with the second element giving font type for the legend.}
+	\item{lwd}{line width for branches.}
+	\item{check}{check to make sure that the topology and branch lengths of all phylogenies in \code{trees} are equal.}
+	\item{legend}{if \code{FALSE} no legend is plotted; if a numeric value, it gives the length of the legend in units of branch length. Default is 0.5 times the total tree length.}
+	\item{outline}{logical value indicating whether or not to outline the branches of the tree in black.}
+	\item{type}{type of plot desired. Options are \code{"phylogram"} for a rightward square phylogram; and \code{"fan"} for a circular phylogram.}
+	\item{plot}{logical value indicating whether or not to plot the tree. If \code{plot=FALSE} then an object of class \code{"densityMap"} will be returned without plotting.}
+	\item{direction}{plotting direction for \code{type="phylogram"}.}
+	\item{x}{for \code{plot.densityMap}, an object of class \code{"densityMap"}.}
+	\item{...}{optional arguments for \code{plot.densityMap}. These include all the arguments of \code{densityMap} except \code{trees} and \code{res}. Additional optional arguments include \code{mar} (margins), \code{offset} (tip label offset), and \code{hold} (whether or not to use \code{dev.hold} to hold output to graphical device before plotting; defaults to \code{hold=TRUE}).}
+}
+\description{
+	Function plots a tree with the posterior density for a mapped character from stochastic character mapping on the tree. Since the mapped value is the probability of being in state "1", only binary [0,1] characters are allowed.
+}
+\value{
+	Plots a tree and returns an object of class \code{"densityMap"} invisibly.
+}
+\references{
+	Bollback, J. P. 2006. Stochastic character mapping of discrete traits on phylogenies. \emph{BMC Bioinformatics}, \bold{7}, 88.
+
+	Huelsenbeck, J. P., R. Neilsen, and J. P. Bollback. 2003. Stochastic mapping of morphological characters. \emph{Systematic Biology}, \bold{52}, 131-138. 
+
+	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+
+	Revell, L. J. 2013. Two new graphical methods for mapping trait evolution on phylogenies. \emph{Methods in Ecology and Evolution}, \bold{4}, 754-759.
+}
+\author{Liam Revell \email{liam.revell@umb.edu}}
+\seealso{
+	\code{\link{make.simmap}}, \code{\link{plotSimmap}}, \code{\link{read.simmap}}
+}
+\keyword{phylogenetics}
+\keyword{plotting}
+\keyword{comparative method}

@@ -1,0 +1,15 @@
+citHeader("To cite phytools in publication use:")
+
+citEntry(
+	entry="Article",
+	title="phytools: An R package for phylogenetic comparative biology (and other things).",
+	author="Liam J. Revell",
+	journal="Methods in Ecology and Evolution",
+	year=2012,
+	volume="3",
+	pages="217-223",
+	textVersion="Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). Methods Ecol. Evol. 3 217-223. doi:10.1111/j.2041-210X.2011.00169.x"	   
+)
+
+citFooter("As phytools is continually evolving, you may want to cite its version number. Find it with 'help(package=phytools)'.")
+

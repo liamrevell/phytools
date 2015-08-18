@@ -1,0 +1,58 @@
+Package: phytools
+Version: 0.4-99
+Date: 2015-8-18
+Title: Phylogenetic Tools for Comparative Biology (and Other Things)
+Author: Liam J. Revell
+Maintainer: Liam J. Revell <liam.revell@umb.edu>
+Depends: R (>= 2.10), ape (>= 3.0-10), maps
+Imports: animation, clusterGeneration, graphics, grDevices, methods, 
+	mnormt, msm, numDeriv, phangorn (>= 1.6-3), plotrix, 
+	scatterplot3d, stats, utils
+Suggests: geiger, rgl
+ZipData: no
+Description: Package contains various functions for phylogenetic analysis.
+	This functionality is concentrated in the phylogenetic analysis of 
+	comparative data from species. For example, the package includes
+	functions for Bayesian and ML ancestral state estimation; visual
+	simulation of trait evolution; fitting models of trait evolution
+	with multiple Brownian rates and correlations; visualizing 
+	discrete and continuous character evolution using colors or 
+	projections into trait space; identifying the location of a change
+	in the rate of character evolution on the tree; fast Brownian motion
+	simulation and simulation under several other models of 
+	continuous trait evolution; fitting a model of correlated binary
+	trait evolution; locating the position of a fossil or an recently
+	extinct lineage on a tree using continuous character data with ML;
+	plotting lineage accumulation through time, including across 
+	multiple trees (such as a Bayesian posterior sample); conducting
+	an analysis called stochastic character mapping, in which character
+	histories for a discrete trait are sampled from their posterior	
+	probability distribution under a model; conducting a multiple 
+	(i.e., partial) Mantel test; fitting a phylogenetic regression model
+	with error in predictor and response variables; conducting a
+	phylogenetic principal components analysis, a phylogenetic
+	regression, a reduced major axis regression, a phylogenetic
+	canonical correlation analysis, and a phylogenetic ANOVA; projecting 
+	a tree onto a geographic map; simulating discrete character 
+	histories on the tree; and fitting a model in which a discrete 
+	character evolves under the threshold model. In addition to this 
+	phylogenetic comparative method functionality, the package also 
+	contains functions for a wide range of other purposes in 
+	phylogenetic biology. For instance, functionality in this package 
+	includes (but is not restricted to): adding taxa to a tree 
+	(including randomly, everywhere, or automatically to genera); 
+	generating all bi- and multi-furcating trees for a set of taxa; 
+	reducing a phylogeny to its backbone tree; dropping tips or adding 
+	tips to special types of phylogenetic trees; exporting a tree as an 
+	XML file; converting a tree with a mapped character to a tree with
+	singleton nodes and one character state per edge; estimating a
+	phylogeny using the least squares method; simulating birth-death
+	trees under a range of conditions; rerooting trees; a wide range
+	of visualizations of trees; and a variety of other manipulations
+	and analyses that phylogenetic biologists may find useful for
+	their research.
+License: GPL (>= 2)
+URL: http://www.phytools.org
+Packaged: 2015-8-18 12:00:00 EDT
+Repository: 
+Date/Publication: 2015-8-18 12:00:00 EDT
