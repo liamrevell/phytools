@@ -98,9 +98,9 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			}
 		}
 	} else {
-		if(is.null(colors)){ 
-			colors<-palette()
-			names(colors)<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
+		if(is.null(colors)){
+			nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
+			colors<-setNames(palette()[1:length(nn)],nn)
 		}
 		for(i in 1:nrow(H)){
 			y<-H[i,1]
