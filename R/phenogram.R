@@ -100,7 +100,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	} else {
 		if(is.null(colors)){ 
 			colors<-palette()
-			names(colors)<-as.character(1:8)
+			names(colors)<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
 		}
 		for(i in 1:nrow(H)){
 			y<-H[i,1]
