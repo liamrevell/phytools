@@ -22,6 +22,10 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	# get optional arguments
 	if(hasArg(node.by.map)) node.by.map<-list(...)$node.by.map
 	else node.by.map<-FALSE
+	if(hasArg(ftype)) ftype<-list(...)$ftype
+	else ftype<-"reg"
+	ftype<-which(c("off","reg","b","i","bi")==ftype)-1
+	if(!ftype) label<-"off"
 	if(hasArg(node.size)){ 
 		node.size<-list(...)$node.size
 		if(length(node.size)==1) node.size<-c(node.size,node.size)
@@ -93,10 +97,21 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 			aa<-atan(asp*(YY[ii,2]-YY[ii,1])/(XX[ii,2]-XX[ii,1]))/(2*pi)*360
 			adj<-if(XX[ii,2]<XX[ii,1]) c(1,0.25) else c(0,0.25)
 			tt<-if(XX[ii,2]<XX[ii,1]) paste(tree$tip.label[i],"  ",sep="") else paste("  ",tree$tip.label[i],sep="")
-			if(label=="radial") text(XX[ii,2],YY[ii,2],tt,cex=fsize,srt=aa,adj=adj,font=3)
-			else if(label=="horizontal") text(XX[ii,2],YY[ii,2],tt,cex=fsize,adj=adj,font=3)
+			if(label=="radial") text(XX[ii,2],YY[ii,2],tt,cex=fsize,srt=aa,adj=adj,font=ftype)
+			else if(label=="horizontal") text(XX[ii,2],YY[ii,2],tt,cex=fsize,adj=adj,font=ftype)
 		}
-	}
+	} else adj<-0
+	xx<-setNames(c(XX[1,1],XX[,2]),c(tree$edge[1,1],tree$edge[,2]))
+	xx<-xx[order(as.numeric(names(xx)))]
+	yy<-setNames(c(YY[1,1],YY[,2]),c(tree$edge[1,1],tree$edge[,2]))
+	yy<-yy[order(as.numeric(names(yy)))]	
+	PP<-list(type="phylomorphospace",use.edge.length=TRUE,node.pos=1,
+		show.tip.label=if(label!="off") TRUE else FALSE,show.node.label=FALSE,
+		font=ftype,cex=fsize,adj=adj,srt=NULL,no.margin=FALSE,label.offset=0,
+		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+		direction=NULL,tip.color="black",Ntip=Ntip(tree),Nnode=tree$Nnode,
+		edge=tree$edge,xx=xx,yy=yy)
+	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }
 
 # function to expand a range
