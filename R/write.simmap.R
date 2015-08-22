@@ -4,7 +4,7 @@
 write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL){
 	if(inherits(tree,"multiPhylo")) for(i in 1:length(tree)) write.simmap(tree,file,if(i==1) append else TRUE,map.order)
 	else {
-		if(!inherits(trees,"phylo")) stop("trees should be an object of class \"phylo\" or \"multiPhylo\".")
+		if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
 		if(is.null(tree$maps)) stop("tree is does not contain a stochastic character map.")
 		if(is.null(map.order)){
 			if(!is.null(attr(tree,"map.order")))
