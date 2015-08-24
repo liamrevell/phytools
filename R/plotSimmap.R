@@ -223,7 +223,6 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 		if(ftype) text(x[ii,2],y[ii,2],tt,srt=aa,adj=adj,cex=fsize,font=ftype)
 	}
 	if(setEnv){
-		cat("setEnv=TRUE for this type is experimental. please be patient with bugs\n")
 		PP<-list(type="fan",use.edge.length=TRUE,node.pos=1,
 			show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
