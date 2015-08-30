@@ -1,15 +1,17 @@
 \name{rateshift}
 \alias{rateshift}
+\alias{plot.rateshift}
 \title{Find the temporal position of one or more rate shifts}
 \usage{
 rateshift(tree, x, nrates=1, niter=10, ...)
+\method{plot}{rateshift}(x, ...)
 }
 \arguments{
  	\item{tree}{object of class \code{"phylo"}.}
 	\item{x}{vector of phenotypic trait values for species. \code{names(x)} should contain the species names and match \code{tree$tip.label}.}
 	\item{nrates}{number of rates.}
 	\item{niter}{number of iterations of optimization routine to ensure convergence.}
-	\item{...}{optional arguments.}
+	\item{...}{optional arguments. In the case of the \code{plot} method, these will be passed to \code{\link{plotSimmap}}.}
 }
 \description{
 	Function finds the location of one or more rate shifts.

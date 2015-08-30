@@ -1,5 +1,5 @@
 ## find the temporal position of a rate shift using ML
-## written by Liam J. Revell 2013, 2014
+## written by Liam J. Revell 2013, 2014, 2015
 
 rateshift<-function(tree,x,nrates=1,niter=10,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -19,7 +19,11 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 		else cat("iter\ts^2(1)\tlogL\n")
 	} else if(niter==1) {
 		cat("Optimizing. Please wait.\n\n")
-	} else cat("Optimization progress:\n|")
+		flush.console()
+	} else { 
+		cat("Optimization progress:\n|")
+		flush.console()
+	}
 	lik<-function(par,tree,y,nrates,plot,print,iter,tol,maxh,for.hessian=FALSE,minL){
 		sig2<-par[1:nrates]
 		shift<-if(nrates>1) setNames(sort(c(0,par[1:(nrates-1)+nrates])),1:nrates) else shift<-setNames(0,1)
@@ -56,7 +60,10 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 		fit[[i]]<-if(nrates==1) optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,iter=i,tol=tol,maxh=h,minL=minL,
 				method="Brent",lower=tol,upper=10*phyl.vcv(as.matrix(x),vcv(tree),lambda=1)$R[1,1])
 			else optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,iter=i,tol=tol,maxh=h,minL=minL)
-		if(!print&&niter>1) cat(".")
+		if(!print&&niter>1){ 
+			cat(".")
+			flush.console()
+		}
 	}
 	if(!print&&niter>1) cat("|\nDone.\n\n")
 	ll<-sapply(fit,function(x) x$value)
@@ -118,4 +125,33 @@ logLik.rateshift<-function(object,...){
 	class(logLik)<-"logLik"
 	attr(logLik,"df")<-2*length(object$sig2)
 	logLik
+}
+
+## S3 plot method for object of class "rateshift"
+## written by Liam J. Revell 2015
+
+plot.rateshift<-function(x,...){
+	if(length(x$sig2)>1){
+		cols<-colorRampPalette(c("blue","purple","red"))(101)
+		rr<-range(x$sig2)
+		names(cols)<-seq(rr[1],rr[2],by=diff(rr)/100)
+		ii<-sapply(x$sig2,function(x,y) order(abs(y-x))[1],
+			y=as.numeric(names(cols)))
+		colors<-setNames(cols[ii],names(ii))
+		plot(x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
+			colors=colors,...)
+		nulo<-lapply(x$shift,function(x,y) lines(rep(x,2),c(1,Ntip(y)),
+			lty="dotted",col="grey"),y=x$tree)
+		add.color.bar(leg=0.5*max(nodeHeights(x$tree)),cols=cols,
+			prompt=FALSE,x=0,y=-0.05*Ntip(x$tree),lims=round(rr,3),
+			title=expression(sigma^2))
+	} else {
+		colors<-setNames("blue",1)
+		plot(x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
+			colors=colors,...)
+		txt<-as.character(round(x$sig2,3))
+		add.simmap.legend(leg=expression(paste(sigma^2," = ",sep="")),
+			colors="blue",prompt=FALSE,x=0,y=-0.05*Ntip(x$tree))
+		text(x=5.5*strwidth("W"),y=-0.05*Ntip(x$tree),round(x$sig2,3))
+	}
 }
