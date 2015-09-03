@@ -3,6 +3,9 @@
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
 		stop("tr1 & tr2 should be objects of class \"phylo\".")
+	## hack to make sure tip labels of each tree are in cladewise order
+	tr1<-read.tree(text=write.tree(tr1))
+	tr2<-read.tree(text=write.tree(tr2))
 	## if no association matrix check for exact matches
 	if(is.null(assoc)){
 		assoc<-intersect(tr1$tip.label,tr2$tip.label)
