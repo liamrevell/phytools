@@ -189,9 +189,14 @@ setMap<-function(x,...){
 }
 
 ## drop tips from an object of class 'densityMap'
-## written by Liam J. Revell 2014
+## written by Liam J. Revell 2014, 2015
 
 drop.tip.densityMap<-function(x,tip){
-	if(class(x)!="densityMap") cat("x should be an object of class \"densityMap\"\n")
-	else return(drop.tip.contMap(x,tip))
+	if(!inherits(x,"densityMap")) cat("x should be an object of class \"densityMap\"\n")
+	else { 
+		class(x)<-"contMap"
+		x<-drop.tip.contMap(x,tip)
+		class(x)<-"densityMap"
+		return(x)
+	}
 }
