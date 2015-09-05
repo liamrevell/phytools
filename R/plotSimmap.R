@@ -348,14 +348,22 @@ plot.multiSimmap<-function(x,...) plotSimmap(x,...)
 ## function to split vertical plotted lines by the states of daughter edges
 ## written by Liam J. Revell 2015
 splitEdgeColor<-function(tree,colors,lwd=2){
-    obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-    for(i in 1:tree$Nnode+Ntip(tree)){
-        daughters<-tree$edge[which(tree$edge[,1]==i),2]
-        for(j in 1:length(daughters)){
-            jj<-which(tree$edge[,2]==daughters[j])
-            color<-if(tree$maps[[jj]][1]==0) colors[names(tree$maps[[jj]])[2]] else colors[names(tree$maps[[jj]])[1]]
-            lines(rep(obj$xx[i],2),obj$yy[c(i,daughters[j])],col=color,lwd=lwd)
-        }
-    }
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	for(i in 1:tree$Nnode+Ntip(tree)){
+		daughters<-tree$edge[which(tree$edge[,1]==i),2]
+		cols<-vector()
+		for(j in 1:length(daughters)){
+			jj<-which(tree$edge[,2]==daughters[j])
+			cols[j]<-if(tree$maps[[jj]][1]==0&&length(tree$maps[[jj]])>1) colors[names(tree$maps[[jj]])[2]] 
+				else colors[names(tree$maps[[jj]])[1]]
+		}
+		ii<-order(obj$yy[c(i,daughters)])
+		jj<-order(obj$yy[daughters])
+		x0<-x1<-rep(obj$xx[i],length(daughters))
+		y0<-obj$yy[c(i,daughters)][ii][1:length(daughters)]
+		y1<-obj$yy[c(i,daughters)][ii][2:(length(daughters)+1)]
+		cols<-cols[jj]
+		for(j in 1:length(x0)) segments(x0[j],y0[j],x1[j],y1[j],col=cols[j],lwd=lwd,lend=2)
+	}
 }
 
