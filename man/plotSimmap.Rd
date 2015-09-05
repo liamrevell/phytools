@@ -5,7 +5,7 @@
 plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE, 
 	node.numbers=FALSE, mar=NULL, add=FALSE, offset=NULL, direction="rightwards",
 	type="phylogram", setEnv=TRUE, part=1.0, xlim=NULL, ylim=NULL, 
-	nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE)
+	nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE, split.vertical=FALSE)
 }
 \arguments{
  	\item{tree}{a modified object of class "phylo" or "multiPhylo" containing a stochastic mapping or set of mappings (e.g., see \code{\link{read.simmap}} & \code{\link{make.simmap}}).}
@@ -28,6 +28,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{tips}{labeled vector containing the vertical position of tips. Normally this will be \code{1:N} for \code{N} tips in the tree.}
 	\item{maxY}{maximum value of y to use before rotating a tree into fan configuration. This will only make a difference if different from \code{Ntip(tree)}.}
 	\item{hold}{logical argument indicating whether or not to hold the output to the graphical device before plotting. Defaults to \code{hold=TRUE}.}
+	\item{split.vertical}{split the color of the vertically plotted edges by the state of the daughter edges. Only applies if the edge state changes exactly at a node.}
 }
 \description{
 	Function plots one or multiple stochastic character mapped trees.
