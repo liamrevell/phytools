@@ -4,7 +4,7 @@
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
 	type="phylogram",setEnv=TRUE,part=1.0,xlim=NULL,ylim=NULL,nodes="intermediate",
-	tips=NULL,maxY=NULL,hold=TRUE){
+	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,ftype=ftype,
@@ -34,7 +34,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		if(hold) null<-dev.hold()
 		if(type=="phylogram"){
 			plotPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,add,offset,
-				direction,setEnv,xlim,ylim,nodes,tips)
+				direction,setEnv,xlim,ylim,nodes,tips,split.vertical)
 		} else if(type=="fan"){
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY)
 		}
@@ -45,8 +45,12 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 # function to plot simmap tree in type "phylogram"
 # written by Liam J. Revell 2011-2015
 plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
-	add,offset,direction,setEnv,xlim,ylim,placement,tips){
+	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical){
 	# set offset fudge (empirically determined)
+	if(split.vertical&&!setEnv){
+		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
+		spit.vertical<-FALSE
+	}
 	offsetFudge<-1.37
 	# reorder
 	cw<-reorderSimmap(tree)
@@ -106,9 +110,11 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(direction=="leftwards") plot.window(xlim=xlim[2:1],ylim=ylim)
 	else plot.window(xlim=xlim,ylim=ylim)
 	####
-	for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
-		Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],col=colors[names(cw$maps[[match(nodes[i],
-		cw$edge[,1])]])[1]],lwd=lwd)
+	if(!split.vertical){
+		for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
+			Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],col=colors[names(cw$maps[[match(nodes[i],
+			cw$edge[,1])]])[1]],lwd=lwd)
+	}
 	for(i in 1:nrow(cw$edge)){
 		x<-H[i,1]
  		for(j in 1:length(cw$maps[[i]])){
@@ -150,6 +156,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
+	if(split.vertical) splitEdgeColor(cw,colors,lwd)
 }
 
 # function to plot simmap tree in type "fan"
@@ -337,3 +344,18 @@ plotTree<-function(tree,...){
 ## added by Liam J. Revell 2015
 plot.simmap<-function(x,...) plotSimmap(x,...)
 plot.multiSimmap<-function(x,...) plotSimmap(x,...)
+
+## function to split vertical plotted lines by the states of daughter edges
+## written by Liam J. Revell 2015
+splitEdgeColor<-function(tree,colors,lwd=2){
+    obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+    for(i in 1:tree$Nnode+Ntip(tree)){
+        daughters<-tree$edge[which(tree$edge[,1]==i),2]
+        for(j in 1:length(daughters)){
+            jj<-which(tree$edge[,2]==daughters[j])
+            color<-if(tree$maps[[jj]][1]==0) colors[names(tree$maps[[jj]])[2]] else colors[names(tree$maps[[jj]])[1]]
+            lines(rep(obj$xx[i],2),obj$yy[c(i,daughters[j])],col=color,lwd=lwd)
+        }
+    }
+}
+
