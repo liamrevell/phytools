@@ -8,6 +8,8 @@ collapseTree<-function(tree,...){
 	else nodes<-TRUE
 	if(hasArg(hold)) hold<-list(...)$hold
 	else hold<-TRUE
+	if(hasArg(drop.extinct)) drop.extinct<-list(...)$drop.extinct
+	else drop.extinct=FALSE
 	cat("Click on the nodes that you would like to collapse...\n")
 	## turn off locator bell (it's annoying)
 	options(locatorBell=FALSE)
@@ -126,6 +128,15 @@ collapseTree<-function(tree,...){
 	}
 	## turn locator bell back on
 	options(locatorBell=TRUE)
+	if(drop.extinct){ 
+		if(!is.ultrametric(otree)) cat("Input tree was not ultrametric. Ignoring argument drop.extinct.\n")
+		else { 
+			th<-setNames(sapply(1:Ntip(tree),nodeheight,tree=tree),tree$tip.label)
+			tips<-names(th)[which(th<(mean(sapply(1:Ntip(otree),
+				nodeheight,tree=otree))-.Machine$double.eps^0.5))]
+			tree<-drop.tip(tree,tips)
+		}
+	}
 	tree
 }
 
