@@ -708,9 +708,9 @@ roundBranches<-function(tree,digits=0){
 			a<-unique(a)
 			tree$mapped.edge<-matrix(data=0,length(tree$edge.length),length(a),dimnames=list(apply(tree$edge,1,function(x) paste(x,collapse=",")),state=a))
 			for(i in 1:length(tree$maps)) for(j in 1:length(tree$maps[[i]])) tree$mapped.edge[i,names(tree$maps[[i]])[j]]<-tree$mapped.edge[i,names(tree$maps[[i]])[j]]+tree$maps[[i]][j]
-		} else stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
+		}
 		return(tree)
-	}
+	} else stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
 }
 
 # function to merge mapped states
