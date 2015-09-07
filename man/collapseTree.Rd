@@ -6,7 +6,7 @@ collapseTree(tree, ...)
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
- 	\item{...}{optional arguments. These \emph{mostly} match the arguments of \code{\link{plotSimmap}}.}
+ 	\item{...}{optional arguments. These \emph{mostly} match the arguments of \code{\link{plotSimmap}}, but also include the argument \code{drop.extinct} which will (if the input tree is ultrametric) drop any 'extinct' lineages from the tree that is returned by the function.}
 }
 \description{
 	Function creates an interactive visualization of collapsing & expanding clades on the tree.
