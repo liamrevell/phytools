@@ -1231,16 +1231,10 @@ expm<-function(Y){
 untangle<-function(tree,method=c("reorder","read.tree")){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	method<-method[1]
-	if(!is.null(tree$maps)) simmap<-TRUE
-	else simmap<-FALSE
-	if(method=="reorder"){
-		if(simmap) tree<-reorderSimmap(reorderSimmap(tree,"pruningwise"))
-		else tree<-reorder(reorder(tree,"pruningwise"))
-	} else if(method=="read.tree"){
-		if(simmap){
-			stop("Option 'read.tree' does not presently work for SIMMAP style trees")
-			# tree<-read.simmap(text=write.simmap(tree))
-		} else tree<-read.tree(text=write.tree(tree))
+	if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
+	else if(method=="read.tree"){
+		if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
+		else tree<-read.tree(text=write.tree(tree))
 	}
 	return(tree)
 }

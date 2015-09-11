@@ -1,7 +1,7 @@
 # function writes a modified "phylo" object to a simmap Newick string
 # written by Liam Revell 2011, 2013, 2015
 
-write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL){
+write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL,quiet=FALSE){
 	if(inherits(tree,"multiPhylo")) for(i in 1:length(tree)) write.simmap(tree,file,if(i==1) append else TRUE,map.order)
 	else {
 		if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
@@ -10,13 +10,13 @@ write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL){
 			if(!is.null(attr(tree,"map.order")))
 				map.order<-attr(tree,"map.order")
 			else {
-				message("map order should be specified in function call or by tree attribute \"map.order\".\nAssuming right-to-left order.")
+				if(!quiet) message("map order should be specified in function call or by tree attribute \"map.order\".\nAssuming right-to-left order.")
 				map.order<-"R"
 			}
 		}
 		map.order<-toupper(unlist(strsplit(map.order,NULL))[1])
 		if(map.order!="R"&&map.order!="L"){
-			message("do not recognize map order. Assuming right-to-left order.")
+			if(!quiet) message("do not recognize map order. Assuming right-to-left order.")
 			map.order<-"R"
 		}
 		tree<-reorderSimmap(tree,"cladewise")
