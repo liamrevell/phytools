@@ -40,6 +40,8 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE){
 	obj
 }
 
+## print method for "fastAnc"
+## written by Liam J. Revell 2015
 print.fastAnc<-function(x,digits=6,printlen=NULL,...){
 	cat("Ancestral character estimates using fastAnc:\n")
 	if(!is.list(obj)){ 
@@ -64,6 +66,8 @@ print.fastAnc<-function(x,digits=6,printlen=NULL,...){
 	cat("\n")
 }
 
+## internal function
+## written by Liam J. Revell 2015
 printDotDot<-function(x,digits,printlen){
 	if(is.vector(x)){
 		x<-as.data.frame(t(as.matrix(unclass(round(x[1:printlen],digits)))))

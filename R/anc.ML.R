@@ -4,10 +4,10 @@
 
 anc.ML<-function(tree,x,maxit=2000,model=c("BM","OU"),...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(model[1]=="BM") X<-anc.BM(tree,x,maxit,...)
-	else if(model[1]=="OU") X<-anc.OU(tree,x,maxit,...)
+	if(model[1]=="BM") obj<-anc.BM(tree,x,maxit,...)
+	else if(model[1]=="OU") obj<-anc.OU(tree,x,maxit,...)
 	else stop(paste("Do not recognize method",model))
-	X
+	obj
 }
 
 ## internal to estimate ancestral states under a BM model
@@ -46,11 +46,11 @@ anc.BM<-function(tree,x,maxit,...){
 		control=list(maxit=maxit))
 	states<-fit$par[1:tree$Nnode+1]
 	names(states)<-c(length(tree$tip)+1,rownames(C)[(length(tree$tip)+1):nrow(C)])
-	X<-list(sig2=fit$par[1],ace=states,logLik=-fit$value,counts=fit$counts,
+	obj<-list(sig2=fit$par[1],ace=states,logLik=-fit$value,counts=fit$counts,
 		convergence=fit$convergence,message=fit$message,model="BM")
-	if(length(xx)>0) X$missing.x<-setNames(fit$par[1:length(xx)+tree$Nnode+1],xx)
-	class(X)<-"anc.ML"
-	X
+	if(length(xx)>0) obj$missing.x<-setNames(fit$par[1:length(xx)+tree$Nnode+1],xx)
+	class(obj)<-"anc.ML"
+	obj
 }
 
 ## internal to estimate ancestral states under an OU model (this may not work)
@@ -81,10 +81,36 @@ anc.OU<-function(tree,x,maxit=2000,...){
 	fit<-optim(pp,likOU,tree=tree,x=x,trace=trace,method="L-BFGS-B",
 		lower=c(tol,tol,rep(-Inf,tree$Nnode)),upper=rep(Inf,length(pp)),
 		control=list(maxit=maxit))
-	X<-list(sig2=fit$par[1],alpha=fit$par[2],
+	obj<-list(sig2=fit$par[1],alpha=fit$par[2],
 		ace=setNames(fit$par[1:tree$Nnode+2],1:tree$Nnode+length(tree$tip.label)),
 		logLik=-fit$value,counts=fit$counts,convergence=fit$convergence,
 		message=fit$message,model="OU")
-	class(X)<-"anc.ML"
-	X
+	class(obj)<-"anc.ML"
+	obj
 }
+
+## print method for "anc.ML"
+## written by Liam J. Revell 2015
+print.anc.ML<-function(x,digits=6,printlen=NULL,...){
+	cat(paste("Ancestral character estimates using anc.ML under a",
+		x$model,"model:\n"))
+	Nnode<-length(x$ace)
+	if(is.null(printlen)||printlen>=Nnode) print(round(x$ace,digits))
+	else printDotDot(x$ace,digits,printlen)
+	cat("\nFitted model parameters & likelihood:\n")
+	if(x$model=="BM"){
+		obj<-data.frame(round(x$sig2,digits),round(x$logLik,digits))
+		colnames(obj)<-c("sig2","log-likelihood")
+		rownames(obj)<-""
+		print(obj)
+	} else if(x$model=="OU"){
+		obj<-data.frame(round(x$sig2,digits),round(x$alpha,digits),
+			round(x$logLik,digits))
+		colnames(obj)<-c("sigma^2","alpha","logLik")
+		rownames(obj)<-""
+		print(obj)
+	}
+	if(x$convergence==0) cat("\nR thinks it has found the ML solution.\n\n") 
+	else cat("\nOptimization may not have converged.\n\n")	
+}
+

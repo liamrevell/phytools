@@ -63,6 +63,7 @@ S3method(summary, multiSimmap)
 S3method(reorder, simmap)
 S3method(plot, rateshift)
 S3method(print, fastAnc)
+S3method(print, anc.ML)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, bind.tree, branching.times, collapse.singles)
