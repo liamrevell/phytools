@@ -49,7 +49,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		root<-N+1
 		# get conditional likelihoods & model
 		if(is.character(Q)&&Q=="empirical"){
-			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m)
+			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi)
 			L<-XX$L
 			Q<-XX$Q
 			logL<-XX$loglik
@@ -60,7 +60,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			mtrees<-replicate(nsim,smap(tree,x,N,m,root,L,Q,pi,logL),simplify=FALSE)
 		} else if(is.character(Q)&&Q=="mcmc"){
 			if(prior$use.empirical){
-				qq<-apeAce(bt,xx,model)$rates
+				qq<-fitMk(bt,xx,model)$rates
 				prior$alpha<-qq*prior$beta
 			}
 			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior)
@@ -79,7 +79,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			if(pm) printmessage(Reduce('+',Q)/length(Q),pi,method="mcmc")
 			mtrees<-mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE)
 		} else if(is.matrix(Q)){
-			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m)
+			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi)
 			L<-XX$L
 			logL<-XX$loglik
 			if(pi[1]=="equal") pi<-setNames(rep(1/m,m),colnames(L)) # set equal
@@ -149,13 +149,13 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	p<-rgamma(np,prior$alpha,prior$beta)
 	Q<-matrix(p[rate],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	yy<-getPars(bt,xx,model,Q,tree,tol,m)
+	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi)
 	cat("Running MCMC burn-in. Please wait....\n")
 	for(i in 1:burnin){
 		pp<-update(p)
 		Qp<-matrix(pp[rate],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE)
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -170,7 +170,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		pp<-update(p)
 		Qp<-matrix(pp[rate],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE)
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -180,7 +180,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		if(i%%samplefreq==0){
 			Qi<-matrix(p[rate],m,m)
 			diag(Qi)<--rowSums(Qi,na.rm=TRUE)
-			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE)
+			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE,pi=pi)
 		}
 	}
 	return(XX)
@@ -188,8 +188,8 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 
 # get pars
 # written by Liam J. Revell 2013
-getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE){
-	XX<-apeAce(bt,xx,model,fixedQ=Q,output.liks=liks)
+getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi){
+	XX<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi)
 	N<-length(bt$tip.label)
 	II<-XX$index.matrix+1
 	lvls<-XX$states
@@ -287,109 +287,99 @@ statdist<-function(Q){
 	}
 }
 
-# function for conditional likelihoods at nodes, from ace(...,type="discrete")
-# modified (only very slightly) from E. Paradis et al. 2013
-apeAce<-function(tree,x,model,fixedQ=NULL,...){
+## function for conditional likelihoods at nodes, from ace(...,type="discrete")
+## written by Liam J. Revell 2015, with input from (& structural similarity to) function ace by E. Paradis et al. 2013
+fitMk<-function(tree,x,model,fixedQ=NULL,...){
 	if(hasArg(output.liks)) output.liks<-list(...)$output.liks
-	else output.liks<-TRUE
-	ip<-0.1
-	nb.tip<-length(tree$tip.label)
-	nb.node<-tree$Nnode
-	if(is.matrix(x)){ 
+	else output.liks<-FALSE
+	N<-Ntip(tree)
+	M<-tree$Nnode
+	if(is.matrix(x)){
 		x<-x[tree$tip.label,]
-		nl<-ncol(x)
-		lvls<-colnames(x)
+		m<-ncol(x)
+		states<-colnames(x)
 	} else {
-		x<-x[tree$tip.label]
-  		if(!is.factor(x)) x<-factor(x)
-		nl<-nlevels(x)
-		lvls<-levels(x)
-		x<-as.integer(x)
+		x<-to.matrix(x,sort(unique(x)))
+		m<-ncol(x)
+		states<-colnames(x)
 	}
+	if(hasArg(pi)) pi<-list(...)$pi
+	else pi<-"equal"
+	if(pi=="equal") pi<-setNames(rep(1/m,m),states)
 	if(is.null(fixedQ)){
 		if(is.character(model)){
-			rate<-matrix(NA,nl,nl)
-			if(model=="ER") np<-rate[]<-1
-			if(model=="ARD"){
-				np<-nl*(nl-1)
-				rate[col(rate)!=row(rate)]<-1:np
-			}
-			if (model=="SYM") {
-				np<-nl*(nl-1)/2
-				sel<-col(rate)<row(rate)
-				rate[sel]<-1:np
+			rate<-matrix(NA,m,m)
+			if(model=="ER") k<-rate[]<-1
+			else if(model=="ARD"){
+				k<-m*(m-1)
+				rate[col(rate)!=row(rate)]<-1:k
+			} else if(model=="SYM"){
+				k<-m*(m-1)/2
+				ii<-col(rate)<row(rate)
+				rate[ii]<-1:k
 				rate<-t(rate)
-				rate[sel]<-1:np
+				rate[ii]<-1:k
 			}
 		} else {
-			if(ncol(model)!=nrow(model)) stop("the matrix given as 'model' is not square")
-			if(ncol(model)!=nl) stop("the matrix 'model' must have as many rows as the number of categories in 'x'")
+			if(ncol(model)!=nrow(model)) 
+				stop("model is not a square matrix")
+			if(ncol(model)!=ncol(x)) 
+				stop("model does not have the right number of columns")
 			rate<-model
-			np<-max(rate)
+			k<-max(rate)
 		}
-		Q<-matrix(0,nl,nl)
+		Q<-matrix(0,m,m)
 	} else {
-		rate<-matrix(NA,nl,nl)
-		np<-nl*(nl-1)
-		rate[col(rate)!=row(rate)]<-1:np
+		rate<-matrix(NA,m,m)
+		k<-m*(m-1)
+		rate[col(rate)!=row(rate)]<-1:k
 		Q<-fixedQ
 	}
 	index.matrix<-rate
-	tmp<-cbind(1:nl,1:nl)
-	index.matrix[tmp]<-NA
+	tmp<-cbind(1:m,1:m)
 	rate[tmp]<-0
-	rate[rate==0]<-np+1
-	liks<-matrix(0,nb.tip+nb.node,nl)
-	TIPS<-1:nb.tip
-	if(is.matrix(x)) liks[TIPS,]<-x
-	else liks[cbind(TIPS,x)]<-1
-	phy<-reorder(tree,"pruningwise")
-	dev<-function(p,output.liks=FALSE,fixedQ=NULL){
-		if(any(is.nan(p))||any(is.infinite(p))) return(1e50)
-		comp<-numeric(nb.tip+nb.node)
-		if(is.null(fixedQ)){
-			Q[]<-c(p,0)[rate]
-			diag(Q)<--rowSums(Q)
-		} else Q<-fixedQ
-		for(i in seq(from=1,by=2,length.out=nb.node)){
-			j<-i+1L
-			anc<-phy$edge[i,1]
-			des1<-phy$edge[i,2]
-			des2<-phy$edge[j,2]
-			v.l<-matexpo(Q*phy$edge.length[i])%*%liks[des1,]
-			v.r<-matexpo(Q*phy$edge.length[j])%*%liks[des2,]
-			v<-v.l*v.r
-			comp[anc]<-sum(v)
-			liks[anc,]<-v/comp[anc]
+	rate[rate==0]<-k+1
+	liks<-rbind(x,matrix(0,M,m,dimnames=list(1:M+N,states)))
+	pw<-reorder(tree,"pruningwise")
+	lik<-function(pp,output.liks=FALSE,pi){
+		if(any(is.nan(pp))||any(is.infinite(pp))) return(1e50)
+		comp<-vector(length=N+M,mode="numeric")
+		Q[]<-c(pp,0)[rate]
+		diag(Q)<--rowSums(Q)
+		parents<-unique(pw$edge[,1])
+		root<-min(parents)
+		for(i in 1:length(parents)){
+			anc<-parents[i]
+			ii<-which(pw$edge[,1]==parents[i])
+			desc<-pw$edge[ii,2]
+			el<-pw$edge.length[ii]
+			v<-vector(length=length(desc),mode="list")
+			for(j in 1:length(v))
+				v[[j]]<-expm(Q*el[j])%*%liks[desc[j],]
+			vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
+			comp[anc]<-sum(vv)
+			liks[anc,]<-vv/comp[anc]
 		}
-		if(output.liks) return(liks[-TIPS,])
-		dev<--2*sum(log(comp[-TIPS]))
-		if(is.na(dev)) Inf else dev
+		if(output.liks) return(liks[1:M+N,])
+		logL<--2*sum(log(comp[1:M+N]))
+		return(if(is.na(logL)) Inf else logL)
 	}
 	if(is.null(fixedQ)){
-		out<-nlminb(rep(ip,length.out=np),function(p) dev(p),lower=rep(0,np),upper=rep(1e50,np))
-		obj<-list()
-		obj$loglik<--out$objective/2
-		obj$rates<-out$par
-		obj$index.matrix<-index.matrix
-		if(output.liks){ 
-			obj$lik.anc<-dev(obj$rates,TRUE)
-			colnames(obj$lik.anc)<-lvls
-		}
-		obj$states<-lvls
+		fit<-nlminb(rep(0.1,k),function(p) lik(p,pi=pi),lower=rep(0,k),upper=rep(1e50,k))
+		obj<-list(logLik=-fit$objective/2,
+			rates=fit$par,
+			index.matrix=index.matrix,
+			states=states)
+		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	} else {
-		out<-dev(rep(ip,length.out=np),fixedQ=Q)
-		obj<-list()
-		obj$loglik<--out/2
-		obj$rates<-fixedQ[sapply(1:np,function(x,y) which(x==y),index.matrix)]
-		obj$index.matrix<-index.matrix
-		if(output.liks){
-			obj$lik.anc<-dev(obj$rates,TRUE,fixedQ=Q)
-			colnames(obj$lik.anc)<-lvls
-		}
-		obj$states<-lvls
+		fit<-lik(fixedQ[sapply(1:k,function(x,y) which(x==y),index.matrix)],pi=pi)
+		obj<-list(logLik=fit/2,
+			rates=fixedQ[sapply(1:k,function(x,y) which(x==y),index.matrix)],
+			index.matrix=index.matrix,
+			states=states)
+		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	}
-	return(obj)
+	obj
 }
 
 ## S3 print method for objects of class "simmap" & multiSimmap
