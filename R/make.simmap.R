@@ -318,3 +318,6 @@ print.multiSimmap<-function(x,details=FALSE,...){
 summary.simmap<-function(object,...) describe.simmap(object,...)
 summary.multiSimmap<-function(object,...) describe.simmap(object,...)
 
+## for backward compatibility with any function using apeAce internally
+apeAce<-function(tree,x,model,fixedQ=NULL,...) fitMk(tree,x,model,fixedQ,...)
+
