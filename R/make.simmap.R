@@ -305,7 +305,7 @@ fitMk<-function(tree,x,model,fixedQ=NULL,...){
 	}
 	if(hasArg(pi)) pi<-list(...)$pi
 	else pi<-"equal"
-	if(pi=="equal") pi<-setNames(rep(1/m,m),states)
+	if(is.character(pi)&&pi=="equal") pi<-setNames(rep(1/m,m),states)
 	if(is.null(fixedQ)){
 		if(is.character(model)){
 			rate<-matrix(NA,m,m)
