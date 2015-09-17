@@ -2,7 +2,7 @@
 ## written by Liam J. Revell 2015
 ## with input from (& structural similarity to) function ace by E. Paradis et al. 2013
 
-fitMk<-function(tree,x,model,fixedQ=NULL,...){
+fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	if(hasArg(output.liks)) output.liks<-list(...)$output.liks
 	else output.liks<-FALSE
 	N<-Ntip(tree)
@@ -18,7 +18,14 @@ fitMk<-function(tree,x,model,fixedQ=NULL,...){
 	}
 	if(hasArg(pi)) pi<-list(...)$pi
 	else pi<-"equal"
-	if(is.character(pi)&&pi=="equal") pi<-setNames(rep(1/m,m),states)
+	if(pi[1]=="equal") pi<-setNames(rep(1/m,m),states)
+	else if(pi[1]=="estimated"){ 
+		pi<-if(!is.null(fixedQ)) statdist(fixedQ) else statdist(summary(fitMk(tree,x,model),quiet=TRUE)$Q)
+		cat("Using pi estimated from the stationary distribution of Q assuming a flat prior.\npi =\n")
+		print(round(pi,6))
+		cat("\n")
+	}	
+	else pi<-pi/sum(pi)
 	if(is.null(fixedQ)){
 		if(is.character(model)){
 			rate<-matrix(NA,m,m)
@@ -74,36 +81,56 @@ fitMk<-function(tree,x,model,fixedQ=NULL,...){
 			liks[anc,]<-vv/comp[anc]
 		}
 		if(output.liks) return(liks[1:M+N,])
-		logL<--2*sum(log(comp[1:M+N]))
+		logL<--sum(log(comp[1:M+N]))
 		return(if(is.na(logL)) Inf else logL)
 	}
 	if(is.null(fixedQ)){
 		fit<-nlminb(rep(0.1,k),function(p) lik(p,pi=pi),lower=rep(0,k),upper=rep(1e50,k))
-		obj<-list(logLik=-fit$objective/2,
+		obj<-list(logLik=-fit$objective,
 			rates=fit$par,
 			index.matrix=index.matrix,
-			states=states)
+			states=states,
+			pi=pi)
 		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	} else {
-		fit<-lik(fixedQ[sapply(1:k,function(x,y) which(x==y),index.matrix)],pi=pi)
-		obj<-list(logLik=fit/2,
-			rates=fixedQ[sapply(1:k,function(x,y) which(x==y),index.matrix)],
+		fit<-lik(Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],pi=pi)
+		obj<-list(logLik=-fit,
+			rates=Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],
 			index.matrix=index.matrix,
-			states=states)
+			states=states,
+			pi=pi)
 		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	}
 	class(obj)<-"fitMk"
-	obj
+	return(obj)
 }
 
 print.fitMk<-function(x,digits=6,...){
 	cat("Object of class \"fitMk\".\n\n")
 	cat("Fitted (or set) value of Q:\n")
-	Q<-matrix(NA,length(obj$states),length(obj$states))
-	Q[]<-obj$rates[obj$index.matrix]
+	Q<-matrix(NA,length(x$states),length(x$states))
+	Q[]<-x$rates[x$index.matrix]
 	diag(Q)<-0
 	diag(Q)<--rowSums(Q)
-	colnames(Q)<-rownames(Q)<-obj$states
+	colnames(Q)<-rownames(Q)<-x$states
 	print(round(Q,digits))
-	cat(paste("\nLog-likelihood:",round(obj$logLik,digits),"\n\n"))
-} 
+	cat("\nFitted (or set) value of pi:\n")
+	print(x$pi)
+	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n\n"))
+}
+
+summary.fitMk<-function(object,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-6
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
+	if(!quiet) cat("Fitted (or set) value of Q:\n")
+	Q<-matrix(NA,length(object$states),length(object$states))
+	Q[]<-object$rates[object$index.matrix]
+	diag(Q)<-0
+	diag(Q)<--rowSums(Q)
+	colnames(Q)<-rownames(Q)<-object$states
+	if(!quiet) print(round(Q,digits))
+	if(!quiet) cat(paste("\nLog-likelihood:",round(object$logLik,digits),"\n\n"))
+	invisible(list(Q=Q,logLik=object$logLik))
+}
