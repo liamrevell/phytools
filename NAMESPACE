@@ -66,6 +66,7 @@ S3method(print, fastAnc)
 S3method(print, anc.ML)
 S3method(print, fitMk)
 S3method(summary, fitMk)
+S3method(logLik, fitMk)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, bind.tree, branching.times, collapse.singles)

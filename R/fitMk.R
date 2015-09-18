@@ -105,6 +105,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	return(obj)
 }
 
+## print method for objects of class "fitMk"
 print.fitMk<-function(x,digits=6,...){
 	cat("Object of class \"fitMk\".\n\n")
 	cat("Fitted (or set) value of Q:\n")
@@ -119,6 +120,7 @@ print.fitMk<-function(x,digits=6,...){
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n\n"))
 }
 
+## summary method for objects of class "fitMk"
 summary.fitMk<-function(object,...){
 	if(hasArg(digits)) digits<-list(...)$digits
 	else digits<-6
@@ -134,3 +136,7 @@ summary.fitMk<-function(object,...){
 	if(!quiet) cat(paste("\nLog-likelihood:",round(object$logLik,digits),"\n\n"))
 	invisible(list(Q=Q,logLik=object$logLik))
 }
+
+## logLik method for objects of class "fitMk"
+logLik.fitMk<-function(object,...) object$logLik
+	

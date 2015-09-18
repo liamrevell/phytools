@@ -14,7 +14,7 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 	This function uses the re-rooting method of Yang et al. (1995) to get the marginal ancestral state estimates for each internal node of the tree using likelihood. This method get the conditional scaled likelihoods for the root node (which is the same as the marginal ancestral state reconstruction for that node) and successively moves the root to each node in the tree. The function can also return the posterior probabilities for the tip nodes of the tree.
 }
 \details{
-	This function calls code modified from \code{\link{ace}} in the (Paradis et al. 2004) internally in the calculation of normalized conditional likelihoods.
+	This function calls \code{\link{fitMk}} internally. \code{fitMk} uses some code adapted from \code{ace} in the ape package.
 }
 \value{
 	A list containing the following elements:
@@ -31,7 +31,7 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{make.simmap}}
+	\code{\link{ace}}, \code{\link{fitMk}}, \code{\link{make.simmap}}
 }
 \keyword{phylogenetics}
 \keyword{bayesian}
