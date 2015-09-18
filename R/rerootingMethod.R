@@ -22,14 +22,14 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	}
 	yy<-yy[tree$tip.label,]
 	yy<-yy/rowSums(yy)
-	YY<-apeAce(tree,yy,model=model)
+	YY<-fitMk(tree,yy,model=model,output.liks=TRUE)
 	Q<-matrix(c(0,YY$rates)[YY$index.matrix+1],length(YY$states),length(YY$states),
 		dimnames=list(YY$states,YY$states))
 	diag(Q)<--colSums(Q,na.rm=TRUE)
 	nn<-if(tips) c(1:n,2:tree$Nnode+n) else 2:tree$Nnode+n
 	ff<-function(nn){
 		tt<-reroot(tree,node.number=nn,position=tree$edge.length[which(tree$edge[,2]==nn)])
-		apeAce(tt,yy,model=model,fixedQ=Q)$lik.anc[1,]
+		fitMk(tt,yy,model=model,fixedQ=Q,output.liks=TRUE)$lik.anc[1,]
 	}
 	XX<-t(sapply(nn,ff))
 	if(tips) XX<-rbind(XX[1:n,],YY$lik.anc[1,],XX[(n+1):nrow(XX),])
@@ -43,5 +43,5 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 		XX<-XX[ii,]
 		rownames(XX)<-M[,1]		
 	}
-	return(list(loglik=YY$loglik,Q=Q,marginal.anc=XX))
+	return(list(loglik=YY$logLik,Q=Q,marginal.anc=XX))
 }
