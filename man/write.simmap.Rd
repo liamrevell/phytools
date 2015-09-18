@@ -2,14 +2,14 @@
 \alias{write.simmap}
 \title{Write a stochastic character mapped tree to file}
 \usage{
-write.simmap(tree, file=NULL, append=FALSE, map.order=NULL)
+write.simmap(tree, file=NULL, append=FALSE, map.order=NULL)md
 }
 \arguments{
 	\item{tree}{a phylogenetic tree as a modified object of class \code{"phylo"}. See \code{\link{make.simmap}} and \code{\link{read.simmap}}.}
 	\item{file}{an optional filename.}
 	\item{append}{a logical value indicating whether to append to file.}
 	\item{map.order}{a optional value specifying whether to write the map in left-to-right or right-to-left order.  Acceptable values are "left-to-right" or "right-to-left" or some abbreviation of either.  If not provided, \code{write.simmap} will use \code{attr(tree,"map.order")} if available.}
-	\item(quiet}{logical value indicating whether or not to print a warning message when \code{map.order} is neither specified by a function argument or as an attribute of \code{tree}.}
+	\item{quiet}{logical value indicating whether or not to print a warning message when \code{map.order} is neither specified by a function argument or as an attribute of \code{tree}.}
 }
 \description{
 	This function writes stochastic character mapped trees to file using the Newick style format of SIMMAP v1.0 (Bollback 2006). Note, can only write one tree at a time to file (hence the \code{append} option).
