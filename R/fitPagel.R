@@ -65,7 +65,8 @@ fitPagel<-function(tree,x,y,...){
 		lik.ratio=2*(logLik(fit.dQ)-logLik(fit.iQ)),
 		P=pchisq(2*(logLik(fit.dQ)-logLik(fit.iQ)),
 		df=length(levels(x))+length(levels(y)),
-		lower.tail=FALSE))
+		lower.tail=FALSE),
+		method=method)
 	class(obj)<-"fitPagel"
 	obj
 }
@@ -87,6 +88,7 @@ print.fitPagel<-function(x,...){
 	cat("\nHypothesis test result:\n")
 	cat(paste("  likelihood-ratio: ",signif(x$lik.ratio,7),"\n"))
 	cat(paste("  p-value: ",signif(x$P,7),"\n"))
+	cat(paste("\nModel fitting method used was",x$method,"\n\n"))
 }
 
 ## function borrowed from geiger to pull the Q-matrix from a fit returned by fitDiscrete
