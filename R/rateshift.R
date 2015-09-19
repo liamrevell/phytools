@@ -15,11 +15,8 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	else optim.method<-"optim"
 	if(print){
 		cat("Optimization progress:\n\n")
-		if(nrates>1){
-##			cat(paste(c("iter",paste("s^2(",1:nrates,")",sep=""),
-##				paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
-			cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
-		} else cat("iter\ts^2(1)\tlogL\n")
+		if(nrates>1) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
+		else cat("iter\ts^2(1)\tlogL\n")
 	} else if(niter==1) {
 		cat("Optimizing. Please wait.\n\n")
 		flush.console()
@@ -28,11 +25,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 		flush.console()
 	}
 	lik<-function(par,tree,y,nrates,plot,print,iter,tol,maxh,for.hessian=FALSE,minL){
-##		sig2<-par[1:nrates]
-##		shift<-if(nrates>1) setNames(sort(c(0,par[1:(nrates-1)+nrates])),1:nrates) else shift<-setNames(0,1)
-##		shift<-if(nrates>1) sort(c(setNames(0,1),setNames(par[1:(nrates-1)+nrates],2:nrates))) else shift<-setNames(0,1)		
 		shift<-if(nrates>1) sort(c(setNames(0,1),setNames(par,2:nrates))) else shift<-setNames(0,1)
-##		if((nrates>1)&&(any(sig2<=0)||any(shift[2:length(shift)]<=0)||any(shift>=maxh))&&(for.hessian==FALSE)) logL<-minL
 		if((any(shift[2:length(shift)]<=0)||any(shift>=maxh))&&(for.hessian==FALSE)) logL<-minL
 		else {
 			tree<-make.era.map(tree,shift,tol=tol/10)
@@ -44,9 +37,8 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 			logL<-brownie.lite(tree,x)$logL.multiple
 		}
 		if(print&&!for.hessian){
-##			if(nrates>1) cat(paste(c(iter,round(sig2,4),round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
-##			else cat(paste(c(iter,round(sig2,4),round(logL,4),"\n"),collapse="\t"))
-			cat(paste(c(iter,round(par,4),round(logL,4),"\n"),collapse="\t"))
+			if(nrates>1) cat(paste(c(iter,round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
+			else cat(paste(c(iter,round(par,4),round(logL,4),"\n"),collapse="\t"))
 		}
 		-logL
 	}
