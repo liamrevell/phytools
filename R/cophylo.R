@@ -47,6 +47,7 @@ phylogram<-function(tree,part=1,direction="right",fsize=1,ftype="i",lwd=1){
 	d<-if(direction=="right") 1 else -1
 	## rescale tree so it fits in one half of the plot
 	## with enough space for labels
+	if(ftype=="off") fsize<-0
 	sh<-fsize*strwidth(tree$tip.label)
 	tree$edge.length<-tree$edge.length/max(nodeHeights(tree))*(part-max(sh))
 	n<-Ntip(tree)
@@ -77,9 +78,12 @@ phylogram<-function(tree,part=1,direction="right",fsize=1,ftype="i",lwd=1){
 		points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=0.7*sqrt(lwd))
 	}
 	## plot tip labels
-	for(i in 1:n) text(d*max(h+fsize*strwidth(tree$tip.label)),y[i],
-		sub("_"," ",tree$tip.label[i]), pos=if(d<0) 4 else 2,offset=0,
-		cex=fsize,font=which(c("off","reg","b","i","bi")==ftype)-1)
+	font<-which(c("off","reg","b","i","bi")==ftype)-1
+	if(font>0){
+		for(i in 1:n) text(d*max(h+fsize*strwidth(tree$tip.label)),y[i],
+			sub("_"," ",tree$tip.label[i]), pos=if(d<0) 4 else 2,offset=0,
+			cex=fsize,font=font)
+	}
 	## return rightmost or leftmost edge of tip labels
 	invisible(d*max(h+fsize*strwidth(tree$tip.label)))
 }
