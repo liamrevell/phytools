@@ -9,6 +9,8 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	else plot<-FALSE
 	if(hasArg(print)) print<-list(...)$print
 	else print<-FALSE
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
 	if(hasArg(minL)) minL<-list(...)$minL
 	else minL<--1e12
 	if(hasArg(optim.method)) optim.method<-list(...)$optim.method
@@ -21,14 +23,14 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 			if(nrates>1) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
 			else cat("iter\ts^2(1)\tlogL\n")
 		} else if(niter==1) {
-			cat("Optimizing. Please wait.\n\n")
+			if(!quiet) cat("Optimizing. Please wait.\n\n")
 			flush.console()
 		} else { 
-			cat("Optimization progress:\n|")
+			if(!quiet) cat("Optimization progress:\n|")
 			flush.console()
 		}
 	} else {
-		cat("Estimating rates conditioned on input shift points...\n\n")
+		if(!quiet) cat("Estimating rates conditioned on input shift points...\n\n")
 		nrates<-if(fixed.shift[1]!=TRUE) length(fixed.shift)+1 else 1
 		if(nrates>2) fixed.shift<-sort(fixed.shift)
 		names(fixed.shift)<-NULL
@@ -64,11 +66,11 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 			} else suppressWarnings(fit[[i]]<-optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,
 				iter=i,Tol=tol,maxh=h,minL=minL))
 			if(!print&&niter>1){ 
-				cat(".")
+				if(!quiet) cat(".")
 				flush.console()
 			}
 		}
-		if(!print&&niter>1) cat("|\nDone.\n\n")
+		if(!print&&niter>1) if(!quiet) cat("|\nDone.\n\n")
 		ll<-sapply(fit,function(x) if(nrates>1) x$value else -x$logL1)
 		fit<-fit[[which(ll==min(ll))[1]]]
 		frequency.best<-mean(ll<=(min(ll)+1e-4))
