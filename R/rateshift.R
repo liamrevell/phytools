@@ -11,12 +11,15 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	else print<-FALSE
 	if(hasArg(minL)) minL<-list(...)$minL
 	else minL<--1e12
+	if(hasArg(optim.method)) optim.method<-list(...)$optim.method
+	else optim.method<-"optim"
 	if(print){
 		cat("Optimization progress:\n\n")
-		if(nrates>1)
-			cat(paste(c("iter",paste("s^2(",1:nrates,")",sep=""),
-				paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
-		else cat("iter\ts^2(1)\tlogL\n")
+		if(nrates>1){
+##			cat(paste(c("iter",paste("s^2(",1:nrates,")",sep=""),
+##				paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
+			cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
+		} else cat("iter\ts^2(1)\tlogL\n")
 	} else if(niter==1) {
 		cat("Optimizing. Please wait.\n\n")
 		flush.console()
@@ -25,9 +28,12 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 		flush.console()
 	}
 	lik<-function(par,tree,y,nrates,plot,print,iter,tol,maxh,for.hessian=FALSE,minL){
-		sig2<-par[1:nrates]
-		shift<-if(nrates>1) setNames(sort(c(0,par[1:(nrates-1)+nrates])),1:nrates) else shift<-setNames(0,1)
-		if((nrates>1)&&(any(sig2<=0)||any(shift[2:length(shift)]<=0)||any(shift>=maxh))&&(for.hessian==FALSE)) logL<-minL
+##		sig2<-par[1:nrates]
+##		shift<-if(nrates>1) setNames(sort(c(0,par[1:(nrates-1)+nrates])),1:nrates) else shift<-setNames(0,1)
+##		shift<-if(nrates>1) sort(c(setNames(0,1),setNames(par[1:(nrates-1)+nrates],2:nrates))) else shift<-setNames(0,1)		
+		shift<-if(nrates>1) sort(c(setNames(0,1),setNames(par,2:nrates))) else shift<-setNames(0,1)
+##		if((nrates>1)&&(any(sig2<=0)||any(shift[2:length(shift)]<=0)||any(shift>=maxh))&&(for.hessian==FALSE)) logL<-minL
+		if((any(shift[2:length(shift)]<=0)||any(shift>=maxh))&&(for.hessian==FALSE)) logL<-minL
 		else {
 			tree<-make.era.map(tree,shift,tol=tol/10)
 			if(plot&&!for.hessian){ 
@@ -35,16 +41,12 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 				title(main=paste("Optimizing rate shift(s), round",iter,"....",sep=" "))
 				for(i in 2:(length(shift))) lines(rep(shift[i],2),c(0,length(tree$tip.label)+1),lty="dashed")
 			}
-			mC<-multiC(tree)
-			mC<-mapply("*",mC,sig2,SIMPLIFY=FALSE)
-			V<-Reduce("+",mC)
-			invV<-solve(V)
-			a<-as.numeric(colSums(invV)%*%x/sum(invV))
-			logL<-sum(dmnorm(y,rep(a,length(x)),V,log=TRUE))
+			logL<-brownie.lite(tree,x)$logL.multiple
 		}
 		if(print&&!for.hessian){
-			if(nrates>1) cat(paste(c(iter,round(sig2,4),round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
-			else cat(paste(c(iter,round(sig2,4),round(logL,4),"\n"),collapse="\t"))
+##			if(nrates>1) cat(paste(c(iter,round(sig2,4),round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
+##			else cat(paste(c(iter,round(sig2,4),round(logL,4),"\n"),collapse="\t"))
+			cat(paste(c(iter,round(par,4),round(logL,4),"\n"),collapse="\t"))
 		}
 		-logL
 	}
@@ -53,20 +55,26 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	x<-x[tree$tip.label]
 	fit<-list()
 	for(i in 1:niter){
-		if(nrates>1)
-			par<-c(rchisq(n=nrates,df=N)/N*rep(phyl.vcv(as.matrix(x),vcv(tree),lambda=1)$R[1,1],nrates),
-				sort(runif(n=nrates-1))*h)
-		else par<-phyl.vcv(as.matrix(x),vcv(tree),lambda=1)$R[1,1]
-		fit[[i]]<-if(nrates==1) optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,iter=i,tol=tol,maxh=h,minL=minL,
+		if(nrates>1){
+##			par<-c(rchisq(n=nrates,df=N)/N*rep(phyl.vcv(as.matrix(x),vcv(tree),lambda=1)$R[1,1],nrates),
+##				sort(runif(n=nrates-1))*h)
+			par<-sort(runif(n=nrates-1)*h)
+		} else par<-NULL
+		if(nrates==1) fit[[i]]<-optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,iter=i,tol=tol,maxh=h,minL=minL,
 				method="Brent",lower=tol,upper=10*phyl.vcv(as.matrix(x),vcv(tree),lambda=1)$R[1,1])
-			else optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,iter=i,tol=tol,maxh=h,minL=minL)
+			else { 
+				if(optim.method=="optim") fit[[i]]<-optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,
+					iter=i,tol=tol,maxh=h,minL=minL)
+				else if(optim.method=="nlminb") fit[[i]]<-nlminb(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,
+					iter=i,tol=tol,maxh=h,minL=minL)
+			}
 		if(!print&&niter>1){ 
 			cat(".")
 			flush.console()
 		}
 	}
 	if(!print&&niter>1) cat("|\nDone.\n\n")
-	ll<-sapply(fit,function(x) x$value)
+	ll<-sapply(fit,function(x) if(optim.method=="optim") x$value else if(optim.method=="nlminb") x$objective)
 	fit<-fit[[which(ll==min(ll))[1]]]
 	H<-optimHess(fit$par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,iter=NA,tol=tol,maxh=h,for.hessian=TRUE,minL=minL)
 	vcv<-if(nrates>1) solve(H) else 1/H
@@ -77,7 +85,8 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 		shift=if(nrates>1)setNames(fit$par[1:(nrates-1)+nrates],paste(1:(nrates-1),"<->",2:nrates,sep="")) else NULL,
 		vcv=vcv,
 		tree=if(nrates>1) make.era.map(tree,c(0,fit$par[1:(nrates-1)+nrates])) else make.era.map(tree,0),
-		logL=-fit$value,convergence=fit$convergence,message=fit$message)
+		logL=if(optim.method=="optim") -fit$value else if(optim.method=="nlminb") -fit$objective,
+		convergence=fit$convergence,message=fit$message)
 	class(obj)<-"rateshift"
 	if(plot){
 		plotSimmap(obj$tree,setNames(rainbow(nrates),1:nrates),lwd=3,ftype="off",mar=c(0.1,0.1,4.1,0.1))
