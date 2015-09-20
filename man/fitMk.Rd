@@ -9,7 +9,7 @@ fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names.}
 	\item{model}{model. See \code{make.simmap} or \code{ace} for details.}
 	\item{fixedQ}{fixed value of transition matrix \code{Q}, if one is desired.}
-	\item{...}{optional arguments.}
+	\item{...}{optional arguments, including <code>pi</code>, the prior distribution at the root node (defaults to <code>pi="equal"</code>).}
 }
 \description{
 	This function fits a so-called M\emph{k} model for discrete character evolution. It is primarily designed to be used inside of \code{make.simmap}.
