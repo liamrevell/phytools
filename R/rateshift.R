@@ -13,11 +13,9 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	else quiet<-FALSE
 	if(hasArg(minL)) minL<-list(...)$minL
 	else minL<--1e12
-	if(hasArg(optim.method)) optim.method<-list(...)$optim.method
-	else optim.method<-"optim"
 	if(hasArg(fixed.shift)) fixed.shift<-list(...)$fixed.shift
-	else fixed.shift<-NULL
-	if(is.null(fixed.shift)){
+	else fixed.shift<-FALSE
+	if(!fixed.shift[1]){
 		if(print){
 			cat("Optimization progress:\n\n")
 			if(nrates>1) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
@@ -56,7 +54,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	h<-max(nodeHeights(tree))
 	N<-length(tree$tip.label)
 	x<-x[tree$tip.label]
-	if(is.null(fixed.shift)){
+	if(!fixed.shift[1]){
 		fit<-list()
 		for(i in 1:niter){
 			if(nrates>1) par<-sort(runif(n=nrates-1)*h)
