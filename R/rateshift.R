@@ -1,7 +1,7 @@
 ## find the temporal position of a rate shift using ML
 ## written by Liam J. Revell 2013, 2014, 2015
 
-rateshift<-function(tree,x,nrates=1,niter=10,...){
+rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8
@@ -15,6 +15,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 	else minL<--1e12
 	if(hasArg(fixed.shift)) fixed.shift<-list(...)$fixed.shift
 	else fixed.shift<-FALSE
+	fn<-if(method=="ML") brownie.lite else brownieREML
 	if(!fixed.shift[1]){
 		if(print){
 			cat("Optimization progress:\n\n")
@@ -43,7 +44,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 				title(main=paste("Optimizing rate shift(s), round",iter,"....",sep=" "))
 				for(i in 2:(length(shift))) lines(rep(shift[i],2),c(0,length(tree$tip.label)+1),lty="dashed")
 			}
-			logL<-brownie.lite(tree,x)$logL.multiple
+			logL<-fn(tree,x)$logL.multiple
 		}
 		if(print){
 			if(nrates>1) cat(paste(c(iter,round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
@@ -59,7 +60,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 		for(i in 1:niter){
 			if(nrates>1) par<-sort(runif(n=nrates-1)*h)
 			if(nrates==1){ 
-				fit[[i]]<-brownie.lite(make.era.map(tree,setNames(0,1)),x)
+				fit[[i]]<-fn(make.era.map(tree,setNames(0,1)),x)
 				fit[[i]]$convergence<-if(fit[[i]]$convergence=="Optimization has converged.") 0 else 1
 			} else suppressWarnings(fit[[i]]<-optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,
 				iter=i,Tol=tol,maxh=h,minL=minL))
@@ -85,7 +86,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 			-logL
 		}
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fit$par)) else make.era.map(tree,0)
-		obj<-brownie.lite(mtree,x)
+		obj<-fn(mtree,x)
 		H<-optimHess(c(obj$sig2.multiple,fit$par),likHess,tree=tree,y=x,nrates=nrates,tol=tol,maxh=h)
 		vcv<-if(nrates>1) solve(H) else 1/H
 		if(nrates>1)
@@ -97,7 +98,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,...){
 			frequency.best=frequency.best)
 	} else {
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fixed.shift)) else make.era.map(tree,0)
-		fit<-brownie.lite(mtree,x)
+		fit<-fn(mtree,x)
 		if(fit$convergence=="Optimization has converged.") fit$convergence<-0
 		obj<-list(sig2=setNames(fit$sig2.multiple,1:nrates),
 			shift=if(nrates>1) setNames(fixed.shift,paste(1:(nrates-1),"<->",2:nrates,sep="")) else NULL,
