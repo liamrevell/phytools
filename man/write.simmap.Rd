@@ -2,7 +2,7 @@
 \alias{write.simmap}
 \title{Write a stochastic character mapped tree to file}
 \usage{
-write.simmap(tree, file=NULL, append=FALSE, map.order=NULL)
+write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree as a modified object of class \code{"phylo"}. See \code{\link{make.simmap}} and \code{\link{read.simmap}}.}
