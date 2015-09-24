@@ -320,8 +320,13 @@ summary.multiSimmap<-function(object,...) describe.simmap(object,...)
 
 ## for backward compatibility with any function using apeAce internally
 apeAce<-function(tree,x,model,fixedQ=NULL,...){
-	if(hasArg(output.liks)) return(fitMk(tree,x,model,fixedQ,...))
-	else return(fitMk(tree,x,model,fixedQ,output.liks=TRUE,...))
+	if(hasArg(output.liks)){ 
+		output.liks<-list(...)$output.liks
+		return(fitMk(tree,x,model,fixedQ,...))
+	} else { 
+		output.liks<-TRUE
+		return(fitMk(tree,x,model,fixedQ,output.liks=TRUE,...))
+	}
 }
 
 

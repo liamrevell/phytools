@@ -44,7 +44,7 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE){
 ## written by Liam J. Revell 2015
 print.fastAnc<-function(x,digits=6,printlen=NULL,...){
 	cat("Ancestral character estimates using fastAnc:\n")
-	if(!is.list(obj)){ 
+	if(!is.list(x)){ 
 		if(is.null(printlen)||printlen>=length(x)) print(round(unclass(x),digits)) 
 		else printDotDot(unclass(x),digits,printlen)
 	} else {
