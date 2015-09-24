@@ -72,6 +72,6 @@ print.brownieREML<-function(x, ...){
 		"k","logL","\n"),collapse="\t"))
 	cat(paste(paste(c("value",paste(x$sig2.multiple,round(sqrt(diag(x$vcv.multiple)),digits),sep="\t"),x$k2,
 		x$logL.multiple),collapse="\t"),"\n\n",sep=""))
-	if(x$convergence[1]=="Optimization has converged.") cat("R thinks it has found the ML solution.\n\n")
+	if(x$convergence[1]=="Optimization has converged.") cat("R thinks it has found the REML solution.\n\n")
 	else cat("Optimization may not have converged.\n\n")
 }
