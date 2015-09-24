@@ -1,8 +1,11 @@
 # This function is a simplified REML version of brownie.lite()
 # written by Liam J. Revell 2011, 2013
 
-brownieREML<-function(tree,x,maxit=2000){
+brownieREML<-function(tree,x,maxit=2000,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	## optional arguments
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-8
 	# bookkeeping
 	if(!is.binary.tree(tree)) tree<-multi2di(tree)
 	x<-x[tree$tip.label] # order in tip.label order
@@ -28,9 +31,14 @@ brownieREML<-function(tree,x,maxit=2000){
 	}
 	YY<-optim(setNames(rep(1,p)*runif(n=p),colnames(tree$mapped.edge)),lik2,tree=tree,x=x,method="L-BFGS-B",lower=rep(1e-8,p))
 	sig2<-YY$par
-	v2<-solve(optimHess(sig2,lik2,tree=tree,x=x))
+	obj<-optimHess(sig2,lik2,tree=tree,x=x)
+	if(any(diag(obj)<tol)){ 
+		ii<-which(diag(obj)>0)
+		H<-obj[ii,ii]
+		v2<-matrix(Inf,nrow(obj),ncol(obj))
+		v2[ii,ii]<-if(length(H)>1) solve(H) else 1/H
+	} else v2<-if(length(sig2)>1) solve(obj) else 1/obj
 	logL2<--YY$value
-
 	if(YY$convergence==0) converged<-"Optimization has converged."
 	else converged<-"Optimization may not have converged.  Consider increasing maxit."
 	convergence=(YY$convergence==0)
@@ -43,7 +51,7 @@ brownieREML<-function(tree,x,maxit=2000){
 # This function scales a mapped tree by sig2
 # written by Liam J. Revell 2011
 scaleByMap<-function(mtree,sig2){
-	edge.length<-mtree$mapped.edge[,names(sig2)]%*%sig2
+	edge.length<-if(length(sig2)>1) mtree$mapped.edge[,names(sig2)]%*%sig2 else mtree$mapped.edge*sig2
 	tree<-list(Nnode=mtree$Nnode,edge=mtree$edge,tip.label=mtree$tip.label,edge.length=edge.length[,1])
 	class(tree)<-"phylo"
 	return(tree)

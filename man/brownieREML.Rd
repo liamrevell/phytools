@@ -2,12 +2,13 @@
 \alias{brownieREML}
 \title{REML version of brownie.lite}
 \usage{
-brownieREML(tree, x, maxit=2000)
+brownieREML(tree, x, maxit=2000, ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree in modified \code{"phylo"} format (see \code{\link{read.simmap}} and \code{\link{make.simmap}}).}
 	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization - may need to be increased for large trees.}
+	\item{...}{optional arguments.}
 }
 \description{
 	This function takes a modified \code{"phylo"} object with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then uses restricted maximum likelihood (REML) to fit the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This function is similar to \code{\link{brownie.lite}} but uses REML (which is faster and unbiased) instead of ML.  REML optimization takes advantage of Felsenstein's (1985) contrasts algorithm.

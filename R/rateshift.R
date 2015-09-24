@@ -44,7 +44,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 				title(main=paste("Optimizing rate shift(s), round",iter,"....",sep=" "))
 				for(i in 2:(length(shift))) lines(rep(shift[i],2),c(0,length(tree$tip.label)+1),lty="dashed")
 			}
-			logL<-fn(tree,x)$logL.multiple
+			logL<-fn(tree,y)$logL.multiple
 		}
 		if(print){
 			if(nrates>1) cat(paste(c(iter,round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
@@ -73,7 +73,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 		ll<-sapply(fit,function(x) if(nrates>1) x$value else -x$logL1)
 		fit<-fit[[which(ll==min(ll))[1]]]
 		frequency.best<-mean(ll<=(min(ll)+1e-4))
-		likHess<-function(par,tree,y,nrates,tol,maxh){
+		likHess<-if(method=="ML") function(par,tree,y,nrates,tol,maxh){
 			sig2<-par[1:nrates]
 			shift<-if(nrates>1) setNames(c(0,par[1:(nrates-1)+nrates]),1:nrates) else shift<-setNames(0,1)
 			tree<-make.era.map(tree,shift,tol=tol/10)
@@ -83,6 +83,14 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 			invV<-solve(V)
 			a<-as.numeric(colSums(invV)%*%x/sum(invV))
 			logL<-sum(dmnorm(y,rep(a,length(x)),V,log=TRUE))
+			-logL
+		} else if(method=="REML") function(par,tree,y,nrates,tol,maxh){
+			sig2<-par[1:nrates]
+			shift<-if(nrates>1) setNames(c(0,par[1:(nrates-1)+nrates]),1:nrates) else shift<-setNames(0,1)
+			tree<-make.era.map(tree,shift,tol=tol/10)
+			tree<-scaleByMap(tree,setNames(sig2,1:nrates))
+			picX<-pic(y,tree,scaled=FALSE,var.contrasts=TRUE)
+			logL<-sum(dnorm(picX[,1],sd=sqrt(picX[,2]),log=TRUE))
 			-logL
 		}
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fit$par)) else make.era.map(tree,0)
@@ -95,7 +103,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 		obj<-list(sig2=setNames(obj$sig2.multiple,1:nrates),
 			shift=if(nrates>1) setNames(fit$par,paste(1:(nrates-1),"<->",2:nrates,sep="")) else NULL,
 			vcv=vcv,tree=mtree,logL=obj$logL.multiple,convergence=fit$convergence,message=fit$message,
-			frequency.best=frequency.best)
+			method=method,frequency.best=frequency.best)
 	} else {
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fixed.shift)) else make.era.map(tree,0)
 		fit<-fn(mtree,x)
@@ -103,7 +111,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 		obj<-list(sig2=setNames(fit$sig2.multiple,1:nrates),
 			shift=if(nrates>1) setNames(fixed.shift,paste(1:(nrates-1),"<->",2:nrates,sep="")) else NULL,
 			vcv=matrix(-1,2*nrates-1,2*nrates-1),tree=mtree,logL=fit$logL.multiple,convergence=fit$convergence,
-			message="Fitted rates from a fixed shifts",frequency.best=NA)
+			method=method,message="Fitted rates from a fixed shifts",frequency.best=NA)
 	}
 	class(obj)<-"rateshift"
 	if(plot) plot(obj,ftype="off")	
@@ -134,8 +142,10 @@ print.rateshift<-function(x,...){
 			round(sqroot(diag(x$vcv)[1:length(x$shift)+length(x$sig2)]),digits),
 			sep="\t")),collapse="\t"),"\n\n",sep=""))
 	} else cat("This is a one-rate model.\n\n")
+	if(x$method=="ML") cat("Model fit using ML.\n\n") 
+	else if(x$method=="REML") cat("Model fit using REML.\n\n")
 	cat(paste("Frequency of best fit:",x$frequency.best,"\n\n"))
-	if (x$convergence==0) cat("R thinks it has found the ML solution.\n\n")
+	if (x$convergence==0) cat(paste("R thinks it has found the",x$method,"solution.\n\n"))
     	else cat("Optimization may not have converged.\n\n")
 }
 
