@@ -100,17 +100,18 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 # written by Liam J. Revell 2013
 printmessage<-function(Q,pi,method){
 	if(method=="empirical"||method=="fixed")
-		message("make.simmap is sampling character histories conditioned on the transition matrix\nQ =")
+		cat("make.simmap is sampling character histories conditioned on the transition matrix\n\nQ =\n")
 	else if(method=="mcmc"){
-		message("make.simmap is simulating with a sample of Q from the posterior distribution")
-		message("Mean Q from the posterior is\nQ =")
+		cat("make.simmap is simulating with a sample of Q from\nthe posterior distribution\n")
+		cat("\nMean Q from the posterior is\nQ =\n")
 	}
 	print(Q)
-	if(method=="empirical") message("(estimated using likelihood);")
-	else if(method=="fixed") message("(specified by the user);")
-	message("and (mean) root node prior probabilities\npi =")
+	if(method=="empirical") cat("(estimated using likelihood);\n")
+	else if(method=="fixed") cat("(specified by the user);\n")
+	cat("and (mean) root node prior probabilities\npi =\n")
 	if(is.list(pi)) pi<-Reduce("+",pi)/length(pi)
 	print(pi)
+	flush.console()
 }
 
 # mcmc for Q used in Q="mcmc"
@@ -151,6 +152,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
 	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi)
 	cat("Running MCMC burn-in. Please wait....\n")
+	flush.console()
 	for(i in 1:burnin){
 		pp<-update(p)
 		Qp<-matrix(pp[rate],m,m)
@@ -164,7 +166,8 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		}
 	}
 	# now run MCMC generation, sampling at samplefreq
-	cat(paste("Running",samplefreq*nsim,"generations of MCMC, sampling every",samplefreq,"generations. Please wait....\n"))
+	cat(paste("Running",samplefreq*nsim,"generations of MCMC, sampling every",samplefreq,"generations.\nPlease wait....\n\n"))
+	flush.console()
 	XX<-vector("list",nsim)
 	for(i in 1:(samplefreq*nsim)){
 		pp<-update(p)
@@ -189,12 +192,12 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 # get pars
 # written by Liam J. Revell 2013
 getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi){
-	XX<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi)
+	obj<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi)
 	N<-length(bt$tip.label)
-	II<-XX$index.matrix+1
-	lvls<-XX$states
+	II<-obj$index.matrix+1
+	lvls<-obj$states
 	if(liks){
-		L<-XX$lik.anc
+		L<-obj$lik.anc
 		rownames(L)<-N+1:nrow(L)
 		if(!is.binary.tree(tree)){
 			ancNames<-matchNodes(tree,bt)
@@ -204,14 +207,14 @@ getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi){
 		L<-rbind(xx,L)
 		rownames(L)[1:N]<-1:N
 	} else L<-NULL	
-	Q<-matrix(c(0,XX$rates)[II],m,m,dimnames=list(lvls,lvls))
+	Q<-matrix(c(0,obj$rates)[II],m,m,dimnames=list(lvls,lvls))
 	if(any(rowSums(Q,na.rm=TRUE)<tol)){
 		message(paste("\nWarning: some rows of Q not numerically distinct from 0; setting to",tol,"\n"))
 		ii<-which(rowSums(Q,na.rm=TRUE)<tol)
 		for(i in 1:length(ii)) Q[ii[i],setdiff(1:ncol(Q),ii[i])]<-tol/(ncol(Q)-1)
 	}
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	return(list(Q=Q,L=L,loglik=XX$loglik))
+	return(list(Q=Q,L=L,loglik=logLik(obj)))
 }
 
 # convert vector of x to binary matrix
