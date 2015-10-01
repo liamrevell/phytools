@@ -139,4 +139,10 @@ summary.fitMk<-function(object,...){
 
 ## logLik method for objects of class "fitMk"
 logLik.fitMk<-function(object,...) object$logLik
+
+## AIC method
+AIC.fitMk<-function(object,...,k=2){
+	np<-length(object$rates)
+	-2*logLik(object)+np*k
+}
 	
