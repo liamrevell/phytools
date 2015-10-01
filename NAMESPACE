@@ -68,6 +68,7 @@ S3method(print, fitMk)
 S3method(summary, fitMk)
 S3method(logLik, fitMk)
 S3method(print, brownieREML)
+S3method(AIC, fitMk)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, bind.tree, branching.times, collapse.singles)
