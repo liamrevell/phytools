@@ -3,7 +3,9 @@
 
 ## fastDist: uses fastHeight to compute patristic distance between a pair of species
 fastDist<-function(tree,sp1,sp2){
-	fastHeight(tree,sp1,sp1)+fastHeight(tree,sp2,sp2)-2*fastHeight(tree,sp1,sp2)
+	if(sp1==sp2) 0
+	else fastHeight(tree,sp1,sp1)+fastHeight(tree,sp2,sp2)-
+		2*fastHeight(tree,sp1,sp2)
 }
 
 # function reorders simmap tree
