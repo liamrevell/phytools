@@ -1,6 +1,11 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
 
+## fastDist: uses fastHeight to compute patristic distance between a pair of species
+fastDist<-function(tree,sp1,sp2){
+	fastHeight(tree,sp1,sp1)+fastHeight(tree,sp2,sp2)-2*fastHeight(tree,sp1,sp2)
+}
+
 # function reorders simmap tree
 # written Liam Revell 2011, 2013, 2015
 reorderSimmap<-function(tree,order="cladewise",index.only=FALSE,...){
