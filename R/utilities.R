@@ -4,6 +4,7 @@
 ## fastDist: uses fastHeight to compute patristic distance between a pair of species
 fastDist<-function(tree,sp1,sp2){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(is.null(tree$edge.length)) stop("tree should have edge lengths.")
 	if(sp1==sp2) 0
 	else fastHeight(tree,sp1,sp1)+fastHeight(tree,sp2,sp2)-
 		2*fastHeight(tree,sp1,sp2)
@@ -485,6 +486,7 @@ fastMRCA<-function(tree,sp1,sp2){
 ## written by Liam J. Revell 2014, 2015
 fastHeight<-function(tree,sp1,sp2){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(is.null(tree$edge.length)) stop("tree should have edge lengths.")
 	sp1<-which(tree$tip.label==sp1)
 	sp2<-which(tree$tip.label==sp2)
 	a1<-c(sp1,getAncestors(tree,sp1))
