@@ -106,7 +106,6 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			interval=c(0,1e6))$minimum
 		xlim<-c(min(H),max(H)+sw/alp)
 	}
-	print(Y)
 	if(is.null(ylim)) ylim=range(Y)
 	if(direction=="leftwards") plot.window(xlim=xlim[2:1],ylim=ylim)
 	else plot.window(xlim=xlim,ylim=ylim)
