@@ -57,7 +57,7 @@ optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10
 		} else bestQ<-Inf
 	}
 
-	message(paste("best Q score of",round(Q,10),"found after",Nnni,"nearest neighber interchange(s).",collapse=""))
+	message(paste("best Q score of",round(Q,10),"found after",Nnni,"nearest neighbor interchange(s).",collapse=""))
 
 	if(set.neg.to.zero) best.tree$edge.length[best.tree$edge.length<0]<-0
 
