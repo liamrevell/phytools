@@ -54,7 +54,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	offsetFudge<-1.37
 	# reorder
 	cw<-reorderSimmap(tree)
-	pw<-reorderSimmap(tree,"pruningwise")
+	pw<-reorderSimmap(tree,"postorder")
 	# count nodes and tips
 	n<-Ntip(cw)
  	m<-cw$Nnode
@@ -72,21 +72,21 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			desc<-pw$edge[which(pw$edge[,1]==nodes[i]),2]
 			Y[nodes[i]]<-(min(Y[desc])+max(Y[desc]))/2
 		} else if(placement=="centered"){
-			desc<-getDescendants(tree,nodes[i])
-			desc<-desc[desc<=Ntip(tree)]
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
 			Y[nodes[i]]<-(min(Y[desc])+max(Y[desc]))/2
 		} else if(placement=="weighted"){
 			desc<-pw$edge[which(pw$edge[,1]==nodes[i]),2]
 			n1<-desc[which(Y[desc]==min(Y[desc]))]
 			n2<-desc[which(Y[desc]==max(Y[desc]))]
-			v1<-tree$edge.length[which(tree$edge[,2]==n1)]
-			v2<-tree$edge.length[which(tree$edge[,2]==n2)]
+			v1<-pw$edge.length[which(pw$edge[,2]==n1)]
+			v2<-pw$edge.length[which(pw$edge[,2]==n2)]
 			Y[nodes[i]]<-((1/v1)*Y[n1]+(1/v2)*Y[n2])/(1/v1+1/v2)
 		} else if(placement=="inner"){
-			desc<-getDescendants(tree,nodes[i])
-			desc<-desc[desc<=Ntip(tree)]
-			mm<-which(abs(Y[desc]-median(Y[1:Ntip(tree)]))==min(abs(Y[desc]-
-				median(Y[1:Ntip(tree)]))))
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(abs(Y[desc]-median(Y[1:Ntip(pw)]))==min(abs(Y[desc]-
+				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
 			Y[nodes[i]]<-Y[desc][mm]
 		}
@@ -106,6 +106,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			interval=c(0,1e6))$minimum
 		xlim<-c(min(H),max(H)+sw/alp)
 	}
+	print(Y)
 	if(is.null(ylim)) ylim=range(Y)
 	if(direction=="leftwards") plot.window(xlim=xlim[2:1],ylim=ylim)
 	else plot.window(xlim=xlim,ylim=ylim)
@@ -134,7 +135,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			cex=fsize)
 		for(i in 1:nrow(cw$edge)){
 			x<-H[i,2]
-			if(cw$edge[i,2]>Ntip(tree)){
+			if(cw$edge[i,2]>Ntip(cw)){
 				symbols(x,Y[cw$edge[i,2]],
 					rectangles=matrix(c(1.2*fsize*strwidth(as.character(cw$edge[i,2])),
 					1.4*fsize*strheight(as.character(cw$edge[i,2]))),1,2),inches=FALSE,
@@ -180,7 +181,7 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 	}
 	if(is.null(maxY)) maxY<-max(Y)
 	Y<-setNames(Y/maxY*2*pi,1:(n+m))
-	Y<-part*cbind(Y[as.character(tree$edge[,2])],Y[as.character(tree$edge[,2])])
+	Y<-part*cbind(Y[as.character(cw$edge[,2])],Y[as.character(cw$edge[,2])])
 	R<-nodeHeights(cw)
 	# now put into a circular coordinate system
 	x<-R*cos(Y)
@@ -235,10 +236,10 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
 			x.lim=xlim,y.lim=ylim,direction="rightwards",tip.color="black",
 			Ntip=Ntip(cw),Nnode=cw$Nnode,edge=cw$edge,
-			xx=c(x[sapply(1:n,function(x,y) which(x==y)[1],y=tree$edge[,2]),2],x[1,1],
-			if(m>1) x[sapply(2:m+n,function(x,y) which(x==y)[1],y=tree$edge[,2]),2] else c()),
-			yy=c(y[sapply(1:n,function(x,y) which(x==y)[1],y=tree$edge[,2]),2],y[1,1],
-			if(m>1) y[sapply(2:m+n,function(x,y) which(x==y)[1],y=tree$edge[,2]),2] else c()))
+			xx=c(x[sapply(1:n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2],x[1,1],
+			if(m>1) x[sapply(2:m+n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2] else c()),
+			yy=c(y[sapply(1:n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2],y[1,1],
+			if(m>1) y[sapply(2:m+n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2] else c()))
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
 }
