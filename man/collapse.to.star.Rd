@@ -9,7 +9,7 @@ collapse.to.star(tree, node)
 	\item{node}{node for the clade to be collapsed.}
 }
 \description{
-	This function collapses a subtree to a star, keeping the tips at the same height above the root as in the original tree.
+	This function collapses a subtree to a star. If the tree has edge lengths, the function will keep the tips at the same height above the root as in the original tree.
 }
 \value{
 	An object of class \code{"phylo"}.

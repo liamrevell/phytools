@@ -844,11 +844,14 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0){
 # written by Liam J. Revell 2013, 2015
 collapse.to.star<-function(tree,node){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	nel<-if(is.null(tree$edge.length)) TRUE else FALSE
+	if(nel) tree$edge.length<-rep(1,nrow(tree$edge))
 	tt<-splitTree(tree,split=list(node=node,bp=tree$edge.length[which(tree$edge[,2]==node)]))
 	ss<-starTree(species=tt[[2]]$tip.label,branch.lengths=diag(vcv(tt[[2]])))
 	ss$root.edge<-0
 	tree<-paste.tree(tt[[1]],ss)
-	return(tree)
+	if(nel) tree$edge.length<-NULL 
+	tree
 }
 
 # function returns the MRCA, or its height above the root, for a set of taxa (in tips)
@@ -1127,6 +1130,7 @@ maxLambda<-function(tree){
 }
 
 # function reorders the columns of mapped.edge from a set of simmap trees
+
 # written by Liam J. Revell 2013, 2015
 orderMappedEdge<-function(trees,ordering=NULL){
 	if(!inherits(trees,"phylo")&&!inherits(trees,"multiPhylo")) 
