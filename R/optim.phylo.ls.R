@@ -1,5 +1,5 @@
 # function performs least-squares phylogeny inference by nni
-# written by Liam J. Revell 2011, 2013
+# written by Liam J. Revell 2011, 2013, 2015
 
 optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10,collapse=TRUE){
 
@@ -11,8 +11,8 @@ optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10
 
 	if(is.null(stree))
 		stree<-rtree(n=n,tip.label=rownames(D),br=NULL,rooted=F) # random starting tree
-	else if(class(stree)!="phylo"){
-		message("starting tree must be an object of class \"phylo.\" using random starting tree.")
+	else if(!inherits(stree,"phylo")){
+		cat("starting tree must be an object of class \"phylo.\" using random starting tree.\n")
 		stree<-rtree(n=n,tip.label=rownames(D),br=NULL,rooted=F) # random starting tree
 	}
 	if(!is.binary.tree(stree)) stree<-multi2di(stree)
@@ -57,7 +57,7 @@ optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10
 		} else bestQ<-Inf
 	}
 
-	message(paste("best Q score of",round(Q,10),"found after",Nnni,"nearest neighbor interchange(s).",collapse=""))
+	cat(paste("best Q score of",round(Q,10),"found after",Nnni,"nearest neighbor interchange(s).\n",collapse=""))
 
 	if(set.neg.to.zero) best.tree$edge.length[best.tree$edge.length<0]<-0
 
