@@ -53,7 +53,7 @@ optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10
 			best.tree<-nni.trees[[ind]]
 			Nnni<-Nnni+1
 			Q<-attr(best.tree,"Q-score")
-			print(paste(Nnni,"set(s) of nearest neighbor interchanges. best Q so far =",round(Q,10),collapse=""))
+			cat(paste(Nnni,"set(s) of nearest neighbor interchanges. best Q so far =",round(Q,10),"\n",collapse=""))
 		} else bestQ<-Inf
 	}
 
