@@ -62,25 +62,21 @@ ls.tree<-function(tree,D){
 }
 
 # function computes design matrix for least squares given a topology
-# written by Liam J. Revell 2011
+# written by Liam J. Revell 2011, totally re-written 2015
 phyloDesign<-function(tree){
-	n<-length(tree$tip)
-	cnames<-vector(); for(i in 1:nrow(tree$edge)) cnames[i]<-paste(as.character(tree$edge[i,]),collapse=",")
-	k<-1; rnames<-vector(); for(i in 1:n) for(j in 1:n) if(j>i) { rnames[k]<-paste(c(i,j),collapse=","); k<-k+1 }
-	X<-matrix(0,n*(n-1)/2,nrow(tree$edge),dimnames=list(rnames,cnames))
-	anc.nodes<-compute.ancestor.nodes(tree)
-	anc.nodes<-anc.nodes[,c(n+1:tree$Nnode,1:n)]
-	for(i in 1:(n-1)){
-		for(j in (i+1):n){
-			nodes.i<-names(anc.nodes[i,anc.nodes[i,]==1])
-			for(k in 1:length(nodes.i)) 
-				X[paste(c(i,j),collapse=","),match(as.numeric(nodes.i[k]),tree$edge[,2])]<-X[paste(c(i,j),collapse=","),match(as.numeric(nodes.i[k]),tree$edge[,2])]+1
-			nodes.j<-names(anc.nodes[j,anc.nodes[j,]==1])
-			for(k in 1:length(nodes.j)) 
-				X[paste(c(i,j),collapse=","),match(as.numeric(nodes.j[k]),tree$edge[,2])]<-X[paste(c(i,j),collapse=","),match(as.numeric(nodes.j[k]),tree$edge[,2])]+1
-		}
+	N<-Ntip(tree)
+	A<-lapply(1:N,function(n,t) c(getAncestors(t,n),n),t=tree)
+	X<-matrix(0,N*(N-1)/2,nrow(tree$edge))
+	colnames(X)<-apply(tree$edge,1,paste,collapse=",")
+	rn<-sapply(1:N,function(x,y) sapply(y,paste,x=x,sep=","),y=1:N)
+	rownames(X)<-rn[upper.tri(rn)]
+	ii<-1
+	for(i in 1:(N-1)) for(j in (i+1):N){ 
+		e<-c(setdiff(A[[i]],A[[j]]),setdiff(A[[j]],A[[i]]))
+		e<-sapply(e,function(x,y) which(y==x),y=tree$edge[,2])
+		X[ii,e]<-1
+		ii<-ii+1	
 	}
-	X[X>1]<-0
 	X
 }
 
