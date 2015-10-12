@@ -21,23 +21,12 @@ optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10
 	Nnni<-0
 	# loop while Q is not improved by nni
 	while(bestQ-Q<tol&&fixed==FALSE){
-		nni.trees<-nni(best.tree)
-		nniQ<-vector()
-		bestQ<-Inf
-		for(i in 1:length(nni.trees)){
-			# compute least squares branch lengths and Q
-			nni.trees[[i]]<-ls.tree(nni.trees[[i]],D)
-			# compute Q
-			nniQ[i]<-attr(nni.trees[[i]],"Q-score")
-			# is this the best one so far?
-			if(nniQ[i]<bestQ){ 
-				bestQ<-nniQ[i]
-				ind<-i
-			}
-		}
-		# set new best tree
+		nni.trees<-lapply(nni(best.tree),ls.tree,D=D)
+		nniQ<-sapply(nni.trees,function(x) attr(x,"Q-score"))
+		ii<-which(nniQ==min(nniQ))
+		bestQ<-nniQ[ii]
 		if(bestQ<Q){
-			best.tree<-nni.trees[[ind]]
+			best.tree<-nni.trees[[ii]]
 			Nnni<-Nnni+1
 			Q<-attr(best.tree,"Q-score")
 			cat(paste(Nnni,"set(s) of nearest neighbor interchanges. best Q so far =",round(Q,10),"\n",collapse=""))
