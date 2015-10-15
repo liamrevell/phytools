@@ -46,6 +46,8 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 ## written by Liam J. Revell
 phylogram<-function(tree,part=1,direction="right",fsize=1,ftype="i",lwd=1,...){
 	d<-if(direction=="right") 1 else -1
+	## check if edge lenths
+	if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 	## rescale tree so it fits in one half of the plot
 	## with enough space for labels
 	if(ftype=="off") fsize<-0
