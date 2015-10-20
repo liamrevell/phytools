@@ -1243,16 +1243,21 @@ expm<-function(Y){
 # function 'untangles' (or attempts to untangle) a tree with crossing branches
 # written by Liam J. Revell 2013, 2015
 untangle<-function(tree,method=c("reorder","read.tree")){
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	obj<-attributes(tree)
-	method<-method[1]
-	if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
-	else if(method=="read.tree"){
-		if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
-		else tree<-read.tree(text=write.tree(tree))
+	if(inherits(tree,"multiPhylo"){
+		tree<-lapply(tree,untangle,method=method)
+		class(tree)<-"multiPhylo"
+	} else {
+		if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+		obj<-attributes(tree)
+		method<-method[1]
+		if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
+		else if(method=="read.tree"){
+			if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
+			else tree<-read.tree(text=write.tree(tree))
+		}
+		ii<-!names(obj)%in%names(attributes(tree))
+		attributes(tree)<-c(attributes(tree),obj[ii])
 	}
-	ii<-!names(obj)%in%names(attributes(tree))
-	attributes(tree)<-c(attributes(tree),obj[ii])
 	tree
 }
 
