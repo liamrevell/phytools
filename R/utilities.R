@@ -1243,7 +1243,7 @@ expm<-function(Y){
 # function 'untangles' (or attempts to untangle) a tree with crossing branches
 # written by Liam J. Revell 2013, 2015
 untangle<-function(tree,method=c("reorder","read.tree")){
-	if(inherits(tree,"multiPhylo"){
+	if(inherits(tree,"multiPhylo")){
 		tree<-lapply(tree,untangle,method=method)
 		class(tree)<-"multiPhylo"
 	} else {
