@@ -3,7 +3,7 @@
 \title{Plot a tree with bars at the tips}
 \usage{
 plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", method="plotTree", 
-	tip.labels=FALSE, ...)
+	tip.labels=FALSE, col="grey", border=NULL, ...)
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
@@ -13,6 +13,8 @@ plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", method="plotTree"
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"fan"}.}
 	\item{method}{plotting method to use. Can be \code{"plotTree"} (for \code{\link{plotTree}}) or \code{"plotSimmap"} (for \code{\link{plotSimmap}}).}
 	\item{tip.labels}{argument indicating whether or not tip labels should be plotted. Defaults to \code{tip.labels=FALSE}.}
+	\item{col}{colors of the plotted bars. Can be a single value or a vector with length equal to the number of tips in the tree.}
+	\item{border}{single value specifying the color of the border for the plotted bars. Defaults to \code{border=NULL}, which means that black borders will be plotted.}
 	\item{...}{optional arguments to be passed to code{\link{plotTree}} or \code{\link{plotSimmap}}.}
 }
 \description{
