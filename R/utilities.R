@@ -1,6 +1,36 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
 
+## get a position in the tree interactively
+## written by Liam J. Revell 2015
+get.treepos<-function(message=TRUE){
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(obj$type=="phylogram"&&obj$direction=="rightwards"){
+		if(message){ 
+			cat("Click on the tree position you want to capture...\n")
+			dev.flush()
+		}
+		x<-unlist(locator(1)) 	
+		y<-x[2] 	
+		x<-x[1]
+		d<-pos<-c()
+		for(i in 1:nrow(obj$edge)){
+			x0<-obj$xx[obj$edge[i,]]
+			y0<-obj$yy[obj$edge[i,2]]
+			if(x<x0[1]||x>x0[2]){
+				d[i]<-min(dist(rbind(c(x,y),c(x0[1],y))),
+					dist(rbind(c(x,y),c(x0[2],y))))
+				pos[i]<-if(x>x0[2]) 0 else diff(obj$xx[obj$edge[i,]])
+			} else {
+				d[i]<-abs(y0-y)
+				pos[i]<-obj$xx[obj$edge[i,2]]-x
+			}
+		}
+		ii<-which(d==min(d))
+		list(where=obj$edge[ii,2],pos=pos[ii])
+	} else stop("Does not work for the plotted tree type.")
+}
+
 ## fastDist: uses fastHeight to compute patristic distance between a pair of species
 fastDist<-function(tree,sp1,sp2){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -810,9 +840,16 @@ sampleFrom<-function(xbar=0,xvar=1,n=1,randn=NULL,type="norm"){
 
 # function adds a new tip to the tree
 # written by Liam J. Revell 2012, 2013, 2014, 2015
-bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0){
+bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(is.null(where)) where<-length(tree$tip.label)+1
+	if(interactive==TRUE){
+		plotTree(tree,...)
+		cat("Click where you would like to bind the tip...\n")
+		dev.flush()
+		obj<-get.treepos(message=FALSE)
+		where<-obj$where
+		position<-obj$pos
+	} else if(is.null(where)) where<-length(tree$tip.label)+1
 	if(where<=length(tree$tip.label)&&position==0){
 		pp<-1e-12
 		if(tree$edge.length[which(tree$edge[,2]==where)]<=1e-12){
@@ -837,6 +874,7 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0){
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tip$tip.label))]<-0
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tree$tip.label[where]))]<-0
 	}
+	if(interactive) plotTree(obj,...)
 	return(obj)
 }
 
