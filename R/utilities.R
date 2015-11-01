@@ -217,8 +217,16 @@ drop.clade<-function(tree,tip){
 # function to re-root a phylogeny along an edge
 # written by Liam Revell 2011-2015
 
-reroot<-function(tree,node.number,position){
+reroot<-function(tree,node.number,position,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(interactive){
+		plotTree(tree,...)
+		cat("Click where you would like re-root the plotted tree\n")
+		flush.console()
+		obj<-get.treepos(message=FALSE)
+		node.number<-obj$where
+		position<-tree$edge.length[which(tree$edge[,2]==node.number)]-obj$pos
+	}
 	tt<-splitTree(tree,list(node=node.number,bp=position))
 	p<-tt[[1]]
 	d<-tt[[2]]
@@ -231,8 +239,9 @@ reroot<-function(tree,node.number,position){
 	cc<-p$edge[which(p$edge[,2]==bb),1]
 	dd<-setdiff(p$edge[which(p$edge[,1]==cc),2],bb)
 	p$edge.length[which(p$edge[,2]==dd)]<-p$edge.length[which(p$edge[,2]==dd)]+ee
-	tt<-paste.tree(p,d)
-	return(tt)
+	obj<-paste.tree(p,d)
+	if(interactive) plotTree(obj,...)
+	obj
 }
 
 ## function to add an arrow pointing to a tip or node in the tree
