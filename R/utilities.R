@@ -8,7 +8,7 @@ get.treepos<-function(message=TRUE){
 	if(obj$type=="phylogram"&&obj$direction=="rightwards"){
 		if(message){ 
 			cat("Click on the tree position you want to capture...\n")
-			dev.flush()
+			flush.console()
 		}
 		x<-unlist(locator(1)) 	
 		y<-x[2] 	
@@ -18,8 +18,8 @@ get.treepos<-function(message=TRUE){
 			x0<-obj$xx[obj$edge[i,]]
 			y0<-obj$yy[obj$edge[i,2]]
 			if(x<x0[1]||x>x0[2]){
-				d[i]<-min(dist(rbind(c(x,y),c(x0[1],y))),
-					dist(rbind(c(x,y),c(x0[2],y))))
+				d[i]<-min(dist(rbind(c(x,y),c(x0[1],y0))),
+					dist(rbind(c(x,y),c(x0[2],y0))))
 				pos[i]<-if(x>x0[2]) 0 else diff(obj$xx[obj$edge[i,]])
 			} else {
 				d[i]<-abs(y0-y)
@@ -842,10 +842,12 @@ sampleFrom<-function(xbar=0,xvar=1,n=1,randn=NULL,type="norm"){
 # written by Liam J. Revell 2012, 2013, 2014, 2015
 bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	use.edge.length<-if(is.null(tree$edge.length)) FALSE else TRUE
+	if(use.edge.length==FALSE) tree<-compute.brlen(tree)
 	if(interactive==TRUE){
 		plotTree(tree,...)
-		cat("Click where you would like to bind the tip...\n")
-		dev.flush()
+		cat(paste("Click where you would like to bind the tip \"",tip.label,"\"\n",sep=""))
+		flush.console()
 		obj<-get.treepos(message=FALSE)
 		where<-obj$where
 		position<-obj$pos
@@ -874,8 +876,10 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tip$tip.label))]<-0
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tree$tip.label[where]))]<-0
 	}
+	obj<-untangle(obj,"read.tree")
 	if(interactive) plotTree(obj,...)
-	return(obj)
+	if(!use.edge.length) obj$edge.length<-NULL
+	obj
 }
 
 # function collapses the subtree descended from node to a star tree
@@ -908,6 +912,7 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 		H<-nodeHeights(tree)
 		X<-sapply(tips,function(x,y,z) sapply(y,fastMRCA,sp1=x,tree=z),y=tips,z=tree)
 		Y<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
+
 		if(type=="height") return(Y[which.min(Y)]) else return(X[which.min(Y)])
 	}
 }
