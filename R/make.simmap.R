@@ -133,7 +133,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 			np<-m*(m-1)
 			rate[col(rate)!=row(rate)]<-1:np
 		}
-		if (model=="SYM") {
+		if(model=="SYM") {
 			np<-m*(m-1)/2
 			sel<-col(rate)<row(rate)
 			rate[sel]<-1:np
@@ -148,14 +148,14 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	}
 	# burn-in
 	p<-rgamma(np,prior$alpha,prior$beta)
-	Q<-matrix(p[rate],m,m)
+	Q<-matrix(c(0,p)[rate+1],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
 	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi)
 	cat("Running MCMC burn-in. Please wait....\n")
 	flush.console()
 	for(i in 1:burnin){
 		pp<-update(p)
-		Qp<-matrix(pp[rate],m,m)
+		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
 		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
@@ -171,7 +171,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	XX<-vector("list",nsim)
 	for(i in 1:(samplefreq*nsim)){
 		pp<-update(p)
-		Qp<-matrix(pp[rate],m,m)
+		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
 		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
@@ -181,7 +181,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 			p<-pp
 		}
 		if(i%%samplefreq==0){
-			Qi<-matrix(p[rate],m,m)
+			Qi<-matrix(c(0,p)[rate+1],m,m)
 			diag(Qi)<--rowSums(Qi,na.rm=TRUE)
 			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE,pi=pi)
 		}
