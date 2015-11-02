@@ -18,7 +18,8 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	map<-map(database,regions,xlim=xlim,ylim=ylim,plot=FALSE,fill=TRUE,resolution=0)
 	# if rotate
 	if(hasArg(type)) type<-list(...)$type else type<-"phylogram"
-	if(rotate&&type=="phylogram") tree<-minRotate(tree,coords[,2])
+	if(hasArg(direction)) direction<-list(...)$direction else direction<-"downwards"
+	if(rotate&&type=="phylogram") tree<-minRotate(tree,coords[,if(direction=="rightwards") 1 else 2])
 	x<-list(tree=tree,map=map,coords=coords)
 	class(x)<-"phylo.to.map"
 	if(plot) plot.phylo.to.map(x,...)
@@ -59,47 +60,80 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	if(hasArg(colors)) colors<-list(...)$colors
 	else colors<-"red"
 	if(length(colors)!=2) rep(colors[1],2)->colors
-	# recompute ylim to leave space for the tree
-	if(type=="phylogram") ylim<-c(ylim[1],ylim[2]+split[1]/split[2]*(ylim[2]-ylim[1]))
+	if(hasArg(direction)) direction<-list(...)$direction
+	else direction<-"downwards"
+	# recompute ylim or xlim to leave space for the tree
+	if(type=="phylogram"){
+		if(direction=="downwards") ylim<-c(ylim[1],ylim[2]+split[1]/split[2]*(ylim[2]-ylim[1]))
+		if(direction=="rightwards") xlim<-c(xlim[1]-split[1]/split[2]*(xlim[2]-xlim[1]),xlim[2])
+	}
 	# open & size a new plot
 	par(mar=mar)
 	plot.new()
 	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	map(map,add=TRUE,fill=TRUE,col="gray95",mar=rep(0,4))
 	if(type=="phylogram"){
-		# plot a white rectangle
-		dx<-abs(diff(xlim))
-		rect(xlim[1]-1.04*dx,ylim[2]-split[1]*(ylim[2]-ylim[1]),xlim[2]+1.04*dx,ylim[2],col="white",border="white")
-		# rescale tree so it fits in the upper half of the plot
-		# with enough space for labels
-		sh<-(fsize*strwidth(tree$tip.label))/(par()$usr[2]-par()$usr[1])*(par()$usr[4]-par()$usr[3])
-		tree$edge.length<-tree$edge.length/max(nodeHeights(tree))*(split[1]*(ylim[2]-ylim[1])-max(sh))
-		n<-length(tree$tip.label)
-		# reorder cladewise to assign tip positions
-		cw<-reorder(tree,"cladewise")
-		x<-vector(length=n+cw$Nnode)
-		x[cw$edge[cw$edge[,2]<=n,2]]<-0:(n-1)/(n-1)*(xlim[2]-xlim[1])+xlim[1]
-		# reorder pruningwise for post-order traversal
-		pw<-reorder(tree,"pruningwise")
-		nn<-unique(pw$edge[,1])
-		# compute horizontal position of each edge
-		for(i in 1:length(nn)){
-			xx<-x[pw$edge[which(pw$edge[,1]==nn[i]),2]]
-			x[nn[i]]<-mean(range(xx))
+		if(direction=="downwards"){
+			# plot a white rectangle
+			dx<-abs(diff(xlim))
+			rect(xlim[1]-1.04*dx,ylim[2]-split[1]*(ylim[2]-ylim[1]),xlim[2]+1.04*dx,ylim[2],col="white",border="white")
+			# rescale tree so it fits in the upper half of the plot
+			# with enough space for labels
+			sh<-(fsize*strwidth(tree$tip.label))/(par()$usr[2]-par()$usr[1])*(par()$usr[4]-par()$usr[3])
+			tree$edge.length<-tree$edge.length/max(nodeHeights(tree))*(split[1]*(ylim[2]-ylim[1])-max(sh))
+			n<-Ntip(tree)
+			# reorder cladewise to assign tip positions
+			cw<-reorder(tree,"cladewise")
+			x<-vector(length=n+cw$Nnode)
+			x[cw$edge[cw$edge[,2]<=n,2]]<-0:(n-1)/(n-1)*(xlim[2]-xlim[1])+xlim[1]
+			# reorder pruningwise for post-order traversal
+			pw<-reorder(tree,"pruningwise")
+			nn<-unique(pw$edge[,1])
+			# compute horizontal position of each edge
+			for(i in 1:length(nn)){
+				xx<-x[pw$edge[which(pw$edge[,1]==nn[i]),2]]
+				x[nn[i]]<-mean(range(xx))
+			}
+			# compute start & end points of each edge
+			Y<-ylim[2]-nodeHeights(cw)
+			# plot vertical edges
+			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],lwd=2,lend=2)
+			# plot horizontal relationships
+			for(i in 1:tree$Nnode+n) lines(range(x[cw$edge[which(cw$edge[,1]==i),2]]),Y[which(cw$edge[,1]==i),1],lwd=2,lend=2)
+			# plot coordinates & linking lines
+			coords<-coords[tree$tip.label,2:1]
+			points(coords,pch=16,cex=psize,col=colors[2])
+			for(i in 1:n) lines(c(x[i],coords[i,1]),c(Y[which(cw$edge[,2]==i),2]-if(from.tip) 0 else sh[i],coords[i,2]),col=colors[1],lty="dashed")
+			# plot tip labels
+			if(ftype) for(i in 1:n) text(x[i],Y[which(cw$edge[,2]==i),2],sub("_"," ",cw$tip.label[i]),pos=4,offset=0.1,
+				srt=-90,cex=fsize,font=ftype)
+		} else {
+			dy<-abs(diff(ylim))
+			rect(xlim[1],ylim[1],xlim[1]+split[1]*(xlim[2]-xlim[1]),ylim[2],col="white",border="white")
+			sh<-fsize*strwidth(tree$tip.label)
+			tree$edge.length<-tree$edge.length/max(nodeHeights(tree))*(split[1]*(xlim[2]-xlim[1])-max(sh))
+			n<-Ntip(tree)
+			cw<-reorder(tree,"cladewise")
+			y<-vector(length=n+cw$Nnode)
+			y[cw$edge[cw$edge[,2]<=n,2]]<-0:(n-1)/(n-1)*(ylim[2]-ylim[1])+ylim[1]
+			pw<-reorder(tree,"postorder")
+			nn<-unique(pw$edge[,1])
+			for(i in 1:length(nn)){
+				yy<-y[pw$edge[which(pw$edge[,1]==nn[i]),2]]
+				y[nn[i]]<-mean(range(yy))
+			}
+			H<-nodeHeights(cw)
+			X<-xlim[1]+H
+
+			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=2,lend=2)
+			for(i in 1:tree$Nnode+n) lines(X[which(cw$edge[,1]==i),1],range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=2,lend=2)
+			coords<-coords[cw$tip.label,2:1]
+			points(coords,pch=16,cex=psize,col=colors[2])
+			for(i in 1:n) lines(c(X[which(cw$edge[,2]==i),2]+if(from.tip) 0 else sh[i],coords[i,1]),
+				c(y[i],coords[i,2]),col=colors[1],lty="dashed")
+			if(ftype) for(i in 1:n) text(X[which(cw$edge[,2]==i),2],y[i],sub("_"," ",cw$tip.label[i]),pos=4,offset=0.1,
+				cex=fsize,font=ftype)
 		}
-		# compute start & end points of each edge
-		Y<-ylim[2]-nodeHeights(cw)
-		# plot vertical edges
-		for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],lwd=2,lend=2)
-		# plot horizontal relationships
-		for(i in 1:tree$Nnode+n) lines(range(x[cw$edge[which(cw$edge[,1]==i),2]]),Y[which(cw$edge[,1]==i),1],lwd=2,lend=2)
-		# plot coordinates & linking lines
-		coords<-coords[tree$tip.label,2:1]
-		points(coords,pch=16,cex=psize,col=colors[2])
-		for(i in 1:n) lines(c(x[i],coords[i,1]),c(Y[which(cw$edge[,2]==i),2]-if(from.tip) 0 else sh[i],coords[i,2]),col=colors[1],lty="dashed")
-		# plot tip labels
-		for(i in 1:n) text(x[i],Y[which(cw$edge[,2]==i),2],sub("_"," ",tree$tip.label[i]),pos=4,offset=0.1,
-			srt=-90,cex=fsize,font=ftype)
 	} else if(type=="direct"){
 		phylomorphospace(tree,coords[,2:1],add=TRUE,label="horizontal",node.size=c(0,psize),lwd=1,
 			control=list(col.node=setNames(rep(colors[2],max(tree$edge)),1:max(tree$edge)),
@@ -114,7 +148,7 @@ minRotate<-function(tree,x,...){
 	if(hasArg(print)) print<-list(...)$print
 	else print<-TRUE
 	tree<-reorder(tree)
-	nn<-1:tree$Nnode+length(tree$tip.label)
+	nn<-1:tree$Nnode+Ntip(tree)
 	x<-x[tree$tip.label]
 	for(i in 1:tree$Nnode){
 		tt<-read.tree(text=write.tree(rotate(tree,nn[i])))
@@ -125,4 +159,13 @@ minRotate<-function(tree,x,...){
 	}
 	attr(tree,"minRotate")<-min(oo,pp)
 	return(tree)
+}
+
+print.phylo.to.map<-function(x,...){
+	cat("Object of class \"phylo.to.map\" containing:\n\n")
+	cat(paste("(1) A phylogenetic tree with",Ntip(x$tree),"tips and",x$tree$Nnode,"internal nodes.\n\n",sep=" "))
+	cat("(2) A geographic map with range:\n")
+	cat(paste("     ",paste(round(x$map$range[3:4],2),collapse="N, "),"N\n",sep=""))
+	cat(paste("     ",paste(round(x$map$range[1:2],2),collapse="W, "),"W.\n\n",sep=""))
+	cat(paste("(3) A table containing",nrow(x$coords),"geographic coordinates.\n\n"))
 }
