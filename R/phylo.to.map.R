@@ -118,11 +118,11 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
-				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
+				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
 				x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 				direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
 				edge=cw$edge,xx=x,yy=sapply(1:(Ntip(cw)+cw$Nnode),
-				function(x,y,z) y[match(x,z)],y=Y,z=cw$edge),)
+				function(x,y,z) y[match(x,z)],y=Y,z=cw$edge))
 		} else {
 			dy<-abs(diff(ylim))
 			rect(xlim[1],ylim[1],xlim[1]+split[1]*(xlim[2]-xlim[1]),ylim[2],col="white",border="white")
@@ -150,7 +150,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 				cex=fsize,font=ftype)
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
-				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
+				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
 				x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 				direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
 				edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
