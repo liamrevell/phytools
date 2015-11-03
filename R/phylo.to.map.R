@@ -115,6 +115,14 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			# plot tip labels
 			if(ftype) for(i in 1:n) text(x[i],Y[which(cw$edge[,2]==i),2],sub("_"," ",cw$tip.label[i]),pos=4,offset=0.1,
 				srt=-90,cex=fsize,font=ftype)
+
+			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
+				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
+				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
+				x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+				direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+				edge=cw$edge,xx=x,yy=sapply(1:(Ntip(cw)+cw$Nnode),
+				function(x,y,z) y[match(x,z)],y=Y,z=cw$edge),)
 		} else {
 			dy<-abs(diff(ylim))
 			rect(xlim[1],ylim[1],xlim[1]+split[1]*(xlim[2]-xlim[1]),ylim[2],col="white",border="white")
@@ -132,7 +140,6 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			}
 			H<-nodeHeights(cw)
 			X<-xlim[1]+H
-
 			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2)
 			for(i in 1:cw$Nnode+n) lines(X[which(cw$edge[,1]==i),1],range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd[1],lend=2)
 			coords<-coords[cw$tip.label,2:1]
@@ -141,7 +148,15 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 				c(y[i],coords[i,2]),col=colors[1],lty=lty,lwd=lwd[2])
 			if(ftype) for(i in 1:n) text(X[which(cw$edge[,2]==i),2],y[i],sub("_"," ",cw$tip.label[i]),pos=4,offset=0.1,
 				cex=fsize,font=ftype)
+			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
+				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
+				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
+				x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+				direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+				edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+				function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 		}
+		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	} else if(type=="direct"){
 		phylomorphospace(tree,coords[,2:1],add=TRUE,label="horizontal",node.size=c(0,psize),lwd=lwd[2],
 			control=list(col.node=setNames(rep(colors[2],max(tree$edge)),1:max(tree$edge)),
