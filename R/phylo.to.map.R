@@ -62,6 +62,13 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	if(length(colors)!=2) rep(colors[1],2)->colors
 	if(hasArg(direction)) direction<-list(...)$direction
 	else direction<-"downwards"
+	if(hasArg(pch)) pch<-list(...)$pch
+	else pch<-16
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-c(2,1)
+	if(length(lwd)==1) lwd<-rep(lwd,2)
+	if(hasArg(lty)) lty<-list(...)$lty
+	else lty<-"dashed"
 	# recompute ylim or xlim to leave space for the tree
 	if(type=="phylogram"){
 		if(direction=="downwards") ylim<-c(ylim[1],ylim[2]+split[1]/split[2]*(ylim[2]-ylim[1]))
@@ -97,13 +104,14 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			# compute start & end points of each edge
 			Y<-ylim[2]-nodeHeights(cw)
 			# plot vertical edges
-			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],lwd=2,lend=2)
+			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],lwd=lwd[1],lend=2)
 			# plot horizontal relationships
-			for(i in 1:tree$Nnode+n) lines(range(x[cw$edge[which(cw$edge[,1]==i),2]]),Y[which(cw$edge[,1]==i),1],lwd=2,lend=2)
+			for(i in 1:cw$Nnode+n) lines(range(x[cw$edge[which(cw$edge[,1]==i),2]]),Y[which(cw$edge[,1]==i),1],lwd=lwd[1],lend=2)
 			# plot coordinates & linking lines
-			coords<-coords[tree$tip.label,2:1]
-			points(coords,pch=16,cex=psize,col=colors[2])
-			for(i in 1:n) lines(c(x[i],coords[i,1]),c(Y[which(cw$edge[,2]==i),2]-if(from.tip) 0 else sh[i],coords[i,2]),col=colors[1],lty="dashed")
+			coords<-coords[cw$tip.label,2:1]
+			points(coords,pch=pch,cex=psize,col=colors[2])
+			for(i in 1:n) lines(c(x[i],coords[i,1]),c(Y[which(cw$edge[,2]==i),2]-if(from.tip) 0 else sh[i],coords[i,2]),
+				col=colors[1],lty=lty,lwd=lwd[2])
 			# plot tip labels
 			if(ftype) for(i in 1:n) text(x[i],Y[which(cw$edge[,2]==i),2],sub("_"," ",cw$tip.label[i]),pos=4,offset=0.1,
 				srt=-90,cex=fsize,font=ftype)
@@ -125,17 +133,17 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			H<-nodeHeights(cw)
 			X<-xlim[1]+H
 
-			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=2,lend=2)
-			for(i in 1:tree$Nnode+n) lines(X[which(cw$edge[,1]==i),1],range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=2,lend=2)
+			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2)
+			for(i in 1:cw$Nnode+n) lines(X[which(cw$edge[,1]==i),1],range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd[1],lend=2)
 			coords<-coords[cw$tip.label,2:1]
-			points(coords,pch=16,cex=psize,col=colors[2])
+			points(coords,pch=pch,cex=psize,col=colors[2])
 			for(i in 1:n) lines(c(X[which(cw$edge[,2]==i),2]+if(from.tip) 0 else sh[i],coords[i,1]),
-				c(y[i],coords[i,2]),col=colors[1],lty="dashed")
+				c(y[i],coords[i,2]),col=colors[1],lty=lty,lwd=lwd[2])
 			if(ftype) for(i in 1:n) text(X[which(cw$edge[,2]==i),2],y[i],sub("_"," ",cw$tip.label[i]),pos=4,offset=0.1,
 				cex=fsize,font=ftype)
 		}
 	} else if(type=="direct"){
-		phylomorphospace(tree,coords[,2:1],add=TRUE,label="horizontal",node.size=c(0,psize),lwd=1,
+		phylomorphospace(tree,coords[,2:1],add=TRUE,label="horizontal",node.size=c(0,psize),lwd=lwd[2],
 			control=list(col.node=setNames(rep(colors[2],max(tree$edge)),1:max(tree$edge)),
 			col.edge=setNames(rep(colors[1],nrow(tree$edge)),tree$edge[,2])))
 	}
