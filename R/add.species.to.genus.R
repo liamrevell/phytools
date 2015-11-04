@@ -37,3 +37,23 @@ add.species.to.genus<-function(tree,species,genus=NULL,where=c("root","random"))
 	tree
 }
 
+## function take genus backbone tree & converts genus tree to species tree by simulating pure-birth subtrees
+## written by Liam J. Revell 2015
+
+genus.to.species.tree<-function(tree,species){
+	N<-Ntip(tree)
+	genera<-tree$tip.label
+	for(i in 1:N){
+	species<-gsub(" ","_",species)
+		jj<-grep(paste(genera[i],"_",sep=""),species)
+		nn<-which(tree$tip.label==genera[i])
+		if(length(jj)>1){
+			h<-runif(n=1)*tree$edge.length[which(tree$edge[,2]==nn)]
+			tree$edge.length[which(tree$edge[,2]==nn)]<-
+				tree$edge.length[which(tree$edge[,2]==nn)]-h
+			sub.tree<-pbtree(n=length(jj),scale=h,tip.label=species[jj])
+			tree<-bind.tree(tree,sub.tree,where=nn)
+		} else if(length(jj)==1) tree$tip.label[nn]<-species[jj]
+	}
+	tree
+}
