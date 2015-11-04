@@ -444,9 +444,11 @@ plot.describe.simmap<-function(x,...){
 		states<-colnames(x$ace)
 		if(hasArg(colors)) colors<-list(...)$colors
 		else colors<-setNames(palette()[1:length(states)],states)
-		plotTree(x$tree[[1]],lwd=lwd,offset=cex[2],...)
+		plotTree(if(is.null(x$ref.tree)) x$tree[[1]] else x$ref.tree,lwd=lwd,
+			offset=cex[2],...)
 		nodelabels(pie=x$ace,piecol=colors[colnames(x$ace)],cex=cex[1])
-		if(!is.null(x$tips)) tips<-x$tips else tips<-to.matrix(getStates(x$tree[[1]],"tips"),seq=states) 
+		if(!is.null(x$tips)) tips<-x$tips else tips<-to.matrix(getStates(x$tree[[1]],"tips"),
+			seq=states) 
 		tiplabels(pie=tips,piecol=colors[colnames(tips)],cex=cex[2])
 	} else if(inherits(x$tree,"phylo")){
 		states<-colnames(x$Tr)
@@ -466,22 +468,37 @@ describe.simmap<-function(tree,...){
 	else check.equal<-FALSE
 	if(hasArg(message)) message<-list(...)$message
 	else message<-FALSE
+	if(hasArg(ref.tree)) ref.tree<-list(...)$ref.tree
+	else ref.tree<-NULL
 	if(inherits(tree,"multiPhylo")){
 		if(check.equal){
 			TT<-sapply(tree,function(x,y) sapply(y,all.equal.phylo,x),y=tree)
 			check<-all(TT)
-			if(!check) warning("some trees not equal")
-		}
+			if(!check) cat("Note: Some trees are not equal.\nA \"reference\" tree will be computed if none was provided.\n\n")
+		} else check<-TRUE
 		YY<-getStates(tree)
 		states<-sort(unique(as.vector(YY)))
-		ZZ<-t(apply(YY,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,levels=states,Nsim=length(tree)))
+		if(is.null(ref.tree)&&check) ZZ<-t(apply(YY,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,levels=states,Nsim=length(tree)))
+		else {
+			if(is.null(ref.tree)){
+				cat("No reference tree provided & some trees are unequal.\nComputing majority-rule consensus tree.\n")
+				ref.tree<-consensus(tree,p=0.5)
+			}
+			YYp<-matrix(NA,ref.tree$Nnode,length(tree),dimnames=list(1:ref.tree$Nnode+Ntip(ref.tree),NULL))
+			for(i in 1:length(tree)){
+				M<-matchNodes(ref.tree,tree[[i]])
+				jj<-sapply(M[,2],function(x,y) if(x%in%y) which(as.numeric(y)==x) else NA,y=as.numeric(rownames(YY)))
+				YYp[,i]<-YY[jj,i]
+			}
+			ZZ<-t(apply(YYp,1,function(x,levels) summary(factor(x[!is.na(x)],levels))/sum(!is.na(x)),levels=states))
+		}
 		XX<-countSimmap(tree,states,FALSE)
 		XX<-XX[,-(which(as.vector(diag(-1,length(states)))==-1)+1)]
 		AA<-t(sapply(unclass(tree),function(x) c(colSums(x$mapped.edge),sum(x$edge.length))))
 		colnames(AA)[ncol(AA)]<-"total"
 		BB<-getStates(tree,type="tips")
 		CC<-t(apply(BB,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,levels=states,Nsim=length(tree)))
-		x<-list(count=XX,times=AA,ace=ZZ,tips=CC,tree=tree)
+		x<-list(count=XX,times=AA,ace=ZZ,tips=CC,tree=tree,ref.tree=if(!is.null(ref.tree)) ref.tree else NULL)
 		class(x)<-"describe.simmap"
 	} else if(inherits(tree,"phylo")){
 		XX<-countSimmap(tree,message=FALSE)
@@ -966,7 +983,9 @@ getStates<-function(tree,type=c("nodes","tips")){
 	type<-type[1]
 	if(inherits(tree,"multiPhylo")){
 		tree<-unclass(tree)
-		y<-sapply(tree,getStates,type=type)
+		obj<-lapply(tree,getStates,type=type)
+		nn<-names(obj[[1]])
+		y<-sapply(obj,function(x,n) x[n],n=nn)
 	} else if(inherits(tree,"phylo")){ 
 		if(type=="nodes"){
 			y<-setNames(sapply(tree$maps,function(x) names(x)[1]),tree$edge[,1])
