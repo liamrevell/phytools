@@ -43,8 +43,8 @@ add.species.to.genus<-function(tree,species,genus=NULL,where=c("root","random"))
 genus.to.species.tree<-function(tree,species){
 	N<-Ntip(tree)
 	genera<-tree$tip.label
-	for(i in 1:N){
 	species<-gsub(" ","_",species)
+	for(i in 1:N){
 		jj<-grep(paste(genera[i],"_",sep=""),species)
 		nn<-which(tree$tip.label==genera[i])
 		if(length(jj)>1){

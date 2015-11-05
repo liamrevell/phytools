@@ -63,13 +63,16 @@ anc.OU<-function(tree,x,maxit=2000,...){
 	else tol<-1e-8
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-FALSE
+	if(hasArg(a.init)) a.init<-list(...)$a.init
+	else a.init<-2*log(2)/max(nodeHeights(tree))
 	likOU<-function(par,tree,x,trace){
 		sig2<-par[1]
 		alpha<-par[2]
 		a0<-par[3]
 		a<-par[1:(tree$Nnode-1)+3]
-		logLik<-sum(dmnorm(c(x,a),mean=rep(a0,length(tree$tip.label)+tree$Nnode-1),
-			varcov=sig2*vcvPhylo(tree,model="OU",alpha=alpha),log=TRUE))
+		## logLik<-sum(dmnorm(c(x,a),mean=rep(a0,length(tree$tip.label)+tree$Nnode-1),
+		##	varcov=sig2*vcvPhylo(tree,model="OU",alpha=alpha),log=TRUE))
+		logLik<-logMNORM(c(x,a),rep(a0,Ntip(tree)+tree$Nnode-1),sig2*vcvPhylo(tree,model="OU",alpha=alpha))
 		if(trace) print(c(sig2,alpha,logLik))
 		-logLik
 	}
@@ -77,7 +80,7 @@ anc.OU<-function(tree,x,maxit=2000,...){
 	pp<-rep(NA,tree$Nnode+2)
 	pp[1:tree$Nnode+2]<-fastAnc(tree,x)
 	pp[1]<-phyl.vcv(as.matrix(c(x,pp[2:tree$Nnode+2])),vcvPhylo(tree),lambda=1)$R[1,1]
-	pp[2]<-tol ## arbitrarily
+	pp[2]<-a.init ## arbitrarily
 	fit<-optim(pp,likOU,tree=tree,x=x,trace=trace,method="L-BFGS-B",
 		lower=c(tol,tol,rep(-Inf,tree$Nnode)),upper=rep(Inf,length(pp)),
 		control=list(maxit=maxit))
@@ -88,6 +91,9 @@ anc.OU<-function(tree,x,maxit=2000,...){
 	class(obj)<-"anc.ML"
 	obj
 }
+
+logMNORM<-function(x,x0,vcv)
+	-t(x-x0)%*%solve(vcv)%*%(x-x0)/2-length(x)*log(2*pi)/2-determinant(vcv,logarithm=TRUE)$modulus[1]/2
 
 ## print method for "anc.ML"
 ## written by Liam J. Revell 2015
