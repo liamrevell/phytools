@@ -23,7 +23,7 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 		a<-fit$ace
 		if(!is.null(fit$missing.x)) x<-c(x,fit$missing.x)
 	} else if(method=="user"){
-		if(hasArg(anc.states)) anc<-list(...)$anc.states
+		if(hasArg(anc.states)) anc.states<-list(...)$anc.states
 		else {
 			cat("No ancestral states have been provided. Using states estimated with fastAnc.\n\n")
 			a<-fastAnc(tree,x)
