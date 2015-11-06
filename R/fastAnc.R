@@ -1,10 +1,22 @@
-# function does fast estimation of ML ancestral states using ace
-# written by Liam J. Revell 2012, 2013, 2015
+## function does fast estimation of ML ancestral states using ace
+## written by Liam J. Revell 2012, 2013, 2015
 
-fastAnc<-function(tree,x,vars=FALSE,CI=FALSE){
+fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
-	if(!is.binary.tree(tree)) btree<-multi2di(tree)
-	else btree<-tree
+	if(hasArg(anc.states)) anc.states<-list(...)$anc.states
+	else anc.states<-NULL
+	if(!is.null(anc.states)){
+		nodes<-as.numeric(names(anc.states))
+		tt<-tree
+		for(i in 1:length(nodes)){
+			M<-matchNodes(tt,tree,method="distances",quiet=TRUE)
+			ii<-M[which(M[,2]==nodes[i]),1]
+			tt<-bind.tip(tt,nodes[i],edge.length=0,where=ii)
+		}
+		x<-c(x,anc.states)
+	} else tt<-tree
+	if(!is.binary.tree(tt)) btree<-multi2di(tt)
+	else btree<-tt
 	M<-btree$Nnode
 	N<-length(btree$tip.label)
 	anc<-v<-vector()
@@ -20,8 +32,8 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE){
 			names(v)[i-N]<-names(anc)[i-N]
 		}
  	}
-	if(!is.binary.tree(tree)){
-		ancNames<-matchNodes(tree,btree)
+	if(!is.binary.tree(tree)||!is.null(anc.states)){
+		ancNames<-matchNodes(tree,btree,method="distances",quiet=TRUE)
 		anc<-anc[as.character(ancNames[,2])]
 		names(anc)<-ancNames[,1]
 		if(vars||CI){ 

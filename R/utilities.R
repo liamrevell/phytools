@@ -1043,6 +1043,8 @@ countSimmap<-function(tree,states=NULL,message=TRUE){
 # written by Liam J. Revell 2012, 2013, 2015
 matchNodes<-function(tr1,tr2,method=c("descendants","distances"),...){
 	if(!inherits(tr1,"phylo")||!inherits(tr1,"phylo")) stop("tr1 & tr2 should both be objects of class \"phylo\".")
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
 	method<-method[1]
 	method<-matchType(method,c("descendants","distances"))
 	if(method=="descendants"){
@@ -1081,7 +1083,7 @@ matchNodes<-function(tr1,tr2,method=c("descendants","distances"),...){
 				if(length(a)==1) Nodes[i,2]<-a
 				else {
 					Nodes[i,2]<-a[1]
-					warning("polytomy detected; some node matches may be arbitrary")
+					if(!quiet) warning("polytomy detected; some node matches may be arbitrary")
 				}
 			}
 		}
@@ -1117,6 +1119,7 @@ applyBranchLengths<-function(tree,edge.length){
 
 # function to compute phylogenetic VCV using joint Pagel's lambda
 # written by Liam Revell 2011
+
 phyl.vcv<-function(X,C,lambda){
 	C<-lambda.transform(lambda,C)
 	invC<-solve(C)
