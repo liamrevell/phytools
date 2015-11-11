@@ -19,7 +19,8 @@ edgeProbs<-function(trees){
 		else FALSE,e=edge,s=states)
 		sum(obj)/length(obj)
 	}
-	edge.probs<-matrix(0,nrow(trees[[1]]$edge),m,dimnames=list(NULL,nn))
+	edge.probs<-matrix(0,nrow(trees[[1]]$edge),m,
+		dimnames=list(apply(trees[[1]]$edge,1,paste,collapse=","),nn))
 	k<-1
 	for(i in 1:m) for(j in 1:m){
 		if(i!=j){ 
@@ -245,6 +246,7 @@ drop.clade<-function(tree,tip){
 			trim.internal=FALSE)
 	tree
 }
+
 
 # function to re-root a phylogeny along an edge
 # written by Liam Revell 2011-2015
