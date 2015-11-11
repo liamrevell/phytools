@@ -1,6 +1,37 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
 
+## compute the probability of states changes along edges of the tree
+## written by Liam J. Revell 2015
+edgeProbs<-function(trees){
+	SS<-sapply(trees,getStates,"tips")
+	states<-sort(unique(as.vector(SS)))
+	m<-length(states)
+	TT<-sapply(states,function(x,y) sapply(y,paste,x,sep="->"),
+		y=states)
+	nn<-c(TT[upper.tri(TT)],TT[lower.tri(TT)])
+	## this function computes for a given edge
+	fn<-function(edge,trees,states){
+		obj<-sapply(trees,function(x,e,s) 
+		if(names(x$maps[[e]])[1]==
+			s[1]&&names(x$maps[[e]])[length(x$maps[[e]])]==s[2]) TRUE
+		else FALSE,e=edge,s=states)
+		sum(obj)/length(obj)
+	}
+	edge.probs<-matrix(0,nrow(trees[[1]]$edge),m,dimnames=list(NULL,nn))
+	k<-1
+	for(i in 1:m) for(j in 1:m){
+		if(i!=j){ 
+			edge.probs[,k]<-sapply(1:nrow(trees[[1]]$edge),fn,
+				trees=trees,states=states[c(i,j)])
+			k<-k+1
+		}
+	}
+	edge.probs<-cbind(edge.probs,1-rowSums(edge.probs))
+	colnames(edge.probs)[ncol(edge.probs)]<-"no change"
+	edge.probs
+}
+
 ## get a position in the tree interactively
 ## written by Liam J. Revell 2015
 get.treepos<-function(message=TRUE){
