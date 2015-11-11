@@ -4,6 +4,7 @@
 ## compute the probability of states changes along edges of the tree
 ## written by Liam J. Revell 2015
 edgeProbs<-function(trees){
+	if(!inherits(trees,"multiSimmap")) stop("trees should be an object of class \"multiSimmap\".")
 	SS<-sapply(trees,getStates,"tips")
 	states<-sort(unique(as.vector(SS)))
 	m<-length(states)
@@ -1123,6 +1124,7 @@ matchNodes<-function(tr1,tr2,method=c("descendants","distances"),...){
 }
 
 # function applies the branch lengths of a reference tree to a second tree, including mappings
+
 # written by Liam J. Revell 2012, 2015
 applyBranchLengths<-function(tree,edge.length){
 	if(inherits(tree,"multiPhylo")){
