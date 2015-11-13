@@ -24,7 +24,7 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	diag(Q)<--colSums(Q,na.rm=TRUE)
 	nn<-if(tips) c(1:n,2:tree$Nnode+n) else 2:tree$Nnode+n
 	ff<-function(nn){
-		tt<-root(tree,node=nn)
+		tt<-if(nn>Ntip(tree)) root(tree,node=nn) else reroot(tree,nn,tree$edge.length[which(tree$edge[,2]==nn)])
 		fitMk(tt,yy,model=model,fixedQ=Q,output.liks=TRUE)$lik.anc[1,]
 	}
 	XX<-t(sapply(nn,ff))
