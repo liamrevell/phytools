@@ -4,6 +4,11 @@
 
 compute.mr<-function(trees,type=c("phyDat","matrix")){
 	type<-type[1]
+	if(inherits(trees,"phylo")){ 
+		trees<-list(trees)
+		class(trees)<-"multiPhylo"
+	}
+	if(!inherits(trees,"multiPhylo")) stop("trees should be an object of class \"phylo\" or \"multiPhylo\".")
 	# compute matrix representation phylogenies
 	X<-list() # list of bipartitions
 	characters<-0 # number of characters
