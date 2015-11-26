@@ -1,7 +1,7 @@
 export(add.arrow, add.color.bar, add.everywhere, add.random, add.simmap.legend, add.species.to.genus, allFurcTrees, anc.Bayes)
 export(anc.ML, anc.trend, ancThresh, applyBranchLengths, ave.rates)
 export(backbone.toPhylo, bmPlot, bind.tip, biplot.phyl.pca, branching.diffusion, brownie.lite, brownieREML)
-export(cladelabels, collapse.to.star, collapseTree, contMap, cophylo, countSimmap)
+export(cladelabels, collapse.to.star, collapseTree, contMap, cophylo, countSimmap, compute.mr)
 export(densityMap, describe.simmap, di2multi.simmap, drop.clade, drop.leaves, drop.tip.contMap, drop.tip.densityMap)
 export(drop.tip.simmap, drop.tip.singleton)
 export(edgelabels.cophylo, edgeProbs, estDiversity, evol.rate.mcmc, evol.vcv, evolvcv.lite, exhaustiveMP, expm, export.as.xml)

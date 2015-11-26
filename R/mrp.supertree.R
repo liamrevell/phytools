@@ -2,11 +2,8 @@
 # uses pratchet() or optim.parsimony() from the "phangorn" package
 # written by Liam J. Revell 2011, 2013, 2015
 
-mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
-	# set method
-	method<-method[1]
-	# some minor error checking
-	if(!inherits(trees,"multiPhylo")) stop("trees should be an object of class \"multiPhylo\".")
+compute.mr<-function(trees,type=c("phyDat","matrix")){
+	type<-type[1]
 	# compute matrix representation phylogenies
 	X<-list() # list of bipartitions
 	characters<-0 # number of characters
@@ -27,10 +24,21 @@ mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
 		XX[rownames(X[[i]]),c(j:((j-1)+ncol(X[[i]])))]<-X[[i]][1:nrow(X[[i]]),1:ncol(X[[i]])]
 		j<-j+ncol(X[[i]])
 	}
-	# compute contrast matrix for phangorn
-	contrast<-matrix(data=c(1,0,0,1,1,1),3,2,dimnames=list(c("0","1","?"),c("0","1")),byrow=TRUE)
-	# convert XX to phyDat object
-	XX<-phyDat(XX,type="USER",contrast=contrast) 
+	if(type=="phyDat"){
+		# compute contrast matrix for phangorn
+		contrast<-matrix(data=c(1,0,0,1,1,1),3,2,dimnames=list(c("0","1","?"),c("0","1")),byrow=TRUE)
+		# convert XX to phyDat object
+	 	XX<-phyDat(XX,type="USER",contrast=contrast)
+	}
+	XX
+}
+
+mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
+	# set method
+	method<-method[1]
+	# some minor error checking
+	if(!inherits(trees,"multiPhylo")) stop("trees should be an object of class \"multiPhylo\".")
+	XX<-compute.mr(trees,type="phyDat")
 	# estimate supertree
 	if(method=="pratchet"){
 		if(hasArg(start)){
@@ -53,10 +61,10 @@ mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
 		} else supertree<-pratchet(XX,all=TRUE,...)
 		if(class(supertree)=="phylo")
 			message(paste("The MRP supertree, optimized via pratchet(),\nhas a parsimony score of ",
-				attr(supertree,"pscore")," (minimum ",characters,")",sep=""))
+				attr(supertree,"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
 		else if(class(supertree)=="multiPhylo")
 			message(paste("pratchet() found ",length(supertree)," supertrees\nwith a parsimony score of ",
-				attr(supertree[[1]],"pscore")," (minimum ",characters,")",sep=""))
+				attr(supertree[[1]],"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
 	} else if(method=="optim.parsimony"){
 		if(hasArg(start)){
 			start<-list(...)$start
@@ -78,10 +86,10 @@ mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
 		}
 		if(class(supertree)=="phylo")
 			message(paste("The MRP supertree, optimized via optim.parsimony(),\nhas a parsimony score of ",
-				attr(supertree,"pscore")," (minimum ",characters,")",sep=""))
+				attr(supertree,"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
 		else if(class(supertree)=="multiPhylo")
 			message(paste("optim.parsimony() found ",length(supertree)," supertrees\nwith a parsimony score of ",
-				attr(supertree[[1]],"pscore")," (minimum ",characters,")",sep=""))
+				attr(supertree[[1]],"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
 	}
 	return(supertree)
 }
