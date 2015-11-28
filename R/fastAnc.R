@@ -3,6 +3,7 @@
 
 fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+	if(length(class(tree)>1)) class(tree)<-"phylo"
 	if(hasArg(anc.states)) anc.states<-list(...)$anc.states
 	else anc.states<-NULL
 	if(!is.null(anc.states)){
