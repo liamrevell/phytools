@@ -29,8 +29,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	if(is.null(fixedQ)){
 		if(is.character(model)){
 			rate<-matrix(NA,m,m)
-			if(model=="ER") k<-rate[]<-1
-			else if(model=="ARD"){
+			if(model=="ER"){ 
+				k<-rate[]<-1
+				diag(rate)<-NA
+			} else if(model=="ARD"){
 				k<-m*(m-1)
 				rate[col(rate)!=row(rate)]<-1:k
 			} else if(model=="SYM"){
@@ -80,8 +82,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			comp[anc]<-sum(vv)
 			liks[anc,]<-vv/comp[anc]
 		}
-		if(output.liks) if(M>1) return(liks[1:M+N,]) 
+		if(output.liks){ 
+			if(M>1) return(liks[1:M+N,]) 
 			else return(matrix(liks[1:M+N,],M,m,dimnames=list(Ntip(tree)+1,states)))
+		}
 		logL<--sum(log(comp[1:M+N]))
 		return(if(is.na(logL)) Inf else logL)
 	}
