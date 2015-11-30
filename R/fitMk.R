@@ -13,6 +13,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		states<-colnames(x)
 	} else {
 		x<-to.matrix(x,sort(unique(x)))
+		x<-x[tree$tip.label,]
 		m<-ncol(x)
 		states<-colnames(x)
 	}
