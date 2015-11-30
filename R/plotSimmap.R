@@ -263,7 +263,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	else fsize<-1.0
 	if(is.null(leg)) leg<-names(colors)
 	h<-fsize*strheight(LETTERS[1])
-	w<-h*(par()$usr[2]-par()$usr[1])/(par()$usr[4]-par()$usr[3])
+	w<-par()$mfcol[2]*h*(par()$usr[2]-par()$usr[1])/(par()$usr[4]-par()$usr[3])
 	if(vertical){
 		y<-y-0:(length(leg)-1)*1.5*h
 		x<-rep(x+w/2,length(y))		
