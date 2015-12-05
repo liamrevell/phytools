@@ -42,7 +42,7 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 			names(a)<-M[,1]
 		} else { 
 			if(is.null(names(anc.states))) names(anc.states)<-1:tree$Nnode+Ntip(tree)
-			a<-a[as.character(1:tree$Nnode+Ntip(tree))]
+			a<-anc.states[as.character(1:tree$Nnode+Ntip(tree))]
 		}
 	}
 	y<-c(a,x[tree$tip.label])
