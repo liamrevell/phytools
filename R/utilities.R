@@ -936,7 +936,9 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tip$tip.label))]<-0
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tree$tip.label[where]))]<-0
 	}
+	root.time<-if(!is.null(obj$root.time)) obj$root.time else NULL
 	obj<-untangle(obj,"read.tree")
+	if(!is.null(root.time)) obj$root.time<-root.time
 	if(interactive) plotTree(obj,...)
 	if(!use.edge.length) obj$edge.length<-NULL
 	obj
