@@ -28,16 +28,6 @@ write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE)
 \seealso{
 	\code{\link{make.simmap}}, \code{\link{read.simmap}}, \code{\link{plotSimmap}}
 }
-\examples{
-# simulate a tree & data
-tree<-sim.history(pbtree(n=100,scale=1),Q=matrix(c(-1,1,1,-1),2,2))
-# generate stochastic character maps
-mtrees<-make.simmap(tree,tree$states,nsim=20)
-# write them to file
-\dontrun{
-lapply(mmtrees,write.simmap,file="treefile.tre",append=TRUE) 
-}
-}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{input/output}
