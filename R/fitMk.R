@@ -113,7 +113,7 @@ print.fitMk<-function(x,digits=6,...){
 	cat("Object of class \"fitMk\".\n\n")
 	cat("Fitted (or set) value of Q:\n")
 	Q<-matrix(NA,length(x$states),length(x$states))
-	Q[]<-x$rates[x$index.matrix]
+	Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
 	diag(Q)<--rowSums(Q)
 	colnames(Q)<-rownames(Q)<-x$states
@@ -131,7 +131,7 @@ summary.fitMk<-function(object,...){
 	else quiet<-FALSE
 	if(!quiet) cat("Fitted (or set) value of Q:\n")
 	Q<-matrix(NA,length(object$states),length(object$states))
-	Q[]<-object$rates[object$index.matrix]
+	Q[]<-c(0,object$rates)[object$index.matrix+1]
 	diag(Q)<-0
 	diag(Q)<--rowSums(Q)
 	colnames(Q)<-rownames(Q)<-object$states
