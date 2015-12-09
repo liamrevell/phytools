@@ -1,6 +1,7 @@
 \name{fastMRCA}
 \alias{fastMRCA}
 \alias{fastHeight}
+\alias{fastDist}
 \title{Get the MRCA (or height above the root of the MRCA) of a pair of tip taxa}
 \usage{
 fastMRCA(tree, sp1, sp2)

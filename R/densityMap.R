@@ -11,6 +11,8 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 	else states<-NULL
 	if(hasArg(hold)) hold<-list(...)$hold
 	else hold<-TRUE
+	if(length(lwd)==1) lwd<-rep(lwd,2)
+	else if(length(lwd)>2) lwd<-lwd[1:2]
 	tol<-1e-10
 	if(!inherits(trees,"multiPhylo")&&inherits(trees,"phylo")) stop("trees not \"multiPhylo\" object; just use plotSimmap.")
 	if(!inherits(trees,"multiPhylo")) stop("trees should be an object of class \"multiPhylo\".")
@@ -75,14 +77,15 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 	invisible(x)
 }
 
-# function
-# written by Liam J. Revell 2012, 2013, 2014, 2015
+## S3 plot method for objects of class "densityMap"
+## also used internally by plot.contMap
+## written by Liam J. Revell 2012, 2013, 2014, 2015
 
 plot.densityMap<-function(x,...){
 	if(class(x)=="densityMap"){
 		tree<-x$tree
 		cols<-x$cols
-	} else stop("x should be an object of class 'densityMap'")
+	} else stop("x should be an object of class \"densityMap\"")
 	H<-nodeHeights(tree)
 	# get & set optional arguments
 	if(hasArg(legend)) legend<-list(...)$legend
@@ -95,6 +98,8 @@ plot.densityMap<-function(x,...){
 	else outline<-FALSE
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-3
+	if(length(lwd)==1) lwd<-rep(lwd,2)
+	else if(length(lwd)>2) lwd<-lwd[1:2]
 	if(hasArg(leg.txt)) leg.txt<-list(...)$leg.txt
 	else leg.txt<-c("0",paste("PP(state=",x$states[2],")",sep=""),"1")
 	if(hasArg(type)) type<-list(...)$type
@@ -128,11 +133,12 @@ plot.densityMap<-function(x,...){
 		else if(is.null(ylim)) ylim<-NULL
 		if(outline){
 			par(col="transparent")
-			plotTree(tree,fsize=fsize[1],lwd=lwd+2,offset=offset+0.2*lwd/3+0.2/3,ftype=ftype[1],
+			plotTree(tree,fsize=fsize[1],lwd=lwd[1]+2,
+				offset=offset+0.2*lwd[1]/3+0.2/3,ftype=ftype[1],
 				ylim=ylim,mar=mar,direction=direction,hold=FALSE)
 			par(col="black")
 		}
-		plotSimmap(tree,cols,pts=FALSE,lwd=lwd,fsize=fsize[1],mar=mar,ftype=ftype[1],add=outline,
+		plotSimmap(tree,cols,pts=FALSE,lwd=lwd[1],fsize=fsize[1],mar=mar,ftype=ftype[1],add=outline,
 			ylim=ylim,direction=direction,offset=offset,hold=FALSE)
 		if(legend){
 			ff<-function(dd){
@@ -142,16 +148,19 @@ plot.densityMap<-function(x,...){
 			}
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
 			add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
-				digits=dig,prompt=FALSE,x=0,y=1-0.08*(N-1),lwd=lwd,fsize=fsize[2])
+				digits=dig,prompt=FALSE,x=0,y=1-0.08*(N-1),lwd=lwd[2],
+				fsize=fsize[2])
 		}
 	} else if(type=="fan"){
 		if(outline){
 			par(col="white")
-			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd+2,mar=mar,fsize=fsize[1],
+			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd[1]+2,
+				mar=mar,fsize=fsize[1],
 				ftype=ftype[1],ylim=ylim,hold=FALSE)))
 			par(col="black")
 		}
-		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd,mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
+		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd[1],
+			mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
 			type="fan",ylim=ylim,hold=FALSE)))
 		if(legend){
 			ff<-function(dd){
@@ -161,13 +170,14 @@ plot.densityMap<-function(x,...){
 			}
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
 			add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),digits=dig,
-				prompt=FALSE,x=0.9*par()$usr[1],y=0.9*par()$usr[3],lwd=lwd,fsize=fsize[2])
+				prompt=FALSE,x=0.9*par()$usr[1],y=0.9*par()$usr[3],lwd=lwd[2],
+				fsize=fsize[2])
 		}
 	}
 	if(hold) null<-dev.flush()
 }
 
-## S3 print method for object of class 'densityMap'
+## S3 print method for object of class "densityMap"
 ## written by Liam J. Revell 2013
 
 print.densityMap<-function(x,...){

@@ -87,14 +87,16 @@ getState<-function(x,trans){
 	return(state)
 }
 
-# function
-# written by Liam J. Revell 2012, 2013, 2014, 2015
+## S3 print method for objects of class "contMap"
+## uses print.densityMap internally
+## written by Liam J. Revell 2012, 2013, 2014, 2015
+
 plot.contMap<-function(x,...){
 	if(inherits(x,"contMap")){
 		lims<-x$lims
 		x<-list(tree=x$tree,cols=x$cols)
 		class(x)<-"densityMap"
-	} else stop("x should be an object of class 'contMap'")
+	} else stop("x should be an object of class \"contMap\"")
 	H<-nodeHeights(x$tree)
 	# get & set optional arguments
 	if(hasArg(legend)) legend<-list(...)$legend
