@@ -14,7 +14,7 @@ contMap(tree, x, res=100, fsize=NULL, ftype=NULL, lwd=4, legend=NULL,
 	\item{res}{resolution for gradient plotting. Larger numbers indicate a finer (smoother) gradient.}
 	\item{fsize}{relative font size - can be a vector with the second element giving the font size for the legend.}
 	\item{ftype}{font type - see options in \code{\link{plotSimmap}}. As with \code{fsize}, this can be a vector with the second element giving font type for the legend.}
-	\item{lwd}{line width for branches.}
+	\item{lwd}{line width for branches. Can be a single integer number or a vector. In the latter case, the second number will be taken to be the desired legend width.}
 	\item{legend}{if \code{FALSE} no legend is plotted; if a numeric value, it gives the length of the legend in units of branch length. Default is 0.5 times the total tree length.}
 	\item{lims}{range for the color map. By default, this will be \code{c(min(x),max(x))}, and should always include this range.}
 	\item{outline}{logical value indicating whether or not to outline the branches of the tree in black.}
