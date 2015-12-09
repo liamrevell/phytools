@@ -13,7 +13,7 @@ densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
 	\item{res}{resolution for gradient plotting. Larger numbers indicate a finer (smoother) gradient.}
 	\item{fsize}{relative font size - can be a vector with the second element giving the font size for the legend.}
 	\item{ftype}{font type - see options in \code{\link{plotSimmap}}. As with \code{fsize}, can be a vector with the second element giving font type for the legend.}
-	\item{lwd}{line width for branches.}
+	\item{lwd}{line width for branches. If a vector of two elements is supplied, the second element will be taken to be the desired width of the legend bar.}
 	\item{check}{check to make sure that the topology and branch lengths of all phylogenies in \code{trees} are equal.}
 	\item{legend}{if \code{FALSE} no legend is plotted; if a numeric value, it gives the length of the legend in units of branch length. Default is 0.5 times the total tree length.}
 	\item{outline}{logical value indicating whether or not to outline the branches of the tree in black.}
