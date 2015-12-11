@@ -126,7 +126,7 @@ simOU <- function(tree, alpha, sig2, theta, a0, internal, nsim){
 	rownames(x) <- c(tree$tip.label, (nTips+1L):max(tree$edge))
 	
 	if(internal==TRUE)
-		return(x) # include internal nodes
+		return(x[1:nrow(x),]) # include internal nodes
 	else
-		return(x[1:length(tree$tip.label)]) # tip nodes only
+		return(x[1:length(tree$tip.label),]) # tip nodes only
 }
