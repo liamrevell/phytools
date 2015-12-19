@@ -76,7 +76,7 @@ fitPagel<-function(tree,x,y,...){
 
 print.fitPagel<-function(x,...){
 	cat("\n  Pagel's binary character correlation test:\n")
-	cat("\nIndepedent model rate matrix:\n")
+	cat("\nIndependent model rate matrix:\n")
 	print(x$independent.Q)
 	cat("\nDependent model rate matrix:\n")
 	print(x$dependent.Q)
