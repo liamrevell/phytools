@@ -3,7 +3,7 @@
 \title{Plots a posterior sample of trees}
 \usage{
 density.tree(trees, colors="blue", alpha=NULL, method="plotTree", fix.depth=FALSE,
-	use.edge.length=TRUE, ...)
+	use.edge.length=TRUE, compute.consensus=FALSE, ...)
 }
 \arguments{
 	\item{trees}{an object of class \code{"multiPhylo"} or \code{"multiSimmap"}.}
@@ -12,6 +12,7 @@ density.tree(trees, colors="blue", alpha=NULL, method="plotTree", fix.depth=FALS
 	\item{method}{plotting method to be used internally. Can be \code{"plotTree"} or \code{"plotSimmap"}.}
 	\item{fix.depth}{logical value indicating whether or not to plot trees with a fixed depth or to permit plotted trees to have different depths.}
 	\item{use.edge.length}{logical value indicating whether to use the edge lengths of the input tree. Defaults to \code{use.edge.length=TRUE} unless any input tree edge lengths are \code{NULL}.}
+	\item{compute.consensus}{logical value indicating whether or not to use the tip order from a consensus tree. (Defaults to \code{compute.consensus=FALSE}.}
 	\item{...}{arguments to be passed to \code{plotTree} or \code{plotSimmap}.}
 }
 \description{
