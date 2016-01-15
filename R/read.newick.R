@@ -90,7 +90,7 @@ newick<-function(text){
 		}
 	}
 	Ntip<-k-1
-	edge<-edge[!is.na(edge[,2]),]
+	edge<-edge[!is.na(edge[,2]),,drop=F]
 	edge[edge>0]<-edge[edge>0]+Ntip
 	edge[edge<0]<--edge[edge<0]
 	edge.length[is.na(edge.length)]<-0
