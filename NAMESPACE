@@ -14,7 +14,7 @@ export(midpoint.root, minRotate, minSplit, mrp.supertree, multi.mantel, multiC, 
 export(nodeheight, nodeHeights, nodelabels.cophylo)
 export(optim.phylo.ls, orderMappedEdge)
 export(paintBranches, paintSubTree, paste.tree, pbtree, pgls.Ives,phenogram, phyl.cca, phyl.pairedttest, phyl.pca, phyl.resid, phyl.RMA)
-export(phyl.vcv, phylo.toBackbone,phylo.to.map, phylANOVA, phyloDesign, phylomorphospace, phylomorphospace3d, phylosig)
+export(phyl.vcv, phylo.heatmap, phylo.toBackbone,phylo.to.map, phylANOVA, phyloDesign, phylomorphospace, phylomorphospace3d, phylosig)
 export(plotBranchbyTrait, plot.contMap, plot.cophylo, plot.densityMap, plot.phylo.to.map, plotSimmap, plotThresh, plotTree)
 export(plotTree.singletons, plotTree.splits, plotTree.wBars, posterior.evolrate)
 export(ratebystate, rateshift, read.newick, read.simmap, reorder.backbonePhylo, reorderSimmap, rep.multiPhylo, rep.phylo, repPhylo)
