@@ -9,7 +9,7 @@ phylo.heatmap(tree, X, fsize=1, colors=NULL, standardize=FALSE, ...)
 	\item{X}{a matrix containing data for multiple continuous characters in which \code{rownames} correspond to the tip labels of the tree.}
 	\item{fsize}{an integer or vector of length 3 containing the font size for the tip labels, the trait labels, and the legend text. (If a single integer is supplied, then the value will be recycled.)}
 	\item{colors}{a vector of colors to be passed to \code{\link{image}}. Can be a function call (e.g., \code{heat.colors(n=200)[200:1]}).}
-	\item{standardize}{a logical value indicating whether or not to standardize each column of \code{X} to have the same variance prior to analysis.}
+	\item{standardize}{a logical value indicating whether or not to standardize each column of \code{X} to have the same variance & mean prior to analysis.}
 	\item{...}{optional arguments.}
 }
 \description{

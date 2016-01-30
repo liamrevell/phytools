@@ -10,7 +10,8 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	if(is.null(colnames(X))) colnames(X)<-paste("var",1:ncol(X),sep="")
 	if(standardize){
 		sd<-apply(X,2,function(x) sqrt(var(x)))
-		X<-X/(matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%sd)
+		X<-(X-matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%colMeans(X))/
+			(matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%sd)
 	}
 	if(hasArg(xlim)) xlim<-list(...)$xlim
 	else xlim<-c(-0.5,2)
