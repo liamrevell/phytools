@@ -14,6 +14,7 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 	max.x<-max(x)
 	if(any(x<0)) x<-x-min(x)
 	if(method=="plotTree"){
+		x<-x[tree$tip.label]
 		## plot tree
 		plotTree(tree,offset=1.7,ylim=c(-1/25*Ntip(tree),
 			Ntip(tree)),...)
@@ -31,6 +32,7 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 			...)
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
+		x<-x[tree$tip.label,]
 		## plot tree
 		plot.new()
 		par(mar=rep(0.1,4))
