@@ -2,13 +2,14 @@
 \alias{dotTree}
 \title{Creates a phylogenetic dot plot}
 \usage{
-dotTree(tree, x, legend=TRUE, ...)
-dot.legend(x, y, min, max, length=4, prompt=FALSE, ...)
+dotTree(tree, x, legend=TRUE, method="plotTree", ...)
+dot.legend(x, y, min, max, length=4, prompt=FALSE, method="plotTree", ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{vector of trait values. In the case of \code{dot.legend}, the \emph{x} coordinate of the legend.}
 	\item{legend}{logical value indicating whether or not a legend should be plotted.}
+	\item{method}{tree plotting method to be used internally. Will switch to \code{method="phylogram"} if the number of traits is greater than one. For \code{dot.legend}, it should be the method that was used for the plot.}
 	\item{y}{\emph{y} coordinate of the legend.}
 	\item{min}{minimum value for \code{dot.legend}.}
 	\item{max}{maximum value for \code{dot.legend}.}
