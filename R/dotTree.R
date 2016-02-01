@@ -1,13 +1,11 @@
 ## function to plot a tree with dots/circles for a plotted phenotype
 ## written by Liam J. Revell 2016
 
-dotTree<-function(tree,x,legend=TRUE,...){
+dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 	if(is.data.frame(x)) x<-as.matrix(x)
-	if(is.matrix(x)) if(ncol(x)==1) x<-x[,1]
-	if(hasArg(method)) method<-list(...)$method
-	else { 
-		if(is.matrix(x)) method<-"phylogram"
-		else method<-"plotTree"
+	if(is.matrix(x)&&method=="plotTree"){
+		if(ncol(x)>1) method<-"phylogram"
+		else x<-x[,1]
 	}
 	## reorder tree
 	tree<-reorder(tree,"cladewise")
@@ -29,7 +27,8 @@ dotTree<-function(tree,x,legend=TRUE,...){
 			diff(par()$usr[3:4]),col="blue")
 		## add legend
 		if(legend) dot.legend(x=par()$usr[1]+0.1*max(nodeHeights(tree)),
-			y=0.1*(1+par()$usr[3]),min.x,max.x,length=5,...)
+			y=0.1*(1+par()$usr[3]),min.x,max.x,length=5,method="plotTree",
+			...)
 	} else if(method=="phylogram"){
 		## plot tree
 		plot.new()
@@ -59,7 +58,6 @@ dotTree<-function(tree,x,legend=TRUE,...){
 dot.legend<-function(x,y,min,max,length=5,prompt=FALSE,method="plotTree",...){
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-1
-	if(hasArg(method)) 
 	if(prompt){
 		obj<-locator(1)
 		x<-obj$x
@@ -78,7 +76,7 @@ dot.legend<-function(x,y,min,max,length=5,prompt=FALSE,method="plotTree",...){
 		lines(c(x,max(x+temp)),rep(y-0.5-y1,2))
 		lines(c(x,x),y-c(y1+0.5,2*y1+0.5))
 		lines(c(max(x+temp),max(x+temp)),y-c(y1+0.5,2*y1+0.5))
-	} else if(method=="phylogram")
+	} else if(method=="phylogram"){
 		text(x,y-0.04,round(min,2),pos=1,cex=cex)
 		s<-(0.8*max(min,0)/(min(max,max+min))+0.1)/(2*Ntip(tree))*
 			diff(par()$usr[1:2])/diff(par()$usr[3:4])
@@ -91,4 +89,5 @@ dot.legend<-function(x,y,min,max,length=5,prompt=FALSE,method="plotTree",...){
 		lines(c(x,max(x+temp)),rep(y-0.02-y1,2))
 		lines(c(x,x),y-c(y1+0.02,2*y1+0.02))
 		lines(c(max(x+temp),max(x+temp)),y-c(y1+0.02,2*y1+0.02))
+	}
 }
