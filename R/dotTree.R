@@ -30,6 +30,7 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 			y=0.1*(1+par()$usr[3]),min.x,max.x,length=5,method="plotTree",
 			...)
 	} else if(method=="phylogram"){
+		if(is.vector(x)) x<-as.matrix(x)
 		## plot tree
 		plot.new()
 		par(mar=rep(0.1,4))
