@@ -2,7 +2,7 @@
 \alias{dotTree}
 \title{Creates a phylogenetic dot plot}
 \usage{
-dotTree(tree, x, legend=TRUE, method="plotTree", ...)
+dotTree(tree, x, legend=TRUE, ...)
 dot.legend(x, y, min, max, length=4, prompt=FALSE, method="plotTree", ...)
 }
 \arguments{
