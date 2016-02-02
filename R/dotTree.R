@@ -1,7 +1,7 @@
 ## function to plot a tree with dots/circles for a plotted phenotype
 ## written by Liam J. Revell 2016
 
-dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
+dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
 	if(is.data.frame(x)) x<-as.matrix(x)
 	if(is.matrix(x)&&method=="plotTree"){
 		if(ncol(x)>1) method<-"phylogram"
@@ -9,6 +9,14 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 	}
 	## reorder tree
 	tree<-reorder(tree,"cladewise")
+	## if standardize==TRUE
+	if(standardize){
+		if(is.matrix(x)){
+			sd<-apply(x,2,function(x) sqrt(var(x)))
+			x<-(x-matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%colMeans(x))/
+				(matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%sd)
+		} else if(is.vector(x)) x<-(x-mean(x))/sqrt(var(x))
+	}
 	## in case any x<0
 	min.x<-min(x)
 	max.x<-max(x)
@@ -27,9 +35,12 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 			radius=(0.8*x/max(x)+0.1)/2*diff(par()$usr[1:2])/
 			diff(par()$usr[3:4]),col="blue")
 		## add legend
-		if(legend) dot.legend(x=par()$usr[1]+0.1*max(nodeHeights(tree)),
-			y=0.1*(1+par()$usr[3]),min.x,max.x,length=5,method="plotTree",
-			...)
+		if(legend){ 
+			h<-dot.legend(x=par()$usr[1]+0.1*max(nodeHeights(tree)),
+				y=0.1*(1+par()$usr[3]),min.x,max.x,method="plotTree",
+				...)
+			if(standardize) text(h,0.1*(1+par()$usr[3]),"(SD units)",pos=4)
+		}
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
 		x<-x[tree$tip.label,]
@@ -46,12 +57,15 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",...){
 		## plot points
 		for(i in 1:ncol(x)){
 			draw.circle(x.tip+1.2*strwidth("W")+0.1*(i-1),y.tip,
-				nv=200,radius=(0.8*x[,i]/(Ntip(tree)*(max(x)+0.1)))/
+				nv=200,radius=(0.8*x[,i]/max(x)+0.1)/Ntip(tree)/
 					2*diff(par()$usr[1:2])/diff(par()$usr[3:4]),col="blue")
 		}
 		## add legend
-		if(legend) dot.legend(x=-0.45,y=-0.04,min.x,max.x,length=5,
-			method="phylogram",...)
+		if(legend){ 
+			h<-dot.legend(x=-0.45,y=-0.04,min.x,max.x,
+				method="phylogram",...)
+			if(standardize) text(h,-0.04,"(SD units)",pos=4)
+		}
 	}
 }
 
@@ -93,4 +107,5 @@ dot.legend<-function(x,y,min,max,length=5,prompt=FALSE,method="plotTree",...){
 		lines(c(x,x),y-c(y1+0.02,2*y1+0.02))
 		lines(c(max(x+temp),max(x+temp)),y-c(y1+0.02,2*y1+0.02))
 	}
+	invisible(max(x+temp)+0.5*max(rr))
 }
