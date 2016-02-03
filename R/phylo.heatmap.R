@@ -28,7 +28,7 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	plot.new()
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
-	h<-phylogram(tree,fsize=fsize[1])
+	h<-phylogram(tree,fsize=fsize[1],...)
 	START<-h+1/2*((2-0.5)*split[2]/split[1]+0.5-h)/(ncol(X)-1)+
 		0.5*strwidth("W")*fsize[1]
 	END<-(2-0.5)*split[2]/split[1]+0.5-1/2*((2-0.5)*split[2]/split[1]+
