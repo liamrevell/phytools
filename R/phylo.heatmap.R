@@ -12,8 +12,8 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	split<-split/sum(split)
 	if(is.null(colnames(X))) colnames(X)<-paste("var",1:ncol(X),sep="")
 	if(standardize){
-		sd<-apply(X,2,function(x) sqrt(var(x)))
-		X<-(X-matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%colMeans(X))/
+		sd<-apply(X,2,function(x) sqrt(var(x,na.rm=TRUE)))
+		X<-(X-matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%colMeans(X,na.rm=TRUE))/
 			(matrix(rep(1,Ntip(tree)),Ntip(tree),1)%*%sd)
 	}
 	if(hasArg(xlim)) xlim<-list(...)$xlim
@@ -36,13 +36,23 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	image(x=seq(START,END,by=(END-START)/(ncol(X)-1)),
 		z=t(X[cw$tip.label,]),add=TRUE,
 		col=colors,...)
-	if(legend) add.color.bar(leg=END-START,cols=colors,lims=range(X),
+	if(legend) add.color.bar(leg=END-START,cols=colors,lims=range(X,na.rm=TRUE),
 		title=if(standardize) "standardized value" else "value",
 		subtitle=if(standardize) "SD units" else "",prompt=FALSE,x=START,
 		y=-1/(2*(Ntip(tree)-1))-3*fsize[3]*strheight("W"),
-		digits=if(max(abs(X))<1) round(log10(1/max(abs(X))))+1 else 2,
-		fsize=fsize[3])
+		digits=if(max(abs(X),na.rm=TRUE)<1) round(log10(1/max(abs(X),na.rm=TRUE)))+1 
+		else 2,fsize=fsize[3])
 	if(labels) text(x=seq(START,END,by=(END-START)/(ncol(X)-1)),
 		y=rep(1+1/(2*(Ntip(tree)-1))+0.4*fsize[2]*strwidth("I"),ncol(X)),
 		colnames(X),srt=70,adj=c(0,0.5),cex=fsize[2])
+	if(any(is.na(X))){
+		ii<-which(is.na(X),arr.ind=TRUE)
+		x.na<-seq(START,END,by=(END-START)/(ncol(X)-1))[ii[,2]]
+		y.na<-seq(0,1,by=1/(nrow(X)-1))[ii[,1]]
+		for(i in 1:length(x.na)){
+			xx<-x.na[i]+c(1/2,-1/2)*(END-START)/(ncol(X)-1)
+			yy<-y.na[i]+c(-1/2,1/2)*1/(nrow(X)-1)
+			lines(xx,yy)
+		}
+	}
 }

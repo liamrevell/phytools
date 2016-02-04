@@ -45,6 +45,8 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 ## called internally by plot.cophylo to plot a phylogram
 ## written by Liam J. Revell
 phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,...){
+	if(hasArg(pts)) pts<-list(...)$pts
+	else pts<-TRUE
 	d<-if(direction=="rightwards") 1 else -1
 	## check if edge lenths
 	if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
@@ -78,7 +80,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		fsize*strwidth(tree$tip.label)
 	for(i in 1:n){ 
 		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]),rep(y[i],2),lwd=1,lty="dotted")
-		points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=0.7*sqrt(lwd))
+		if(pts) points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=0.7*sqrt(lwd))
 	}
 	## plot tip labels
 	font<-which(c("off","reg","b","i","bi")==ftype)-1
