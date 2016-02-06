@@ -74,6 +74,8 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 		cat("Optimizing the positions of the tip labels...\n")
 		flush.console()
 	}
+	## matrix for tip coordinates
+	tip.coords<-matrix(NA,Ntip(tree),2,dimnames=list(tree$tip.label,c("x","y")))
 	if(hold) null<-dev.hold()
 	if(is.null(tree$maps)){
 		if(is.null(colors)) colors<-"black"
@@ -83,6 +85,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			if(tree$edge[1,2]<=length(tree$tip)){
 				if(fsize&&!add){
 					text(tree$tip.label[tree$edge[1,2]],x=H[1,2]+link,y=tt[tree$edge[1,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[1,2]],]<-c(H[1,2]+link,tt[tree$edge[1,2]])
 					if(link>0) lines(x=c(H[1,2],H[1,2]+link),y=c(X[1,2],tt[tree$edge[1,2]]),lty=3)
 				}
 			}
@@ -93,6 +96,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			if(tree$edge[i,2]<=length(tree$tip)){
 				if(fsize&&!add){ 
 					text(tree$tip.label[tree$edge[i,2]],x=H[i,2]+link,y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,tt[tree$edge[i,2]])
 					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),lty=3)
 				}
 			}
@@ -117,6 +121,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			if(tree$edge[i,2]<=length(tree$tip)){
 				if(fsize&&!add){ 
 					text(tree$tip.label[tree$edge[i,2]],x=H[i,2]+link,y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,tt[tree$edge[i,2]])
 					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),lty=3)
 				}
 			}
@@ -133,11 +138,12 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	yy<-yy[order(as.numeric(names(yy)))]
 	PP<-list(type="phenogram",use.edge.length=TRUE,node.pos=1,
 		show.tip.label=if(ftype!="off") TRUE else FALSE,show.node.label=FALSE,
-		font=ftype,cex=fsize,adj=0,srt=NULL,no.margin=FALSE,label.offset=0,
+		font=ftype,cex=fsize,adj=0,srt=NULL,no.margin=FALSE,label.offset=offset,
 		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 		direction=NULL,tip.color="black",Ntip=Ntip(tree),Nnode=tree$Nnode,
 		edge=tree$edge,xx=xx,yy=yy)
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
+	invisible(tip.coords)
 }
 
 ## function to spread labels
