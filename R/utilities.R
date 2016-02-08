@@ -549,15 +549,19 @@ describe.simmap<-function(tree,...){
 }
 
 ## function finds the height of a given node
-## written by Liam Revell 2014, 2015
-nodeheight<-function(tree,node){
+## written by Liam Revell 2014, 2015, 2016
+nodeheight<-function(tree,node,...){
+	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+	else root.edge<-FALSE
+	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(node==(length(tree$tip.label)+1)) h<-0
 	else {
 		a<-setdiff(c(getAncestors(tree,node),node),length(tree$tip.label)+1)
 		h<-sum(tree$edge.length[sapply(a,function(x,e) which(e==x),e=tree$edge[,2])])
 	}
-	h
+	h+ROOT
 }
 
 # fast pairwise MRCA function
@@ -727,8 +731,12 @@ di2multi.simmap<-function(tree,tol=1e-08){
 }
 
 # returns the heights of each node
-# written by Liam J. Revell 2011, 2012, 2013, 2015
-nodeHeights<-function(tree){
+# written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
+nodeHeights<-function(tree,...){
+	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+	else root.edge<-FALSE
+	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order"))) t<-reorder(tree)
 	else t<-tree
@@ -746,7 +754,7 @@ nodeHeights<-function(tree){
 	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order")))
 		o<-apply(matrix(tree$edge[,2]),1,function(x,y) which(x==y),y=t$edge[,2])
 	else o<-1:nrow(t$edge)
-	return(X[o,])
+	return(X[o,]+ROOT)
 }
 
 ## function drops all the leaves from the tree & collapses singleton nodes

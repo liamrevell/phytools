@@ -18,7 +18,7 @@ export(phyl.vcv, phylo.heatmap, phylo.toBackbone,phylo.to.map, phylANOVA, phyloD
 export(plotBranchbyTrait, plot.contMap, plot.cophylo, plot.densityMap, plot.phylo.to.map, plotSimmap, plotThresh, plotTree)
 export(plotTree.singletons, plotTree.splits, plotTree.wBars, posterior.evolrate)
 export(ratebystate, rateshift, read.newick, read.simmap, reorder.backbonePhylo, reorderSimmap, rep.multiPhylo, rep.phylo, repPhylo)
-export(reroot, rerootingMethod, rescaleSimmap, rotateNodes, roundBranches, roundPhylogram, rstate)
+export(reroot, rerootingMethod, rescaleSimmap, rotateNodes, rootedge.to.singleton, roundBranches, roundPhylogram, rstate)
 export(sampleFrom, setMap, sim.corrs, sim.history, sim.ratebystate, sim.rates, skewers, splitEdgeColor, splitplotTree)
 export(splitTree, starTree, strahlerNumber)
 export(threshBayes, threshDIC, threshState, tiplabels.cophylo, tipRotate, to.matrix, treeSlice)
