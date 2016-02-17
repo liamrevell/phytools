@@ -92,7 +92,7 @@ plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainb
 }
 
 # function to add color bar
-# written by Liam J. Revell 2013, 2015
+# written by Liam J. Revell 2013, 2015, 2016
 
 add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd=4,outline=TRUE,...){
 	if(prompt){
@@ -111,7 +111,13 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 	else fsize<-1.0
 	if(hasArg(subtitle)) subtitle<-list(...)$subtitle
 	else subtitle<-NULL
+	if(hasArg(direction)) direction<-list(...)$direction
+	else direction<-"rightwards"
 	X<-x+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
+	if(direction=="leftwards"){ 
+		X<-X[nrow(X):1,]
+		lims<-lims[2:1]
+	}
 	Y<-cbind(rep(y,length(cols)),rep(y,length(cols))) 		
 	if(outline) lines(c(X[1,1],X[nrow(X),2]),c(Y[1,1],Y[nrow(Y),2]),lwd=lwd+2,lend=2) 
 	for(i in 1:length(cols)) lines(X[i,],Y[i,],col=cols[i],lwd=lwd,lend=2)

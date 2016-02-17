@@ -89,7 +89,7 @@ getState<-function(x,trans){
 
 ## S3 print method for objects of class "contMap"
 ## uses print.densityMap internally
-## written by Liam J. Revell 2012, 2013, 2014, 2015
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
 
 plot.contMap<-function(x,...){
 	if(inherits(x,"contMap")){
@@ -119,6 +119,8 @@ plot.contMap<-function(x,...){
 	else direction<-"rightwards"
 	if(hasArg(offset)) offset<-list(...)$offset
 	else offset<-NULL
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
 	if(hasArg(hold)) hold<-list(...)$hold
@@ -133,7 +135,7 @@ plot.contMap<-function(x,...){
 	# done optional arguments
 	leg.txt<-c(round(lims[1],sig),leg.txt,round(lims[2],sig))
 	plot(x,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,leg.txt=leg.txt,
-		type=type,mar=mar,direction=direction,offset=offset,ylim=ylim,hold=hold)
+		type=type,mar=mar,direction=direction,offset=offset,xlim=xlim,ylim=ylim,hold=hold)
 }
 
 ## S3 print method for object of class 'contMap'
