@@ -248,10 +248,10 @@ drop.clade<-function(tree,tip){
 }
 
 
-# function to re-root a phylogeny along an edge
-# written by Liam Revell 2011-2015
+## function to re-root a phylogeny along an edge
+## written by Liam J. Revell 2011-2016
 
-reroot<-function(tree,node.number,position,interactive=FALSE,...){
+reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(interactive){
 		plotTree(tree,...)
@@ -261,6 +261,7 @@ reroot<-function(tree,node.number,position,interactive=FALSE,...){
 		node.number<-obj$where
 		position<-tree$edge.length[which(tree$edge[,2]==node.number)]-obj$pos
 	}
+	if(is.null(position)) position<-tree$edge.length[which(tree$edge[,2]==node.number)]
 	tt<-splitTree(tree,list(node=node.number,bp=position))
 	p<-tt[[1]]
 	d<-tt[[2]]
