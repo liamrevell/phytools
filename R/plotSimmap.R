@@ -243,8 +243,8 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 	}
 }
 
-# adds legend to an open stochastic map style plot
-# written by Liam J. Revell 2013
+## adds legend to an open stochastic map style plot
+## written by Liam J. Revell 2013, 2016
 add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	if(hasArg(shape)) shape<-list(...)$shape
 	else shape<-"square"
@@ -263,7 +263,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	else fsize<-1.0
 	if(is.null(leg)) leg<-names(colors)
 	h<-fsize*strheight(LETTERS[1])
-	w<-par()$mfcol[2]*h*(par()$usr[2]-par()$usr[1])/(par()$usr[4]-par()$usr[3])
+	w<-par()$mfcol[2]*h*diff(par()$usr[1:2])/diff(par()$usr[3:4])
 	if(vertical){
 		y<-y-0:(length(leg)-1)*1.5*h
 		x<-rep(x+w/2,length(y))		
@@ -275,8 +275,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 		text(x,y,leg,pos=4,cex=fsize/par()$cex)
 	}
 	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE)
-	else if(shape=="circle") symbols(x,y,circles=rep(w,length(x)),bg=colors,add=TRUE,
-		inches=FALSE)
+	else if(shape=="circle") draw.circle(x,y,nv=200,radius=w/2,col=colors)
 	else stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
 }
 

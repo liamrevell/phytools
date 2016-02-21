@@ -16,7 +16,7 @@ dot.legend(x, y, min, max, length=4, prompt=FALSE, method="plotTree", ...)
 	\item{max}{maximum value for \code{dot.legend}.}
 	\item{length}{length of legend.}
 	\item{prompt}{logical value indicating whether or not to prompt for legend position.}
-	\item{...}{optional arguments. In the case of \code{dotTree}, these will be passed to \code{\link{plotTree}} or a different internally used plotting function for \code{method="phylogram"}. See \code{\link{phylo.heatmap}} for more detail on these arguments.}
+	\item{...}{optional arguments. In the case of \code{dotTree}, these will be passed to \code{\link{plotTree}} or a different internally used plotting function for \code{method="phylogram"}. See \code{\link{phylo.heatmap}} for more detail on these arguments. Other option for \code{dotTree} also include \code{data.type} (\code{"continuous"} or \code{"discrete"}) and \code{colors}.}
 }
 \description{
 	Creates a plot in which different sized dots/circles represent different tip values for a quantitative trait.
