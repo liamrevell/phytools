@@ -2,7 +2,7 @@
 \alias{fitMk}
 \title{Fits Mk model}
 \usage{
-fitMk(tree, x, model="SYM", fixedQ=NULL, method="fitMk", ...)
+fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}

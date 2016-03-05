@@ -1,8 +1,8 @@
-\name{density.tree}
-\alias{density.tree}
+\name{densityTree}
+\alias{densityTree}
 \title{Plots a posterior sample of trees}
 \usage{
-density.tree(trees, colors="blue", alpha=NULL, method="plotTree", fix.depth=FALSE,
+densityTree(trees, colors="blue", alpha=NULL, method="plotTree", fix.depth=FALSE,
 	use.edge.length=TRUE, compute.consensus=FALSE, ...)
 }
 \arguments{

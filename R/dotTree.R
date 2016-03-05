@@ -58,8 +58,8 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		## add legend
 		if(legend){ 
 			h<-dot.legend(x=par()$usr[1]+0.1*max(nodeHeights(tree)),
-				y=0.1*(1+par()$usr[3]),min.x,max.x,method="plotTree",
-				...)
+				y=0.1*(1+par()$usr[3]),min.x,max.x,Ntip=Ntip(tree),
+				method="plotTree",...)
 			if(standardize) text(h,0.1*(1+par()$usr[3]),"(SD units)",pos=4)
 		}
 	} else if(method=="phylogram"){
@@ -83,7 +83,7 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		}
 		## add legend
 		if(legend){ 
-			h<-dot.legend(x=-0.45,y=-0.04,min.x,max.x,
+			h<-dot.legend(x=-0.45,y=-0.04,min.x,max.x,Ntip=Ntip(tree),
 				method="phylogram",...)
 			if(standardize) text(h,-0.04,"(SD units)",pos=4)
 		}
@@ -147,7 +147,7 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 ## dot legend
 ## written by Liam J. Revell 2016
 
-dot.legend<-function(x,y,min,max,length=5,prompt=FALSE,method="plotTree",...){
+dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,method="plotTree",...){
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-1
 	if(hasArg(colors)) colors<-list(...)$colors
@@ -166,15 +166,15 @@ dot.legend<-function(x,y,min,max,length=5,prompt=FALSE,method="plotTree",...){
 		temp<-c(0,cumsum(1.1*rep(2*max(rr),length-1)))
 		draw.circle(x+temp,rep(y,length),nv=200,radius=rr,col=colors)
 		text(max(x+temp),y-0.5,round(max,2),pos=1,cex=cex)
-		y1<-0.1/25*Ntip(tree)
+		y1<-0.1/25*Ntip
 		lines(c(x,max(x+temp)),rep(y-0.5-y1,2))
 		lines(c(x,x),y-c(y1+0.5,2*y1+0.5))
 		lines(c(max(x+temp),max(x+temp)),y-c(y1+0.5,2*y1+0.5))
 	} else if(method=="phylogram"){
 		text(x,y-0.04,round(min,2),pos=1,cex=cex)
-		s<-(0.8*max(min,0)/(min(max,max+min))+0.1)/(2*Ntip(tree))*
+		s<-(0.8*max(min,0)/(min(max,max+min))+0.1)/(2*Ntip)*
 			diff(par()$usr[1:2])/diff(par()$usr[3:4])
-		e<-(0.8*diff(par()$usr[1:2])+0.1)/(2*Ntip(tree)*diff(par()$usr[3:4]))
+		e<-(0.8*diff(par()$usr[1:2])+0.1)/(2*Ntip*diff(par()$usr[3:4]))
 		rr<-seq(s,e,length.out=length)
 		temp<-c(0,cumsum(1.1*rep(2*max(rr),length-1)))
 		draw.circle(x+temp,rep(y,length),nv=200,radius=rr,col=colors)

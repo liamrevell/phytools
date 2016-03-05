@@ -6,7 +6,7 @@ make.transparent<-function(color,alpha){
 
 ## function to plot a posterior density of trees (e.g., densiTree in phangorn)
 ## written by Liam J. Revell 2016
-density.tree<-function(trees,colors="blue",alpha=NULL,method="plotTree",fix.depth=FALSE,
+densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",fix.depth=FALSE,
 	use.edge.length=TRUE,compute.consensus=FALSE,...){
 	N<-length(trees)
 	if(any(sapply(trees,function(x) is.null(x$edge.length)))) use.edge.length<-FALSE
