@@ -5,7 +5,7 @@
 describe.simmap(tree, ...)
 }
 \arguments{
-	\item{tree}{a single tree or a set of trees with a mapped discrete character (e.g, see \code{\link{make.simmap}} or \code{\link{read.simmap}}.}
+	\item{tree}{a single tree or a set of trees with a mapped discrete character (e.g, see \code{\link{make.simmap}} or \code{\link{read.simmap}}).}
 	\item{...}{optional arguments which include: \code{plot}, a logical value indicating whether or not to plot the posterior probabilities at nodes (default is \code{plot=FALSE}); \code{check.equal}, a logical value indicating whether or not to check if all trees are equal using \code{\link{all.equal.phylo}} (default is \code{check.equal=FALSE}); and \code{message}, a logical indicating whether or not to print an informative message to the screen (default is \code{message=TRUE}).}
 }
 \description{

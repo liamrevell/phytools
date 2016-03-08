@@ -1,5 +1,14 @@
 # some utility functions
-# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
+# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
+
+## match labels between trees (equivalent to matchNodes)
+## written by Liam J. Revell 2016
+matchLabels<-function(tr1,tr2){
+	foo<-function(x,y) if(length(obj<-which(y==x))>0) obj else NA
+	M<-cbind(1:Ntip(tr1),sapply(tr1$tip.label,foo,y=tr2$tip.label))
+	colnames(M)<-c("tr1","tr2")
+	M
+}
 
 ## compute the probability of states changes along edges of the tree
 ## written by Liam J. Revell 2015
