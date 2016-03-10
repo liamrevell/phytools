@@ -1382,7 +1382,7 @@ untangle<-function(tree,method=c("reorder","read.tree")){
 		if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
 		else if(method=="read.tree"){
 			if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
-			else tree<-read.tree(text=write.tree(tree))
+			else tree<-if(Ntip(tree)>1) read.tree(text=write.tree(tree)) else read.newick(text=write.tree(tree))
 		}
 		ii<-!names(obj)%in%names(attributes(tree))
 		attributes(tree)<-c(attributes(tree),obj[ii])
