@@ -28,13 +28,13 @@ fitPagel<-function(tree,x,y,method="fitMk",...){
 	rownames(iQ)<-colnames(iQ)<-levels(xy)
 	fit.iQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=iQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ,...)
-		else fitMk(tree,xy,model=iQ,...)
+		else fitMk(tree,to.matrix(xy,levels(xy)),model=iQ,...)
 	## fit dependendent model
 	dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,6,0,7,8,0),4,4,byrow=TRUE)
 	rownames(dQ)<-colnames(dQ)<-levels(xy)
 	fit.dQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=dQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=dQ,...)
-		else fitMk(tree,xy,model=dQ,...)
+		else fitMk(tree,to.matrix(xy,levels(xy)),model=dQ,...)
 	## back translate independent model
 	if(method=="fitDiscrete") iQ<-.Qmatrix.from.gfit(fit.iQ)
 	else {

@@ -2,6 +2,7 @@
 ## written by Liam J. Revell 2016
 
 dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
+	if(is.data.frame(x)) x<-as.matrix(x)
 	if(hasArg(data.type)) data.type<-list(...)$data.type
 	else {
 		## try to detect type
@@ -15,7 +16,7 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
 	} else if(data.type=="discrete"){ 
 		if(hasArg(colors)) colors<-list(...)$colors
 		else { 
-			ss<-sort(unique(x))
+			ss<-unique(as.vector(x))
 			colors<-setNames(palette()[1:length(ss)],ss)
 		}
 		dotTree.discrete(tree,x,colors,legend,method,...)
