@@ -2,8 +2,9 @@
 ## written by Liam J. Revell 2016
 
 consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
-	if(hasArg(consensus.tree)) tree<-list(...)$consensus.tree
-	else tree<-consensus(trees,p=0.5)
+	if(hasArg(consensus.tree)) consensus.tree<-list(...)$consensus.tree
+	else consensus.tree<-consensus(trees,p=0.5)
+	tree<-consensus.tree ## get rid of this cumbersome name
 	if(hasArg(if.absent)) if.absent<-list(...)$if.absent
 	else if.absent<-"zero"
 	N<-length(trees)
@@ -25,7 +26,7 @@ consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
 		tree$edge.length<-edge.length
 	} else if(method[1]=="least.squares"){
 		D<-Reduce('+',lapply(trees,function(x,t) cophenetic(x)[t,t],t=tree$tip.label))/N
-		tree<-nnls.tree(D,tree=tree,rooted=is.rooted(tree))
+		tree<-nnls.tree(D,tree=tree,rooted=all(sapply(trees,is.ultrametric)))
 	}
 	tree
 }
