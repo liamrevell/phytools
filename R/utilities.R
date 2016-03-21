@@ -1,6 +1,23 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## get mapped states
+## written by Liam J. Revell 2016
+mapped.states<-function(tree,...){
+	if(!(inherits(tree,"simmap")||inherits(tree,"multiSimmap")))
+		stop("tree should be an object of class \"simmap\" or \"multiSimmap\".")
+	else {
+		if(inherits(tree,"simmap")){
+			obj<-sort(unique(c(getStates(tree,type="nodes"),
+				getStates(tree,type="tips"))))
+		} else {
+			X<-rbind(getStates(tree,type="nodes"),getStates(tree,type="tips"))
+			obj<-apply(X,2,function(x) sort(unique(x)))
+		}
+	}
+	obj
+}
+
 ## match labels between trees (equivalent to matchNodes)
 ## written by Liam J. Revell 2016
 matchLabels<-function(tr1,tr2){
