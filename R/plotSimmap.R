@@ -152,7 +152,8 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			}
 		}
 	}
-	pos<-if(direction=="leftwards"||(par()$usr[1]>par()$usr[2])) 2 else 4
+	if(direction=="leftwards") pos<-if(par()$usr[1]>par()$usr[2]) 2 else 4
+	if(direction=="rightwards") pos<-if(par()$usr[1]>par()$usr[2]) 4 else 2
 	for(i in 1:n) if(ftype) text(H[which(cw$edge[,2]==i),2],Y[i],cw$tip.label[i],pos=pos,
 		offset=offset,cex=fsize,font=ftype)
 	if(setEnv){
