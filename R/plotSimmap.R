@@ -104,11 +104,16 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			offsetFudge*fsize*strwidth("W",units="inches")
 		alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=H,sw=sw,pp=pp,
 			interval=c(0,1e6))$minimum
-		xlim<-c(min(H),max(H)+sw/alp)
+		xlim<-if(direction=="leftwards") c(min(H)-sw/alp,max(H)) else c(min(H),max(H)+sw/alp)
 	}
 	if(is.null(ylim)) ylim=range(Y)
-	if(direction=="leftwards") plot.window(xlim=xlim[2:1],ylim=ylim)
-	else plot.window(xlim=xlim,ylim=ylim)
+	if(direction=="leftwards"){ 
+		H<-max(H)-H
+		## H<-H[,2:1]
+		## plot.window(xlim=xlim[2:1],ylim=ylim)
+		## plot.window(xlim=xlim,ylim=ylim)
+	} 
+	plot.window(xlim=xlim,ylim=ylim)
 	####
 	if(!split.vertical){
 		for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
@@ -118,11 +123,15 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	for(i in 1:nrow(cw$edge)){
 		x<-H[i,1]
  		for(j in 1:length(cw$maps[[i]])){
-			lines(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
-				col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=2)
+			if(direction=="leftwards")
+				lines(c(x,x-cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=2)
+			else lines(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=2)
 			if(pts) points(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
 				pch=20,lwd=(lwd-1))
-			x<-x+cw$maps[[i]][j]; j<-j+1
+			x<-x+if(direction=="leftwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
+			j<-j+1
 		}
 	}
 	if(node.numbers){
@@ -143,7 +152,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			}
 		}
 	}
-	pos<-if(direction=="leftwards") 2 else 4
+	pos<-if(direction=="leftwards"||(par()$usr[1]>par()$usr[2])) 2 else 4
 	for(i in 1:n) if(ftype) text(H[which(cw$edge[,2]==i),2],Y[i],cw$tip.label[i],pos=pos,
 		offset=offset,cex=fsize,font=ftype)
 	if(setEnv){
