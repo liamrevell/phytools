@@ -151,7 +151,8 @@ plot.densityMap<-function(x,...){
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
 			add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
 				digits=dig,prompt=FALSE,x=0,y=1-0.08*(N-1),lwd=lwd[2],
-				fsize=fsize[2],direction=direction)
+				fsize=fsize[2],
+				direction=if(!is.null(xlim)) if(xlim[2]<xlim[1]) "leftwards" else "rightwards" else "rightwards")
 		}
 	} else if(type=="fan"){
 		if(outline){
