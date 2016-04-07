@@ -13,8 +13,8 @@ minTreeDist(tree, trees, method="quadratic.path.difference", ...)
 	\item{trees}{object of class \code{"multiPhylo"}.}
 	\item{start}{starting tree for optimization.}
 	\item{method}{distance criterion for minimization. Options are \code{"symmetric.difference"}, \code{"branch.score.difference"}, \code{"path.difference"}, and \code{"quadratic.path.difference"}.}
-	\code{tol}{tolerance value for optimization.}
-	\code{quiet}{logical value indicating whether to run "quietly" or not.}
+	\item{tol}{tolerance value for optimization.}
+	\item{quiet}{logical value indicating whether to run "quietly" or not.}
 }
 \description{
 	These functions compute average trees or consensus trees by various criteria.
