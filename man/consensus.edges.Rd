@@ -1,6 +1,6 @@
 \name{consensus.edges}
 \alias{consensus.edges}
-\title{Add color bar to a plot}
+\title{Compute consensus edges for a tree under some criterion}
 \usage{
 consensus.edges(trees, method=c("mean.edge","least.squares"), ...)
 }
