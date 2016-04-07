@@ -8,12 +8,11 @@ averageTree(trees, start=NULL, method="quadratic.path.difference",
 	tol=1e-12, quiet=FALSE, ...)
 ls.consensus(trees, start=NULL, tol=1e-12, quiet=FALSE)
 minTreeDist(tree, trees, method="quadratic.path.difference", ...)
-
 }
 \arguments{
 	\item{trees}{object of class \code{"multiPhylo"}.}
 	\item{start}{starting tree for optimization.}
-	\item{method}{distance criterion for minimization. Options are \code{"symmetric.difference"}, \code{"branch.score.difference"}, \code{"path.difference"}, and \code{"quadratic.path.difference"}.
+	\item{method}{distance criterion for minimization. Options are \code{"symmetric.difference"}, \code{"branch.score.difference"}, \code{"path.difference"}, and \code{"quadratic.path.difference"}.}
 	\code{tol}{tolerance value for optimization.}
 	\code{quiet}{logical value indicating whether to run "quietly" or not.}
 }
