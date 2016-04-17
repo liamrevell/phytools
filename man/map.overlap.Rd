@@ -4,7 +4,7 @@
 \title{Proportional overlap between two mapped character histories on a tree}
 \usage{
 map.overlap(tree1, tree2, tol=1e-6, ...)
-Map.Overlap(tree1, tree2, tol=1e-06, standardize=TRUE, ...){
+Map.Overlap(tree1, tree2, tol=1e-06, standardize=TRUE, ...)
 }
 \arguments{
 	\item{tree1}{an object of class \code{"simmap"}.}
