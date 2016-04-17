@@ -12,7 +12,7 @@ mapped.states<-function(tree,...){
 				obj<-sort(colnames(tree$mapped.edge))
 			else 
 				obj<-sort(unique(unlist(lapply(tree$maps,function(x) names(x)))))
-		} else if(inherits(tree,"multiSimmap") {
+		} else if(inherits(tree,"multiSimmap")) {
 			obj<-sapply(tree,mapped.states,...)
 		}
 	}
