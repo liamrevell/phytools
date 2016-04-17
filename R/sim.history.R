@@ -1,5 +1,5 @@
-# function simulates stochastic character history under some model
-# written by Liam J. Revell 2011, 2013, 2014
+## function simulates stochastic character history under some model
+## written by Liam J. Revell 2011, 2013, 2014
 
 sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -26,18 +26,15 @@ sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
 	class(mtrees)<-c("multiSimmap","multiPhylo")
 	# now loop
 	for(i in 1:nsim){
-		# set root state		
-		if(is.null(anc)){
-			temp<-rep(1/nrow(Q),nrow(Q))
-			names(temp)<-rownames(Q)
-			anc<-rstate(temp)
-		}
+		# set root state
+		if(is.vector(anc)) a<-rstate(anc)
+		if(is.null(anc)) a<-rstate(setNames(rep(1/nrow(Q),nrow(Q)),rownames(Q)))
 		# create the map tree object
 		mtree<-tree
 		mtree$maps<-list()
 		# now we want to simulate the node states on the tree
 		node.states<-matrix(NA,nrow(tree$edge),ncol(tree$edge))
-		node.states[which(tree$edge[,1]==(length(tree$tip)+1)),1]<-anc
+		node.states[which(tree$edge[,1]==(length(tree$tip)+1)),1]<-a
 		for(j in 1:nrow(tree$edge)){
 			if(tree$edge.length[j]==0){ 
 				map<-vector(); map[1]<-tree$edge.length[j]
