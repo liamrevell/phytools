@@ -8,11 +8,12 @@ mapped.states<-function(tree,...){
 		stop("tree should be an object of class \"simmap\" or \"multiSimmap\".")
 	else {
 		if(inherits(tree,"simmap")){
-			obj<-sort(unique(c(getStates(tree,type="nodes"),
-				getStates(tree,type="tips"))))
-		} else {
-			X<-rbind(getStates(tree,type="nodes"),getStates(tree,type="tips"))
-			obj<-apply(X,2,function(x) sort(unique(x)))
+			if(!is.null(tree$mapped.edge)) 
+				obj<-sort(colnames(tree$mapped.edge))
+			else 
+				obj<-sort(unique(unlist(lapply(tree$maps,function(x) names(x)))))
+		} else if(inherits(tree,"multiSimmap") {
+			obj<-sapply(tree,mapped.states,...)
 		}
 	}
 	obj
