@@ -1,9 +1,9 @@
 # function to read a Newick string with node labels & (possible) singles
-# written by Liam J. Revell 2013, 2014
+# written by Liam J. Revell 2013, 2014, 2015
 
-read.newick<-function(file="",text){
+read.newick<-function(file="",text,...){
 	# check to see if reading from file
-	if(file!="") text<-scan(file,sep="\n",what="character")
+	if(file!="") text<-scan(file,sep="\n",what="character",...)
 	if(length(text)>1){
 		tree<-lapply(text,newick)
 		class(tree)<-"multiPhylo"
@@ -90,7 +90,7 @@ newick<-function(text){
 		}
 	}
 	Ntip<-k-1
-	edge<-edge[!is.na(edge[,2]),]
+	edge<-edge[!is.na(edge[,2]),,drop=F]
 	edge[edge>0]<-edge[edge>0]+Ntip
 	edge[edge<0]<--edge[edge<0]
 	edge.length[is.na(edge.length)]<-0

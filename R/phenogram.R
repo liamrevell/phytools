@@ -1,5 +1,5 @@
-# function creates a phenogram (i.e., 'traitgram')
-# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
+## function creates a phenogram (i.e., 'traitgram')
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
 phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FALSE,...){
 	## get optional arguments
@@ -74,6 +74,8 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 		cat("Optimizing the positions of the tip labels...\n")
 		flush.console()
 	}
+	## matrix for tip coordinates
+	tip.coords<-matrix(NA,Ntip(tree),2,dimnames=list(tree$tip.label,c("x","y")))
 	if(hold) null<-dev.hold()
 	if(is.null(tree$maps)){
 		if(is.null(colors)) colors<-"black"
@@ -83,6 +85,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			if(tree$edge[1,2]<=length(tree$tip)){
 				if(fsize&&!add){
 					text(tree$tip.label[tree$edge[1,2]],x=H[1,2]+link,y=tt[tree$edge[1,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[1,2]],]<-c(H[1,2]+link,tt[tree$edge[1,2]])
 					if(link>0) lines(x=c(H[1,2],H[1,2]+link),y=c(X[1,2],tt[tree$edge[1,2]]),lty=3)
 				}
 			}
@@ -93,6 +96,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			if(tree$edge[i,2]<=length(tree$tip)){
 				if(fsize&&!add){ 
 					text(tree$tip.label[tree$edge[i,2]],x=H[i,2]+link,y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,tt[tree$edge[i,2]])
 					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),lty=3)
 				}
 			}
@@ -117,6 +121,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			if(tree$edge[i,2]<=length(tree$tip)){
 				if(fsize&&!add){ 
 					text(tree$tip.label[tree$edge[i,2]],x=H[i,2]+link,y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,tt[tree$edge[i,2]])
 					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),lty=3)
 				}
 			}
@@ -127,21 +132,37 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 		axis(1,at=at); axis(2); title(xlab=xlab,ylab=ylab,main=main,sub=sub)
 	}
 	if(hold) null<-dev.flush()
+	xx<-setNames(c(H[1,1],H[,2]),c(tree$edge[1,1],tree$edge[,2]))
+	xx<-xx[order(as.numeric(names(xx)))]
+	yy<-setNames(c(X[1,1],X[,2]),c(tree$edge[1,1],tree$edge[,2]))
+	yy<-yy[order(as.numeric(names(yy)))]
+	PP<-list(type="phenogram",use.edge.length=TRUE,node.pos=1,
+		show.tip.label=if(ftype!="off") TRUE else FALSE,show.node.label=FALSE,
+		font=ftype,cex=fsize,adj=0,srt=NULL,no.margin=FALSE,label.offset=offset,
+		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+		direction=NULL,tip.color="black",Ntip=Ntip(tree),Nnode=tree$Nnode,
+		edge=tree$edge,xx=xx,yy=yy)
+	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
+	invisible(tip.coords)
 }
 
-# function to spread labels
-# written by Liam J. Revell 2013, 2014
+## function to spread labels
+## written by Liam J. Revell 2013, 2014, 2016
 spreadlabels<-function(tree,x,fsize=1,cost=c(1,1),range=NULL){
 	if(is.null(range)) range<-range(x)
-	yy<-x[1:length(tree$tip)]
+	yy<-x[1:Ntip(tree)]
 	zz<-setNames((rank(yy,ties.method="random")-1)/(length(yy)-1)*diff(range(yy))+range(yy)[1],names(yy))
 	mm<-max(fsize*strheight(tree$tip.label))
 	ff<-function(zz,yy,cost,mo=1,ms=1){
 		ZZ<-cbind(zz-mm/2,zz+mm/2)
 		ZZ<-ZZ[order(zz),]
-		oo<-0; for(i in 2:nrow(ZZ)) oo<-if(ZZ[i-1,2]>ZZ[i,1]) oo<-oo+ZZ[i-1,2]-ZZ[i,1] else oo<-oo
+		oo<-0
+		for(i in 2:nrow(ZZ)) 
+			oo<-if(ZZ[i-1,2]>ZZ[i,1]) oo<-oo+ZZ[i-1,2]-ZZ[i,1] else oo<-oo
 		pp<-sum((zz-yy)^2)
-		return(oo/mo*cost[1]+pp/ms*cost[2])
+		oo<-if(oo<(1e-6*diff(par()$usr[3:4]))) 0 else oo
+		pp<-if(pp<(1e-6*diff(par()$usr[3:4]))) 0 else pp
+		oo/mo*cost[1]+pp/ms*cost[2]
 	}
 	mo<-ff(yy,zz,cost=c(1,0))
 	ms<-ff(yy,zz,cost=c(0,1))

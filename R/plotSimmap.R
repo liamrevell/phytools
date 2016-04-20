@@ -1,5 +1,5 @@
 ## functions plot stochastic character mapped trees
-## written by Liam Revell 2011-2015
+## written by Liam Revell 2011-2016
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
@@ -104,11 +104,16 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			offsetFudge*fsize*strwidth("W",units="inches")
 		alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=H,sw=sw,pp=pp,
 			interval=c(0,1e6))$minimum
-		xlim<-c(min(H),max(H)+sw/alp)
+		xlim<-if(direction=="leftwards") c(min(H)-sw/alp,max(H)) else c(min(H),max(H)+sw/alp)
 	}
 	if(is.null(ylim)) ylim=range(Y)
-	if(direction=="leftwards") plot.window(xlim=xlim[2:1],ylim=ylim)
-	else plot.window(xlim=xlim,ylim=ylim)
+	if(direction=="leftwards"){ 
+		H<-max(H)-H
+		## H<-H[,2:1]
+		## plot.window(xlim=xlim[2:1],ylim=ylim)
+		## plot.window(xlim=xlim,ylim=ylim)
+	} 
+	plot.window(xlim=xlim,ylim=ylim)
 	####
 	if(!split.vertical){
 		for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
@@ -118,11 +123,15 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	for(i in 1:nrow(cw$edge)){
 		x<-H[i,1]
  		for(j in 1:length(cw$maps[[i]])){
-			lines(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
-				col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=2)
+			if(direction=="leftwards")
+				lines(c(x,x-cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=2)
+			else lines(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=2)
 			if(pts) points(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
 				pch=20,lwd=(lwd-1))
-			x<-x+cw$maps[[i]][j]; j<-j+1
+			x<-x+if(direction=="leftwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
+			j<-j+1
 		}
 	}
 	if(node.numbers){
@@ -143,7 +152,8 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			}
 		}
 	}
-	pos<-if(direction=="leftwards") 2 else 4
+	if(direction=="leftwards") pos<-if(par()$usr[1]>par()$usr[2]) 4 else 2
+	if(direction=="rightwards") pos<-if(par()$usr[1]>par()$usr[2]) 2 else 4
 	for(i in 1:n) if(ftype) text(H[which(cw$edge[,2]==i),2],Y[i],cw$tip.label[i],pos=pos,
 		offset=offset,cex=fsize,font=ftype)
 	if(setEnv){
@@ -243,8 +253,8 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 	}
 }
 
-# adds legend to an open stochastic map style plot
-# written by Liam J. Revell 2013
+## adds legend to an open stochastic map style plot
+## written by Liam J. Revell 2013, 2016
 add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	if(hasArg(shape)) shape<-list(...)$shape
 	else shape<-"square"
@@ -263,7 +273,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	else fsize<-1.0
 	if(is.null(leg)) leg<-names(colors)
 	h<-fsize*strheight(LETTERS[1])
-	w<-par()$mfcol[2]*h*(par()$usr[2]-par()$usr[1])/(par()$usr[4]-par()$usr[3])
+	w<-par()$mfcol[2]*h*diff(par()$usr[1:2])/diff(par()$usr[3:4])
 	if(vertical){
 		y<-y-0:(length(leg)-1)*1.5*h
 		x<-rep(x+w/2,length(y))		
@@ -275,8 +285,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 		text(x,y,leg,pos=4,cex=fsize/par()$cex)
 	}
 	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE)
-	else if(shape=="circle") symbols(x,y,circles=rep(w,length(x)),bg=colors,add=TRUE,
-		inches=FALSE)
+	else if(shape=="circle") draw.circle(x,y,nv=200,radius=w/2,col=colors)
 	else stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
 }
 

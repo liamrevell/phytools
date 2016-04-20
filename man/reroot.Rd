@@ -2,12 +2,12 @@
 \alias{reroot}
 \title{Re-root a tree along an edge}
 \usage{
-reroot(tree, node.number, position, interactive=FALSE, ...)
+reroot(tree, node.number, position=NULL, interactive=FALSE, ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}
 	\item{node.number}{ number of the node descending from the target branch in \code{tree$edge} - this can also be a tip in which case the node number is the index number of the tip in \code{tree$tip.label}.}
-	\item{position}{position along the target edge at which to re-root the tree.}.
+	\item{position}{position along the target edge at which to re-root the tree. If not supplied, then the tree will be re-rooted \emph{at} the node or tip.}
 	\item{interactive}{logical value indicating whether to use interactive mode (defaults to \code{interactive=FALSE}).}
 	\item{...}{arguments to be passed to \code{plotTree} for \code{interactive=TRUE} only.}
 }

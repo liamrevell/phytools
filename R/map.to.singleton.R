@@ -108,4 +108,14 @@ reorderPhylo<-function(x,order="pruningwise",index.only=FALSE,...){
 	return(x)
 }
 
-
+## function converts a tree with a root edge to a tree with a singleton node instead
+## written by Liam J. Revell 2016
+rootedge.to.singleton<-function(tree){
+	cw<-reorder(tree,"cladewise")
+	root.edge<-if(!is.null(cw$root.edge)) cw$root.edge else 0
+	cw$edge[which(cw$edge>Ntip(cw))]<-cw$edge[which(cw$edge>Ntip(cw))]+1
+	cw$edge<-rbind(Ntip(cw)+c(1,2),cw$edge)
+	cw$Nnode<-cw$Nnode+1
+	cw$edge.length<-c(root.edge,cw$edge.length)
+	cw
+}

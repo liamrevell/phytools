@@ -1,5 +1,32 @@
 # some utility functions
-# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
+# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
+
+## get mapped states
+## written by Liam J. Revell 2016
+mapped.states<-function(tree,...){
+	if(!(inherits(tree,"simmap")||inherits(tree,"multiSimmap")))
+		stop("tree should be an object of class \"simmap\" or \"multiSimmap\".")
+	else {
+		if(inherits(tree,"simmap")){
+			if(!is.null(tree$mapped.edge)) 
+				obj<-sort(colnames(tree$mapped.edge))
+			else 
+				obj<-sort(unique(unlist(lapply(tree$maps,function(x) names(x)))))
+		} else if(inherits(tree,"multiSimmap")) {
+			obj<-sapply(tree,mapped.states,...)
+		}
+	}
+	obj
+}
+
+## match labels between trees (equivalent to matchNodes)
+## written by Liam J. Revell 2016
+matchLabels<-function(tr1,tr2){
+	foo<-function(x,y) if(length(obj<-which(y==x))>0) obj else NA
+	M<-cbind(1:Ntip(tr1),sapply(tr1$tip.label,foo,y=tr2$tip.label))
+	colnames(M)<-c("tr1","tr2")
+	M
+}
 
 ## compute the probability of states changes along edges of the tree
 ## written by Liam J. Revell 2015
@@ -248,10 +275,10 @@ drop.clade<-function(tree,tip){
 }
 
 
-# function to re-root a phylogeny along an edge
-# written by Liam Revell 2011-2015
+## function to re-root a phylogeny along an edge
+## written by Liam J. Revell 2011-2016
 
-reroot<-function(tree,node.number,position,interactive=FALSE,...){
+reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(interactive){
 		plotTree(tree,...)
@@ -261,6 +288,7 @@ reroot<-function(tree,node.number,position,interactive=FALSE,...){
 		node.number<-obj$where
 		position<-tree$edge.length[which(tree$edge[,2]==node.number)]-obj$pos
 	}
+	if(is.null(position)) position<-tree$edge.length[which(tree$edge[,2]==node.number)]
 	tt<-splitTree(tree,list(node=node.number,bp=position))
 	p<-tt[[1]]
 	d<-tt[[2]]
@@ -549,15 +577,19 @@ describe.simmap<-function(tree,...){
 }
 
 ## function finds the height of a given node
-## written by Liam Revell 2014, 2015
-nodeheight<-function(tree,node){
+## written by Liam Revell 2014, 2015, 2016
+nodeheight<-function(tree,node,...){
+	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+	else root.edge<-FALSE
+	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(node==(length(tree$tip.label)+1)) h<-0
 	else {
 		a<-setdiff(c(getAncestors(tree,node),node),length(tree$tip.label)+1)
 		h<-sum(tree$edge.length[sapply(a,function(x,e) which(e==x),e=tree$edge[,2])])
 	}
-	h
+	h+ROOT
 }
 
 # fast pairwise MRCA function
@@ -727,8 +759,12 @@ di2multi.simmap<-function(tree,tol=1e-08){
 }
 
 # returns the heights of each node
-# written by Liam J. Revell 2011, 2012, 2013, 2015
-nodeHeights<-function(tree){
+# written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
+nodeHeights<-function(tree,...){
+	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+	else root.edge<-FALSE
+	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order"))) t<-reorder(tree)
 	else t<-tree
@@ -746,7 +782,7 @@ nodeHeights<-function(tree){
 	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order")))
 		o<-apply(matrix(tree$edge[,2]),1,function(x,y) which(x==y),y=t$edge[,2])
 	else o<-1:nrow(t$edge)
-	return(X[o,])
+	return(X[o,]+ROOT)
 }
 
 ## function drops all the leaves from the tree & collapses singleton nodes
@@ -1364,7 +1400,7 @@ untangle<-function(tree,method=c("reorder","read.tree")){
 		if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
 		else if(method=="read.tree"){
 			if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
-			else tree<-read.tree(text=write.tree(tree))
+			else tree<-if(Ntip(tree)>1) read.tree(text=write.tree(tree)) else read.newick(text=write.tree(tree))
 		}
 		ii<-!names(obj)%in%names(attributes(tree))
 		attributes(tree)<-c(attributes(tree),obj[ii])

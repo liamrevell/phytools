@@ -1,11 +1,15 @@
 \name{plotSimmap}
 \alias{plotSimmap}
+\alias{plot.simmap}
+\alias{plot.multiSimmap}
 \title{Plot stochastic character mapped tree}
 \usage{
 plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE, 
 	node.numbers=FALSE, mar=NULL, add=FALSE, offset=NULL, direction="rightwards",
 	type="phylogram", setEnv=TRUE, part=1.0, xlim=NULL, ylim=NULL, 
 	nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE, split.vertical=FALSE)
+\method{plot}{simmap}(x, ...)
+\method{plot}{multiSimmap}(x, ...)
 }
 \arguments{
  	\item{tree}{a modified object of class "phylo" or "multiPhylo" containing a stochastic mapping or set of mappings (e.g., see \code{\link{read.simmap}} & \code{\link{make.simmap}}).}
@@ -29,6 +33,8 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{maxY}{maximum value of y to use before rotating a tree into fan configuration. This will only make a difference if different from \code{Ntip(tree)}.}
 	\item{hold}{logical argument indicating whether or not to hold the output to the graphical device before plotting. Defaults to \code{hold=TRUE}.}
 	\item{split.vertical}{split the color of the vertically plotted edges by the state of the daughter edges. Only applies if the edge state changes exactly at a node.}
+	\item{x}{for S3 plotting method, object of class \code{"simmap"} or \code{"multiSimmap"}.}
+	\item{...}{for S3 plotting method, other arguments to be passed to \code{\link{plotSimmap}}.}
 }
 \description{
 	Function plots one or multiple stochastic character mapped trees.
@@ -59,7 +65,7 @@ rownames(Q)<-colnames(Q)<-letters[1:3]
 tree<-sim.history(pbtree(n=100,scale=1),Q)
 cols<-setNames(c("blue","red","green"),letters[1:3])
 # plot the mapping
-plotSimmap(tree,cols,ftype="i",fsize=0.7)
+plot(tree,cols,ftype="i",fsize=0.7)
 }
 \keyword{phylogenetics}
 \keyword{plotting}

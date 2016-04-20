@@ -2,11 +2,12 @@
 \alias{read.newick}
 \title{Robust Newick style tree reader}
 \usage{
-read.newick(file="", text)
+read.newick(file="", text, ...)
 }
 \arguments{
 	\item{file}{name of text file with single Newick style tree or multiple trees, one per line.}
 	\item{text}{character string containing tree.}
+	\item{...}{optional arguments to be passed to \code{\link{scan}}. Note that if the arguments \code{sep} or \code{what} are supplied this could generate an error. Useful optional arguments might include \code{skip} (number of lines to skip) and \code{nlines} (number of lines to read).}
 }
 \description{
 	This function reads a Newick style tree from file.

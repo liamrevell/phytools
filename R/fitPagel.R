@@ -1,11 +1,9 @@
 ## function fits Pagel '94 model of correlated evolution of two binary characters
 ## uses fitMk, ape::ace, or geiger::fitDiscrete internally
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2016
 
-fitPagel<-function(tree,x,y,...){
+fitPagel<-function(tree,x,y,method="fitMk",...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
-	if(hasArg(method)) method<-list(...)$method
-	else method<-"fitMk"
 	if(method=="fitDiscrete"){
 		chk<-.check.pkg("geiger")
 		if(!chk){
@@ -28,15 +26,15 @@ fitPagel<-function(tree,x,y,...){
 	## fit independent model
 	iQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,1,0,4,3,0),4,4,byrow=TRUE)
 	rownames(iQ)<-colnames(iQ)<-levels(xy)
-	fit.iQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=iQ) 
-		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ)
-		else fitMk(tree,xy,model=iQ)
+	fit.iQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=iQ,...) 
+		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ,...)
+		else fitMk(tree,to.matrix(xy,levels(xy)),model=iQ,...)
 	## fit dependendent model
 	dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,6,0,7,8,0),4,4,byrow=TRUE)
 	rownames(dQ)<-colnames(dQ)<-levels(xy)
-	fit.dQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=dQ) 
-		else if(method=="ace") ace(xy,tree,type="discrete",model=dQ)
-		else fitMk(tree,xy,model=dQ)
+	fit.dQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=dQ,...) 
+		else if(method=="ace") ace(xy,tree,type="discrete",model=dQ,...)
+		else fitMk(tree,to.matrix(xy,levels(xy)),model=dQ,...)
 	## back translate independent model
 	if(method=="fitDiscrete") iQ<-.Qmatrix.from.gfit(fit.iQ)
 	else {
@@ -76,7 +74,7 @@ fitPagel<-function(tree,x,y,...){
 
 print.fitPagel<-function(x,...){
 	cat("\n  Pagel's binary character correlation test:\n")
-	cat("\nIndepedent model rate matrix:\n")
+	cat("\nIndependent model rate matrix:\n")
 	print(x$independent.Q)
 	cat("\nDependent model rate matrix:\n")
 	print(x$dependent.Q)

@@ -1,8 +1,10 @@
 \name{matchNodes}
 \alias{matchNodes}
+\alias{matchLabels}
 \title{Matches nodes between two trees}
 \usage{
 matchNodes(tr1, tr2, method=c("descendants","distances"), ...)
+matchLabels(tr1, tr2)
 }
 \arguments{
 	\item{tr1}{first tree.}
@@ -11,7 +13,7 @@ matchNodes(tr1, tr2, method=c("descendants","distances"), ...)
 	\item{...}{optional arguments which may or may not be used depending on \code{method}. \code{tol} is a tolerance value for the difference from exact matching that is allowed for \code{method="distances"}. \code{corr}, which is \code{FALSE} by default, indicates whether to match nodes under \code{method="distances"} using the correlation (\code{corr=TRUE}) or the absolute similarity of distances.}
 }
 \description{
-	This function returns a matrix in which the first column contains all the internal nodes for \code{tr1} and the second column contains the matching nodes from \code{tr2}, inasmuch as they can be identified. For \code{method="descendants"}, pairs of matching nodes are defined by sharing all descendant leaves in common. for \code{method="distances"}, nodes are considered to matched if the share the same set of distances (or proportional distances, for optional argument \code{corr=TRUE}) to all tips.
+	This function returns a matrix in which the first column contains all the internal nodes for \code{tr1} and the second column contains the matching nodes from \code{tr2}, inasmuch as they can be identified. For \code{method="descendants"}, pairs of matching nodes are defined by sharing all descendant leaves in common. for \code{method="distances"}, nodes are considered to matched if the share the same set of distances (or proportional distances, for optional argument \code{corr=TRUE}) to all tips. \code{matchLabels} is functionally equivalent but matches node (tip) numbers based on the labels only.
 }
 \details{
 	Primarily designed to be used internally by \code{\link{fastAnc}}.
