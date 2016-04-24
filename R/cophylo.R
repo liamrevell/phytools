@@ -113,7 +113,7 @@ makelinks<-function(obj,x){
 }
 
 ## plot an object of class "cophylo"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2016
 plot.cophylo<-function(x,...){
 	plot.new()
 	if(hasArg(mar)) mar<-list(...)$mar
@@ -128,10 +128,13 @@ plot.cophylo<-function(x,...){
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
 	leftArgs<-rightArgs<-obj
-	if(!is.null(obj$fsize)&&length(obj$fsize)>1){
-		leftArgs$fsize<-obj$fsize[1]
-		rightArgs$fsize<-obj$fsize[2]
-	}
+	if(!is.null(obj$fsize)){
+		if(length(obj$fsize)>1){
+			leftArgs$fsize<-obj$fsize[1]
+			rightArgs$fsize<-obj$fsize[2]
+			sb.fsize<- if(length(obj$fsize)>2) obj$fsize[3] else 1
+		} else sb.fsize<-1
+	} else sb.fsize<-1
 	x1<-do.call("phylogram",c(list(tree=x$trees[[1]],part=0.4),leftArgs))
 	left<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],part=0.4,
@@ -139,7 +142,7 @@ plot.cophylo<-function(x,...){
 	right<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(!is.null(x$assoc)) makelinks(x,c(x1,x2))
 	else cat("No associations provided.\n")
-	if(any(scale.bar>0)) add.scalebar(x,scale.bar,fsize)
+	if(any(scale.bar>0)) add.scalebar(x,scale.bar,sb.fsize)
 	assign("last_plot.cophylo",list(left=left,right=right),envir=.PlotPhyloEnv)
 }
 
