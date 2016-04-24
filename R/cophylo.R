@@ -4,8 +4,8 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
 		stop("tr1 & tr2 should be objects of class \"phylo\".")
 	## hack to make sure tip labels of each tree are in cladewise order
-	tr1<-read.tree(text=write.tree(tr1))
-	tr2<-read.tree(text=write.tree(tr2))
+	tr1<-untangle(tr1,"read.tree")
+	tr2<-untangle(tr2,"read.tree")
 	## if no association matrix check for exact matches
 	if(is.null(assoc)){
 		assoc<-intersect(tr1$tip.label,tr2$tip.label)
@@ -17,9 +17,15 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	}
 	## check to verify that all taxa in assoc are in tree
 	ii<-sapply(assoc[,1],"%in%",tr1$tip.label)
-	if(any(!ii)) assoc<-assoc[ii,]
+	if(any(!ii)){ 
+		assoc<-assoc[ii,]
+		cat("Some species in assoc[,1] not in tr1. Removing species & links.\n")
+	}
 	ii<-sapply(assoc[,2],"%in%",tr2$tip.label)
-	if(any(!ii)) assoc<-assoc[ii,]
+	if(any(!ii)){ 
+		assoc<-assoc[ii,]
+		cat("Some species in assoc[,2] not in tr2. Removing species & links.\n")
+	}
 	## now check if rotation is to be performed
 	if(rotate){
 		cat("Rotating nodes to optimize matching...\n")
