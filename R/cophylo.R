@@ -1,5 +1,5 @@
 ## creates an object of class "cophylo"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2016
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
 		stop("tr1 & tr2 should be objects of class \"phylo\".")
@@ -15,6 +15,11 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 			rotate<-FALSE
 		}
 	}
+	## check to verify that all taxa in assoc are in tree
+	ii<-sapply(assoc[,1],"%in%",tr1$tip.label)
+	assoc<-assoc[ii,]
+	ii<-sapply(assoc[,2],"%in%",tr2$tip.label)
+	assoc<-assoc[jj,]
 	## now check if rotation is to be performed
 	if(rotate){
 		cat("Rotating nodes to optimize matching...\n")
