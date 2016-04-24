@@ -17,9 +17,9 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	}
 	## check to verify that all taxa in assoc are in tree
 	ii<-sapply(assoc[,1],"%in%",tr1$tip.label)
-	assoc<-assoc[ii,]
+	if(any(!ii)) assoc<-assoc[ii,]
 	ii<-sapply(assoc[,2],"%in%",tr2$tip.label)
-	assoc<-assoc[jj,]
+	if(any(!ii)) assoc<-assoc[ii,]
 	## now check if rotation is to be performed
 	if(rotate){
 		cat("Rotating nodes to optimize matching...\n")
