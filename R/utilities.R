@@ -511,7 +511,8 @@ plot.describe.simmap<-function(x,...){
 		nodelabels(pie=x$ace,piecol=colors[colnames(x$ace)],cex=cex[1])
 		if(!is.null(x$tips)) tips<-x$tips else tips<-to.matrix(getStates(x$tree[[1]],"tips"),
 			seq=states) 
-		tiplabels(pie=tips,piecol=colors[colnames(tips)],cex=cex[2])
+		tiplabels(pie=tips[if(is.null(x$ref.tree)) x$tree[[1]]$tip.label else 
+			x$ref.tree$tip.label,],piecol=colors[colnames(tips)],cex=cex[2])
 	} else if(inherits(x$tree,"phylo")){
 		states<-colnames(x$Tr)
 		if(hasArg(colors)) colors<-list(...)$colors
