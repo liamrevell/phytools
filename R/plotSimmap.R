@@ -160,7 +160,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 		PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 			show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
-			x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+			x.lim=xlim,y.lim=ylim,
 			direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
 			edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
