@@ -16,8 +16,13 @@ as.phylo.simmap<-function(x,...){
 ## written by Liam J. Revell 2016
 as.multiPhylo.multiSimmap<-function(x,...){
 	obj<-lapply(x,as.phylo)
-	class(obj)<-setdiff(class(obj),"multiSimmap")
+	class(obj)<-setdiff(class(x),"multiSimmap")
 	obj
+}
+
+as.multiPhylo<-function(x,...){
+    if (identical(class(x),"multiPhylo")) return(x)
+    UseMethod("as.multiPhylo")
 }
 
 ## get mapped states
