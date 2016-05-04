@@ -6,7 +6,7 @@ as.multiPhylo(x, ...)
 \method{as.multiPhylo}{multiSimmap}(x, ...)
 }
 \arguments{
-	\item{x}object to be converted to \code{"multiPhylo"}. Presently an object of class \code{"multiSimmap"}.}
+	\item{x}{object to be converted to \code{"multiPhylo"}. Presently an object of class \code{"multiSimmap"}.}
 	\item{...}{optional arguments.}
 }
 \description{
