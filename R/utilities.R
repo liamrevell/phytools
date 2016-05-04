@@ -1,6 +1,25 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## generic function to convert an object of class "simmap" to "phylo"
+## written by Liam J. Revell 2016
+as.phylo.simmap<-function(x,...){
+	x$maps<-NULL
+	x$mapped.edge<-NULL
+	if(!is.null(x$node.states)) x$node.states<-NULL
+	if(!is.null(x$states)) x$states<-NULL
+	class(x)<-setdiff(class(x),"simmap")
+	x
+}
+
+## generic function to convert an object of class "multiSimmap" to "multiPhylo"
+## written by Liam J. Revell 2016
+as.multiPhylo.multiSimmap<-function(x,...){
+	obj<-lapply(x,as.phylo)
+	class(obj)<-setdiff(class(obj),"multiSimmap")
+	obj
+}
+
 ## get mapped states
 ## written by Liam J. Revell 2016
 mapped.states<-function(tree,...){
