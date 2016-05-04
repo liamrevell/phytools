@@ -8,6 +8,9 @@ as.phylo.simmap<-function(x,...){
 	x$mapped.edge<-NULL
 	if(!is.null(x$node.states)) x$node.states<-NULL
 	if(!is.null(x$states)) x$states<-NULL
+	if(!is.null(x$Q)) x$Q<-NULL
+	if(!is.null(x$logL)) x$logL<-NULL
+	if(!is.null(attr(x,"map.order"))) attr(x,"map.order")<-NULL
 	class(x)<-setdiff(class(x),"simmap")
 	x
 }
