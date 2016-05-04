@@ -1,5 +1,6 @@
 \name{as.multiPhylo}
 \alias{as.multiPhylo}
+\alias{as.multiPhylo.multiSimmap}
 \title{Conversion to object of class \code{"multiPhylo"}}
 \usage{
 as.multiPhylo(x, ...)

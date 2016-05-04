@@ -74,7 +74,7 @@ S3method(as.phylo, simmap)
 S3method(as.multiPhylo, multiSimmap)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
-importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, bind.tree, branching.times, collapse.singles)
+importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
 importFrom(ape, consensus, compute.brlen, cophenetic.phylo, di2multi, dist.dna, dist.nodes, drop.tip, edgelabels, extract.clade)
 importFrom(ape, is.binary.tree)
 importFrom(ape, is.monophyletic, is.rooted, is.ultrametric, ladderize, matexpo, mrca, multi2di, neworder_phylo, neworder_pruningwise)
