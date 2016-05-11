@@ -7,7 +7,7 @@ sim.history(tree, Q, anc=NULL, nsim=1, ...)
 \arguments{
 	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"}.}
 	\item{Q}{a matrix containing the instantaneous transition rates between states. Note that normally this is the \emph{transpose} of the matrix produced by \code{fitDiscrete} in the geiger package or \code{\link{make.simmap}} in phytools; that is to say the transition rate from \code{i -> j} should be given by \code{Q[j,i]}. However, if your matrix is properly conformed (i.e., rows \emph{or} columns sum to 0), then \code{sim.history} will attempt to transpose your matrix correctly & will return an informative message (if \code{message=TRUE}, see below).}
-	\item{anc}{an optional value for the state at the root node; if \code{NULL}, a random state will be assigned.}
+	\item{anc}{an optional value for the state at the root node; if \code{NULL}, a random state will be assigned. \code{anc} can be a vector of states, in which one of the states will be chosen randomly for each simulation. \code{anc} can be a vector of probabilities with names, in which case a state will be chosen in proportion to the given probabilities.}
 	\item{nsim}{number of simulations.}
 	\item{...}{other optional arguments. Currently only \code{message}, a logical value indicating whether or not to turn on informational messages (defaults to \code{message=TRUE}).}
 }

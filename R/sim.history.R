@@ -2,7 +2,8 @@
 ## written by Liam J. Revell 2011, 2013, 2014, 2016
 
 sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(!inherits(tree,"phylo")) 
+		stop("tree should be an object of class \"phylo\".")
 	if(hasArg(message)) message<-list(...)$message
 	else message<-TRUE
 	# reorder to cladewise
@@ -18,7 +19,8 @@ sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
 			}
 			Q<-t(Q)
 		} else {
-			if(message) cat("Some columns (or rows) of Q don't sum to 0.0. Fixing.\n")
+			if(message) 
+				cat("Some columns (or rows) of Q don't sum to 0.0. Fixing.\n")
 			diag(Q)<-0
 			diag(Q)<--colSums(Q,na.rm=TRUE)
 		}
@@ -29,7 +31,8 @@ sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
 	mtrees<-vector(mode="list",length=nsim)
 	class(mtrees)<-c("multiSimmap","multiPhylo")
 	## deal with ancestral state
-	if(is.null(anc)) anc<-setNames(rep(1/ncol(Q),ncol(Q)),colnames(Q))
+	if(is.null(anc)) 
+		anc<-setNames(rep(1/ncol(Q),ncol(Q)),colnames(Q))
 	if(is.character(anc)){ 
 		anc<-colSums(to.matrix(anc,colnames(Q)))
 		anc<-anc/sum(anc)
@@ -93,7 +96,8 @@ sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
 		for(j in 1:length(mtree$maps)) 
 			for(k in 1:length(mtree$maps[[j]])) 
 				mtree$mapped.edge[j,names(mtree$maps[[j]])[k]]<-
-					mtree$mapped.edge[j,names(mtree$maps[[j]])[k]]+mtree$maps[[j]][k]
+					mtree$mapped.edge[j,names(mtree$maps[[j]])[k]]+
+					mtree$maps[[j]][k]
 		class(mtree)<-c("simmap",setdiff(class(mtree),"simmap"))
 		mtrees[[i]]<-mtree	
 	}
