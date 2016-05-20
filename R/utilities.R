@@ -11,6 +11,8 @@ bind.tree.simmap<-function(x,y,where="root"){
 	xy<-read.tree(text=write.tree(bind.tree(x,y,where)))
 	Mx<-rbind(matchLabels(x,xy),matchNodes(x,xy,"distances"))
 	My<-rbind(matchLabels(y,xy),matchNodes(y,xy,"distances"))
+	if(where!="root"&&where<=Ntip(x))
+		Mx[which(is.na(Mx[,2])),2]<-findMRCA(xy,y$tip.label)
 	xy$maps<-vector(mode="list",length=nrow(xy$edge))
 	ix<-sapply(Mx[-which(Mx[,1]==rootx),1],
 		function(x,y) which(y==x),y=x$edge[,2])
