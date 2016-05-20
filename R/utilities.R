@@ -1,6 +1,37 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## wrapper for bind.tree that takes objects of class "simmap"
+## written by Liam J. Revell 2016
+bind.tree.simmap<-function(x,y,where="root"){
+	x<-reorder(x)
+	y<-reorder(y)
+	rootx<-x$edge[1,1]
+	rooty<-y$edge[1,1]
+	xy<-read.tree(text=write.tree(bind.tree(x,y,where)))
+	Mx<-rbind(matchLabels(x,xy),matchNodes(x,xy,"distances"))
+	My<-rbind(matchLabels(y,xy),matchNodes(y,xy,"distances"))
+	xy$maps<-vector(mode="list",length=nrow(xy$edge))
+	ix<-sapply(Mx[-which(Mx[,1]==rootx),1],
+		function(x,y) which(y==x),y=x$edge[,2])
+	ixy<-sapply(Mx[-which(Mx[,1]==rootx),2],
+		function(x,y) which(y==x),y=xy$edge[,2])
+	xy$maps[ixy]<-x$maps[ix]
+	iy<-sapply(My[-which(My[,1]==rooty),1],
+		function(x,y) which(y==x),y=y$edge[,2])
+	ixy<-sapply(My[-which(My[,1]==rooty),2],
+		function(x,y) which(y==x),y=xy$edge[,2])
+	xy$maps[ixy]<-y$maps[iy]
+	xy$mapped.edge<-makeMappedEdge(xy$edge,xy$maps)
+	ns<-c(setNames(getStates(xy,"tips"),1:Ntip(xy)),
+		getStates(xy,"nodes"))
+	xy$node.states<-cbind(ns[as.character(xy$edge[,1])],
+		ns[as.character(xy$edge[,2])])
+	xy$states<-getStates(xy,"tips")
+	attr(xy,"class")<-c("simmap",class(xy))
+	xy
+}
+
 ## generic function to convert an object of class "simmap" to "phylo"
 ## written by Liam J. Revell 2016
 as.phylo.simmap<-function(x,...){
@@ -24,8 +55,8 @@ as.multiPhylo.multiSimmap<-function(x,...){
 }
 
 as.multiPhylo<-function(x,...){
-    if (identical(class(x),"multiPhylo")) return(x)
-    UseMethod("as.multiPhylo")
+	if (identical(class(x),"multiPhylo")) return(x)
+	UseMethod("as.multiPhylo")
 }
 
 ## get mapped states
