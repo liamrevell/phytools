@@ -14,7 +14,7 @@ fitPagel<-function(tree,x,y,method="fitMk",...){
 		}
 	}
 	if(method%in%c("fitDiscrete","ace","fitMK")==FALSE){
-		cat(paste("  method = \"",method,"\" not found.\n"))
+		cat(paste("  method = \"",method,"\" not found.\n",sep=""))
 		cat("  Defaulting to method = \"fitMk\"\n\n")
 		method<-"fitMk"
 	}
