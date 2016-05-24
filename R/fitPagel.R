@@ -13,6 +13,11 @@ fitPagel<-function(tree,x,y,method="fitMk",...){
 			fitDiscrete<-function(...) NULL
 		}
 	}
+	if(method%in%c("fitDiscrete","ace","fitMK")==FALSE){
+		cat(paste("  method = \"",method,"\" not found.\n"))
+		cat("  Defaulting to method = \"fitMk\"\n\n")
+		method<-"fitMk"
+	}
 	if(!is.factor(x)) x<-as.factor(x)
 	levels.x<-levels(x)
 	if(!is.factor(y)) y<-as.factor(y)
