@@ -46,11 +46,11 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ,...)
 		else fitMk(tree,to.matrix(xy,levels(xy)),model=iQ,...)
 	## fit dependendent model
-	if(model=="xy")
+	if(dep.var=="xy")
 		dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,6,0,7,8,0),4,4,byrow=TRUE)
-	else if(model=="x")
+	else if(dep.var=="x")
 		dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,1,0,6,3,0),4,4,byrow=TRUE)
-	else if(model=="y")
+	else if(dep.var=="y")
 		dQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,5,0,4,6,0),4,4,byrow=TRUE)
 	if(model%in%c("ER","SYM")) dQ<-make.sym(dQ)
 	k.dQ<-length(unique(as.vector(dQ)))-1
