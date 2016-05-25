@@ -2,8 +2,17 @@
 ## uses fitMk, ape::ace, or geiger::fitDiscrete internally
 ## written by Liam J. Revell 2014, 2015, 2016
 
-fitPagel<-function(tree,x,y,method="fitMk",...){
+fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+	if(dep.var%in%c("x","y","xy")==FALSE){
+		cat("  Invalid option for argument \"dep.var\".\n")
+		cat("  Setting dep.var=\"xy\" (x depends on y & vice versa)\n\n")
+		dep.var<-"xy"
+	}
+	if(model%in%c("ER","SYM","ARD")==FALSE){
+		cat("  Invalid model. Setting model=\"ARD\"\n\n")
+		model<-"ARD"
+	}
 	if(method=="fitDiscrete"){
 		chk<-.check.pkg("geiger")
 		if(!chk){
@@ -13,7 +22,7 @@ fitPagel<-function(tree,x,y,method="fitMk",...){
 			fitDiscrete<-function(...) NULL
 		}
 	}
-	if(method%in%c("fitDiscrete","ace","fitMK")==FALSE){
+	if(method%in%c("fitDiscrete","ace","fitMk")==FALSE){
 		cat(paste("  method = \"",method,"\" not found.\n",sep=""))
 		cat("  Defaulting to method = \"fitMk\"\n\n")
 		method<-"fitMk"
@@ -28,14 +37,23 @@ fitPagel<-function(tree,x,y,method="fitMk",...){
 	xy<-setNames(factor(paste(x,y,sep="|"),
 		levels=sapply(levels.x,paste,levels.y,sep="|")),
 		names(x))
-	## fit independent model
+	## fit independent dep.var
 	iQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,1,0,4,3,0),4,4,byrow=TRUE)
+	if(model%in%c("ER","SYM")) iQ<-make.sym(iQ)
+	k.iQ<-length(unique(as.vector(iQ)))-1
 	rownames(iQ)<-colnames(iQ)<-levels(xy)
 	fit.iQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=iQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ,...)
 		else fitMk(tree,to.matrix(xy,levels(xy)),model=iQ,...)
 	## fit dependendent model
-	dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,6,0,7,8,0),4,4,byrow=TRUE)
+	if(model=="xy")
+		dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,6,0,7,8,0),4,4,byrow=TRUE)
+	else if(model=="x")
+		dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,1,0,6,3,0),4,4,byrow=TRUE)
+	else if(model=="y")
+		dQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,5,0,4,6,0),4,4,byrow=TRUE)
+	if(model%in%c("ER","SYM")) dQ<-make.sym(dQ)
+	k.dQ<-length(unique(as.vector(dQ)))-1
 	rownames(dQ)<-colnames(dQ)<-levels(xy)
 	fit.dQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=dQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=dQ,...)
@@ -65,28 +83,37 @@ fitPagel<-function(tree,x,y,method="fitMk",...){
 		dependent.Q=dQ,
 		independent.logL=logLik(fit.iQ),
 		dependent.logL=logLik(fit.dQ),
+		independent.AIC=2*k.iQ-2*logLik(fit.iQ),
+		dependent.AIC=2*k.dQ-2*logLik(fit.dQ),
 		lik.ratio=2*(logLik(fit.dQ)-logLik(fit.iQ)),
 		P=pchisq(2*(logLik(fit.dQ)-logLik(fit.iQ)),
-		df=length(levels(x))+length(levels(y)),
+		df=k.dQ-k.iQ,
 		lower.tail=FALSE),
-		method=method)
+		method=method,
+		dep.var=dep.var,
+		model=model)
 	class(obj)<-"fitPagel"
 	obj
 }
 
 ## print method for objects of class "fitPagel"
-## written by Liam J. Revell 2014
-
+## written by Liam J. Revell 2014, 2016
 print.fitPagel<-function(x,...){
-	cat("\n  Pagel's binary character correlation test:\n")
+	cat("\nPagel's binary character correlation test:\n")
+	cat(paste("\nAssumes \"",x$model,
+		"\" substitution model for both characters\n",sep=""))
 	cat("\nIndependent model rate matrix:\n")
 	print(x$independent.Q)
-	cat("\nDependent model rate matrix:\n")
+	tmp<-if(x$dep.var=="xy") "x & y" 
+		else if(x$dep.var=="x") "x only" 
+		else if(x$dep.var=="y") "y only"
+	cat(paste("\nDependent (",tmp,") model rate matrix:\n",sep=""))
 	print(x$dependent.Q)
 	cat("\nModel fit:\n")
-	obj<-matrix(c(x$independent.logL,x$dependent.logL),2,1)
+	obj<-matrix(c(x$independent.logL,x$dependent.logL,
+		x$independent.AIC,x$dependent.AIC),2,2)
 	rownames(obj)<-c("independent","dependent")
-	colnames(obj)<-"log-likelihood"
+	colnames(obj)<-c("log-likelihood","AIC")
 	print(obj)
 	cat("\nHypothesis test result:\n")
 	cat(paste("  likelihood-ratio: ",signif(x$lik.ratio,7),"\n"))
@@ -94,8 +121,8 @@ print.fitPagel<-function(x,...){
 	cat(paste("\nModel fitting method used was",x$method,"\n\n"))
 }
 
-## function borrowed from geiger to pull the Q-matrix from a fit returned by fitDiscrete
-
+## function borrowed from geiger to pull the Q-matrix from a fit returned by 
+## fitDiscrete
 .Qmatrix.from.gfit<-function(x){
 	if(!.check.pkg("geiger")) argn<-function(...) NULL
 	lik=x$lik
@@ -124,4 +151,10 @@ print.fitPagel<-function(x,...){
 	diag(Qmat)=-rowSums(Qmat)
 	rownames(Qmat)<-colnames(Qmat)<-levels(lik)
 	Qmat
+}
+
+## make the model matrix symmetric
+make.sym<-function(X){
+	for(i in 1:nrow(X)) for(j in i:nrow(X)) X[j,i]<-X[i,j]
+	X
 }
