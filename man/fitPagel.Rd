@@ -2,13 +2,16 @@
 \alias{fitPagel}
 \title{Function to test for correlated evolution of binary traits}
 \usage{
-fitPagel(tree, x, y, method="fitMk", ...)
+fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{a vector of phenotypic values for a binary trait for the species in \code{tree}.}
 	\item{y}{a second binary character for the species in \code{tree}.}
 	\item{method}{function to use for optimization (defaults to \code{method="fitMk"}). Other options are \code{"ace"} to use the \code{\link{ace}} function in ape for optimization, or to \code{"fitDiscrete"} (if the geiger package is installed) to use geiger's \code{fitDiscrete} for optimization.}
+	\code{model}{model of evolution for the individual characters. Can be \code{model="ER"}, \code{"SYM"} (equivalent to \code{"ER"} in this case),
+	and \code{"ARD"}.}
+	\code{dep.var}{dependent variable. If \code{dep.var="xy"} than the rate of subsitution in \code{x} depends on \code{y} & vice versa. If \code{dep.var="x"} than the substitution rate in \code{x} depends on \code{y}, but not the converse. Finally, if \code{dep.var="y"} than the rate of substitution in \code{y} depends on \code{x}, but not the converse.}
 	\item{...}{optional arguments to be passed to \code{\link{fitMk}}, \code{\link{ace}}, or \code{fitDiscrete}.}
 }
 \description{
