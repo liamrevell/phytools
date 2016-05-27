@@ -91,7 +91,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		fsize*strwidth(tree$tip.label)
 	for(i in 1:n){ 
 		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]),rep(y[i],2),lwd=1,lty="dotted")
-		if(pts) points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=0.7*sqrt(lwd))
+		if(pts) points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=pts*0.7*sqrt(lwd))
 	}
 	## plot tip labels
 	font<-which(c("off","reg","b","i","bi")==ftype)-1
