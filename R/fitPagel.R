@@ -158,3 +158,68 @@ make.sym<-function(X){
 	for(i in 1:nrow(X)) for(j in i:nrow(X)) X[j,i]<-X[i,j]
 	X
 }
+
+
+
+
+plot.fitPagel<-function(x,...){
+	if(hasArg(signif)) signif<-list(...)$signif
+	else signif<-3
+	par(mfrow=c(2,1))
+	## INDEPENDENT MODEL
+	plot.new()
+	par(mar=c(1.1,2.1,3.1,2.1))
+	plot.window(xlim=c(0,2),ylim=c(0,1),asp=1)
+	mtext("a) Independent model",side=3,adj=0,line=1.2,cex=1.2)
+	## trait 1
+	text(x=0.15,y=1,"Trait 1:")
+	arrows(x0=0.4,y0=0.15,y1=0.85,lwd=2,length=0.1)
+	arrows(x0=0.45,y0=0.85,y1=0.15,lwd=2,length=0.1)
+	text(x=0.425,y=0.95,strsplit(rownames(x$dependent.Q)[1],"|")[[1]][1])
+	text(x=0.425,y=0.05,strsplit(rownames(x$dependent.Q)[3],"|")[[1]][1])
+	text(x=0.50,y=0.5,round(x$independent.Q[1,3],signif),cex=0.8,srt=90)
+	text(x=0.35,y=0.5,round(x$independent.Q[3,1],signif),cex=0.8,srt=90)
+	## trait 2
+	text(x=1.3,y=1,"Trait 2:")	
+	arrows(x0=1.55,y0=0.15,y1=0.85,lwd=2,length=0.1)
+	arrows(x0=1.60,y0=0.85,y1=0.15,lwd=2,length=0.1)
+	text(x=1.575,y=0.95,strsplit(rownames(x$dependent.Q)[1],"|")[[1]][3])
+	text(x=1.575,y=0.05,strsplit(rownames(x$dependent.Q)[2],"|")[[1]][3])
+	text(x=1.65,y=0.5,round(x$independent.Q[1,2],signif),cex=0.8,srt=90)
+	text(x=1.50,y=0.5,round(x$independent.Q[2,1],signif),cex=0.8,srt=90)
+	## DEPENDENT MODEL
+	plot.new()
+	par(mar=c(1.1,2.1,3.1,2.1))
+	plot.window(xlim=c(0,2),ylim=c(0,1),asp=1)
+	mtext("b) Dependent model",side=3,adj=0,line=1.2,cex=1.2)
+	arrows(x0=0.15,y0=0.15,y1=0.85,lwd=2,length=0.1)
+	arrows(x0=0.2,y0=0.85,y1=0.15,lwd=2,length=0.1)
+	arrows(x0=1.6,y0=0.05,x1=0.4,lwd=2,length=0.1)
+	arrows(x0=0.4,y0=0.1,x1=1.6,lwd=2,length=0.1)
+	arrows(x0=1.8,y0=0.15,y1=0.85,lwd=2,length=0.1)
+	arrows(x0=1.85,y0=0.85,y1=0.15,lwd=2,length=0.1)
+	arrows(x0=1.6,y0=0.9,x1=0.4,lwd=2,length=0.1)
+	arrows(x0=0.4,y0=0.95,x1=1.6,lwd=2,length=0.1)
+	## add states
+	text(x=0.175,y=0.95,
+		paste(strsplit(rownames(x$dependent.Q)[1],"|")[[1]][c(1,3)],
+		collapse=", "))
+	text(x=1.825,y=0.95,
+		paste(strsplit(rownames(x$dependent.Q)[2],"|")[[1]][c(1,3)],
+		collapse=", "))
+	text(x=1.825,y=0.05,
+		paste(strsplit(rownames(x$dependent.Q)[4],"|")[[1]][c(1,3)],
+		collapse=", "))
+	text(x=0.175,y=0.05,
+		paste(strsplit(rownames(x$dependent.Q)[3],"|")[[1]][c(1,3)],
+		collapse=", "))
+	## add rates
+	text(x=1,y=1,round(x$dependent.Q[1,2],signif),cex=0.8)
+	text(x=1,y=0.85,round(x$dependent.Q[2,1],signif),cex=0.8)
+	text(x=1.9,y=0.5,round(x$dependent.Q[2,4],signif),cex=0.8,srt=90)
+	text(x=1.75,y=0.5,round(x$dependent.Q[4,2],signif),cex=0.8,srt=90)
+	text(x=1,y=0,round(x$dependent.Q[4,3],signif),cex=0.8)
+	text(x=1,y=0.15,round(x$dependent.Q[3,4],signif),cex=0.8)
+	text(x=0.1,y=0.5,round(x$dependent.Q[3,1],signif),cex=0.8,srt=90)
+	text(x=0.25,y=0.5,round(x$dependent.Q[1,3],signif),cex=0.8,srt=90)
+}
