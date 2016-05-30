@@ -10,14 +10,13 @@ make.transparent(color, alpha)
 \arguments{
 	\item{trees}{an object of class \code{"multiPhylo"} or \code{"multiSimmap"}.}
 	\item{colors}{a color or a named vector of colors in which names correspond to mapped states in an object of class \code{"multiSimmap"}.}
-	\item{alpha}{transparency level for plotted trees. By default will be one divided by the number of trees.}
+	\item{alpha}{transparency level for plotted trees which is passed to internally used function, \code{make.transparent}. (\code{0} is fully transparent, which \code{1} is fully opaque.) By default will be one divided by the number of trees.}
 	\item{method}{plotting method to be used internally. Can be \code{"plotTree"} or \code{"plotSimmap"}.}
 	\item{fix.depth}{logical value indicating whether or not to plot trees with a fixed depth or to permit plotted trees to have different depths.}
 	\item{use.edge.length}{logical value indicating whether to use the edge lengths of the input tree. Defaults to \code{use.edge.length=TRUE} unless any input tree edge lengths are \code{NULL}.}
 	\item{compute.consensus}{logical value indicating whether or not to use the tip order from a consensus tree. (Defaults to \code{compute.consensus=FALSE}.}
 	\item{...}{arguments to be passed to \code{plotTree} or \code{plotSimmap}.}
 	\item{color}{in \code{make.transparent}, the color to render transparent.}
-	\item{alpha}{transparency level for \code{make.transparent}. (\code{0} is fully transparent, which \code{1} is fully opaque.}
 }
 \description{
 	Functions plots a posterior sample of trees, including with mapped discrete characters.
