@@ -159,67 +159,150 @@ make.sym<-function(X){
 	X
 }
 
-
-
-
+## S3 plot method for objects of class "fitPagel
+## written by Liam J. Revell 2016
 plot.fitPagel<-function(x,...){
 	if(hasArg(signif)) signif<-list(...)$signif
 	else signif<-3
+	if(hasArg(main)) main<-list(...)$main
+	else main<-NULL
+	if(!is.null(main)&&length(main)==1) main<-rep(main,2)
+	if(hasArg(cex.main)) cex.main<-list(...)$cex.main
+	else cex.main<-1.2
+	if(hasArg(cex.sub)) cex.sub<-list(...)$cex.sub
+	else cex.sub<-1
+	if(hasArg(cex.traits)) cex.traits<-list(...)$cex.traits
+	else cex.traits<-0.9
+	if(hasArg(cex.rates)) cex.rates<-list(...)$cex.rates
+	else cex.rates<-0.8
+	if(hasArg(lwd.by.rate)) lwd.by.rate<-list(...)$lwd.by.rate
+	else lwd.by.rate<-FALSE
+	if(lwd.by.rate){
+		rates<-c(x$independent.Q[x$independent.Q>0],x$dependent.Q[x$dependent.Q>0])
+		LWD.ind<-round(x$independent.Q/min(rates))
+		LWD.dep<-round(x$dependent.Q/min(rates))
+		if(hasArg(max.lwd)) max.lwd<-list(...)$max.lwd
+		else max.lwd<-10
+		LWD.ind[LWD.ind>max.lwd]<-max.lwd
+		LWD.dep[LWD.dep>max.lwd]<-max.lwd
+	} else LWD.ind<-LWD.dep<-matrix(2,nrow(x$dependent.Q),
+		ncol(x$dependent.Q))
 	par(mfrow=c(2,1))
 	## INDEPENDENT MODEL
 	plot.new()
 	par(mar=c(1.1,2.1,3.1,2.1))
 	plot.window(xlim=c(0,2),ylim=c(0,1),asp=1)
-	mtext("a) Independent model",side=3,adj=0,line=1.2,cex=1.2)
+	mtext(if(!is.null(main)) main[1] else "a) Independent model",
+		side=3,adj=0,line=1.2,cex=cex.main)
 	## trait 1
-	text(x=0.15,y=1,"Trait 1:")
-	arrows(x0=0.4,y0=0.15,y1=0.85,lwd=2,length=0.1)
-	arrows(x0=0.45,y0=0.85,y1=0.15,lwd=2,length=0.1)
-	text(x=0.425,y=0.95,strsplit(rownames(x$dependent.Q)[1],"|")[[1]][1])
-	text(x=0.425,y=0.05,strsplit(rownames(x$dependent.Q)[3],"|")[[1]][1])
-	text(x=0.50,y=0.5,round(x$independent.Q[1,3],signif),cex=0.8,srt=90)
-	text(x=0.35,y=0.5,round(x$independent.Q[3,1],signif),cex=0.8,srt=90)
+	text(x=0.15,y=1,"Trait 1:",cex=cex.sub)
+	arrows(x0=0.5,y0=0.15,x1=0.5,y1=0.85,
+		lwd=max(LWD.ind[3,1],1),
+		lty=if(LWD.ind[3,1]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=0.55,y0=0.85,x1=0.55,y1=0.15,
+		lwd=max(LWD.ind[1,3],1),
+		lty=if(LWD.ind[1,3]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	text(x=0.525,y=0.95,namesplit(rownames(x$dependent.Q)[1])[1],
+		cex=cex.traits)
+	text(x=0.525,y=0.05,namesplit(rownames(x$dependent.Q)[3])[1],
+		cex=cex.traits)
+	text(x=0.60,y=0.5,round(x$independent.Q[1,3],signif),cex=cex.rates,srt=90)
+	text(x=0.45,y=0.5,round(x$independent.Q[3,1],signif),cex=cex.rates,srt=90)
 	## trait 2
-	text(x=1.3,y=1,"Trait 2:")	
-	arrows(x0=1.55,y0=0.15,y1=0.85,lwd=2,length=0.1)
-	arrows(x0=1.60,y0=0.85,y1=0.15,lwd=2,length=0.1)
-	text(x=1.575,y=0.95,strsplit(rownames(x$dependent.Q)[1],"|")[[1]][3])
-	text(x=1.575,y=0.05,strsplit(rownames(x$dependent.Q)[2],"|")[[1]][3])
-	text(x=1.65,y=0.5,round(x$independent.Q[1,2],signif),cex=0.8,srt=90)
-	text(x=1.50,y=0.5,round(x$independent.Q[2,1],signif),cex=0.8,srt=90)
+	text(x=1.3,y=1,"Trait 2:",cex=cex.sub)	
+	arrows(x0=1.65,y0=0.15,x1=1.65,y1=0.85,
+		lwd=max(LWD.ind[2,1],1),
+		lty=if(LWD.ind[2,1]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=1.70,y0=0.85,x1=1.70,y1=0.15,
+		lwd=max(LWD.ind[1,2],1),
+		lty=if(LWD.ind[1,2]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	text(x=1.675,y=0.95,namesplit(rownames(x$dependent.Q)[1])[2],
+		cex=cex.traits)
+	text(x=1.675,y=0.05,namesplit(rownames(x$dependent.Q)[2])[2],
+		cex=cex.traits)
+	text(x=1.75,y=0.5,round(x$independent.Q[1,2],signif),cex=cex.rates,srt=90)
+	text(x=1.60,y=0.5,round(x$independent.Q[2,1],signif),cex=cex.rates,srt=90)
 	## DEPENDENT MODEL
+	collapse<-
+		if(any(sapply(strsplit(rownames(x$dependent.Q),""),length)>6)) 
+		",\n" else ", "
 	plot.new()
 	par(mar=c(1.1,2.1,3.1,2.1))
 	plot.window(xlim=c(0,2),ylim=c(0,1),asp=1)
-	mtext("b) Dependent model",side=3,adj=0,line=1.2,cex=1.2)
-	arrows(x0=0.15,y0=0.15,y1=0.85,lwd=2,length=0.1)
-	arrows(x0=0.2,y0=0.85,y1=0.15,lwd=2,length=0.1)
-	arrows(x0=1.6,y0=0.05,x1=0.4,lwd=2,length=0.1)
-	arrows(x0=0.4,y0=0.1,x1=1.6,lwd=2,length=0.1)
-	arrows(x0=1.8,y0=0.15,y1=0.85,lwd=2,length=0.1)
-	arrows(x0=1.85,y0=0.85,y1=0.15,lwd=2,length=0.1)
-	arrows(x0=1.6,y0=0.9,x1=0.4,lwd=2,length=0.1)
-	arrows(x0=0.4,y0=0.95,x1=1.6,lwd=2,length=0.1)
+	mtext(if(!is.null(main)) main[2] else "b) Dependent model",
+		side=3,adj=0,line=1.2,cex=cex.main)
+	text(x=0.15,y=0.95,"Trait 1,\nTrait 2:",cex=cex.sub)
+	arrows(x0=0.5,y0=0.15,x1=0.5,y1=0.85,
+		lwd=max(LWD.dep[3,1],1),
+		lty=if(LWD.dep[3,1]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=0.55,y0=0.85,x1=0.55,y1=0.15,
+		lwd=max(LWD.dep[1,3],1),
+		lty=if(LWD.dep[1,3]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=1.45,y0=0.05,x1=0.75,y1=0.05,
+		lwd=max(LWD.dep[4,3],1),
+		lty=if(LWD.dep[4,3]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=0.75,y0=0.1,x1=1.45,y1=0.1,
+		lwd=max(LWD.dep[3,4],1),
+		lty=if(LWD.dep[3,4]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=1.65,y0=0.15,x1=1.65,y1=0.85,
+		lwd=max(LWD.dep[4,2],1),
+		lty=if(LWD.dep[4,2]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=1.7,y0=0.85,x1=1.7,y1=0.15,
+		lwd=max(LWD.dep[2,4],1),
+		lty=if(LWD.dep[2,4]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=1.45,y0=0.9,x1=0.75,y1=0.9,
+		lwd=max(LWD.dep[2,1],1),
+		lty=if(LWD.dep[2,1]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
+	arrows(x0=0.75,y0=0.95,x1=1.45,y1=0.95,
+		lwd=max(LWD.dep[1,2],1),
+		lty=if(LWD.dep[1,2]==0) "dashed" else "solid",
+		length=0.15,lend=3,angle=20)
 	## add states
-	text(x=0.175,y=0.95,
-		paste(strsplit(rownames(x$dependent.Q)[1],"|")[[1]][c(1,3)],
-		collapse=", "))
-	text(x=1.825,y=0.95,
-		paste(strsplit(rownames(x$dependent.Q)[2],"|")[[1]][c(1,3)],
-		collapse=", "))
-	text(x=1.825,y=0.05,
-		paste(strsplit(rownames(x$dependent.Q)[4],"|")[[1]][c(1,3)],
-		collapse=", "))
-	text(x=0.175,y=0.05,
-		paste(strsplit(rownames(x$dependent.Q)[3],"|")[[1]][c(1,3)],
-		collapse=", "))
+	text(x=0.525,y=0.95,
+		paste(namesplit(rownames(x$dependent.Q)[1]),
+		collapse=collapse),cex=cex.traits)
+	text(x=1.675,y=0.95,
+		paste(namesplit(rownames(x$dependent.Q)[2]),
+		collapse=collapse),cex=cex.traits)
+	text(x=1.675,y=0.05,
+		paste(namesplit(rownames(x$dependent.Q)[4]),
+		collapse=collapse),cex=cex.traits)
+	text(x=0.525,y=0.05,
+		paste(namesplit(rownames(x$dependent.Q)[3]),
+		collapse=collapse),cex=cex.traits)
 	## add rates
-	text(x=1,y=1,round(x$dependent.Q[1,2],signif),cex=0.8)
-	text(x=1,y=0.85,round(x$dependent.Q[2,1],signif),cex=0.8)
-	text(x=1.9,y=0.5,round(x$dependent.Q[2,4],signif),cex=0.8,srt=90)
-	text(x=1.75,y=0.5,round(x$dependent.Q[4,2],signif),cex=0.8,srt=90)
-	text(x=1,y=0,round(x$dependent.Q[4,3],signif),cex=0.8)
-	text(x=1,y=0.15,round(x$dependent.Q[3,4],signif),cex=0.8)
-	text(x=0.1,y=0.5,round(x$dependent.Q[3,1],signif),cex=0.8,srt=90)
-	text(x=0.25,y=0.5,round(x$dependent.Q[1,3],signif),cex=0.8,srt=90)
+	text(x=1.1,y=1,round(x$dependent.Q[1,2],signif),
+		cex=cex.rates)
+	text(x=1.1,y=0.85,round(x$dependent.Q[2,1],signif),
+		cex=cex.rates)
+	text(x=1.6,y=0.5,round(x$dependent.Q[4,2],signif),
+		cex=cex.rates,srt=90)
+	text(x=1.75,y=0.5,round(x$dependent.Q[2,4],signif),
+		cex=cex.rates,srt=90)
+	text(x=1.1,y=0,round(x$dependent.Q[4,3],signif),
+		cex=cex.rates)
+	text(x=1.1,y=0.15,round(x$dependent.Q[3,4],signif),
+		cex=cex.rates)
+	text(x=0.45,y=0.5,round(x$dependent.Q[3,1],signif),
+		cex=cex.rates,srt=90)
+	text(x=0.6,y=0.5,round(x$dependent.Q[1,3],signif),
+		cex=cex.rates,srt=90)
+}
+
+namesplit<-function(x){
+	tmp<-strsplit(x,"")[[1]]
+	ii<-which(tmp=="|")
+	c(paste(tmp[1:(ii-1)],collapse=""),
+		paste(tmp[(ii+1):length(tmp)],collapse=""))
 }
