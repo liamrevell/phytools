@@ -52,7 +52,7 @@ Description: Package contains various functions for phylogenetic analysis.
 	and analyses that phylogenetic biologists may find useful for
 	their research.
 License: GPL (>= 2)
-URL: http://www.phytools.org
+URL: http://github.com/liamrevell/phytools
 Packaged: 2016-5-29 12:00:00 EST
 Repository: 
 Date/Publication: 2016-5-29 12:00:00 EST
