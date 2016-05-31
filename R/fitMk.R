@@ -167,6 +167,8 @@ plot.fitMk<-function(x,...){
 	else tol<-1e-6
 	if(hasArg(mar)) mar<-list(...)$mar
 	else mar<-c(1.1,1.1,3.1,1.1)
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-1
 	Q<-matrix(NA,length(x$states),length(x$states))
     	Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
@@ -210,7 +212,7 @@ plot.fitMk<-function(x,...){
 						round(Q[i,j],signif),cex=cex.rates,
 						srt=atan(dy/dx)*180/pi)
 				arrows(s[1],s[2],e[1],e[2],length=0.05,
-					code=if(isSymmetric(Q)) 3 else 2)
+					code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
 			}
 		}
 	text(v.x,v.y,x$states,cex=cex.traits,
