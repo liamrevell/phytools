@@ -1,5 +1,6 @@
 \name{fitMk}
 \alias{fitMk}
+\alias{plot.fitMk}
 \title{Fits Mk model}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
