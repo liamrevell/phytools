@@ -74,6 +74,7 @@ S3method(print, phylo.to.map)
 S3method(as.phylo, simmap)
 S3method(as.multiPhylo, multiSimmap)
 S3method(plot, fitPagel)
+S3method(plot, fitMk)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
