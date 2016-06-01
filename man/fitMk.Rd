@@ -1,10 +1,12 @@
 \name{fitMk}
 \alias{fitMk}
 \alias{plot.fitMk}
+\alias{plot.gfit}
 \title{Fits Mk model}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 \method{plot}{fitMk}(x, ...)
+\method{plot}{gfit}(x, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
@@ -15,6 +17,8 @@ fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 }
 \description{
 	This function fits a so-called M\emph{k} model for discrete character evolution. It is primarily designed to be used inside of \code{make.simmap}.
+	
+	Two \code{plot} methods are available. \code{plot.fitMk} plots an object of class \code{"fitMk"} returned by \code{fitMk}. \code{plot.gfit} plots an object of class \code{"gfit"} from geiger's \code{fitDiscrete} function. Both plots portray the fitted model using a graph of arrows connecting states.
 }
 \value{
 	An object of class \code{"fitMk"}. In the case of \code{plot.fitMk}, a plotted M\emph{k} model.

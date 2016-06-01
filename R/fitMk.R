@@ -219,3 +219,21 @@ plot.fitMk<-function(x,...){
 	text(v.x,v.y,x$states,cex=cex.traits,
 		col=make.transparent("black",0.7))
 }
+
+## S3 plot method for objects resulting from fitDiscrete
+plot.gfit<-function(x,...){
+	if("mkn"%in%class(x$lik)==FALSE){
+		stop("Sorry. No plot method presently available for objects of this type.")
+	} else {
+		obj<-list()
+		QQ<-.Qmatrix.from.gfit(x)
+		obj$states<-colnames(QQ)
+		m<-length(obj$states)
+		obj$index.matrix<-matrix(NA,m,m)
+		k<-m*(m-1)
+		obj$index.matrix[col(obj$index.matrix)!=row(obj$index.matrix)]<-1:k
+		obj$rates<-QQ[sapply(1:k,function(x,y) which(x==y),obj$index.matrix)]
+		class(obj)<-"fitMk"
+		plot(obj,...)
+	}
+}
