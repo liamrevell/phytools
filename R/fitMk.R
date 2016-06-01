@@ -181,6 +181,7 @@ plot.fitMk<-function(x,...){
 	nstates<-length(x$states)
 	step<-360/nstates
 	angles<-seq(0,360-step,by=step)/180*pi
+	if(nstates==2) angles<-angles+pi/2
 	v.x<-cos(angles)
 	v.y<-sin(angles)
 	for(i in 1:nstates) for(j in 1:nstates)
