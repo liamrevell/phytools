@@ -160,7 +160,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	} else if(type=="direct"){
 		phylomorphospace(tree,coords[,2:1],add=TRUE,label="horizontal",node.size=c(0,psize),lwd=lwd[2],
 			control=list(col.node=setNames(rep(colors[2],max(tree$edge)),1:max(tree$edge)),
-			col.edge=setNames(rep(colors[1],nrow(tree$edge)),tree$edge[,2])))
+			col.edge=setNames(rep(colors[1],nrow(tree$edge)),tree$edge[,2])),
+			ftype=c("off","reg","b","i","bi")[ftype+1],fsize=fsize)
 	}
 }
 
