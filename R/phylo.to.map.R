@@ -135,7 +135,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 					paste(" ",sub("_"," ",cw$tip.label[i]),sep=""),
 						pos=4,offset=c(0,1),
 					srt=-90,cex=fsize,font=ftype)
-				if(pts) points(x[i],Y[which(cw$edge[,2]==i),2],pch=pch,
+				if(pts) points(x[i],Y[which(cw$edge[,2]==i),2],pch=21,
 					bg=colors[2],
 					cex=0.6*psize)
 			}
@@ -179,7 +179,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 					paste(" ",sub("_"," ",cw$tip.label[i]),sep=""),
 					pos=4,offset=0.1,cex=fsize,font=ftype)
 				if(pts) points(X[which(cw$edge[,2]==i),2],y[i],
-					pch=pch,bg=colors[2],cex=0.6*psize)
+					pch=21,bg=colors[2],cex=0.6*psize)
 			}
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
