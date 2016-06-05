@@ -47,6 +47,10 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	else split<-c(0.4,0.6)
 	if(hasArg(psize)) psize<-list(...)$psize
 	else psize<-1.0
+	if(hasArg(cex.points)){ 
+		cex.points<-list(...)$cex.points
+		if(length(cex.points)==1) cex.points<-c(0.6*cex.points,cex.points)
+	} else cex.points<-c(0.6*psize,psize)
 	if(hasArg(mar)) mar<-list(...)$mar
 	else mar<-rep(0,4)
 	if(hasArg(asp)) asp<-list(...)$asp
@@ -64,6 +68,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	else direction<-"downwards"
 	if(hasArg(pch)) pch<-list(...)$pch
 	else pch<-21
+	if(length(pch)==1) pch<-rep(pch,2)
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-c(2,1)
 	if(length(lwd)==1) lwd<-rep(lwd,2)
@@ -121,7 +126,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 				c(Y[which(cw$edge[,2]==i),2]-
 					if(from.tip) 0 else sh[i],coords[i,2]),
 				col=colors[1],lty=lty,lwd=lwd[2])
-			points(coords,pch=pch,cex=psize,bg=colors[2])
+			points(coords,pch=pch,cex=cex.points[2],bg=colors[2])
 			# plot vertical edges
 			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],
 				lwd=lwd[1],lend=2)
@@ -137,7 +142,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 					srt=-90,cex=fsize,font=ftype)
 				if(pts) points(x[i],Y[which(cw$edge[,2]==i),2],pch=21,
 					bg=colors[2],
-					cex=0.6*psize)
+					cex=cex.points[1])
 			}
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
@@ -170,7 +175,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			for(i in 1:n) lines(c(X[which(cw$edge[,2]==i),2]+
 				if(from.tip) 0 else sh[i],coords[i,1]),
 				c(y[i],coords[i,2]),col=colors[1],lty=lty,lwd=lwd[2])
-			points(coords,pch=pch,cex=psize,bg=colors[2])
+			points(coords,pch=pch,cex=cex.points[2],bg=colors[2])
 			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2)
 			for(i in 1:cw$Nnode+n) lines(X[which(cw$edge[,1]==i),1],
 				range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd[1],lend=2)
@@ -179,7 +184,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 					paste(" ",sub("_"," ",cw$tip.label[i]),sep=""),
 					pos=4,offset=0.1,cex=fsize,font=ftype)
 				if(pts) points(X[which(cw$edge[,2]==i),2],y[i],
-					pch=21,bg=colors[2],cex=0.6*psize)
+					pch=21,bg=colors[2],cex=cex.points[1])
 			}
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
