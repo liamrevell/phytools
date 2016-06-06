@@ -1420,6 +1420,7 @@ multiC<-function(tree,internal=FALSE){
 		class(mtree)<-"phylo"
 		mC[[i]]<-if(internal) vcvPhylo(mtree,internal=TRUE) else vcv.phylo(mtree)
 	}
+	names(mC)<-colnames(tree$mapped.edge)
 	mC
 }
 
