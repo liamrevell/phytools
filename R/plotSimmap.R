@@ -286,7 +286,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	}
 	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE)
 	else if(shape=="circle") nulo<-mapply(draw.circle,x=x,y=y,col=colors,
-		MoreArgs=list(nv=200,radius=w/2,col=colors))
+		MoreArgs=list(nv=200,radius=w/2))
 	else stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
 }
 
