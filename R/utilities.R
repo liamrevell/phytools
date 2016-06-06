@@ -1405,19 +1405,22 @@ getDescendants<-function(tree,node,curr=NULL){
 }
 
 # function computes vcv for each state, and stores in array
-# written by Liam J. Revell 2011/2012
-multiC<-function(tree){
+# written by Liam J. Revell 2011, 2012, 2016
+multiC<-function(tree,internal=FALSE){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	n<-length(tree$tip.label)
+	if(!inherits(tree,"simmap")) stop("tree should be an object of class \"simmap\".")
 	m<-ncol(tree$mapped.edge)
 	# compute separate C for each state
 	mC<-list()
 	for(i in 1:m){
-		mtree<-list(edge=tree$edge,Nnode=tree$Nnode,tip.label=tree$tip.label,edge.length=tree$mapped.edge[,i])
+		mtree<-list(edge=tree$edge,
+			Nnode=tree$Nnode,
+			tip.label=tree$tip.label,
+			edge.length=tree$mapped.edge[,i])
 		class(mtree)<-"phylo"
-		mC[[i]]<-vcv.phylo(mtree)
+		mC[[i]]<-if(internal) vcvPhylo(mtree,internal=TRUE) else vcv.phylo(mtree)
 	}
-	return(mC)
+	mC
 }
 
 # function pastes subtree onto tip
