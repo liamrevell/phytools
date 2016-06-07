@@ -1,5 +1,5 @@
 # function plots reconstructed values for ancestral characters along the edges of the tree
-# written by Liam J. Revell 2012, 2013, 2014, 2015
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
 contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	lims=NULL,outline=TRUE,sig=3,type="phylogram",direction="rightwards",
 	plot=TRUE,...){
@@ -53,6 +53,7 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	if(is.null(lims)) lims<-c(min(y),max(y))
 	trans<-0:1000/1000*(lims[2]-lims[1])+lims[1]
 	names(trans)<-0:1000
+	tree$maps<-vector(mode="list",length=nrow(tree$edge))
 	for(i in 1:nrow(tree$edge)){
 		XX<-cbind(c(H[i,1],steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))]),
 			c(steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))],H[i,2]))-H[i,1]

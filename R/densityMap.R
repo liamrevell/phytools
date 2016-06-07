@@ -38,6 +38,7 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 	}	
 	H<-nodeHeights(tree)
 	message("sorry - this might take a while; please be patient")
+	tree$maps<-vector(mode="list",length=nrow(tree$edge))
 	for(i in 1:nrow(tree$edge)){
 		YY<-cbind(c(H[i,1],steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))]),
 			c(steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))],H[i,2]))-H[i,1]
