@@ -1,9 +1,10 @@
-ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE){
+ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 	D<-Reduce("+",lapply(trees,function(x,t) cophenetic(x)[t,t], 
 		t=trees[[1]]$tip.label))/length(trees)
 	if(is.null(start)) start<-NJ(D)
-	rt<-all(sapply(trees,is.ultrametric))
-	if(rt&&!is.rooted(start)) start<-midpoint.root(start)
+	if(hasArg(ultrametric)) rt<-list(...)$ultrametric ## should the consensus tree be ultrametric
+	else rt<-all(sapply(trees,is.ultrametric))
+	if(rt&&!is.rooted(start)) start<-midpoint(start)
 	curr<-nnls.tree(D,tree=start,rooted=rt,trace=0)
 	Q<-Inf
 	Qp<-attr(curr,"RSS")

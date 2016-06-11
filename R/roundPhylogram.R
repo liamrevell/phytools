@@ -1,11 +1,17 @@
 ## function plots a round phylogram
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2016
 
-roundPhylogram<-function(tree,fsize=1.0,ftype="reg",lwd=2,mar=NULL,offset=NULL,direction="rightwards",type="phylogram",xlim=NULL,ylim=NULL){
+roundPhylogram<-function(tree,fsize=1.0,ftype="reg",lwd=2,mar=NULL,offset=NULL,
+	direction="rightwards",type="phylogram",xlim=NULL,ylim=NULL,...){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
-		tt<-lapply(tree,roundPhylogram,fsize=fsize,ftype=ftype,lwd=lwd,mar=mar,offset=offset, direction=direction,type=type,xlim=xlim,ylim=ylim)
+		tt<-lapply(tree,roundPhylogram,fsize=fsize,ftype=ftype,lwd=lwd,mar=mar,offset=offset, 
+			direction=direction,type=type,xlim=xlim,ylim=ylim)
 	} else {
+		if(hasArg(lty)) lty<-list(...)$lty
+		else lty<-"solid"
+		if(length(lty)!=nrow(tree$edge)) lty<-rep(lty,ceiling(nrow(tree$edge)/length(lty)))
+		if(length(lwd)!=nrow(tree$edge)) lwd<-rep(lwd,ceiling(nrow(tree$edge)/length(lwd)))
 		if(type=="cladogram"||is.null(tree$edge.length)) tree<-compute.brlen(tree)
 		ftype<-which(c("off","reg","b","i","bi")==ftype)-1
 		if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -17,6 +23,9 @@ roundPhylogram<-function(tree,fsize=1.0,ftype="reg",lwd=2,mar=NULL,offset=NULL,d
 		offsetFudge<-1.37
 		# reorder cladewise to assign tip positions
 		cw<-reorder(tree,"cladewise")
+		io<-reorder(tree,index.only=TRUE)
+		lwd<-lwd[io]
+		lty<-lty[io]
 		y<-vector(length=n+cw$Nnode)
 		y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 		# reorder pruningwise for post-order traversal
@@ -51,7 +60,7 @@ roundPhylogram<-function(tree,fsize=1.0,ftype="reg",lwd=2,mar=NULL,offset=NULL,d
 			xx<-X[i,2]
 			yy<-y[cw$edge[i,2]]
 			a<-(xx-c)/(yy-b)^2
-			curve(d*sqrt((x-c)/a)+b,from=X[i,1],to=X[i,2],add=TRUE,lwd=lwd)
+			curve(d*sqrt((x-c)/a)+b,from=X[i,1],to=X[i,2],add=TRUE,lwd=lwd[i],lty=lty[i])
 		}
 		# plot tip labels
 		for(i in 1:n)
