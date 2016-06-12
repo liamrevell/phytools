@@ -2,10 +2,10 @@ ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 	D<-Reduce("+",lapply(trees,function(x,t) cophenetic(x)[t,t], 
 		t=trees[[1]]$tip.label))/length(trees)
 	if(is.null(start)) start<-NJ(D)
-	if(hasArg(ultrametric)) rt<-list(...)$ultrametric ## should the consensus tree be ultrametric
-	else rt<-all(sapply(trees,is.ultrametric))
-	if(rt&&!is.rooted(start)) start<-midpoint(start)
-	curr<-nnls.tree(D,tree=start,rooted=rt,trace=0)
+	if(hasArg(ultrametric)) ultrametric<-list(...)$ultrametric ## should the consensus tree be ultrametric
+	else ultrametric<-all(sapply(trees,is.ultrametric))
+	if(ultrametric&&!is.rooted(start)) start<-midpoint(start)
+	curr<-nnls.tree(D,tree=start,rooted=ultrametric,trace=0)
 	Q<-Inf
 	Qp<-attr(curr,"RSS")
 	if(is.null(Qp)) Qp<-rss(D,curr)
@@ -16,7 +16,7 @@ ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 		curr<-list(curr)
 		class(curr)<-"multiPhylo"
 		NNIs<-c(NNIs,curr)
-		NNIs<-lapply(NNIs,nnls.tree,dm=D,rooted=rt,trace=0)
+		NNIs<-lapply(NNIs,nnls.tree,dm=D,rooted=ultrametric,trace=0)
 		qs<-sapply(NNIs,rss,D=D)
 		ii<-which(qs==min(qs))[1]
 		if(!quiet) message(paste("Best Q =",qs[ii]))
