@@ -6,27 +6,33 @@ ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 	else ultrametric<-all(sapply(trees,is.ultrametric))
 	if(ultrametric&&!is.rooted(start)) start<-midpoint(start)
 	curr<-nnls.tree(D,tree=start,rooted=ultrametric,trace=0)
-	Q<-Inf
-	Qp<-attr(curr,"RSS")
-	if(is.null(Qp)) Qp<-rss(D,curr)
-	ct<-0
-	while((Q-Qp)>tol){
-		Q<-Qp
-		NNIs<-.uncompressTipLabel(nni(curr))
-		curr<-list(curr)
-		class(curr)<-"multiPhylo"
-		NNIs<-c(NNIs,curr)
-		NNIs<-lapply(NNIs,nnls.tree,dm=D,rooted=ultrametric,trace=0)
-		qs<-sapply(NNIs,rss,D=D)
-		ii<-which(qs==min(qs))[1]
-		if(!quiet) message(paste("Best Q =",qs[ii]))
-		Qp<-qs[ii]
-		curr<-NNIs[[ii]]
-		ct<-ct+1
-	}
-	if(!quiet) 
-		message(paste("Solution found after",ct,
-			"set of nearest neighbor interchanges."))
+	if(hasArg(optNNI)) optNNI<-list(...)$optNNI
+	else optNNI<-TRUE
+	if(optNNI){
+		Q<-Inf
+		Qp<-attr(curr,"RSS")
+		if(is.null(Qp)) Qp<-rss(D,curr)
+		ct<-0
+		while((Q-Qp)>tol){
+			Q<-Qp
+			NNIs<-.uncompressTipLabel(nni(curr))
+			curr<-list(curr)
+			class(curr)<-"multiPhylo"
+			NNIs<-c(NNIs,curr)
+			NNIs<-lapply(NNIs,nnls.tree,dm=D,rooted=ultrametric,trace=0)
+			qs<-sapply(NNIs,rss,D=D)
+			ii<-which(qs==min(qs))[1]
+			if(!quiet) message(paste("Best Q =",qs[ii]))
+			Qp<-qs[ii]
+			curr<-NNIs[[ii]]
+			ct<-ct+1
+		}
+		if(!quiet) 
+			message(paste("Solution found after",ct,
+				"set of nearest neighbor interchanges."))
+	} else if(!quiet)
+		message(paste("No optimization of topology performed." 
+			"Returning start tree with LS edge lengths."))
 	curr
 }
 
@@ -120,4 +126,12 @@ qpd<-function(t1,t2){
 	P2<-lapply(t2,function(x) cophenetic(x)[tips,tips])
 	foo<-function(x,y) sqrt(sum((x-y)^2/2))
 	sapply(P2,function(x,y) sapply(y,foo,y=x),y=P1)
+}
+
+TREEDIST<-function(t1,t2,method){
+	obj<-if(method=="symmetric.difference") RF.dist(t1,t2)
+		else if(method=="path.difference") path.dist(t1,t2)
+		else if(method=="weighted.path.difference") path.dist(t1,t2,use.weight=TRUE)
+		else if(method=="branch.score.difference") KF.dist(t1,t2)
+	obj
 }
