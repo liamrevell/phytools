@@ -31,7 +31,7 @@ ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 			message(paste("Solution found after",ct,
 				"set of nearest neighbor interchanges."))
 	} else if(!quiet)
-		message(paste("No optimization of topology performed." 
+		message(paste("No optimization of topology performed.", 
 			"Returning start tree with LS edge lengths."))
 	curr
 }
