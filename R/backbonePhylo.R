@@ -167,6 +167,16 @@ plot.backbonePhylo<-function(x,...){
 		stop("x not an object of class \"backbonePhylo\"")
 	if(hasArg(vscale)) vscale<-list(...)$vscale
 	else vscale<-1
+	if(hasArg(col)) col<-list(...)$col
+	else col<-"grey"
+	if(length(col)!=Ntip(x)){ 
+		if(!is.null(names(col))){ 
+			tmp<-setNames(rep("grey",Ntip(x)),sapply(x$tip.clade,function(x) x$label))
+			tmp[names(col)]<-col
+			col<-tmp
+		} else col<-setNames(rep(col[1],Ntip(x)),sapply(x$tip.clade,function(x) x$label))
+	}
+	if(is.null(names(col))) names(col)<-sapply(x$tip.clade,function(x) x$label)
 	x<-scaleN(x,vscale)
 	tt<-backbone.toPhylo(x)
 	n<-sum(sapply(x$tip.clade,function(x) x$N))
@@ -212,7 +222,7 @@ plot.backbonePhylo<-function(x,...){
 			0.5,y[cw$edge[which(cw$edge[,2]==i),2]]-
 			cw$tip.clade[[i]]$N/2+0.5)
 		if(yy[2]<yy[3]) yy[2]<-yy[3]<-yy[1]
-		polygon(x=xx,y=yy,col="grey",lwd=2)
+		polygon(x=xx,y=yy,col=col[cw$tip.clade[[i]]$label],lwd=2)
 	}
 	for(i in 1:length(cw$tip.clade)) 
 		text(X[which(cw$edge[,2]==i),2],y[i],cw$tip.clade[[i]]$label,pos=4,
