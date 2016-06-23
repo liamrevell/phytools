@@ -34,7 +34,7 @@ phylo.toBackbone<-function(x,trans=NULL,...){
 			flush.console()
 			clab<-readLines(n=1)
 			if(obj$where<=Ntip(x)){
-				if(length(clab)==0) clab<-x$tip.label[obj$where]
+				if(clab="") clab<-x$tip.label[obj$where]
 				tlab<-x$tip.label[obj$where]
 				depth<-obj$pos
 				N<-if(inherits(x,"backbonePhylo")) 
@@ -49,7 +49,7 @@ phylo.toBackbone<-function(x,trans=NULL,...){
 					x$tip.label[obj$where]<-clab
 				}
 			} else {
-				if(length(clab)==0) clab<-x$node.label[obj$where-Ntip(x)]
+				if(clab=="") clab<-x$node.label[obj$where-Ntip(x)]
 				tlab<-x$node.label[obj$where-Ntip(x)]
 				split<-list(node=obj$where,
 					bp=x$edge.length[which(x$edge[,2]==obj$where)]-obj$pos)
