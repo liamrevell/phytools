@@ -122,17 +122,23 @@ edgeProbs<-function(trees){
 }
 
 ## get a position in the tree interactively
-## written by Liam J. Revell 2015
-get.treepos<-function(message=TRUE){
+## written by Liam J. Revell 2015, 2016
+get.treepos<-function(message=TRUE,...){
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(obj$type=="phylogram"&&obj$direction=="rightwards"){
 		if(message){ 
 			cat("Click on the tree position you want to capture...\n")
 			flush.console()
 		}
-		x<-unlist(locator(1)) 	
-		y<-x[2] 	
-		x<-x[1]
+		if(hasArg(x)) x<-list(...)$x
+		else x<-NULL
+		if(hasArg(y)) y<-list(...)$y
+		else y<-NULL
+		if(is.null(x)||is.null(y)){
+			x<-unlist(locator(1)) 	
+			y<-x[2] 	
+			x<-x[1]
+		}
 		d<-pos<-c()
 		for(i in 1:nrow(obj$edge)){
 			x0<-obj$xx[obj$edge[i,]]

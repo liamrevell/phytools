@@ -33,7 +33,8 @@ collapseTree<-function(tree,...){
 	circles(x=lastPP$xx[1:tree$Nnode+Ntip(tree)],
 		y=lastPP$yy[1:tree$Nnode+Ntip(tree)],
 		r=0.007*(par()$usr[2]-par()$usr[1]))
-	check<-textbox(x=c(par()$usr[1],par()$usr[1]+0.1*(par()$usr[2]-par()$usr[1])),
+	check<-textbox(x=c(par()$usr[1],par()$usr[1]+
+		0.1*(par()$usr[2]-par()$usr[1])),
 		y=par()$usr[4],c("click to stop"),justify="c")
 	dev.flush()
 	x<-unlist(locator(1))
