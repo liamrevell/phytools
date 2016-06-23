@@ -32,7 +32,7 @@ phylo.toBackbone<-function(x,trans=NULL,...){
 			obj<-get.treepos(message=FALSE,x=xy[1],y=xy[2])
 			cat("   Enter name of clade (or press ENTER). > ")
 			flush.console()
-			clab<-readline()
+			clab<-readLines(n=1)
 			if(obj$where<=Ntip(x)){
 				if(length(clab)==0) clab<-x$tip.label[obj$where]
 				tlab<-x$tip.label[obj$where]
