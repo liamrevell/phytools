@@ -79,7 +79,7 @@ phylo.toBackbone<-function(x,trans=NULL,...){
 				x<-phylo.toBackbone(x,trans)
 			}
 			if(inherits(x,"backbonePhylo")) plot(x,...) else plotTree(x,...)
-			cat("   Select clade to collapse (or STOP).\n")
+			cat("\n   Select clade to collapse (or STOP).\n")
 			flush.console()
 			check<-textbox(x=c(par()$usr[1],par()$usr[1]+
 				0.1*(par()$usr[2]-par()$usr[1])),
