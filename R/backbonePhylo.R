@@ -34,7 +34,7 @@ phylo.toBackbone<-function(x,trans=NULL,...){
 			flush.console()
 			clab<-readLines(n=1)
 			if(obj$where<=Ntip(x)){
-				if(clab="") clab<-x$tip.label[obj$where]
+				if(clab=="") clab<-x$tip.label[obj$where]
 				tlab<-x$tip.label[obj$where]
 				depth<-obj$pos
 				N<-if(inherits(x,"backbonePhylo")) 
