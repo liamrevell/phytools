@@ -6,7 +6,7 @@ Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
 Depends: R (>= 2.10), ape (>= 3.0-10), maps
 Imports: animation, clusterGeneration, graphics, grDevices, methods, 
-	mnormt, msm, numDeriv, phangorn (>= 1.6-3), plotrix, 
+	mnormt, msm, numDeriv, phangorn (>= 2.0.4), plotrix, 
 	scatterplot3d, stats, utils
 Suggests: geiger, rgl
 ZipData: no
