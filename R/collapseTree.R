@@ -142,7 +142,8 @@ collapseTree<-function(tree,...){
 }
 
 circles<-function(x,y,r,col="blue")
-	draw.circle(x,y,radius=r,border=col,col="white",nv=20)
+	nulo<-mapply(draw.circle,x=x,y=y,radius=r,MoreArgs=list(border=col,
+		col="white",nv=20))
 
 # simplified function to plot tree in type "fan"
 # written by Liam J. Revell 2015
