@@ -244,6 +244,10 @@ plot.backbonePhylo<-function(x,...){
 	for(i in 1:x$Nnode+length(x$tip.clade)) lines(X[which(cw$edge[,1]==i),1],
 		range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=2,lend=2)
 	for(i in 1:length(x$tip.clade)){
+		if(x$tip.clade[[i]]$N==1){
+			tmp<-sep
+			sep<-1
+		} else tmp<-sep
 		xx<-c(X[which(cw$edge[,2]==i),2]-cw$tip.clade[[i]]$depth,
 			X[which(cw$edge[,2]==i),2],X[which(cw$edge[,2]==i),2])
 		yy<-c(y[cw$edge[which(cw$edge[,2]==i),2]],
@@ -252,6 +256,7 @@ plot.backbonePhylo<-function(x,...){
 			cw$tip.clade[[i]]$N/2+sep/2)
 		if(yy[2]<yy[3]) yy[2]<-yy[3]<-yy[1]
 		polygon(x=xx,y=yy,col=col[cw$tip.clade[[i]]$label],lwd=2)
+		sep<-tmp
 	}
 	for(i in 1:length(cw$tip.clade)) 
 		text(X[which(cw$edge[,2]==i),2],y[i],cw$tip.clade[[i]]$label,pos=4,
