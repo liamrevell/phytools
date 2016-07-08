@@ -174,9 +174,38 @@ plot.backbonePhylo<-function(x,...){
 			tmp<-setNames(rep("grey",Ntip(x)),sapply(x$tip.clade,function(x) x$label))
 			tmp[names(col)]<-col
 			col<-tmp
-		} else col<-setNames(rep(col[1],Ntip(x)),sapply(x$tip.clade,function(x) x$label))
+		} else col<-setNames(rep(col[1],Ntip(x)),sapply(x$tip.clade,
+			function(x) x$label))
 	}
-	if(is.null(names(col))) names(col)<-sapply(x$tip.clade,function(x) x$label)
+	if(is.null(names(col))) names(col)<-sapply(x$tip.clade,
+		function(x) x$label)
+	if(hasArg(sep)) sep<-list(...)$sep
+	else sep<-1
+	if(hasArg(fixed.height)) fixed.height<-list(...)$fixed.height
+	else fixed.height<-FALSE
+	if(hasArg(print.clade.size)) 
+		print.clade.size<-list(...)$print.clade.size
+	else print.clade.size<-FALSE
+	if(hasArg(fixed.n1)) fixed.n1<-list(...)$fixed.n1
+	else fixed.n1<-FALSE
+	if(fixed.height||print.clade.size){
+		obj<-x
+		for(i in 1:Ntip(obj)){
+			if(print.clade.size){
+					obj$tip.clade[[i]]$label<-if(x$tip.clade[[i]]$N>1||fixed.n1)
+						paste(x$tip.clade[[i]]$label," (n=",
+						x$tip.clade[[i]]$N,")",sep="")
+						else x$tip.clade[[i]]$label
+					ii<-which(names(col)==x$tip.clade[[i]]$label)
+					names(col)[ii]<-obj$tip.clade[[i]]$label
+			}
+			if(fixed.height)
+				obj$tip.clade[[i]]$N<-if(x$tip.clade[[i]]$N>1||fixed.n1) 
+					sum(sapply(x$tip.clade,function(y) y$N))/Ntip(x)
+					else 1
+		}
+		x<-obj
+	}
 	x<-scaleN(x,vscale)
 	tt<-backbone.toPhylo(x)
 	n<-sum(sapply(x$tip.clade,function(x) x$N))
@@ -219,8 +248,8 @@ plot.backbonePhylo<-function(x,...){
 			X[which(cw$edge[,2]==i),2],X[which(cw$edge[,2]==i),2])
 		yy<-c(y[cw$edge[which(cw$edge[,2]==i),2]],
 			y[cw$edge[which(cw$edge[,2]==i),2]]+cw$tip.clade[[i]]$N/2-
-			0.5,y[cw$edge[which(cw$edge[,2]==i),2]]-
-			cw$tip.clade[[i]]$N/2+0.5)
+			sep/2,y[cw$edge[which(cw$edge[,2]==i),2]]-
+			cw$tip.clade[[i]]$N/2+sep/2)
 		if(yy[2]<yy[3]) yy[2]<-yy[3]<-yy[1]
 		polygon(x=xx,y=yy,col=col[cw$tip.clade[[i]]$label],lwd=2)
 	}
