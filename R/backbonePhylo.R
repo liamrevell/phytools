@@ -187,6 +187,8 @@ plot.backbonePhylo<-function(x,...){
 		function(x) x$label)
 	col<-col[sapply(x$tip.clade,function(x) x$label)]
 	names(col)<-sapply(x$tip.clade,function(x) x$id)
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-2
 	if(hasArg(sep)) sep<-list(...)$sep
 	else sep<-1
 	if(hasArg(fixed.height)) fixed.height<-list(...)$fixed.height
@@ -196,6 +198,10 @@ plot.backbonePhylo<-function(x,...){
 	else print.clade.size<-FALSE
 	if(hasArg(fixed.n1)) fixed.n1<-list(...)$fixed.n1
 	else fixed.n1<-FALSE
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-NULL
 	if(fixed.height||print.clade.size){
 		obj<-x
 		for(i in 1:Ntip(obj)){
@@ -239,18 +245,19 @@ plot.backbonePhylo<-function(x,...){
 		units="inches")))+1.37*par("cex")*strwidth("W",units="inches")
 	alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=X,sw=sw,pp=pp,
 		interval=c(0,1e6))$minimum
-	xlim<-c(min(X),max(X)+sw/alp)
-	plot.window(xlim=xlim,ylim=c(0,n))
+	if(is.null(xlim)) xlim<-c(min(X),max(X)+sw/alp)
+	if(is.null(ylim)) ylim<-c(0,n)
+	plot.window(xlim=xlim,ylim=ylim)
 	# plot horizontal edges
 	for(i in 1:nrow(X)){
 		if(cw$edge[i,2]>length(cw$tip.clade)) lines(X[i,],rep(y[cw$edge[i,2]],2),
-			lwd=2,lend=2)
+			lwd=lwd,lend=2)
 		else lines(c(X[i,1],X[i,2]-cw$tip.clade[[cw$edge[i,2]]]$depth),
-			rep(y[cw$edge[i,2]],2),lwd=2,lend=2)
+			rep(y[cw$edge[i,2]],2),lwd=lwd,lend=2)
 	}
 	# plot vertical relationships
 	for(i in 1:x$Nnode+length(x$tip.clade)) lines(X[which(cw$edge[,1]==i),1],
-		range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=2,lend=2)
+		range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd,lend=2)
 	for(i in 1:length(x$tip.clade)){
 		if(x$tip.clade[[i]]$N==1){
 			tmp<-sep
@@ -263,7 +270,7 @@ plot.backbonePhylo<-function(x,...){
 			sep/2,y[cw$edge[which(cw$edge[,2]==i),2]]-
 			cw$tip.clade[[i]]$N/2+sep/2)
 		if(yy[2]<yy[3]) yy[2]<-yy[3]<-yy[1]
-		polygon(x=xx,y=yy,col=col[cw$tip.clade[[i]]$id],lwd=2)
+		polygon(x=xx,y=yy,col=col[cw$tip.clade[[i]]$id],lwd=lwd)
 		sep<-tmp
 	}
 	for(i in 1:length(cw$tip.clade)) 
