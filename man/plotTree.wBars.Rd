@@ -1,9 +1,11 @@
 \name{plotTree.wBars}
 \alias{plotTree.wBars}
+\alias{plotTree.barplot}
 \title{Plot a tree with bars at the tips}
 \usage{
 plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", method="plotTree", 
 	tip.labels=FALSE, col="grey", border=NULL, ...)
+plotTree.barplot<-function(tree,x,args.plotTree=list(),args.barplot=list())
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
@@ -15,10 +17,14 @@ plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", method="plotTree"
 	\item{tip.labels}{argument indicating whether or not tip labels should be plotted. Defaults to \code{tip.labels=FALSE}.}
 	\item{col}{colors of the plotted bars. Can be a single value or a vector with length equal to the number of tips in the tree.}
 	\item{border}{single value specifying the color of the border for the plotted bars. Defaults to \code{border=NULL}, which means that black borders will be plotted.}
+	\item{args.plotTree}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{plotTree}}.}
+	\item{args.barplot}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{barplot}}.}
 	\item{...}{optional arguments to be passed to code{\link{plotTree}} or \code{\link{plotSimmap}}.}
 }
 \description{
-	Function plots a phylogeny in phylogram or fan style with bars at the tips representing the values for a phenotypic trait.
+	\code{plotTree.wbars} plots a phylogeny in phylogram or fan style with bars at the tips representing the values for a phenotypic trait.
+	
+	\code{plotTree.barplot} creates a split plot in which a right-facing phylogram is on the left, and a bar plot is shown on the right.
 }
 \value{
 	Plots a tree.
