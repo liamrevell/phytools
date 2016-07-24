@@ -19,7 +19,7 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),args.barplot=list())
 	\item{border}{single value specifying the color of the border for the plotted bars. Defaults to \code{border=NULL}, which means that black borders will be plotted.}
 	\item{args.plotTree}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{plotTree}}.}
 	\item{args.barplot}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{barplot}}.}
-	\item{...}{optional arguments to be passed to code{\link{plotTree}} or \code{\link{plotSimmap}}.}
+	\item{...}{optional arguments to be passed to \code{\link{plotTree}} or \code{\link{plotSimmap}}.}
 }
 \description{
 	\code{plotTree.wbars} plots a phylogeny in phylogram or fan style with bars at the tips representing the values for a phenotypic trait.
@@ -27,14 +27,14 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),args.barplot=list())
 	\code{plotTree.barplot} creates a split plot in which a right-facing phylogram is on the left, and a bar plot is shown on the right.
 }
 \value{
-	Plots a tree.
+	Plots a tree with an associated bar plot for a continuously valued character at the tips.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{plotSimmap}}, \code{\link{plotTree}}
+	\code{\link{barplot}}, \code{\link{dotTree}}, \code{\link{plotSimmap}}, \code{\link{plotTree}}
 }
 \keyword{phylogenetics}
 \keyword{plotting}
