@@ -1,15 +1,17 @@
 \name{plotTree.wBars}
 \alias{plotTree.wBars}
 \alias{plotTree.barplot}
+\alias{plotTree.boxplot}
 \title{Plot a tree with bars at the tips}
 \usage{
 plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", method="plotTree", 
 	tip.labels=FALSE, col="grey", border=NULL, ...)
 plotTree.barplot<-function(tree,x,args.plotTree=list(),args.barplot=list())
+plotTree.boxplot<-function(tree,x,args.plotTree=list(),args.boxplot=list())
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
-	\item{x}{a named vector of trait values (normally > 0).}
+	\item{x}{a named vector of trait values. For \code{plotTree.boxplot}, the names should repeat for multiple observations per species. For \code{plotTree.boxplot} \code{x} can also be supplied as a formula, though in that case the factor levels need to be provided in the cladewise order of the tips in \code{tree}.}
  	\item{scale}{scaling factor for the tip bars (relative to the total tree height).}
 	\item{width}{width of the tip bars.}
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"fan"}.}
@@ -19,12 +21,15 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),args.barplot=list())
 	\item{border}{single value specifying the color of the border for the plotted bars. Defaults to \code{border=NULL}, which means that black borders will be plotted.}
 	\item{args.plotTree}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{plotTree}}.}
 	\item{args.barplot}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{barplot}}.}
+	\item{args.boxplot}{in \code{plotTree.boxplot}, arguments to be passed to \code{\link{boxplot}}.}
 	\item{...}{optional arguments to be passed to \code{\link{plotTree}} or \code{\link{plotSimmap}}.}
 }
 \description{
 	\code{plotTree.wbars} plots a phylogeny in phylogram or fan style with bars at the tips representing the values for a phenotypic trait.
 	
 	\code{plotTree.barplot} creates a split plot in which a right-facing phylogram is on the left, and a bar plot is shown on the right.
+	
+	\code{plotTree.boxplot} creates a split plot in which a right-facing phylogram is on the left, and a box plot is shown on the right.
 }
 \value{
 	Plots a tree with an associated bar plot for a continuously valued character at the tips.
