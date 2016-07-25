@@ -31,6 +31,12 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	if(is.null(args.plotTree$ftype)) args.plotTree$ftype<-"i"
 	if(is.null(args.plotTree$lwd)) args.plotTree$lwd<-1
 	par(mfrow=c(1,2))
+	ii<-which(names(args.boxplot)%in%c("formula","x"))
+	args.boxplot<-c(args.boxplot[ii],args.boxplot[-ii])
+	args.boxplot$plot<-FALSE
+	obj<-do.call(boxplot,args.boxplot)
+	args.boxplot$plot<-TRUE
+	args.plotTree$tips<-setNames(1:Ntip(cw),obj$names)
 	do.call(plotTree,args.plotTree)
 	par(mar=args.boxplot$mar)
 	ii<-which(names(args.boxplot)%in%c("formula","x"))
