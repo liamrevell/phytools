@@ -113,13 +113,14 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 }
 
 ## plot links between tip taxa according to assoc
-## written by Liam J. Revell 2015
-makelinks<-function(obj,x){
+## written by Liam J. Revell 2015, 2016
+makelinks<-function(obj,x,link.type="curved"){
 	for(i in 1:nrow(obj$assoc)){
 		ii<-which(obj$trees[[1]]$tip.label==obj$assoc[i,1])
 		jj<-which(obj$trees[[2]]$tip.label==obj$assoc[i,2])
 		y<-c((ii-1)/(Ntip(obj$trees[[1]])-1),(jj-1)/(Ntip(obj$trees[[2]])-1))
-		lines(x,y,lty="dashed")
+		if(link.type=="straight") lines(x,y,lty="dashed")
+		else if(link.type=="curved") drawCurve(x,y,lty="dashed")
 	}
 }
 
@@ -135,6 +136,8 @@ plot.cophylo<-function(x,...){
 	else scale.bar<-rep(0,2)
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-if(any(scale.bar>0)) c(-0.1,1) else c(0,1)
+	if(hasArg(link.type)) link.type<-list(...)$link.type
+	else link.type<-"straight"
 	obj<-list(...)
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
@@ -151,7 +154,7 @@ plot.cophylo<-function(x,...){
 	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],part=0.4,
 		direction="leftwards"),rightArgs))
 	right<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	if(!is.null(x$assoc)) makelinks(x,c(x1,x2))
+	if(!is.null(x$assoc)) makelinks(x,c(x1,x2),link.type)
 	else cat("No associations provided.\n")
 	if(any(scale.bar>0)) add.scalebar(x,scale.bar,sb.fsize)
 	assign("last_plot.cophylo",list(left=left,right=right),envir=.PlotPhyloEnv)
@@ -239,3 +242,16 @@ tiplabels.cophylo<-function(...,which=c("left","right")){
 	else if(which[1]=="right") assign("last_plot.phylo",obj[[2]],envir=.PlotPhyloEnv)
 	tiplabels(...)
 }
+
+## function to draw sigmoidal links
+## modified from https://stackoverflow.com/questions/32046889/connecting-two-points-with-curved-lines-s-ish-curve-in-r
+
+drawCurve<-function(x,y,...){
+	x1<-x[1]
+	x2<-x[2]
+	y1<-y[1]
+	y2<-y[2]
+	curve(plogis(x,scale=0.01,loc=(x1+x2)/2)*(y2-y1)+y1, 
+		x1,x2,add=TRUE,...)
+}
+
