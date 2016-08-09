@@ -1,6 +1,25 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## function to rotate a multifurcation in all possible ways
+## written by Liam J. Revell 2016
+rotate.multi<-function(tree,node){
+	kids<-Children(tree,node)
+	if(length(kids)>2){
+		ii<-sapply(kids,function(x,y) which(y==x),y=tree$edge[,2])
+		jj<-permn(ii)
+		foo<-function(j,i,t){
+			t$edge[i,]<-t$edge[j,]
+			if(!is.null(t$edge.length))
+				t$edge.length[i]<-t$edge.length[j]
+			untangle(t,"read.tree")
+		}
+		obj<-lapply(jj[2:length(jj)],foo,i=ii,t=tree)
+		class(obj)<-"multiPhylo"
+	} else obj<-untangle(rotate(tree,node),"read.tree")
+	obj
+}
+
 ## wrapper for bind.tree that takes objects of class "simmap"
 ## written by Liam J. Revell 2016
 bind.tree.simmap<-function(x,y,where="root"){

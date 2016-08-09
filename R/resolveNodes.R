@@ -65,5 +65,3 @@ resolveAllNodes<-function(tree){
 	}
 	obj
 }
-
-
