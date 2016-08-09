@@ -187,7 +187,7 @@ print.cophylo<-function(x, ...){
     cat("(2) A table of associations between the tips of both trees.\n\n")
 }
 
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2016
 tipRotate<-function(tree,x,...){
 	if(hasArg(fn)) fn<-list(...)$fn
 	else fn<-function(x) x^2
@@ -195,28 +195,53 @@ tipRotate<-function(tree,x,...){
 	else methods<-"pre"
 	if(hasArg(print)) print<-list(...)$print
 	else print<-FALSE
+	if(hasArg(rotate.multi)) rotate.multi<-list(...)$rotate.multi
+	else rotate.multi<-FALSE
+	if(rotate.multi) rotate.multi<-!is.binary.tree(tree)
 	tree<-reorder(tree)
 	nn<-1:tree$Nnode+length(tree$tip.label)
 	if("pre"%in%methods){
 		for(i in 1:tree$Nnode){
-			tt<-read.tree(text=write.tree(rotate(tree,nn[i])))
+			tt<-if(rotate.multi) rotate.multi(tree,nn[i]) else untangle(rotate(tree,nn[i]),"read.tree")
 			oo<-sum(fn(x-setNames(1:length(tree$tip.label),tree$tip.label)[names(x)]))
-			pp<-sum(fn(x-setNames(1:length(tt$tip.label),tt$tip.label)[names(x)]))
+			if(inherits(tt,"phylo")) pp<-sum(fn(x-setNames(1:length(tt$tip.label),tt$tip.label)[names(x)]))
+			else if(inherits(tt,"multiPhylo")){
+				foo<-function(phy,x) sum(fn(x-setNames(1:length(phy$tip.label),phy$tip.label)[names(x)]))
+				pp<-sapply(tt,foo,x=x)
+				ii<-sample(which(pp==min(pp)),1)
+				tt<-tt[[ii]]
+				pp<-pp[ii]
+			}
 			if(oo>pp) tree<-tt
 			if(print) message(paste("objective:",min(oo,pp)))
 		}
 	}
 	if("post"%in%methods){
 		for(i in tree$Nnode:1){
-			tt<-read.tree(text=write.tree(rotate(tree,nn[i])))
+			tt<-if(rotate.multi) rotate.multi(tree,nn[i]) else untangle(rotate(tree,nn[i]),"read.tree")
 			oo<-sum(fn(x-setNames(1:length(tree$tip.label),tree$tip.label)[names(x)]))
-			pp<-sum(fn(x-setNames(1:length(tt$tip.label),tt$tip.label)[names(x)]))
+			if(inherits(tt,"phylo")) pp<-sum(fn(x-setNames(1:length(tt$tip.label),tt$tip.label)[names(x)]))
+			else if(inherits(tt,"multiPhylo")){
+				foo<-function(phy,x) sum(fn(x-setNames(1:length(phy$tip.label),phy$tip.label)[names(x)]))
+				pp<-sapply(tt,foo,x=x)
+				ii<-sample(which(pp==min(pp)),1)
+				tt<-tt[[ii]]
+				pp<-pp[ii]
+			}
 			if(oo>pp) tree<-tt
 			if(print) message(paste("objective:",min(oo,pp)))
 		}
 	}
 	attr(tree,"minRotate")<-min(oo,pp)
 	tree
+}
+
+## multi2di for "multiPhylo" object
+
+MULTI2DI<-function(x){
+	obj<-lapply(x,multi2di)
+	class(obj)<-"multiPhylo"
+	obj
 }
 
 ## labeling methods for plotted "cophylo" object
@@ -246,12 +271,12 @@ tiplabels.cophylo<-function(...,which=c("left","right")){
 ## function to draw sigmoidal links
 ## modified from https://stackoverflow.com/questions/32046889/connecting-two-points-with-curved-lines-s-ish-curve-in-r
 
-drawCurve<-function(x,y,...){
+drawCurve<-function(x,y,scale=0.01,...){
 	x1<-x[1]
 	x2<-x[2]
 	y1<-y[1]
 	y2<-y[2]
-	curve(plogis(x,scale=0.01,loc=(x1+x2)/2)*(y2-y1)+y1, 
+	curve(plogis(x,scale=scale,loc=(x1+x2)/2)*(y2-y1)+y1, 
 		x1,x2,add=TRUE,...)
 }
 
