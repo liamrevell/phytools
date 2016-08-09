@@ -8,7 +8,7 @@ resolveAllNodes(tree)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
-	\item{node}{for \code{resolveNode}, the node with a polytomy to resolve.
+	\item{node}{for \code{resolveNode}, the node with a polytomy to resolve.}
 }
 \description{
 	This functions resolves a single multifurcation or all multifurcations in a tree in all possible ways. If the input tree has edge lengths, then the resolutions will use internal edges of zero length.
