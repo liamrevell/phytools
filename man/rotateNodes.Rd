@@ -10,7 +10,7 @@ rotate.multi(tree, node)
 	\item{tree}{object of class \code{"phylo"}.}
 	\item{nodes}{either a single node number to rotate, a vector of node numbers, or the string \code{"all"}.}
 	\item{polytom}{a vector of mode numeric and length two specifying the two clades that should be exchanged in a polytomy (see \code{\link{rotate}}).}
-	\code{node}{a single node to rotate (in the case of \code{rotate.multi}).}
+	\item{node}{a single node to rotate (in the case of \code{rotate.multi}).}
 	\item{...}{optional arguments.}
 }
 \description{

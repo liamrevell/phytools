@@ -6,8 +6,8 @@
 \usage{
 plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", method="plotTree", 
 	tip.labels=FALSE, col="grey", border=NULL, ...)
-plotTree.barplot<-function(tree,x,args.plotTree=list(),args.barplot=list())
-plotTree.boxplot<-function(tree,x,args.plotTree=list(),args.boxplot=list())
+plotTree.barplot(tree,x,args.plotTree=list(),args.barplot=list())
+plotTree.boxplot(tree,x,args.plotTree=list(),args.boxplot=list())
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
