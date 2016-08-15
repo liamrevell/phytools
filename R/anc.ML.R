@@ -48,9 +48,11 @@ anc.BM<-function(tree,x,maxit,...){
 		detC=detC,xvals=x,msp=xx,trace=trace,method="L-BFGS-B",
 		lower=c(10*.Machine$double.eps,rep(-Inf,tree$Nnode+length(xx))),
 		control=list(maxit=maxit))
-	if(vars||CI) H<-hessian(likelihood,fit$par,C=C,invC=invC,detC=detC,
-		xvals=x,msp=xx,trace=trace)
-	vcv<-solve(H)
+	if(vars||CI){ 
+		H<-hessian(likelihood,fit$par,C=C,invC=invC,detC=detC,
+			xvals=x,msp=xx,trace=trace)
+		vcv<-solve(H)
+	}
 	states<-fit$par[1:tree$Nnode+1]
 	names(states)<-c(length(tree$tip)+1,rownames(C)[(length(tree$tip)+1):nrow(C)])
 	obj<-list(sig2=fit$par[1],ace=states,logLik=-fit$value,counts=fit$counts,
