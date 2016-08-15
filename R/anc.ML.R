@@ -55,7 +55,7 @@ anc.BM<-function(tree,x,maxit,...){
 	names(states)<-c(length(tree$tip)+1,rownames(C)[(length(tree$tip)+1):nrow(C)])
 	obj<-list(sig2=fit$par[1],ace=states,logLik=-fit$value,counts=fit$counts,
 		convergence=fit$convergence,message=fit$message,model="BM")
-	if(vars) obj$vars<-setNames(diag(vcv)[1:tree$Nnode+1],
+	if(vars) obj$var<-setNames(diag(vcv)[1:tree$Nnode+1],
 		c(length(tree$tip)+1,rownames(C)[(length(tree$tip)+1):nrow(C)]))
 	if(CI){
 		obj$CI95<-cbind(obj$ace-1.96*sqrt(diag(vcv)[1:tree$Nnode+1]),
@@ -65,7 +65,7 @@ anc.BM<-function(tree,x,maxit,...){
 	}
 	if(length(xx)>0){
 		obj$missing.x<-setNames(fit$par[1:length(xx)+tree$Nnode+1],xx)
-		if(vars) obj$missing.vars<-setNames(diag(vcv)[1:length(xx)+
+		if(vars) obj$missing.var<-setNames(diag(vcv)[1:length(xx)+
 			tree$Nnode+1],xx)
 		if(CI){ 
 			obj$missing.CI95<-cbind(obj$missing.x-
@@ -121,7 +121,7 @@ logMNORM<-function(x,x0,vcv)
 	-t(x-x0)%*%solve(vcv)%*%(x-x0)/2-length(x)*log(2*pi)/2-determinant(vcv,logarithm=TRUE)$modulus[1]/2
 
 ## print method for "anc.ML"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2016
 print.anc.ML<-function(x,digits=6,printlen=NULL,...){
 	cat(paste("Ancestral character estimates using anc.ML under a",
 		x$model,"model:\n"))
