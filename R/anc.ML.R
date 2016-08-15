@@ -11,20 +11,24 @@ anc.ML<-function(tree,x,maxit=2000,model=c("BM","OU"),...){
 }
 
 ## internal to estimate ancestral states under a BM model
-## written by Liam J. Revell 2011, 2013, 2014
+## written by Liam J. Revell 2011, 2013, 2014, 2016
 anc.BM<-function(tree,x,maxit,...){
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-FALSE
+	if(hasArg(vars)) vars<-list(...)$vars
+	else vars<-FALSE
+	if(hasArg(CI)) CI<-list(...)$CI
+	else CI<-FALSE
 	## check to see if any tips are missing data
 	xx<-setdiff(tree$tip.label,names(x))
 	## function returns the log-likelihood
-	likelihood<-function(par,C,invC,detC,x,msp,trace){
+	likelihood<-function(par,C,invC,detC,xvals,msp,trace){
 		sig2<-par[1]
 		a<-par[2]
 		y<-par[1:(tree$Nnode-1)+2]
-		x<-c(x,setNames(par[1:length(msp)+tree$Nnode+1],msp))
-		x<-x[rownames(C)[1:length(tree$tip.label)]]
-		z<-c(x,y)-a
+		xvals<-c(xvals,setNames(par[1:length(msp)+tree$Nnode+1],msp))
+		xvals<-xvals[rownames(C)[1:length(tree$tip.label)]]
+		z<-c(xvals,y)-a
 		logLik<-(-z%*%invC%*%z/(2*sig2)-nrow(C)*log(2*pi)/2-nrow(C)*log(sig2)/2-
 			detC/2)[1,1]
 		if(trace) print(c(sig2,logLik))
@@ -41,14 +45,35 @@ anc.BM<-function(tree,x,maxit,...){
 	bb<-c(c(x,setNames(rep(mean(x),length(xx)),xx))[tree$tip.label],y)
 	sig2<-((bb-a)%*%invC%*%(bb-a)/nrow(C))[1,1]
 	fit<-optim(c(sig2,a,y,rep(mean(x),length(xx))),fn=likelihood,C=C,invC=invC,
-		detC=detC,x=x,msp=xx,trace=trace,method="L-BFGS-B",
+		detC=detC,xvals=x,msp=xx,trace=trace,method="L-BFGS-B",
 		lower=c(10*.Machine$double.eps,rep(-Inf,tree$Nnode+length(xx))),
 		control=list(maxit=maxit))
+	if(vars||CI) H<-hessian(likelihood,fit$par,C=C,invC=invC,detC=detC,
+		xvals=x,msp=xx,trace=trace)
+	vcv<-solve(H)
 	states<-fit$par[1:tree$Nnode+1]
 	names(states)<-c(length(tree$tip)+1,rownames(C)[(length(tree$tip)+1):nrow(C)])
 	obj<-list(sig2=fit$par[1],ace=states,logLik=-fit$value,counts=fit$counts,
 		convergence=fit$convergence,message=fit$message,model="BM")
-	if(length(xx)>0) obj$missing.x<-setNames(fit$par[1:length(xx)+tree$Nnode+1],xx)
+	if(vars) obj$vars<-setNames(diag(vcv)[1:tree$Nnode+1],
+		c(length(tree$tip)+1,rownames(C)[(length(tree$tip)+1):nrow(C)]))
+	if(CI){
+		obj$CI95<-cbind(obj$ace-1.96*sqrt(diag(vcv)[1:tree$Nnode+1]),
+			obj$ace+1.96*sqrt(diag(vcv)[1:tree$Nnode+1]))
+		rownames(obj$CI95)<-c(length(tree$tip)+1,
+			rownames(C)[(length(tree$tip)+1):nrow(C)])
+	}
+	if(length(xx)>0){
+		obj$missing.x<-setNames(fit$par[1:length(xx)+tree$Nnode+1],xx)
+		if(vars) obj$missing.vars<-setNames(diag(vcv)[1:length(xx)+
+			tree$Nnode+1],xx)
+		if(CI){ 
+			obj$missing.CI95<-cbind(obj$missing.x-
+				1.96*sqrt(diag(vcv)[1:length(xx)+tree$Nnode+1]),
+				obj$missing.x+1.96*sqrt(diag(vcv)[1:length(xx)+tree$Nnode+1]))
+			rownames(obj$missing.CI95)<-xx
+		}
+	}
 	class(obj)<-"anc.ML"
 	obj
 }
@@ -103,6 +128,17 @@ print.anc.ML<-function(x,digits=6,printlen=NULL,...){
 	Nnode<-length(x$ace)
 	if(is.null(printlen)||printlen>=Nnode) print(round(x$ace,digits))
 	else printDotDot(x$ace,digits,printlen)
+	if(!is.null(x$var)){
+		cat("\nVariances on ancestral states:\n")
+		if(is.null(printlen)||printlen>=Nnode) print(round(x$var,digits))
+		else printDotDot(x$var,digits,printlen)
+	}
+	if(!is.null(x$CI95)){
+		cat("\nLower & upper 95% CIs:\n")
+		colnames(x$CI95)<-c("lower","upper")
+		if(is.null(printlen)||printlen>=Nnode) print(round(x$CI95,digits))
+		else printDotDot(x$CI95,digits,printlen)
+	}
 	cat("\nFitted model parameters & likelihood:\n")
 	if(x$model=="BM"){
 		obj<-data.frame(round(x$sig2,digits),round(x$logLik,digits))
