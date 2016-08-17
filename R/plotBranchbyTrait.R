@@ -117,23 +117,23 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 		X<-x+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
 		if(direction=="leftwards"){ 
 			X<-X[nrow(X):1,]
-			lims<-lims[2:1]
+			if(!is.null(lims)) lims<-lims[2:1]
 		}
 		Y<-cbind(rep(y,length(cols)),rep(y,length(cols)))
 	} else if(direction%in%c("upwards","downwards")){
 		Y<-y+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
 		if(direction=="downwards"){ 
 			X<-X[nrow(X):1,]
-			lims<-lims[2:1]
+			if(!is.null(lims)) lims<-lims[2:1]
 		}
 		X<-cbind(rep(x,length(cols)),rep(x,length(cols)))
 	}
 	if(outline) lines(c(X[1,1],X[nrow(X),2]),c(Y[1,1],Y[nrow(Y),2]),lwd=lwd+2,lend=2) 
 	for(i in 1:length(cols)) lines(X[i,],Y[i,],col=cols[i],lwd=lwd,lend=2)
 	if(direction%in%c("rightwards","leftwards")){
-		text(x=x,y=y,
+		if(!is.null(lims)) text(x=x,y=y,
 			round(lims[1],digits),pos=3,cex=fsize)
-		text(x=x+leg,y=y+0.02*diff(par()$usr[3:4]),
+		if(!is.null(lims)) text(x=x+leg,y=y+0.02*diff(par()$usr[3:4]),
 			round(lims[2],digits),pos=3,cex=fsize)
 		if(is.null(title)) title<-"P(state=1)"
 		text(x=(2*x+leg)/2,y=y,title,pos=3,cex=fsize)
@@ -141,9 +141,9 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 			text(x=(2*x+leg)/2,y=y,paste("length=",round(leg,3),sep=""),pos=1,cex=fsize)
 		else text(x=(2*x+leg)/2,y=y,subtitle,pos=1,cex=fsize)
 	} else if(direction%in%c("upwards","downwards")){
-		text(x=x,y=y-0.02*diff(par()$usr[3:4]),round(lims[1],digits),
+		if(!is.null(lims)) text(x=x,y=y-0.02*diff(par()$usr[3:4]),round(lims[1],digits),
 			pos=1,cex=fsize)
-		text(x=x,y=y+leg+0.02*diff(par()$usr[3:4]),
+		if(!is.null(lims)) text(x=x,y=y+leg+0.02*diff(par()$usr[3:4]),
 			round(lims[2],digits),
 			pos=3,cex=fsize)
 		if(is.null(title)) title<-"P(state=1)"
