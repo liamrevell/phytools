@@ -113,18 +113,47 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 	else subtitle<-NULL
 	if(hasArg(direction)) direction<-list(...)$direction
 	else direction<-"rightwards"
-	X<-x+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
-	if(direction=="leftwards"){ 
-		X<-X[nrow(X):1,]
-		lims<-lims[2:1]
+	if(direction%in%c("rightwards","leftwards")){
+		X<-x+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
+		if(direction=="leftwards"){ 
+			X<-X[nrow(X):1,]
+			lims<-lims[2:1]
+		}
+		Y<-cbind(rep(y,length(cols)),rep(y,length(cols)))
+	} else if(direction%in%c("upwards","downwards")){
+		Y<-y+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
+		if(direction=="downwards"){ 
+			X<-X[nrow(X):1,]
+			lims<-lims[2:1]
+		}
+		X<-cbind(rep(x,length(cols)),rep(x,length(cols)))
 	}
-	Y<-cbind(rep(y,length(cols)),rep(y,length(cols))) 		
 	if(outline) lines(c(X[1,1],X[nrow(X),2]),c(Y[1,1],Y[nrow(Y),2]),lwd=lwd+2,lend=2) 
 	for(i in 1:length(cols)) lines(X[i,],Y[i,],col=cols[i],lwd=lwd,lend=2)
-	text(x=x,y=y,round(lims[1],digits),pos=3,cex=fsize)
-	text(x=x+leg,y=y,round(lims[2],digits),pos=3,cex=fsize)
-	if(is.null(title)) title<-"P(state=1)"
-	text(x=(2*x+leg)/2,y=y,title,pos=3,cex=fsize)
-	if(is.null(subtitle)) text(x=(2*x+leg)/2,y=y,paste("length=",round(leg,3),sep=""),pos=1,cex=fsize)
-	else text(x=(2*x+leg)/2,y=y,subtitle,pos=1,cex=fsize)
+	if(direction%in%c("rightwards","leftwards")){
+		text(x=x,y=y,
+			round(lims[1],digits),pos=3,cex=fsize)
+		text(x=x+leg,y=y+0.02*diff(par()$usr[3:4]),
+			round(lims[2],digits),pos=3,cex=fsize)
+		if(is.null(title)) title<-"P(state=1)"
+		text(x=(2*x+leg)/2,y=y,title,pos=3,cex=fsize)
+		if(is.null(subtitle)) 
+			text(x=(2*x+leg)/2,y=y,paste("length=",round(leg,3),sep=""),pos=1,cex=fsize)
+		else text(x=(2*x+leg)/2,y=y,subtitle,pos=1,cex=fsize)
+	} else if(direction%in%c("upwards","downwards")){
+		text(x=x,y=y-0.02*diff(par()$usr[3:4]),round(lims[1],digits),
+			pos=1,cex=fsize)
+		text(x=x,y=y+leg+0.02*diff(par()$usr[3:4]),
+			round(lims[2],digits),
+			pos=3,cex=fsize)
+		if(is.null(title)) title<-"P(state=1)"
+		text(x=x-0.04*diff(par()$usr[1:2]),y=(2*y+leg)/2,title,
+			pos=3,cex=fsize,srt=90)
+		if(is.null(subtitle)) 
+			text(x=x+0.04*diff(par()$usr[1:2]),y=(2*y+leg)/2,
+				paste("length=",round(leg,3),sep=""),pos=1,
+				srt=90,cex=fsize)
+		else text(x=x+0.04*diff(par()$usr[1:2]),y=(2*y+leg)/2,
+			subtitle,pos=1,cex=fsize,srt=90)
+	}
 }
