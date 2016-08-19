@@ -114,13 +114,19 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 
 ## plot links between tip taxa according to assoc
 ## written by Liam J. Revell 2015, 2016
-makelinks<-function(obj,x,link.type="curved"){
+makelinks<-function(obj,x,link.type="curved",link.lwd=1,link.col="black",
+	link.lty="dashed"){
+	if(length(link.lwd)==1) link.lwd<-rep(link.lwd,nrow(obj$assoc))
+	if(length(link.col)==1) link.col<-rep(link.col,nrow(obj$assoc))
+	if(length(link.lty)==1) link.lty<-rep(link.lty,nrow(obj$assoc))
 	for(i in 1:nrow(obj$assoc)){
 		ii<-which(obj$trees[[1]]$tip.label==obj$assoc[i,1])
 		jj<-which(obj$trees[[2]]$tip.label==obj$assoc[i,2])
 		y<-c((ii-1)/(Ntip(obj$trees[[1]])-1),(jj-1)/(Ntip(obj$trees[[2]])-1))
-		if(link.type=="straight") lines(x,y,lty="dashed")
-		else if(link.type=="curved") drawCurve(x,y,lty="dashed")
+		if(link.type=="straight") lines(x,y,lty=link.lty[i],
+			lwd=link.lwd[i],col=link.col[i])
+		else if(link.type=="curved") drawCurve(x,y,lty=link.lty[i],
+			lwd=link.lwd[i],col=link.col[i])
 	}
 }
 
@@ -138,6 +144,12 @@ plot.cophylo<-function(x,...){
 	else ylim<-if(any(scale.bar>0)) c(-0.1,1) else c(0,1)
 	if(hasArg(link.type)) link.type<-list(...)$link.type
 	else link.type<-"straight"
+	if(hasArg(link.lwd)) link.lwd<-list(...)$link.lwd
+	else link.lwd<-1
+	if(hasArg(link.col)) link.col<-list(...)$link.col
+	else link.col<-"black"
+	if(hasArg(link.lty))  link.lty<-list(...)$link.lty
+	else link.lty<-"dashed"
 	obj<-list(...)
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
@@ -154,7 +166,8 @@ plot.cophylo<-function(x,...){
 	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],part=0.4,
 		direction="leftwards"),rightArgs))
 	right<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	if(!is.null(x$assoc)) makelinks(x,c(x1,x2),link.type)
+	if(!is.null(x$assoc)) makelinks(x,c(x1,x2),link.type,link.lwd,link.col,
+		link.lty)
 	else cat("No associations provided.\n")
 	if(any(scale.bar>0)) add.scalebar(x,scale.bar,sb.fsize)
 	assign("last_plot.cophylo",list(left=left,right=right),envir=.PlotPhyloEnv)
