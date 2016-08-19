@@ -293,3 +293,20 @@ drawCurve<-function(x,y,scale=0.01,...){
 		x1,x2,add=TRUE,...)
 }
 
+## S3 summary method
+## written by Liam J. Revell 2016
+
+summary.cophylo<-function(object,...){
+	cat("\nCo-phylogenetic (\"cophylo\") object:",deparse(substitute(object)),
+		"\n\n")
+	cat(paste("Tree 1 (left tree) is an object of class \"phylo\" containing",
+		Ntip(object$trees[[1]]),"species.\n\n"))
+	cat(paste("Tree 2 (right tree) is an object of class \"phylo\" containing",
+		Ntip(object$trees[[2]]),"species.\n\n"))
+	cat("Association (assoc) table as follows:\n\n")
+	cat("\tleft:\t----\tright:\n")
+	nulo<-apply(object$assoc,1,function(x) cat(paste("\t",x[1],"\t----\t",
+		x[2],"\n")))
+	cat("\n")
+}
+
