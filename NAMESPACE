@@ -80,6 +80,7 @@ S3method(plot, fitPagel)
 S3method(plot, fitMk)
 S3method(plot, gfit)
 S3method(plot, phyl.pca)
+S3method(summary, cophylo)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
