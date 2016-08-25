@@ -1,3 +1,94 @@
+## plotTree.boxplot
+## written by Liam J. Revell 2016
+plotTree.boxplot<-function(tree,x,args.plotTree=list(),
+	args.boxplot=list()){
+	cw<-reorder(tree)
+	if(!is.list(x)&&class(x)!="formula"){
+		obj<-setNames(
+			lapply(cw$tip.label,function(x,y) y[which(names(y)==x)],
+			y=x),cw$tip.label)
+	} else obj<-x
+	if(class(x)=="formula") 
+		args.boxplot$formula<-obj else args.boxplot$x<-obj
+	args.boxplot$horizontal<-TRUE
+	args.boxplot$axes<-FALSE
+	args.boxplot$names.arg<-""
+	args.boxplot$xlim<-c(1,Ntip(cw))
+	if(is.null(args.boxplot$space)) args.boxplot$space<-0.7
+	if(is.null(args.boxplot$mar)) 
+		args.boxplot$mar<-c(5.1,0,2.1,1.1)
+	else args.boxplot$mar[2]<-0.1
+	args.plotTree$tree<-cw
+	if(is.null(args.plotTree$mar)) 
+		args.plotTree$mar<-c(5.1,1.1,2.1,0)
+	else {
+		args.plotTree$mar[4]<-0
+	}
+	if(args.plotTree$mar[1]!=args.boxplot$mar[1])
+		args.plotTree$mar[1]<-args.boxplot$mar[1]
+	if(args.plotTree$mar[3]!=args.boxplot$mar[3])
+		args.plotTree$mar[3]<-args.boxplot$mar[3]
+	if(is.null(args.plotTree$ftype)) args.plotTree$ftype<-"i"
+	if(is.null(args.plotTree$lwd)) args.plotTree$lwd<-1
+	par(mfrow=c(1,2))
+	ii<-which(names(args.boxplot)%in%c("formula","x"))
+	args.boxplot<-c(args.boxplot[ii],args.boxplot[-ii])
+	args.boxplot$plot<-FALSE
+	obj<-do.call(boxplot,args.boxplot)
+	args.boxplot$plot<-TRUE
+	args.plotTree$tips<-setNames(1:Ntip(cw),obj$names)
+	do.call(plotTree,args.plotTree)
+	par(mar=args.boxplot$mar)
+	ii<-which(names(args.boxplot)%in%c("formula","x"))
+	args.boxplot<-c(args.boxplot[ii],args.boxplot[-ii])
+	obj<-do.call(boxplot,args.boxplot)
+	axis(1)
+	if(!is.null(args.boxplot$xlab)) title(xlab=args.boxplot$xlab)
+	else title(xlab="x")
+	invisible(obj)
+}
+
+## plotTree.barplot
+## written by Liam J. Revell 2016
+
+plotTree.barplot<-function(tree,x,args.plotTree=list(),
+	args.barplot=list()){
+	cw<-reorder(tree)
+	args.barplot$height<-x[cw$tip.label]
+	args.barplot$plot<-FALSE
+	args.barplot$horiz<-TRUE
+	args.barplot$axes<-FALSE
+	args.barplot$names.arg<-""
+	if(is.null(args.barplot$space)) args.barplot$space<-0.7
+	if(is.null(args.barplot$mar)) 
+		args.barplot$mar<-c(5.1,0,2.1,1.1)
+	else args.barplot$mar[2]<-0.1
+	args.plotTree$tips<-setNames(do.call(barplot,args.barplot)[,1],
+		cw$tip.label)
+	args.barplot$plot<-TRUE
+	args.barplot$ylim<-range(args.plotTree$tips)
+	args.plotTree$tree<-cw
+	if(is.null(args.plotTree$mar)) 
+		args.plotTree$mar<-c(5.1,1.1,2.1,0)
+	else {
+		args.plotTree$mar[4]<-0.1
+	}
+	if(args.plotTree$mar[1]!=args.barplot$mar[1])
+		args.plotTree$mar[1]<-args.barplot$mar[1]
+	if(args.plotTree$mar[3]!=args.barplot$mar[3])
+		args.plotTree$mar[3]<-args.barplot$mar[3]
+	if(is.null(args.plotTree$ftype)) args.plotTree$ftype<-"i"
+	if(is.null(args.plotTree$lwd)) args.plotTree$lwd<-1
+	par(mfrow=c(1,2))
+	do.call(plotTree,args.plotTree)
+	par(mar=args.barplot$mar)
+	obj<-do.call(barplot,args.barplot)
+	axis(1)
+	if(!is.null(args.barplot$xlab)) title(xlab=args.barplot$xlab)
+	else title(xlab="x")
+	invisible(obj)
+}
+
 ## function to plot bars at the tips of a plotted tree
 ## written by Liam J. Revell 2014, 2015
 

@@ -21,7 +21,7 @@ evol.vcv<-function(tree,X,maxit=2000,vars=FALSE,...){
 	D<-matrix(0,n*m,m)
 	for(i in 1:(n*m)) for(j in 1:m) if((j-1)*n<i&&i<=j*n) D[i,j]=1.0
 	C<-vcv(tree)
-	X<-X[rownames(C),]
+	X<-X[rownames(C),,drop=FALSE]
 	y<-as.matrix(as.vector(X))
 	a<-colSums(solve(C))%*%X/sum(solve(C)) # ancestral states
 	R<-t(X-rep(1,nrow(X))%*%a)%*%solve(C)%*%(X-rep(1,nrow(X))%*%a)/n
@@ -138,8 +138,11 @@ upper.diag<-function(x){
 # function converts vector to symmetric matrix
 # written by Liam J. Revell 2013
 to.symmetric<-function(x){
-	X<-upper.diag(x)
-	for(i in 2:nrow(X)) for(j in 1:(i-1)) X[i,j]<-X[j,i]
+	if(length(x)==1) X<-matrix(x,1,1)
+	else {
+		X<-upper.diag(x)
+		for(i in 2:nrow(X)) for(j in 1:(i-1)) X[i,j]<-X[j,i]
+	}
 	X
 }
 

@@ -31,6 +31,7 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+\dontrun{
 tree<-pbtree(n=20,scale=2)
 x<-fastBM(tree)
 phenogram(tree,x)
@@ -43,6 +44,7 @@ phenogram(tree,x)
 tree<-pbtree(n=40)
 x<-fastBM(tree)
 phenogram(tree,x,spread.labels=TRUE,spread.cost=c(1,0))
+}
 }
 \keyword{phylogenetics}
 \keyword{plotting}

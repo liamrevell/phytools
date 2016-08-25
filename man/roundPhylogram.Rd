@@ -3,7 +3,7 @@
 \title{Plot a round phylogram}
 \usage{
 roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL, 
-	direction="rightwards", type="phylogram", xlim=NULL, ylim=NULL)
+	direction="rightwards", type="phylogram", xlim=NULL, ylim=NULL, ...)
 }
 \arguments{
  	\item{tree}{an object of class "phylo" or "multiPhylo" containing one or multiple phylogenies.}
@@ -16,6 +16,7 @@ roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL,
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"cladogram"}. If \code{type="cladogram"} then the branch lengths are not necessary (and, indeed, are not used).}
 	\item{xlim}{x-limits for the plot.}
 	\item{ylim}{y-limits for the plot.}
+	\item{...}{optional arguments.}
 }
 \description{
 	Function plots one or multiple round phylograms.

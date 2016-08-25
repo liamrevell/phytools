@@ -160,7 +160,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 		PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 			show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
-			x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+			x.lim=xlim,y.lim=ylim,
 			direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
 			edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
@@ -273,7 +273,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	else fsize<-1.0
 	if(is.null(leg)) leg<-names(colors)
 	h<-fsize*strheight(LETTERS[1])
-	w<-par()$mfcol[2]*h*diff(par()$usr[1:2])/diff(par()$usr[3:4])
+	w<-par()$mfcol[2]*h*abs(diff(par()$usr[1:2])/diff(par()$usr[3:4]))
 	if(vertical){
 		y<-y-0:(length(leg)-1)*1.5*h
 		x<-rep(x+w/2,length(y))		
@@ -285,7 +285,8 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 		text(x,y,leg,pos=4,cex=fsize/par()$cex)
 	}
 	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE)
-	else if(shape=="circle") draw.circle(x,y,nv=200,radius=w/2,col=colors)
+	else if(shape=="circle") nulo<-mapply(draw.circle,x=x,y=y,col=colors,
+		MoreArgs=list(nv=200,radius=w/2))
 	else stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
 }
 

@@ -1,6 +1,85 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## function to rotate a multifurcation in all possible ways
+## written by Liam J. Revell 2016
+rotate.multi<-function(tree,node){
+	kids<-Children(tree,node)
+	if(length(kids)>2){
+		ii<-sapply(kids,function(x,y) which(y==x),y=tree$edge[,2])
+		jj<-permn(ii)
+		foo<-function(j,i,t){
+			t$edge[i,]<-t$edge[j,]
+			if(!is.null(t$edge.length))
+				t$edge.length[i]<-t$edge.length[j]
+			untangle(t,"read.tree")
+		}
+		obj<-lapply(jj[2:length(jj)],foo,i=ii,t=tree)
+		class(obj)<-"multiPhylo"
+	} else obj<-untangle(rotate(tree,node),"read.tree")
+	obj
+}
+
+## wrapper for bind.tree that takes objects of class "simmap"
+## written by Liam J. Revell 2016
+bind.tree.simmap<-function(x,y,where="root"){
+	x<-reorder(x)
+	y<-reorder(y)
+	rootx<-x$edge[1,1]
+	rooty<-y$edge[1,1]
+	xy<-read.tree(text=write.tree(bind.tree(x,y,where)))
+	Mx<-rbind(matchLabels(x,xy),matchNodes(x,xy,"distances"))
+	My<-rbind(matchLabels(y,xy),matchNodes(y,xy,"distances"))
+	if(where!="root"&&where<=Ntip(x))
+		Mx[which(is.na(Mx[,2])),2]<-findMRCA(xy,y$tip.label)
+	xy$maps<-vector(mode="list",length=nrow(xy$edge))
+	ix<-sapply(Mx[-which(Mx[,1]==rootx),1],
+		function(x,y) which(y==x),y=x$edge[,2])
+	ixy<-sapply(Mx[-which(Mx[,1]==rootx),2],
+		function(x,y) which(y==x),y=xy$edge[,2])
+	xy$maps[ixy]<-x$maps[ix]
+	iy<-sapply(My[-which(My[,1]==rooty),1],
+		function(x,y) which(y==x),y=y$edge[,2])
+	ixy<-sapply(My[-which(My[,1]==rooty),2],
+		function(x,y) which(y==x),y=xy$edge[,2])
+	xy$maps[ixy]<-y$maps[iy]
+	xy$mapped.edge<-makeMappedEdge(xy$edge,xy$maps)
+	ns<-c(setNames(getStates(xy,"tips"),1:Ntip(xy)),
+		getStates(xy,"nodes"))
+	xy$node.states<-cbind(ns[as.character(xy$edge[,1])],
+		ns[as.character(xy$edge[,2])])
+	xy$states<-getStates(xy,"tips")
+	attr(xy,"class")<-c("simmap",class(xy))
+	xy
+}
+
+## generic function to convert an object of class "simmap" to "phylo"
+## written by Liam J. Revell 2016
+as.phylo.simmap<-function(x,...){
+	x$maps<-NULL
+	x$mapped.edge<-NULL
+	if(!is.null(x$node.states)) x$node.states<-NULL
+	if(!is.null(x$states)) x$states<-NULL
+	if(!is.null(x$Q)) x$Q<-NULL
+	if(!is.null(x$logL)) x$logL<-NULL
+	if(!is.null(attr(x,"map.order"))) attr(x,"map.order")<-NULL
+	class(x)<-setdiff(class(x),"simmap")
+	x
+}
+
+## generic function to convert an object of class "multiSimmap" to "multiPhylo"
+## written by Liam J. Revell 2016
+as.multiPhylo.multiSimmap<-function(x,...){
+	obj<-lapply(x,as.phylo)
+	class(obj)<-setdiff(class(x),"multiSimmap")
+	obj
+}
+
+as.multiPhylo<-function(x,...){
+	if (identical(class(x),"multiPhylo")) return(x)
+	UseMethod("as.multiPhylo")
+}
+
 ## get mapped states
 ## written by Liam J. Revell 2016
 mapped.states<-function(tree,...){
@@ -62,17 +141,23 @@ edgeProbs<-function(trees){
 }
 
 ## get a position in the tree interactively
-## written by Liam J. Revell 2015
-get.treepos<-function(message=TRUE){
+## written by Liam J. Revell 2015, 2016
+get.treepos<-function(message=TRUE,...){
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(obj$type=="phylogram"&&obj$direction=="rightwards"){
 		if(message){ 
 			cat("Click on the tree position you want to capture...\n")
 			flush.console()
 		}
-		x<-unlist(locator(1)) 	
-		y<-x[2] 	
-		x<-x[1]
+		if(hasArg(x)) x<-list(...)$x
+		else x<-NULL
+		if(hasArg(y)) y<-list(...)$y
+		else y<-NULL
+		if(is.null(x)||is.null(y)){
+			x<-unlist(locator(1)) 	
+			y<-x[2] 	
+			x<-x[1]
+		}
 		d<-pos<-c()
 		for(i in 1:nrow(obj$edge)){
 			x0<-obj$xx[obj$edge[i,]]
@@ -511,7 +596,8 @@ plot.describe.simmap<-function(x,...){
 		nodelabels(pie=x$ace,piecol=colors[colnames(x$ace)],cex=cex[1])
 		if(!is.null(x$tips)) tips<-x$tips else tips<-to.matrix(getStates(x$tree[[1]],"tips"),
 			seq=states) 
-		tiplabels(pie=tips,piecol=colors[colnames(tips)],cex=cex[2])
+		tiplabels(pie=tips[if(is.null(x$ref.tree)) x$tree[[1]]$tip.label else 
+			x$ref.tree$tip.label,],piecol=colors[colnames(tips)],cex=cex[2])
 	} else if(inherits(x$tree,"phylo")){
 		states<-colnames(x$Tr)
 		if(hasArg(colors)) colors<-list(...)$colors
@@ -1344,19 +1430,23 @@ getDescendants<-function(tree,node,curr=NULL){
 }
 
 # function computes vcv for each state, and stores in array
-# written by Liam J. Revell 2011/2012
-multiC<-function(tree){
+# written by Liam J. Revell 2011, 2012, 2016
+multiC<-function(tree,internal=FALSE){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	n<-length(tree$tip.label)
+	if(!inherits(tree,"simmap")) stop("tree should be an object of class \"simmap\".")
 	m<-ncol(tree$mapped.edge)
 	# compute separate C for each state
 	mC<-list()
 	for(i in 1:m){
-		mtree<-list(edge=tree$edge,Nnode=tree$Nnode,tip.label=tree$tip.label,edge.length=tree$mapped.edge[,i])
+		mtree<-list(edge=tree$edge,
+			Nnode=tree$Nnode,
+			tip.label=tree$tip.label,
+			edge.length=tree$mapped.edge[,i])
 		class(mtree)<-"phylo"
-		mC[[i]]<-vcv.phylo(mtree)
+		mC[[i]]<-if(internal) vcvPhylo(mtree,internal=TRUE) else vcv.phylo(mtree)
 	}
-	return(mC)
+	names(mC)<-colnames(tree$mapped.edge)
+	mC
 }
 
 # function pastes subtree onto tip

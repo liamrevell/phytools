@@ -6,7 +6,7 @@
 \usage{
 averageTree(trees, start=NULL, method="quadratic.path.difference",
 	tol=1e-12, quiet=FALSE, ...)
-ls.consensus(trees, start=NULL, tol=1e-12, quiet=FALSE)
+ls.consensus(trees, start=NULL, tol=1e-12, quiet=FALSE, ...)
 minTreeDist(tree, trees, method="quadratic.path.difference", ...)
 }
 \arguments{
