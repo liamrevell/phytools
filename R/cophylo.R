@@ -59,6 +59,8 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	if(hasArg(pts)) pts<-list(...)$pts
 	else pts<-TRUE
 	d<-if(direction=="rightwards") 1 else -1
+	## sub "_" for " "
+	tree$tip.label<-gsub("_"," ",tree$tip.label)
 	## check if edge lenths
 	if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 	## rescale tree so it fits in one half of the plot
@@ -97,7 +99,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	font<-which(c("off","reg","b","i","bi")==ftype)-1
 	if(font>0){
 		for(i in 1:n) text(d*max(h+fsize*strwidth(tree$tip.label)),y[i],
-			sub("_"," ",tree$tip.label[i]), pos=if(d<0) 4 else 2,offset=0,
+			tree$tip.label[i], pos=if(d<0) 4 else 2,offset=0,
 			cex=fsize,font=font)
 	}
 	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
@@ -304,9 +306,12 @@ summary.cophylo<-function(object,...){
 	cat(paste("Tree 2 (right tree) is an object of class \"phylo\" containing",
 		Ntip(object$trees[[2]]),"species.\n\n"))
 	cat("Association (assoc) table as follows:\n\n")
-	cat("\tleft:\t----\tright:\n")
-	nulo<-apply(object$assoc,1,function(x) cat(paste("\t",x[1],"\t----\t",
-		x[2],"\n")))
+	maxl<-max(sapply(strsplit(object$assoc[,1],""),length))
+	cat(paste("\tleft:",paste(rep(" ",maxl-5),collapse=""),
+		"\t----\tright:\n",sep=""))
+	nulo<-apply(object$assoc,1,function(x,maxl) cat(paste("\t",x[1],
+		paste(rep(" ",maxl-length(strsplit(x[1],split="")[[1]])),
+		collapse=""),"\t----\t",x[2],"\n",sep="")),maxl=maxl)
 	cat("\n")
 }
 
