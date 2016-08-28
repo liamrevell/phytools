@@ -208,13 +208,37 @@ tipRotate<-function(tree,x,...){
 	else fn<-function(x) x^2
 	if(hasArg(methods)) methods<-list(...)$methods
 	else methods<-"pre"
+	if("exhaustive"%in%methods) methods<-"exhaustive"
 	if(hasArg(print)) print<-list(...)$print
 	else print<-FALSE
+	if(hasArg(max.exhaustive)) max.exhaustive<-list(...)$max.exhaustive
+	else max.exhaustive<-20
 	if(hasArg(rotate.multi)) rotate.multi<-list(...)$rotate.multi
 	else rotate.multi<-FALSE
 	if(rotate.multi) rotate.multi<-!is.binary.tree(tree)
 	tree<-reorder(tree)
 	nn<-1:tree$Nnode+length(tree$tip.label)
+	if("exhaustive"%in%methods){
+		if(Ntip(tree)>max.exhaustive){
+			cat(paste("\nmethods=\"exhaustive\" not permitted for more than",
+				max.exhaustive,"tips.\n",
+				"If you are sure you want to run an exhaustive search for a tree of this size\n",
+				"increasing argument max.exhaustive & re-run.\n",
+				"Setting methods to \"pre\".\n\n"))
+			methods<-"pre"
+		} else {
+			cat("Running exhaustive search. May be slow!\n")
+			oo<-Inf
+			tt<-allRotations(tree)
+			foo<-function(phy,x) sum(fn(x-setNames(1:length(phy$tip.label),phy$tip.label)[names(x)]))
+			pp<-sapply(tt,foo,x=x)
+			ii<-sample(which(pp==min(pp)),1)
+			tt<-tt[[ii]]
+			pp<-pp[ii]
+		}
+		if(print) message(paste("objective:",pp))
+		tree<-tt
+	}		
 	if("pre"%in%methods){
 		for(i in 1:tree$Nnode){
 			tt<-if(rotate.multi) rotate.multi(tree,nn[i]) else untangle(rotate(tree,nn[i]),"read.tree")
