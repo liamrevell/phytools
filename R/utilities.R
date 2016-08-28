@@ -1,6 +1,41 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## function to compute all rotations
+## written by Liam J. Revell 2016
+allRotations<-function(tree){
+	if(!is.binary.tree(tree)){
+		was.binary<-FALSE
+		if(is.null(tree$edge.length)){ 
+			tree<-compute.brlen(tree)
+			had.edge.lengths<-FALSE
+		} else had.edge.lengths<-TRUE
+		tree<-multi2di(tree)
+	} else was.binary<-TRUE
+	nodes<-1:tree$Nnode+Ntip(tree)
+	trees<-vector(mode="list",length=2^length(nodes))
+	ii<-2
+	trees[[1]]<-tree
+	for(i in 1:length(nodes)){
+		N<-ii-1
+		for(j in 1:N){
+			trees[[ii]]<-rotate(trees[[j]],nodes[i])
+			ii<-ii+1
+		}
+	}
+	trees<-lapply(trees,untangle,"read.tree")
+	if(!was.binary){
+		trees<-lapply(trees,di2multi)
+		if(!had.edge.lengths) trees<-lapply(trees,
+			function(x){
+				x$edge.length<-NULL
+				x
+			})
+	}
+	class(trees)<-"multiPhylo"
+	trees
+}
+
 ## function to rotate a multifurcation in all possible ways
 ## written by Liam J. Revell 2016
 rotate.multi<-function(tree,node){

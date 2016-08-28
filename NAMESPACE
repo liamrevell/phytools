@@ -1,5 +1,5 @@
-export(add.arrow, add.color.bar, add.everywhere, add.random, add.simmap.legend, add.species.to.genus, allFurcTrees, anc.Bayes)
-export(anc.ML, anc.trend, ancThresh, applyBranchLengths, as.multiPhylo, ave.rates, averageTree)
+export(add.arrow, add.color.bar, add.everywhere, add.random, add.simmap.legend, add.species.to.genus, allFurcTrees)
+export(allRotations, anc.Bayes, anc.ML, anc.trend, ancThresh, applyBranchLengths, as.multiPhylo, ave.rates, averageTree)
 export(backbone.toPhylo, bmPlot, bind.tip, bind.tree.simmap, biplot.phyl.pca, branching.diffusion, brownie.lite, brownieREML)
 export(cladelabels, collapse.to.star, collapseTree, consensus.edges, contMap, cophylo, countSimmap, compute.mr)
 export(densityMap, densityTree, describe.simmap, di2multi.simmap, dot.legend, dotTree, drop.clade, drop.leaves)
