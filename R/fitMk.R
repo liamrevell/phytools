@@ -1,10 +1,16 @@
 ## function for conditional likelihoods at nodes
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2016
 ## with input from (& structural similarity to) function ace by E. Paradis et al. 2013
 
 fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	if(hasArg(output.liks)) output.liks<-list(...)$output.liks
 	else output.liks<-FALSE
+	if(hasArg(q.init)) q.init<-list(...)$q.init
+	else q.init<-length(unique(x))/sum(tree$edge.length)
+	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
+	else opt.method<-"nlminb"
+	if(hasArg(min.q)) min.q<-list(...)$min.q
+	else min.q<-1e-12
 	N<-Ntip(tree)
 	M<-tree$Nnode
 	if(is.matrix(x)){
@@ -88,12 +94,18 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		return(if(is.na(logL)) Inf else logL)
 	}
 	if(is.null(fixedQ)){
-		fit<-nlminb(rep(0.1,k),function(p) lik(p,pi=pi),lower=rep(0,k),upper=rep(1e50,k))
-		obj<-list(logLik=-fit$objective,
+		if(length(q.init)!=k) q.init<-rep(q.init[1],k)
+		if(opt.method=="optim")
+			fit<-optim(q.init,function(p) lik(p,pi=pi),method="L-BFGS-B",lower=rep(min.q,k))
+		else	
+			fit<-nlminb(q.init,function(p) lik(p,pi=pi),lower=rep(0,k),upper=rep(1e50,k))
+		obj<-list(logLik=
+			if(opt.method=="optim") -fit$value else -fit$objective,
 			rates=fit$par,
 			index.matrix=index.matrix,
 			states=states,
-			pi=pi)
+			pi=pi,
+			method=opt.method)
 		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	} else {
 		fit<-lik(Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],pi=pi)
@@ -120,7 +132,8 @@ print.fitMk<-function(x,digits=6,...){
 	print(round(Q,digits))
 	cat("\nFitted (or set) value of pi:\n")
 	print(x$pi)
-	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n\n"))
+	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
+	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",sep=""))
 }
 
 ## summary method for objects of class "fitMk"
