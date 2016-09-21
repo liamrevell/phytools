@@ -49,7 +49,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		root<-N+1
 		# get conditional likelihoods & model
 		if(is.character(Q)&&Q=="empirical"){
-			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi)
+			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi,...)
 			L<-XX$L
 			Q<-XX$Q
 			logL<-XX$loglik
@@ -191,8 +191,8 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 
 # get pars
 # written by Liam J. Revell 2013
-getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi){
-	obj<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi)
+getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,...){
+	obj<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi,...)
 	N<-length(bt$tip.label)
 	II<-obj$index.matrix+1
 	lvls<-obj$states
