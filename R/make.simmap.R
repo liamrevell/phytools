@@ -332,4 +332,7 @@ apeAce<-function(tree,x,model,fixedQ=NULL,...){
 	}
 }
 
-
+## S3 logLik methods for "simmap" & "multiSimmap"
+logLik.simmap<-function(object,...) object$logL
+logLik.multiSimmap<-function(object,...)
+	sapply(object,function(x) x$logL)

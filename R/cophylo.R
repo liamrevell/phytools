@@ -61,20 +61,38 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 			}
 			if(length(obj)>1) class(obj)<-"multiCophylo"
 			else obj<-obj[[1]]
+		} else if ("all"%in%methods){
+			tt1<-allRotations(tr1)
+			tt2<-allRotations(tr2)
+			obj<-vector(mode="list",length=length(tt1)*length(tt2))
+			ij<-1
+			for(i in 1:length(tt1)){
+				for(j in 1:length(tt2)){
+					x<-setNames(sapply(assoc[,2],match,table=tt2[[j]]$tip.label),assoc[,1])
+					y<-setNames(sapply(assoc[,1],match,table=tt1[[i]]$tip.label),assoc[,2])
+					obj[[ij]]<-list(trees=c(
+						tipRotate(tt1[[i]],x*Ntip(tr1)/Ntip(tr2),methods="just.compute"),
+						tipRotate(tt2[[j]],y*Ntip(tr2)/Ntip(tr1),methods="just.compute")),
+						assoc=assoc)
+					class(obj[[ij]])<-"cophylo"
+					ij<-ij+1
+				}
+			}
+			class(obj)<-"multiCophylo"
 		} else {
 			x<-setNames(sapply(assoc[,2],match,table=tr2$tip.label),assoc[,1])
-			tr1<-tipRotate(tr1,x*Ntip(tr1)/Ntip(tr2),...)
+			tr1<-tipRotate(tr1,x*Ntip(tr1)/Ntip(tr2),right=tr2,assoc=assoc,...)
 			best.tr1<-Inf
 			x<-setNames(sapply(assoc[,1],match,table=tr1$tip.label),assoc[,2])
-			tr2<-tipRotate(tr2,x*Ntip(tr2)/Ntip(tr1),...)
+			tr2<-tipRotate(tr2,x*Ntip(tr2)/Ntip(tr1),left=tr1,assoc=assoc,...)
 			best.tr2<-Inf
 			while((best.tr2-attr(tr2,"minRotate"))>0||(best.tr1-attr(tr1,"minRotate"))>0){
 				best.tr1<-attr(tr1,"minRotate")
 				best.tr2<-attr(tr2,"minRotate")
 				x<-setNames(sapply(assoc[,2],match,table=tr2$tip.label),assoc[,1])
-				tr1<-tipRotate(tr1,x*Ntip(tr1)/Ntip(tr2),...)
+				tr1<-tipRotate(tr1,x*Ntip(tr1)/Ntip(tr2),right=tr2,assoc=assoc,...)
 				x<-setNames(sapply(assoc[,1],match,table=tr1$tip.label),assoc[,2])
-				tr2<-tipRotate(tr2,x*Ntip(tr2)/Ntip(tr1),...)
+				tr2<-tipRotate(tr2,x*Ntip(tr2)/Ntip(tr1),left=tr1,assoc=assoc,...)
 			}
 			tt<-list(tr1,tr2)
 			class(tt)<-"multiPhylo"
@@ -264,6 +282,19 @@ tipRotate<-function(tree,x,...){
 	if(hasArg(rotate.multi)) rotate.multi<-list(...)$rotate.multi
 	else rotate.multi<-FALSE
 	if(rotate.multi) rotate.multi<-!is.binary.tree(tree)
+	if(hasArg(anim.cophylo)) anim.cophylo<-list(...)$anim.cophylo
+	else anim.cophylo<-FALSE
+	if(anim.cophylo){
+		if(hasArg(left)) left<-list(...)$left
+		else left<-NULL
+		if(hasArg(right)) right<-list(...)$right
+		else right<-NULL
+		if(hasArg(assoc)) assoc<-list(...)$assoc
+		else assoc<-NULL
+		if(is.null(left)&&is.null(right)) anim.cophylo<-FALSE
+		if(hasArg(only.accepted)) only.accepted<-list(...)$only.accepted
+		else only.accepted<-TRUE
+	}
 	tree<-reorder(tree)
 	nn<-1:tree$Nnode+length(tree$tip.label)
 	if("just.compute"%in%methods){
@@ -292,14 +323,25 @@ tipRotate<-function(tree,x,...){
 		if(print) message(paste("objective:",pp))
 		tree<-tt
 	}
+	ANIM.COPHYLO<-function(tree){
+		dev.hold()
+		if(is.null(left)) plot(cophylo(tree,right,assoc=assoc,rotate=FALSE),...)
+		else if(is.null(right)) plot(cophylo(left,tree,assoc=assoc,rotate=FALSE),...)
+		nodelabels.cophylo(node=i+Ntip(tree),pie=1,col="red",cex=0.4,
+			which=if(is.null(left)) "left" else "right")
+		dev.flush()
+	}
 	if("pre"%in%methods){
 		for(i in 1:tree$Nnode){
+			if(anim.cophylo) ANIM.COPHYLO(tree)
 			tt<-if(rotate.multi) rotate.multi(tree,nn[i]) else untangle(rotate(tree,nn[i]),"read.tree")
 			oo<-sum(fn(x-setNames(1:length(tree$tip.label),tree$tip.label)[names(x)]))
 			if(inherits(tt,"phylo")) pp<-sum(fn(x-setNames(1:length(tt$tip.label),tt$tip.label)[names(x)]))
+			if(anim.cophylo&&!only.accepted) ANIM.COPHYLO(tt)
 			else if(inherits(tt,"multiPhylo")){
 				foo<-function(phy,x) sum(fn(x-setNames(1:length(phy$tip.label),phy$tip.label)[names(x)]))
 				pp<-sapply(tt,foo,x=x)
+				if(anim.cophylo&&!only.accepted) nulo<-lapply(tt,ANIM.COPHYLO)
 				ii<-which(pp==min(pp))
 				ii<-if(length(ii)>1) sample(ii,1) else ii
 				tt<-tt[[ii]]
@@ -311,12 +353,15 @@ tipRotate<-function(tree,x,...){
 	}
 	if("post"%in%methods){
 		for(i in tree$Nnode:1){
+			if(anim.cophylo) ANIM.COPHYLO(tree)
 			tt<-if(rotate.multi) rotate.multi(tree,nn[i]) else untangle(rotate(tree,nn[i]),"read.tree")
 			oo<-sum(fn(x-setNames(1:length(tree$tip.label),tree$tip.label)[names(x)]))
 			if(inherits(tt,"phylo")) pp<-sum(fn(x-setNames(1:length(tt$tip.label),tt$tip.label)[names(x)]))
+			if(anim.cophylo&&!only.accepted) ANIM.COPHYLO(tt)
 			else if(inherits(tt,"multiPhylo")){
 				foo<-function(phy,x) sum(fn(x-setNames(1:length(phy$tip.label),phy$tip.label)[names(x)]))
 				pp<-sapply(tt,foo,x=x)
+				if(anim.cophylo&&!only.accepted) nulo<-lapply(tt,ANIM.COPHYLO)
 				ii<-which(pp==min(pp))
 				ii<-if(length(ii)>1) sample(ii,1) else ii
 				tt<-tt[[ii]]
@@ -327,6 +372,7 @@ tipRotate<-function(tree,x,...){
 		}
 	}
 	attr(tree,"minRotate")<-min(oo,pp)
+	if(anim.cophylo) ANIM.COPHYLO(tree)
 	tree
 }
 

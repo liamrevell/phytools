@@ -83,6 +83,8 @@ S3method(plot, phyl.pca)
 S3method(summary, cophylo)
 S3method(print, multiCophylo)
 S3method(plot, multiCophylo)
+S3method(logLik, simmap)
+S3method(logLik, multiSimmap)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
