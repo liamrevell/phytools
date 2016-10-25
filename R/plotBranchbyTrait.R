@@ -133,7 +133,7 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 	if(direction%in%c("rightwards","leftwards")){
 		if(!is.null(lims)) text(x=x,y=y,
 			round(lims[1],digits),pos=3,cex=fsize)
-		if(!is.null(lims)) text(x=x+leg,y=y+0.02*diff(par()$usr[3:4]),
+		if(!is.null(lims)) text(x=x+leg,y=y,
 			round(lims[2],digits),pos=3,cex=fsize)
 		if(is.null(title)) title<-"P(state=1)"
 		text(x=(2*x+leg)/2,y=y,title,pos=3,cex=fsize)
