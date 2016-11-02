@@ -1,6 +1,50 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## function to compute all paths towards the tips from a node
+## written by  Liam J. Revell
+node.paths<-function(tree,node){
+	d<-Descendants(tree,node,"children")
+	paths<-as.list(d)
+	while(any(d>Ntip(tree))){
+		jj<-1
+		new.paths<-list()
+		for(i in 1:length(paths)){
+			if(paths[[i]][length(paths[[i]])]<=Ntip(tree)){ 
+				new.paths[[jj]]<-paths[[i]]
+				jj<-jj+1
+			} else {
+				ch<-Descendants(tree,paths[[i]][length(paths[[i]])],
+					"children")
+				for(j in 1:length(ch)){
+					new.paths[[jj]]<-c(paths[[i]],ch[j])
+					jj<-jj+1
+				}
+			}
+		}
+		paths<-new.paths
+		d<-sapply(paths,function(x) x[length(x)])
+	}
+	paths
+}
+
+## function to compute a modification of Grafen's edge lengths
+## written by Liam J. Revell 2016
+modified.Grafen<-function(tree,power=2){
+	max.np<-function(tree,node){
+		np<-node.paths(tree,node)
+		if(length(np)>0) max(sapply(np,length)) else 0
+	}
+	nn<-1:(Ntip(tree)+tree$Nnode)
+	h<-sapply(nn,max.np,tree=tree)+1
+	h<-(h/max(h))^power
+	edge.length<-vector()
+	for(i in 1:nrow(tree$edge)) 
+		edge.length[i]<-diff(h[tree$edge[i,2:1]])
+	tree$edge.length<-edge.length
+	tree
+}
+
 ## function to compute all rotations
 ## written by Liam J. Revell 2016
 allRotations<-function(tree){
