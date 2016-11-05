@@ -438,7 +438,7 @@ plot.changesMap<-function(x,...){
 print.changesMap<-function(x, ...){
 	if(hasArg(signif)) signif<-list(...)$signif
 	else signif<-2
-	cat("\nDistribution of changes from stochasting mapping:\n")
+	cat("\nDistribution of changes from stochastic mapping:\n")
 	cat(paste("\t",x$trans[1],"\t\t",x$trans[2],"\n",sep=""))
 	cat(paste("\tMin.   :",round(x$mins[1],signif),
 		"\tMin.   :",round(x$mins[2],signif),"\n",sep=""))
