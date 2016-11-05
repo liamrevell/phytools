@@ -336,3 +336,120 @@ apeAce<-function(tree,x,model,fixedQ=NULL,...){
 logLik.simmap<-function(object,...) object$logL
 logLik.multiSimmap<-function(object,...)
 	sapply(object,function(x) x$logL)
+	
+## S3 density method for "multiSimmap"
+density.multiSimmap<-function(x,...){
+	if(hasArg(method)) method<-list(...)$method
+	else method<-"changes"
+	if(!method%in%c("densityMap","changes")){
+		cat("method not recognized. Setting to default method.\n\n")
+		method<-"changes"
+	}
+	if(method=="densityMap") obj<-densityMap(x,plot=FALSE,...)
+	else if(method=="changes"){
+		if(hasArg(bw)) bw<-list(...)$bw
+		else bw<-1
+		tmp<-summary(trees)
+		ab<-tmp$count[,2]
+		ba<-tmp$count[,3]
+		class(ab)<-class(ba)<-"mcmc"
+		if(.check.pkg("coda")){
+			hpd.ab<-HPDinterval(ab)
+			hpd.ba<-HPDinterval(ba)
+		} else {
+			cat("  HPDinterval requires package coda.\n")
+			cat("  Computing 95% interval from samples only.\n\n")
+			hpd.ab<-c(sort(ab)[round(0.025*length(ab))],
+				sort(ab)[round(0.975*length(ab))])
+			hpd.ba<-c(sort(ba)[round(0.025*length(ba))],
+				sort(ba)[round(0.975*length(ba))])
+		}
+		p.ab<-hist(ab,breaks=seq(min(c(ab,ba))-1.5,
+			max(c(ab,ba))+1.5,bw),plot=FALSE)
+		p.ba<-hist(ba,breaks=seq(min(c(ab,ba))-1.5,
+			max(c(ab,ba))+1.5,bw),plot=FALSE)
+		states<-colnames(tmp$ace)
+		trans<-c(paste(states[1],"->",states[2],sep=""),
+			paste(states[2],"->",states[1],sep=""))
+		obj<-list(hpd.ab=hpd.ab,
+			hpd.ba=hpd.ba,
+			p.ab=p.ab,
+			p.ba=p.ba,
+			states=colnames(tmp$ace),trans=trans,
+			bw=bw,
+			mins=setNames(c(min(ab),min(ba)),trans),
+			meds=setNames(c(median(ab),median(ba)),trans),
+			means=setNames(c(mean(ab),mean(ba)),trans),
+			maxs=setNames(c(max(ab),max(ba)),trans))
+		class(obj)<-"changesMap"
+	}
+	obj
+}
+
+plot.changesMap<-function(x,...){
+	p.ab<-x$p.ab
+	p.ba<-x$p.ba
+	hpd.ab<-x$hpd.ab
+	hpd.ba<-x$hpd.ba
+	bw<-x$bw
+	plot(p.ab$mids,p.ab$density,xlim=c(min(c(ab,ba))-1,
+		max(c(ab,ba))+1),ylim=c(0,1.2*max(c(p.ab$density,
+		p.ba$density))),
+		type="n",xlab="number of changes",
+		ylab="relative frequency across stochastic maps")
+	y2<-rep(p.ab$density,each=2)
+	y2<-y2[-length(y2)]
+	x2<-rep(p.ab$mids-bw/2,each=2)[-1]
+	x3<-c(min(x2),x2,max(x2))
+	y3<-c(0,y2,0)
+	polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+	lines(p.ab$mids-bw/2,p.ab$density,type="s")
+	y2<-rep(p.ba$density,each=2)
+	y2<-y2[-length(y2)]
+	x2<-rep(p.ba$mids-bw/2,each=2)[-1]
+	x3<-c(min(x2),x2,max(x2))
+	y3<-c(0,y2,0)
+	polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
+	lines(p.ba$mids-bw/2,p.ba$density,type="s")
+	add.simmap.legend(colors=setNames(c(make.transparent("blue",0.3),
+		make.transparent("red",0.3)),
+		c(paste(x$states[1],"->",x$states[2],sep=""),
+		paste(x$states[2],"->",x$states[2],sep=""))),
+		prompt=FALSE,x=min(c(ab,ba)),y=0.95*par()$usr[4])
+	lines(hpd.ab,rep(1.01*max(p.ab$density),2))
+	lines(rep(hpd.ab[1],2),c(1.01*max(p.ab$density),
+		1.01*max(p.ab$density)-0.005))
+	lines(rep(hpd.ab[2],2),c(1.01*max(p.ab$density),
+		1.01*max(p.ab$density)-0.005))
+	text(mean(hpd.ab),1.01*max(p.ab$density),
+		paste("HPD(",x$states[1],"->",x$states[2],")",sep=""),
+		pos=3)
+	lines(hpd.ba,rep(1.01*max(p.ba$density),2))
+	lines(rep(hpd.ba[1],2),c(1.01*max(p.ba$density),
+		1.01*max(p.ba$density)-0.005))
+	lines(rep(hpd.ba[2],2),c(1.01*max(p.ba$density),
+		1.01*max(p.ba$density)-0.005))
+	text(mean(hpd.ba),1.01*max(p.ba$density),
+		paste("HPD(",x$states[2],"->",x$states[1],")",sep=""),
+		pos=3)
+}
+
+print.changesMap<-function(x, ...){
+	if(hasArg(signif)) signif<-list(...)$signif
+	else signif<-2
+	cat("\nDistribution of changes from stochasting mapping:\n")
+	cat(paste("\t",x$trans[1],"\t\t",x$trans[2],"\n",sep=""))
+	cat(paste("\tMin.   :",round(x$mins[1],signif),
+		"\tMin.   :",round(x$mins[2],signif),"\n",sep=""))
+	cat(paste("\tMedian :",round(x$meds[1],signif),
+		"\tMedian :",round(x$meds[2],signif),"\n",sep=""))
+	cat(paste("\tMean   :",round(x$means[1],signif),
+		"\tMean   :",round(x$means[2],signif),"\n",sep=""))
+	cat(paste("\tMax.   :",round(x$maxs[1],signif),
+		"\tMax.   :",round(x$maxs[2],signif),"\n\n",sep=""))
+	cat("95% HPD interval(",x$trans[1],"): [",x$hpd.ab[1],", ",
+		x$hpd.ba[2],"]\n",sep="")
+	cat("95% HPD interval(",x$trans[2],"): [",x$hpd.ba[1],", ",
+		x$hpd.ba[2],"]\n\n",sep="")
+}
+
