@@ -414,7 +414,7 @@ plot.changesMap<-function(x,...){
 	add.simmap.legend(colors=setNames(c(make.transparent("blue",0.3),
 		make.transparent("red",0.3)),
 		c(paste(x$states[1],"->",x$states[2],sep=""),
-		paste(x$states[2],"->",x$states[2],sep=""))),
+		paste(x$states[2],"->",x$states[1],sep=""))),
 		prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
 	dd<-0.01*diff(par()$usr[3:4])
 	lines(hpd.ab,rep(max(p.ab$density)+dd,2))
