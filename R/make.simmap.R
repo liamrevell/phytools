@@ -402,17 +402,17 @@ plot.changesMap<-function(x,...){
 	x2<-rep(p.ab$mids-bw/2,each=2)[-1]
 	x3<-c(min(x2),x2,max(x2))
 	y3<-c(0,y2,0)
-	polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+	polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
 	lines(p.ab$mids-bw/2,p.ab$density,type="s")
 	y2<-rep(p.ba$density,each=2)
 	y2<-y2[-length(y2)]
 	x2<-rep(p.ba$mids-bw/2,each=2)[-1]
 	x3<-c(min(x2),x2,max(x2))
 	y3<-c(0,y2,0)
-	polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
+	polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
 	lines(p.ba$mids-bw/2,p.ba$density,type="s")
-	add.simmap.legend(colors=setNames(c(make.transparent("blue",0.3),
-		make.transparent("red",0.3)),
+	add.simmap.legend(colors=setNames(c(make.transparent("red",0.3),
+		make.transparent("blue",0.3)),
 		c(paste(x$states[1],"->",x$states[2],sep=""),
 		paste(x$states[2],"->",x$states[1],sep=""))),
 		prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
