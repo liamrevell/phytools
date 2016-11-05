@@ -392,8 +392,8 @@ plot.changesMap<-function(x,...){
 	hpd.ab<-x$hpd.ab
 	hpd.ba<-x$hpd.ba
 	bw<-x$bw
-	plot(p.ab$mids,p.ab$density,xlim=c(min(c(ab,ba))-1,
-		max(c(ab,ba))+1),ylim=c(0,1.2*max(c(p.ab$density,
+	plot(p.ab$mids,p.ab$density,xlim=c(min(x$mins)-1,
+		max(x$maxs)+1),ylim=c(0,1.2*max(c(p.ab$density,
 		p.ba$density))),
 		type="n",xlab="number of changes",
 		ylab="relative frequency across stochastic maps")
@@ -415,21 +415,22 @@ plot.changesMap<-function(x,...){
 		make.transparent("red",0.3)),
 		c(paste(x$states[1],"->",x$states[2],sep=""),
 		paste(x$states[2],"->",x$states[2],sep=""))),
-		prompt=FALSE,x=min(c(ab,ba)),y=0.95*par()$usr[4])
-	lines(hpd.ab,rep(1.01*max(p.ab$density),2))
-	lines(rep(hpd.ab[1],2),c(1.01*max(p.ab$density),
-		1.01*max(p.ab$density)-0.005))
-	lines(rep(hpd.ab[2],2),c(1.01*max(p.ab$density),
-		1.01*max(p.ab$density)-0.005))
-	text(mean(hpd.ab),1.01*max(p.ab$density),
+		prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
+	dd<-0.01*diff(par()$usr[3:4])
+	lines(hpd.ab,rep(max(p.ab$density)+dd,2))
+	lines(rep(hpd.ab[1],2),c(max(p.ab$density)+dd,
+		max(p.ab$density)+dd-0.005))
+	lines(rep(hpd.ab[2],2),c(max(p.ab$density)+dd,
+		max(p.ab$density)+dd-0.005))
+	text(mean(hpd.ab),max(p.ab$density)+dd,
 		paste("HPD(",x$states[1],"->",x$states[2],")",sep=""),
 		pos=3)
-	lines(hpd.ba,rep(1.01*max(p.ba$density),2))
-	lines(rep(hpd.ba[1],2),c(1.01*max(p.ba$density),
-		1.01*max(p.ba$density)-0.005))
-	lines(rep(hpd.ba[2],2),c(1.01*max(p.ba$density),
-		1.01*max(p.ba$density)-0.005))
-	text(mean(hpd.ba),1.01*max(p.ba$density),
+	lines(hpd.ba,rep(max(p.ba$density)+dd,2))
+	lines(rep(hpd.ba[1],2),c(max(p.ba$density)+dd,
+		max(p.ba$density)+dd-0.005))
+	lines(rep(hpd.ba[2],2),c(max(p.ba$density)+dd,
+		max(p.ba$density)+dd-0.005))
+	text(mean(hpd.ba),max(p.ba$density)+dd,
 		paste("HPD(",x$states[2],"->",x$states[1],")",sep=""),
 		pos=3)
 }
