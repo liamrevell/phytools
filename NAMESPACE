@@ -90,6 +90,8 @@ S3method(print, cospeciation)
 S3method(density, multiSimmap)
 S3method(plot, changesMap)
 S3method(print, changesMap)
+S3method(plot, phyloScattergram)
+S3method(print, phyloScattergram)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
