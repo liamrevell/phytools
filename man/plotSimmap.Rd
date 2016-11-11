@@ -7,7 +7,8 @@
 plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE, 
 	node.numbers=FALSE, mar=NULL, add=FALSE, offset=NULL, direction="rightwards",
 	type="phylogram", setEnv=TRUE, part=1.0, xlim=NULL, ylim=NULL, 
-	nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE, split.vertical=FALSE)
+	nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE, split.vertical=FALSE,
+	lend=2)
 \method{plot}{simmap}(x, ...)
 \method{plot}{multiSimmap}(x, ...)
 }
@@ -33,6 +34,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{maxY}{maximum value of y to use before rotating a tree into fan configuration. This will only make a difference if different from \code{Ntip(tree)}.}
 	\item{hold}{logical argument indicating whether or not to hold the output to the graphical device before plotting. Defaults to \code{hold=TRUE}.}
 	\item{split.vertical}{split the color of the vertically plotted edges by the state of the daughter edges. Only applies if the edge state changes exactly at a node.}
+	\item{lend}{line end style. See \code{\link{par}}.}
 	\item{x}{for S3 plotting method, object of class \code{"simmap"} or \code{"multiSimmap"}.}
 	\item{...}{for S3 plotting method, other arguments to be passed to \code{\link{plotSimmap}}.}
 }
