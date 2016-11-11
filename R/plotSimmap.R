@@ -9,7 +9,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,ftype=ftype,
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar,add,offset,direction,type,
-			setEnv,part,xlim,ylim,nodes,tips,maxY,hold)
+			setEnv,part,xlim,ylim,nodes,tips,maxY,hold,split.vertical,lend)
 	} else {
 		# check tree
 		if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\"")
@@ -34,9 +34,10 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		if(hold) null<-dev.hold()
 		if(type=="phylogram"){
 			plotPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,add,offset,
-				direction,setEnv,xlim,ylim,nodes,tips,split.vertical)
+				direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend)
 		} else if(type=="fan"){
-			plotFan(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY)
+			plotFan(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,
+				maxY,lend)
 		}
 		if(hold) null<-dev.flush()
 	}
