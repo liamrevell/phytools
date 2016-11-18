@@ -216,12 +216,29 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 	if(!add) plot.new()
 	plot.window(xlim=xlim,ylim=ylim,asp=1)
 	# plot radial lines (edges)
+	## first, the lines emerging from the root (if there are only two):
+	jj<-which(cw$edge[,1]==(Ntip(cw)+1))
+	if(length(jj)==2){
+		m.left<-cumsum(cw$maps[[jj[1]]])/sum(cw$maps[[jj[1]]])
+		xx.left<-c(x[jj[1],1],x[jj[1],1]+(x[jj[1],2]-x[jj[1],1])*m.left)
+		yy.left<-c(y[jj[1],1],y[jj[1],1]+(y[jj[1],2]-y[jj[1],1])*m.left)
+		m.right<-cumsum(cw$maps[[jj[2]]])/sum(cw$maps[[jj[2]]])
+		xx.right<-c(x[jj[2],1],x[jj[2],1]+(x[jj[2],2]-x[jj[2],1])*m.right)
+		yy.right<-c(y[jj[2],1],y[jj[2],1]+(y[jj[2],2]-y[jj[2],1])*m.right)
+		xx<-c(xx.left[length(xx.left):1],xx.right[2:length(xx.right)])
+		yy<-c(yy.left[length(yy.left):1],yy.right[2:length(yy.right)])
+		col<-colors[c(names(m.left)[length(m.left):1],names(m.right))]
+		segments(xx[2:length(xx)-1],yy[2:length(yy)-1],xx[2:length(xx)],yy[2:length(yy)],
+			col=col,lwd=lwd,lend=lend)
+	} else jj<-NULL
 	for(i in 1:nrow(cw$edge)){
-		maps<-cumsum(cw$maps[[i]])/sum(cw$maps[[i]])
-		xx<-c(x[i,1],x[i,1]+(x[i,2]-x[i,1])*maps)
-		yy<-c(y[i,1],y[i,1]+(y[i,2]-y[i,1])*maps)
-		for(i in 1:(length(xx)-1)) lines(xx[i+0:1],yy[i+0:1],col=colors[names(maps)[i]],
-			lwd=lwd,lend=lend)
+		if(i%in%jj==FALSE){
+			maps<-cumsum(cw$maps[[i]])/sum(cw$maps[[i]])
+			xx<-c(x[i,1],x[i,1]+(x[i,2]-x[i,1])*maps)
+			yy<-c(y[i,1],y[i,1]+(y[i,2]-y[i,1])*maps)
+			for(i in 1:(length(xx)-1)) lines(xx[i+0:1],yy[i+0:1],col=colors[names(maps)[i]],
+				lwd=lwd,lend=lend)
+		}
 	}
 	# plot circular lines
 	for(i in 1:m+n){
@@ -332,13 +349,15 @@ plotTree<-function(tree,...){
 	else maxY<-NULL
 	if(hasArg(hold)) hold<-list(...)$hold
 	else hold<-TRUE
+	if(hasArg(lend)) lend<-list(...)$lend
+	else lend<-2
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		if(!is.null(color)) names(color)<-"1"
 		for(i in 1:length(tree)) plotTree(tree[[i]],color=color,fsize=fsize,ftype=ftype,
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar=mar,add=add,offset=offset,
 			direction=direction,type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,
-			nodes=nodes,tips=tips,maxY=maxY,hold=hold)
+			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend)
 	} else {
 		if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 		tree$maps<-as.list(tree$edge.length)
@@ -347,7 +366,7 @@ plotTree<-function(tree,...){
 		plotSimmap(tree,colors=color,fsize=fsize,ftype=ftype,lwd=lwd,pts=pts,
 			node.numbers=node.numbers,mar=mar,add=add,offset=offset,direction=direction,
 			type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,nodes=nodes,tips=tips,maxY=maxY,
-			hold=hold)
+			hold=hold,lend=lend)
 	}
 }
 
