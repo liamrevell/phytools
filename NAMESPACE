@@ -92,6 +92,7 @@ S3method(plot, changesMap)
 S3method(print, changesMap)
 S3method(plot, phyloScattergram)
 S3method(print, phyloScattergram)
+S3method(di2multi, simmap)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)

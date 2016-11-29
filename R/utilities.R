@@ -885,8 +885,10 @@ lambdaTree<-function(tree,lambda){
 }
 
 ## di2multi method for tree with mapped state
-## written by Liam J. Revell 2013, 2015
-di2multi.simmap<-function(tree,tol=1e-08){
+## written by Liam J. Revell 2013, 2015, 2016
+di2multi.simmap<-function(phy,...){
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-08
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(is.null(tree$maps)){
 		cat("Warning: tree does not contain mapped state. Using di2multi.\n")
