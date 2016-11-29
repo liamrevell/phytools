@@ -349,7 +349,7 @@ density.multiSimmap<-function(x,...){
 	else if(method=="changes"){
 		if(hasArg(bw)) bw<-list(...)$bw
 		else bw<-1
-		tmp<-summary(trees)
+		tmp<-summary(x)
 		ab<-tmp$count[,2]
 		ba<-tmp$count[,3]
 		class(ab)<-class(ba)<-"mcmc"

@@ -6,7 +6,7 @@ di2multi.simmap(phy, ...)
 \method{di2multi}{simmap}(phy, ...)
 }
 \arguments{
-	\item{tree}{modified object of class \code{"phylo"} containing a stochastically mapped discrete character.}
+	\item{phy}{modified object of class \code{"phylo"} containing a stochastically mapped discrete character.}
 	\item{...}{optional argument \code{tol}, length below which edges should be treated as having zero length.}
 }
 \description{

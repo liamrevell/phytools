@@ -889,19 +889,19 @@ lambdaTree<-function(tree,lambda){
 di2multi.simmap<-function(phy,...){
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-08
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(is.null(tree$maps)){
+	if(!inherits(phy,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(is.null(phy$maps)){
 		cat("Warning: tree does not contain mapped state. Using di2multi.\n")
-		return(di2multi(tree,tol))
+		return(di2multi(phy,tol))
 	}
-	N<-length(tree$tip.label)
-	n<-length(intersect(which(tree$edge.length<tol),which(tree$edge[,2]>N)))
-	if(n==0) return(tree)
-	edge<-tree$edge
+	N<-length(phy$tip.label)
+	n<-length(intersect(which(phy$edge.length<tol),which(phy$edge[,2]>N)))
+	if(n==0) return(phy)
+	edge<-phy$edge
 	edge[edge>N]<--edge[edge>N]+N
-	edge.length<-tree$edge.length
-	maps<-tree$maps
-	Nnode<-tree$Nnode
+	edge.length<-phy$edge.length
+	maps<-phy$maps
+	Nnode<-phy$Nnode
 	for(i in 1:n){
 		ii<-intersect(which(edge.length<tol),which(edge[,2]<0))[1]
 		node<-edge[ii,2]
@@ -916,12 +916,12 @@ di2multi.simmap<-function(phy,...){
 	mm<-1:Nnode+N
 	for(i in 1:length(edge)) if(edge[i]%in%nn) edge[i]<-mm[which(nn==edge[i])]
 	mapped.edge<-makeMappedEdge(edge,maps)
-	tt<-list(edge=edge,Nnode=Nnode,tip.label=tree$tip.label,edge.length=edge.length,
+	tt<-list(edge=edge,Nnode=Nnode,tip.label=phy$tip.label,edge.length=edge.length,
 		maps=maps,mapped.edge=mapped.edge)
 	class(tt)<-"phylo"
-	if(!is.null(attr(tree,"order"))) attr(tt,"order")<-attr(tree,"order")
-	if(!is.null(tree$node.states)) tt$node.states<-getStates(tt,"nodes")
-	if(!is.null(tree$states)) tt$states<-getStates(tt,"tips")
+	if(!is.null(attr(phy,"order"))) attr(tt,"order")<-attr(phy,"order")
+	if(!is.null(phy$node.states)) tt$node.states<-getStates(tt,"nodes")
+	if(!is.null(phy$states)) tt$states<-getStates(tt,"tips")
 	return(tt)
 }
 

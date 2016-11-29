@@ -98,7 +98,7 @@ plot.phyloScattergram<-function(x,...){
 		if(i==j) plot(x$contMaps[[i]],legend=FALSE,
 			lwd=2,outline=FALSE,fsize=fsize)
 		else { 
-			phylomorphospace(tree,x$X[,c(j,i)],A=x$A[,c(j,i)],lwd=1,
+			phylomorphospace(x$tree,x$X[,c(j,i)],A=x$A[,c(j,i)],lwd=1,
 				node.by.map=TRUE,axes=FALSE,node.size=c(0,1),
 				colors=colors,label=label,xlab="",ylab="")
 			if(i==1) axis(side=3) # top row

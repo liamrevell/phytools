@@ -17,7 +17,7 @@ cospeciation(t1, t2, distance=c("RF","SPR"),
 	\item{method}{method to use (simulation of pure-birth trees, or permutation of tip labels on a fixed tree) to obtain a null distribution of tree distances via \code{distance}.}
 	\item{assoc}{matrix containing the tip labels in \code{t1} to match to the tip labels in \code{t2}. Note that not all labels in either tree need to be included; however, unlike \code{cophylo}, one label in \code{t1} cannot be matched with more than one label in \code{t2}, nor vice versa. If \code{NULL} then an exact match of tip labels will be sought.}
 	\item{nsim}{number of simulations or permutations.}
-	\code{x}{for \code{plot} and \code{print} methods, an object of class \code{"cospeciation"}.}
+	\item{x}{for \code{plot} and \code{print} methods, an object of class \code{"cospeciation"}.}
 	\item{...}{optional arguments.}
 }
 \description{
