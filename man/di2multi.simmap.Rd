@@ -2,7 +2,7 @@
 \alias{di2multi.simmap}
 \title{Collapse branches of zero length to polytomy in stochastic map style tree}
 \usage{
-di2multi.simmap(tree, tol=1e-08)
+di2multi.simmap(phy, ...)
 \method{di2multi}{simmap}(phy, ...)
 }
 \arguments{
