@@ -1,6 +1,6 @@
 Package: phytools
-Version: 0.5-60
-Date: 2016-11-29
+Version: 0.5-61
+Date: 2016-12-1
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
@@ -34,10 +34,11 @@ Description: Package contains various functions for phylogenetic analysis.
 	regression, a reduced major axis regression, a phylogenetic
 	canonical correlation analysis, and a phylogenetic ANOVA; projecting 
 	a tree onto a geographic map; simulating discrete character 
-	histories on the tree; and fitting a model in which a discrete 
-	character evolves under the threshold model. In addition to this 
-	phylogenetic comparative method functionality, the package also 
-	contains functions for a wide range of other purposes in 
+	histories on the tree; fitting a model in which a discrete character 
+	evolves under the threshold model; visualization of cospeciation; a 
+	simple statistical test for cospeciation between two trees. In 
+	addition to this phylogenetic comparative method functionality, the 
+	package also contains functions for a wide range of other purposes in 
 	phylogenetic biology. For instance, functionality in this package 
 	includes (but is not restricted to): adding taxa to a tree 
 	(including randomly, everywhere, or automatically to genera); 
@@ -47,12 +48,14 @@ Description: Package contains various functions for phylogenetic analysis.
 	XML file; converting a tree with a mapped character to a tree with
 	singleton nodes and one character state per edge; estimating a
 	phylogeny using the least squares method; simulating birth-death
-	trees under a range of conditions; rerooting trees; a wide range
-	of visualizations of trees; and a variety of other manipulations
-	and analyses that phylogenetic biologists may find useful for
-	their research.
+	trees under a range of conditions; rerooting trees; computing a 
+	consensus tree under multiple methods, including via minimization
+	of the distance to other trees in the set; a wide range of 
+	visualizations of trees; and a variety of other manipulations and 
+	analyses that phylogenetic biologists may find useful for their 
+	research.
 License: GPL (>= 2)
 URL: http://github.com/liamrevell/phytools
-Packaged: 2016-11-29 12:00:00 EST
+Packaged: 2016-12-1 12:00:00 EST
 Repository: 
-Date/Publication: 2016-11-29 12:00:00 EST
+Date/Publication: 2016-12-1 12:00:00 EST
