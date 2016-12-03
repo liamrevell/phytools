@@ -8,7 +8,7 @@ bd(x)
 	\item{x}{object of class \code{"birthdeath"}.}
 }
 \description{
-	This function converts an object of class \code{"birthdeath"} to a vector with the ML birth & death rates.}
+	This function converts an object of class \code{"birthdeath"} to a vector with the ML birth & death rates.
 }
 \value{
 	A vector.
