@@ -11,8 +11,16 @@ bd<-function(x){
 
 ## compute AIC weights
 aic.w<-function(aic){
-    d.aic<-aic-min(aic)
-    exp(-1/2*d.aic)/sum(exp(-1/2*d.aic))
+	d.aic<-aic-min(aic)
+	x<-exp(-1/2*d.aic)/sum(exp(-1/2*d.aic))
+	class(x)<-"aic.w"
+	x
+}
+
+print.aic.w<-function(x,...){
+	if(hasArg(signif)) signif<-list(...)$signif
+	else signif<-6
+	print(round(unclass(x),signif))
 }
 
 ## function to compute all paths towards the tips from a node
