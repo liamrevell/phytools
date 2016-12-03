@@ -130,7 +130,8 @@ collapseTree<-function(tree,...){
 	## turn locator bell back on
 	options(locatorBell=TRUE)
 	if(drop.extinct){ 
-		if(!is.ultrametric(otree)) cat("Input tree was not ultrametric. Ignoring argument drop.extinct.\n")
+		if(!is.ultrametric(otree)) 
+			cat("Input tree was not ultrametric. Ignoring argument drop.extinct.\n")
 		else { 
 			th<-setNames(sapply(1:Ntip(tree),nodeheight,tree=tree),tree$tip.label)
 			tips<-names(th)[which(th<(mean(sapply(1:Ntip(otree),

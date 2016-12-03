@@ -1,6 +1,12 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## compute AIC weights
+aic.w<-function(aic){
+    d.aic<-aic-min(aic)
+    exp(-1/2*d.aic)/sum(exp(-1/2*d.aic))
+}
+
 ## function to compute all paths towards the tips from a node
 ## written by  Liam J. Revell
 node.paths<-function(tree,node){
