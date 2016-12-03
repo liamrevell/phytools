@@ -1,6 +1,14 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## convert object of class "birthdeath" into birth & death rates
+bd<-function(x){
+	if(class(x)!="birthdeath") stop("x should be an object of class 'birthdeath'")
+	b<-x$para[2]/(1-x$para[1])
+	d<-b-x$para[2]
+	setNames(c(b,d),c("b","d"))
+}
+
 ## compute AIC weights
 aic.w<-function(aic){
     d.aic<-aic-min(aic)
