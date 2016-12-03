@@ -2,11 +2,10 @@
 \alias{di2multi.simmap}
 \title{Collapse branches of zero length to polytomy in stochastic map style tree}
 \usage{
-di2multi.simmap(phy, ...)
 \method{di2multi}{simmap}(phy, ...)
 }
 \arguments{
-	\item{phy}{modified object of class \code{"phylo"} containing a stochastically mapped discrete character.}
+	\item{phy}{object of class \code{"simmap"} containing a stochastically mapped discrete character.}
 	\item{...}{optional argument \code{tol}, length below which edges should be treated as having zero length.}
 }
 \description{
