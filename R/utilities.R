@@ -19,7 +19,7 @@ aic.w<-function(aic){
 
 print.aic.w<-function(x,...){
 	if(hasArg(signif)) signif<-list(...)$signif
-	else signif<-6
+	else signif<-8
 	print(round(unclass(x),signif))
 }
 
