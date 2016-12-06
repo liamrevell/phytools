@@ -18,13 +18,13 @@ likSurface.rateshift(tree, x, nrates=2, shift.range=NULL,
 	\item{...}{optional arguments. In the case of the \code{plot} method, these will be passed to \code{\link{plotSimmap}}. For \code{rateshift}, optional arguments include: \code{tol}, tolerance; \code{plot} & \code{print}, logical values indicating whether to plot or print the progress of the optimization (default to \code{FALSE}); \code{quiet}, logical argument indicating whether to suppress all notifications (defaults to \code{FALSE}); \code{minL}, numeric value; and \code{fixed.shift}, either a vector of fixed shift points, or a logical value.}
 	\item{shift.range}{for \code{likSurface.rateshift}.}
 	\item{density}{for \code{likSurface.rateshift}.}
-	\item{plot}{logical argument for \code{likSurface.rateshift}.}
+	\item{plot}{logical argument for \code{likSurface.rateshift}. If \code{plot=FALSE} then the surface is returned.}
 }
 \description{
 	Function finds the location of one or more rate shifts. \code{likSurface.rateshift} plots the likelihood surface (which is sometimes quite rugged).
 }
 \value{
-	A fitted object of class \code{"rateshift"}.
+	A fitted object of class \code{"rateshift"}, or, in the case of \code{likSurface.rateshift}, a likelihood surface for the shift points.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

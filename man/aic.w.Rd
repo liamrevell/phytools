@@ -8,7 +8,7 @@ aic.w(aic)
 	\item{aic}{vector of AIC values for different fitted models. If the vector has names, these names will be inherited by the vector returned by the function.}
 }
 \description{
-	This function computes AIC weights for a set of fitted models.
+	This function computes AIC weights for a set of fitted models. It returns an object of class \code{"aic.w"} which is just a vector which allows it to be automatically printed with a numerical precision of 8 significant digits.
 }
 \value{
 	A vector of AIC weights.
