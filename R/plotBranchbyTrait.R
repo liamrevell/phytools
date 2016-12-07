@@ -1,5 +1,5 @@
-# function to plot probability or trait value by branch
-# written by Liam J. Revell 2013, 2014
+## function to plot probability or trait value by branch
+## written by Liam J. Revell 2013, 2014, 2016
 
 plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainbow",legend=TRUE,xlims=NULL,...){
 	mode<-mode[1]
@@ -62,9 +62,12 @@ plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainb
 	if(hasArg(open.angle)) open.angle<-list(...)$open.angle
 	else open.angle<-0
 	# end optional arguments
-	if(palette=="heat.colors") cols<-heat.colors(n=1000)
-	if(palette=="gray") cols<-gray(1000:1/1000)
-	if(palette=="rainbow")	cols<-rainbow(1000,start=0.7,end=0) # blue->red
+	if(is.function(palette)) cols<-palette(n=1000)
+	else {
+		if(palette=="heat.colors") cols<-heat.colors(n=1000)
+		if(palette=="gray") cols<-gray(1000:1/1000)
+		if(palette=="rainbow")	cols<-rainbow(1000,start=0.7,end=0) # blue->red
+	}
 	if(is.null(xlims)) xlims<-range(x)+c(-tol,tol)
 	breaks<-0:1000/1000*(xlims[2]-xlims[1])+xlims[1]
 	whichColor<-function(p,cols,breaks){
