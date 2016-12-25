@@ -1183,8 +1183,8 @@ collapse.to.star<-function(tree,node){
 	tree
 }
 
-# function returns the MRCA, or its height above the root, for a set of taxa (in tips)
-# written by Liam Revell 2012, 2013, 2015
+## function returns the MRCA, or its height above the root, for a set of taxa (in tips)
+## written by Liam Revell 2012, 2013, 2015, 2016
 findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 	type<-type[1]
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -1195,12 +1195,10 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 			X<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
 		}
 		return(X)
-	} else {
-		H<-nodeHeights(tree)
-		X<-sapply(tips,function(x,y,z) sapply(y,fastMRCA,sp1=x,tree=z),y=tips,z=tree)
-		Y<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
-
-		if(type=="height") return(Y[which.min(Y)]) else return(X[which.min(Y)])
+    else {
+		node<-getMRCA(tree,tips)
+		if (type == "node") return(node)
+		else if(type=="height") return(nodeheight(tree,node))
 	}
 }
 
