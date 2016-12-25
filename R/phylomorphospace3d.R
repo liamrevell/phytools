@@ -1,5 +1,5 @@
-# phylomorphospace3d: projection of a tree into three dimensional morphospace
-# written by Liam J. Revell 2012, 2013, 2014
+## phylomorphospace3d: projection of a tree into three dimensional morphospace
+## written by Liam J. Revell 2012, 2013, 2014, 2016
 
 phylomorphospace3d<-function(tree,X,A=NULL,label=TRUE,control=list(),method=c("dynamic","static"),...){
 	method<-method[1]
@@ -78,7 +78,7 @@ phylomorphospace3d<-function(tree,X,A=NULL,label=TRUE,control=list(),method=c("d
 		for(i in 1:length(tree$tip.label)){
 			aa<-xx$xyz.convert(x[which(tree$edge[,2]==i),2],y[which(tree$edge[,2]==i),2],
 				z[which(tree$edge[,2]==i),2])
-			text(tree$tip.label[i],x=aa$x,y=aa$y,pos=2)
+			if(con$ftype) text(tree$tip.label[i],x=aa$x,y=aa$y,pos=2,font=con$ftype)
 		}
 		invisible(xx)
 	}
