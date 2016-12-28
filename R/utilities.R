@@ -176,6 +176,14 @@ as.multiPhylo.multiSimmap<-function(x,...){
 	obj
 }
 
+## generic function to convert object of class "phylo" to "multiPhylo"
+## written by Liam J. Revell 2016
+as.multiPhylo.phylo<-function(x,...){
+	obj<-list(x)
+	class(obj)<-"multiPhylo"
+	obj
+}
+
 as.multiPhylo<-function(x,...){
 	if (identical(class(x),"multiPhylo")) return(x)
 	UseMethod("as.multiPhylo")
