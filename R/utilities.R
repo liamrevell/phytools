@@ -1203,7 +1203,7 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 			X<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
 		}
 		return(X)
-    else {
+    } else {
 		node<-getMRCA(tree,tips)
 		if (type == "node") return(node)
 		else if(type=="height") return(nodeheight(tree,node))
