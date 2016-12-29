@@ -18,6 +18,8 @@ phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
 }
 \details{
 	Optionally jointly estimates lambda if \code{method="lambda"}. Likelihood optimization of lambda is performed using \code{\link{optimize}} on the interval (0,1). Note that some statistician think there is \emph{never} a condition in which a reduced-major-axis regression should be used.
+	
+	The statistical hypothesis testing is based on Clarke (1980; reviewed in McArdle 1988), which differs from some other implementations of non-phylogenetic major axis regression in R.
 }
 \value{
 	A list with the following components:
@@ -29,6 +31,10 @@ phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
 	\item{resid}{a vector of residuals for \code{y} given \code{x}.}
 }
 \references{
+	Clarke, M. R. B. (1980) The reduced major axis of a bivariate sample. \emph{Biometrika}, \bold{67}, 441-446.
+	
+	McArdle, B. H. (1988) The structural relationship: Regression in biology. \emph{Can. J. Zool.}, \bold{66}, 2329-2339.
+
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
