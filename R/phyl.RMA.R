@@ -35,10 +35,12 @@ phyl.RMA<-function(x,y,tree,method="BM",lambda=NULL,fixed=FALSE,h0=1.0){
 	test<-c(r2,T,df,P); names(test)<-c("r2","T","df","P")
 	object<-list(RMA.beta=c(beta0,beta1),V=temp$R,lambda=est.lambda,
 		logL=as.numeric(result$objective),test=test,h0=h0,model=method,
-		resid=as.matrix(r))
+		resid=as.matrix(r),data=cbind(x,y),tree=tree)
 	class(object)<-"phyl.RMA"
 	object
 }
+
+## S3 methods for "phyl.RMA" object class
 
 print.phyl.RMA<-function(x,...){
 	cat("\nCoefficients:\n")
@@ -65,3 +67,9 @@ coef.phyl.RMA<-function(object,...){
 }
 
 residuals.phyl.RMA<-function(object,...) object$resid[,1]
+
+plot.phyl.RMA<-function(x,...){
+	phylomorphospace(x$tree,x$data,node.size=c(0,0),ftype="off")
+	points(x$data,cex=1.2,pch=21,bg="grey")
+	abline(a=coef(x)[1],b=coef(x)[2],lwd=2,col="grey")
+}

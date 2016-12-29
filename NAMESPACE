@@ -98,6 +98,7 @@ S3method(print, aic.w)
 S3method(print, phyl.RMA)
 S3method(coef, phyl.RMA)
 S3method(residuals, phyl.RMA)
+S3method(plot, phyl.RMA)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
