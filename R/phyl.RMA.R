@@ -34,7 +34,7 @@ phyl.RMA<-function(x,y,tree,method="BM",lambda=NULL,fixed=FALSE,h0=1.0){
 	P<-2*pt(T,df=df,lower.tail=FALSE)
 	test<-c(r2,T,df,P); names(test)<-c("r2","T","df","P")
 	object<-list(RMA.beta=c(beta0,beta1),V=temp$R,lambda=est.lambda,
-		logL=as.numeric(result$objective),test=test,h0=h0,
+		logL=as.numeric(result$objective),test=test,h0=h0,model=method,
 		resid=as.matrix(r))
 	class(object)<-"phyl.RMA"
 	object
@@ -46,14 +46,13 @@ print.phyl.RMA<-function(x,...){
 	cat("\nVCV matrix:\n")
 	print(x$V)
 	cat("\n")
-	if(is.null(x$lambda))
-		cat("Model for the covariance structure of the error is \"BM\"\n\n")
-	else {
+	if(x$model=="BM")
+		cat("Model for the covariance structure of the error is \"BM\"\n")
+	else
 		cat("Model for the covariance structure of the error is \"lambda\"\n")
-		cat("\nEstimate(s):\n")
-		print(setNames(c(x$lambda,x$logL),c("lambda","log(L)")))
-		cat("\n")
-	}
+	cat("\nEstimates (or set values):\n")
+	print(setNames(c(x$lambda,x$logL),c("lambda","log(L)")))
+	cat("\n")
 	cat("Hypothesis test based on Clarke (1980; Biometrika):\n")
 	print(round(x$test,6))
 	cat(paste("\nNote that the null hypothesis test is h0 =",x$h0,
