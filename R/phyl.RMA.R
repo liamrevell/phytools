@@ -55,7 +55,7 @@ print.phyl.RMA<-function(x,...){
 		cat("\n")
 	}
 	cat("Hypothesis test based on Clarke (1980; Biometrika):\n")
-	print(x$test)
+	print(round(x$test,6))
 	cat(paste("\nNote that the null hypothesis test is h0 =",x$h0,
 		"\n\n"))
 }
