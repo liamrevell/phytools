@@ -71,5 +71,17 @@ residuals.phyl.RMA<-function(object,...) object$resid[,1]
 plot.phyl.RMA<-function(x,...){
 	phylomorphospace(x$tree,x$data,node.size=c(0,0),ftype="off")
 	points(x$data,cex=1.2,pch=21,bg="grey")
-	abline(a=coef(x)[1],b=coef(x)[2],lwd=2,col="grey")
+	x0<-ace(x$data[,1],tree,method="pic")$ace[1]
+	y0<-ace(x$data[,2],tree,method="pic")$ace[1]
+	a0<-y0-coef(x)[2]*x0
+	abline(a=a0,b=x$h0,lwd=2,col="grey",lty="dashed")
+	abline(a=coef(x)[1],b=coef(x)[2],lwd=2,col="red")
+	tmp<-legend(x=0,y=0,legend=c(expression(beta[RMA]),expression(h[0])),
+		lty=c("solid","dashed"),lwd=c(2,2),plot=FALSE)
+	legend(x=if(x$h0>0) par()$usr[1] else par()$usr[2]-tmp$rect$w,
+		y=par()$usr[4],col=c("red","grey"),
+		legend=c(expression(beta[RMA]),expression(h[0])),
+		lty=c("solid","dashed"),lwd=c(2,2),
+		bg=make.transparent("white",0.75))
+		
 }
