@@ -1,5 +1,5 @@
 ## creates an object of class "cophylo"
-## written by Liam J. Revell 2015, 2016
+## written by Liam J. Revell 2015, 2016, 2017
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
 		stop("tr1 & tr2 should be objects of class \"phylo\".")
@@ -51,9 +51,9 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 			obj<-list()
 			for(i in 1:nrow(ij)){
 				tr1<-tt1[[ij[i,1]]]
-				attr(tr1,"minRotate")<-M1[ij[i,]]
+				attr(tr1,"minRotate")<-M1[ij[i,1],ij[i,2]]
 				tr2<-tt2[[ij[i,2]]]
-				attr(tr2,"minRotate")<-M2[ij[i,]]
+				attr(tr2,"minRotate")<-M2[ij[i,1],ij[i,2]]
 				tt<-list(tr1,tr2)
 				class(tt)<-"multiPhylo"
 				obj[[i]]<-list(trees=tt,assoc=assoc)
