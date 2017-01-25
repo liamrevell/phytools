@@ -11,7 +11,7 @@ plotTree.boxplot(tree,x,args.plotTree=list(),args.boxplot=list())
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
-	\item{x}{a named vector of trait values. For \code{plotTree.boxplot}, the names should repeat for multiple observations per species. For \code{plotTree.boxplot} \code{x} can also be supplied as a formula, though in that case the factor levels need to be provided in a valid cladewise order of the tips in \code{tree}. This order doesn't need to correspond with the current order of the tip labels.}
+	\item{x}{a named vector or matrix of trait values. For \code{plotTree.boxplot}, the names should repeat for multiple observations per species. For \code{plotTree.boxplot} \code{x} can also be supplied as a formula, though in that case the factor levels need to be provided in a valid cladewise order of the tips in \code{tree}. This order doesn't need to correspond with the current order of the tip labels. For \code{plotTree.barplot} \code{x} can be a matrix (or a data frame) in which columns are the values of multiple traits to be simultaneously plotted on the tree.}
  	\item{scale}{scaling factor for the tip bars (relative to the total tree height).}
 	\item{width}{width of the tip bars.}
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"fan"}.}

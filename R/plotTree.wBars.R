@@ -49,22 +49,30 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 }
 
 ## plotTree.barplot
-## written by Liam J. Revell 2016
+## written by Liam J. Revell 2016, 2017
 
 plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	args.barplot=list()){
 	cw<-reorder(tree)
-	args.barplot$height<-x[cw$tip.label]
+	if(is.data.frame(x)) x<-as.matrix(x)
+	if(is.matrix(x)){
+		x<-x[cw$tip.label,]
+		x<-t(x)
+	}
+	args.barplot$height<-if(is.matrix(x)) x[,cw$tip.label] else x[cw$tip.label]
 	args.barplot$plot<-FALSE
 	args.barplot$horiz<-TRUE
 	args.barplot$axes<-FALSE
-	args.barplot$names.arg<-""
-	if(is.null(args.barplot$space)) args.barplot$space<-0.7
+	args.barplot$names.arg<-rep("",Ntip(cw))
+	if(is.null(args.barplot$beside)) args.barplot$beside<-FALSE
+	if(is.null(args.barplot$space)) 
+		args.barplot$space<-if(args.barplot$beside) c(0,1) else 0.7
 	if(is.null(args.barplot$mar)) 
 		args.barplot$mar<-c(5.1,0,2.1,1.1)
 	else args.barplot$mar[2]<-0.1
-	args.plotTree$tips<-setNames(do.call(barplot,args.barplot)[,1],
-		cw$tip.label)
+	obj<-as.matrix(do.call(barplot,args.barplot))
+	if(dim(obj)[2]==1) obj<-t(obj)
+	args.plotTree$tips<-setNames(colMeans(obj),cw$tip.label)
 	args.barplot$plot<-TRUE
 	args.barplot$ylim<-range(args.plotTree$tips)
 	args.plotTree$tree<-cw
