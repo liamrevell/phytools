@@ -3,9 +3,12 @@
 
 write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL,quiet=FALSE){
 	if(inherits(tree,"multiPhylo")){
-		obj<-vector(mode="character",length=length(tree))
-		for(i in 1:length(tree)) obj[i]<-write.simmap(tree[[i]],file,if(i==1) append else TRUE,map.order,quiet)
-		if(is.null(file)) return(obj) else invisible(NULL)
+		if(is.null(file)) obj<-vector(mode="character",length=length(tree))
+		for(i in 1:length(tree)){
+			if(is.null(file)) obj[i]<-write.simmap(tree[[i]],file,if(i==1) append else TRUE,map.order,quiet)
+			else write.simmap(tree[[i]],file,if(i==1) append else TRUE,map.order,quiet)
+		}
+		if(is.null(file)) return(obj)
 	} else {
 		if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
 		if(is.null(tree$maps)) stop("tree is does not contain a stochastic character map.")
@@ -13,7 +16,8 @@ write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL,quiet=FALSE){
 			if(!is.null(attr(tree,"map.order")))
 				map.order<-attr(tree,"map.order")
 			else {
-				if(!quiet) message("map order should be specified in function call or by tree attribute \"map.order\".\nAssuming right-to-left order.")
+				if(!quiet) 
+					message("map order should be specified in function call or by tree attribute \"map.order\".\nAssuming right-to-left order.")
 				map.order<-"R"
 			}
 		}
@@ -70,10 +74,7 @@ write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL,quiet=FALSE){
 		string<-c(string[1:(length(string)-1)],";")
 		string<-paste(string,collapse="")
 		if(is.null(file)) return(string)
-		else { 
-			write(string,file=file,append=append)
-			invisible(NULL)
-		}
+		else write(string,file=file,append=append)
 	}
 }
 
