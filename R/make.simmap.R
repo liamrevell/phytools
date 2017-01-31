@@ -225,8 +225,8 @@ to.matrix<-function(x,seq){
 	return(X)
 }
 
-# function does the stochastic mapping, conditioned on our model & given the conditional likelihoods
-# written by Liam J. Revell 2013
+## function does the stochastic mapping, conditioned on our model & given the conditional likelihoods
+## written by Liam J. Revell 2013, 2017
 smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 	# create the map tree object
 	mtree<-tree; mtree$maps<-list()
@@ -252,6 +252,7 @@ smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 	mtree$Q<-Q
 	mtree$logL<-logL
 	if(!inherits(mtree,"simmap")) class(mtree)<-c("simmap",setdiff(class(mtree),"simmap"))
+	attr(mtree,"map.order")<-"right-to-left"
 	return(mtree)
 }
 
