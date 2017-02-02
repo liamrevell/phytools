@@ -1,11 +1,9 @@
 ## function to draw a tree from an image
 ## written by Liam J. Revell 2017
 
-get.treepos<-phytools:::get.treepos ## temporary while not in the NAMESPACE
-
-tree.drawer<-function(img){
+tree.drawer<-function(img,file=NULL){
 	par(fg=make.transparent("grey",0.8))
-	img<-readJPEG(img)
+	## img<-readJPEG(file) ## file option disabled
 	plot.new()
 	par(mar=rep(0.1,4))
 	plot.window(xlim=c(0,10),ylim=c(0,10))
