@@ -11,7 +11,7 @@ ratebytree<-function(trees,x,...){
 	if(!is.list(x)) stop("x should be a list of vectors.")
 	N<-length(trees)
 	## reorder the trait vectors in x
-	x<-mapply(function(x,t) x<-x[t$tip.label],x=x,t=trees)
+	x<-mapply(function(x,t) x<-x[t$tip.label],x=x,t=trees,SIMPLIFY=FALSE)
 	## first, fit multi-rate model
 	lik.multi<-function(theta,trees,x){
 		n<-sapply(trees,Ntip)
