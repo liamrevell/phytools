@@ -19,7 +19,7 @@ ratebytree<-function(trees,x,...){
 		sig<-theta[1:N]
 		a<-theta[(N+1):(2*N)]
 		C<-lapply(trees,vcv)
-		V<-mapply("*",C,sig)
+		V<-mapply("*",C,sig,SIMPLIFY=FALSE)
 		logL<-0
 		for(i in 1:N) 
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
