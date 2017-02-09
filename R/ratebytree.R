@@ -5,6 +5,10 @@
 ratebytree<-function(trees,x,...){
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-FALSE
+	if(hasArg(digits)) dig<-list(...)$digits
+	else dig<-6
 	## check trees & x
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
@@ -13,7 +17,7 @@ ratebytree<-function(trees,x,...){
 	## reorder the trait vectors in x
 	x<-mapply(function(x,t) x<-x[t$tip.label],x=x,t=trees,SIMPLIFY=FALSE)
 	## first, fit multi-rate model
-	lik.multi<-function(theta,trees,x){
+	lik.multi<-function(theta,trees,x,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
 		sig<-theta[1:N]
@@ -24,6 +28,10 @@ ratebytree<-function(trees,x,...){
 		for(i in 1:N) 
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
 				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
+		if(trace){
+			cat(paste(paste(round(sig,dig),collapse="\t"),round(logL,dig),"\n",sep="\t"))
+			flush.console()
+		}
 		-logL
 	}
 	foo<-function(tree,x){ 
@@ -31,11 +39,20 @@ ratebytree<-function(trees,x,...){
 		c(pvcv$R[1,1],pvcv$a[1,1])
 	}
 	PP<-mapply(foo,trees,x)
+	if(hasArg(init)){ 
+		init<-list(...)$init
+	 	if(!is.null(init$sigm)) PP[1,]<-init$sigm
+		if(!is.null(init$am)) PP[2,]<-init$am
+	}
 	p<-as.vector(t(PP))
-	fit.multi<-optim(p,lik.multi,trees=trees,x=x,method="L-BFGS-B",
+	if(trace){
+		cat("\nOptimizing multi-rate model....\n")
+		cat(paste(paste("sig[",1:N,"]   ",sep="",collapse="\t"),"logL\n",sep="\t"))
+	}
+	fit.multi<-optim(p,lik.multi,trees=trees,x=x,trace=trace,method="L-BFGS-B",
 		lower=c(rep(tol,N),rep(-Inf,N)),upper=c(rep(Inf,N),rep(Inf,N)))
 	## now fit single-rate model
-	lik.onerate<-function(theta,trees,x){
+	lik.onerate<-function(theta,trees,x,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
 		sig<-theta[1]
@@ -46,10 +63,22 @@ ratebytree<-function(trees,x,...){
 		for(i in 1:N) 
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
 				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
+		if(trace){ 
+			cat(paste(round(sig,dig),round(logL,dig),"\n",sep="\t"))
+			flush.console()
+		}
 		-logL
 	}
 	p<-c(mean(fit.multi$par[1:N]),fit.multi$par[(N+1):(2*N)])
-	fit.onerate<-optim(p,lik.onerate,trees=trees,x=x,method="L-BFGS-B",
+	if(hasArg(init)){
+		if(!is.null(init$sigc)) p[1]<-init$sigc
+		if(!is.null(init$ac)) p[1:N+1]<-init$ac
+	}
+	if(trace){
+		cat("\nOptimizing common-rate model....\n")
+		cat(paste("sig      ","logL\n",sep="\t"))
+	}
+	fit.onerate<-optim(p,lik.onerate,trees=trees,x=x,trace=trace,method="L-BFGS-B",
 		lower=c(tol,rep(-Inf,N)),upper=c(Inf,rep(Inf,N)))
 	## compare models:
 	LR<-2*(-fit.multi$value+fit.onerate$value)
