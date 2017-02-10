@@ -4,7 +4,7 @@
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
 	type="phylogram",setEnv=TRUE,part=1.0,xlim=NULL,ylim=NULL,nodes="intermediate",
-	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2){
+	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,ftype=ftype,
@@ -34,7 +34,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		if(hold) null<-dev.hold()
 		if(type=="phylogram"){
 			plotPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,add,offset,
-				direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend)
+				direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend,asp)
 		} else if(type=="fan"){
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,
 				maxY,lend)
@@ -46,7 +46,8 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 # function to plot simmap tree in type "phylogram"
 # written by Liam J. Revell 2011-2015
 plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
-	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend){
+	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
+	asp){
 	# set offset fudge (empirically determined)
 	if(split.vertical&&!setEnv){
 		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
@@ -114,7 +115,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 		## plot.window(xlim=xlim[2:1],ylim=ylim)
 		## plot.window(xlim=xlim,ylim=ylim)
 	} 
-	plot.window(xlim=xlim,ylim=ylim)
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	####
 	if(!split.vertical){
 		for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
@@ -351,13 +352,15 @@ plotTree<-function(tree,...){
 	else hold<-TRUE
 	if(hasArg(lend)) lend<-list(...)$lend
 	else lend<-2
+	if(hasArg(asp)) asp<-list(...)$asp
+	else asp<-NA
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		if(!is.null(color)) names(color)<-"1"
 		for(i in 1:length(tree)) plotTree(tree[[i]],color=color,fsize=fsize,ftype=ftype,
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar=mar,add=add,offset=offset,
 			direction=direction,type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,
-			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend)
+			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend,asp=asp)
 	} else {
 		if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 		tree$maps<-as.list(tree$edge.length)
@@ -366,7 +369,7 @@ plotTree<-function(tree,...){
 		plotSimmap(tree,colors=color,fsize=fsize,ftype=ftype,lwd=lwd,pts=pts,
 			node.numbers=node.numbers,mar=mar,add=add,offset=offset,direction=direction,
 			type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,nodes=nodes,tips=tips,maxY=maxY,
-			hold=hold,lend=lend)
+			hold=hold,lend=lend,asp=asp)
 	}
 }
 
