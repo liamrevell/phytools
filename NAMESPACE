@@ -7,7 +7,7 @@ export(drop.tip.contMap, drop.tip.densityMap, drop.tip.simmap, drop.tip.singleto
 export(edgelabels.cophylo, edgeProbs, estDiversity, evol.rate.mcmc, evol.vcv, evolvcv.lite, exhaustiveMP, expm, export.as.xml)
 export(extract.clade.simmap, extract.strahlerNumber)
 export(fancyTree, fastAnc, fastBM, fastDist, fastHeight, fastMRCA, findMRCA, fitBayes, fitMk, fitDiversityModel, fitPagel)
-export(gammatest, genus.to.species.tree, genSeq, getCladesofSize, getDescendants, getExtant, getExtinct, getSisters, getStates)
+export(gammatest, genus.to.species.tree, genSeq, get.treepos, getCladesofSize, getDescendants, getExtant, getExtinct, getSisters, getStates)
 export(ladderize.simmap, lambda.transform, likMlambda, likSurface.rateshift, locate.fossil, locate.yeti, ls.consensus, ls.tree)
 export(ltt, ltt95)
 export(make.era.map, make.simmap, make.transparent, map.overlap, Map.Overlap, map.to.singleton, mapped.states, markChanges)
