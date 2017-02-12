@@ -159,6 +159,8 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(direction=="upwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
 	for(i in 1:n){
 		shift<-offset*fsize*strwidth("W")*(diff(par()$usr[3:4])/diff(par()$usr[1:2]))
+		if((direction=="downwards"&&diff(par()$usr[3:4])>0) ||
+			(direction=="upwards"&&diff(par()$usr[3:4])<0)) shift<--shift
 		if(ftype){
 			text(labels=cw$tip.label[i],Y[i],
 				H[which(cw$edge[,2]==i),2]+shift,
