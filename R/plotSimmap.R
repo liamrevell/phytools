@@ -157,12 +157,14 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	}
 	if(direction=="downwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
 	if(direction=="upwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
-	for(i in 1:n) if(ftype){
-		text(labels=cw$tip.label[i],Y[i],
-			H[which(cw$edge[,2]==i),2]+if(direction=="downwards")
-			-offset*mean(strwidth(LETTERS)) else offset*mean(strwidth(LETTERS)),
-			pos=pos,offset=0,cex=fsize,font=ftype,
-			srt=if(direction=="downwards") 270 else 90)
+	for(i in 1:n){
+		shift<-offset*fsize*strwidth("W")*(diff(par()$usr[3:4])/diff(par()$usr[1:2]))
+		if(ftype){
+			text(labels=cw$tip.label[i],Y[i],
+				H[which(cw$edge[,2]==i),2]+shift,
+				pos=pos,offset=0,cex=fsize,font=ftype,
+				srt=if(direction=="downwards") 270 else 90)
+		}
 	}
 	if(setEnv){
 		PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
