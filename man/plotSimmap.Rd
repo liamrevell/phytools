@@ -23,7 +23,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{mar}{vector containing the margins for the plot to be passed to \code{\link{par}}. If not specified, the default margins are [0.1,0.1,0.1,0.1].}
 	\item{add}{a logical value indicating whether or not to add the plotted tree to the current plot (\code{TRUE}) or create a new plot (\code{FALSE}, the default).}
 	\item{offset}{offset for the tip labels. Primarily to be used internally by \code{\link{densityMap}}.}
-	\item{direction}{plotting direction. Options are \code{"rightwards"} (the default) and \code{"leftwards"}. Note that for some reason that is not totally clear, \code{node.numbers=TRUE} does not work for \code{direction="leftwards"}.}
+	\item{direction}{plotting direction. Options are \code{"rightwards"} (the default), \code{"leftwards"}, \code{"upwards"} or \code{"downwards"}. For \code{method="fan"} \code{direction} is ignored.}
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"fan"}. Only a subset of options are presently available for \code{type="fan"}.}
 	\item{setEnv}{logical value indicating whether or not to set the environment \code{.PlotPhyloEnv}. Setting this to \code{TRUE} (the default) will allow compatibility with ape labeling functions such as \code{\link{nodelabels}}.}
 	\item{part}{value between 0 and 1 for \code{type="fan"} indicating what fraction of the full circular tree to use as plotting area. For instance, \code{part=0.5} will plot a half fan phylogeny. It also affects the axis scaling used.}
