@@ -1,5 +1,5 @@
-# function plots reconstructed values for ancestral characters along the edges of the tree
-# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
+## function plots reconstructed values for ancestral characters along the edges of the tree
+## written by Liam J. Revell 2012-2017
 contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	lims=NULL,outline=TRUE,sig=3,type="phylogram",direction="rightwards",
 	plot=TRUE,...){

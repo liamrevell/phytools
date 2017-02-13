@@ -1,5 +1,5 @@
 ## functions plot stochastic character mapped trees
-## written by Liam Revell 2011-2016
+## written by Liam Revell 2011-2017
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
@@ -46,8 +46,8 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	}
 }
 
-# function to plot simmap tree in type "phylogram"
-# written by Liam J. Revell 2011-2015
+## function to plot simmap tree in type "phylogram"
+## written by Liam J. Revell 2011-2017
 updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
 	asp){
