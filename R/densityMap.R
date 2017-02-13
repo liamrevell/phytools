@@ -153,7 +153,7 @@ plot.densityMap<-function(x,...){
 			plotTree(tree,fsize=fsize[1],lwd=lwd[1]+2,
 				offset=offset+0.2*lwd[1]/3+0.2/3,ftype=ftype[1],xlim=xlim,
 				ylim=ylim,mar=mar,direction=direction,hold=FALSE,
-				add=FALSE,direction%in%c("upwards","downwards")&&legend)
+				add=direction%in%c("upwards","downwards")&&legend)
 			par(col="black")
 		}
 		plotSimmap(tree,cols,pts=FALSE,lwd=lwd[1],fsize=fsize[1],mar=mar,ftype=ftype[1],add=outline,
@@ -165,7 +165,6 @@ plot.densityMap<-function(x,...){
 				dig
 			}
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
-			print(dig)
 			if(direction%in%c("rightwards","leftwards"))
 				add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
 					digits=dig,prompt=FALSE,x=if(direction=="leftwards") max(H)-legend else 0,
@@ -174,7 +173,6 @@ plot.densityMap<-function(x,...){
 					direction=if(!is.null(xlim)) if(xlim[2]<xlim[1]) "leftwards" else 
 					"rightwards" else "rightwards")
 			else if(direction%in%c("upwards","downwards")){
-				print(legend)
 				sf<-abs(diff(par()$usr[1:2])/diff(par()$usr[3:4]))*
 					par()$pin[2]/par()$pin[1]
 				add.color.bar(legend*sf,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
