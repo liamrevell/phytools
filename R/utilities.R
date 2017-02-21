@@ -1,6 +1,64 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## function to return a node index interactively from a plotted tree
+## written by Liam J. Revell 2017
+getnode<-function(...){
+	if(hasArg(env)) env<-list(...)$env
+	else env<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	xy<-unlist(locator(n=1))
+	points(xy[1],xy[2])
+	d<-sqrt((xy[1]-env$xx)^2+(xy[2]-env$yy)^2)
+	ii<-which(d==min(d))[1]
+	ii
+}
+
+## function mostly to interactively label nodes by clicking
+## written by Liam J. Revell 2017
+labelnodes<-function(text,node=NULL,interactive=TRUE,
+	shape=c("circle","ellipse","rect"),...){
+	shape<-shape[1]
+	if(hasArg(circle.exp)) circle.exp<-list(...)$circle.exp
+	else circle.exp<-1.3
+	if(hasArg(rect.exp)) rect.exp<-list(...)$rect.exp
+	else rect.exp<-1.6
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-1
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	h<-cex*strheight("A")
+	w<-cex*strwidth(text)
+	rad<-circle.exp*h*diff(par()$usr[1:2])/diff(par()$usr[3:4])
+	if(is.null(node)){
+		if(!interactive){
+			cat("No nodes provided. Setting interactive mode to TRUE.\n")
+			interactive<-TRUE
+		}
+		node<-vector(length=length(text))
+	}
+	for(i in 1:length(text)){
+		if(interactive){
+			cat(paste("Click on the node you would like to label ",
+				text[i],".\n",sep=""))
+			flush.console()
+			ii<-getnode(env=obj)
+			node[i]<-ii
+		} else ii<-node[i]
+		if(shape=="circle")
+			draw.circle(obj$xx[ii],obj$yy[ii],rad,col="white")
+		else if(shape=="ellipse")
+			draw.ellipse(obj$xx[ii],obj$yy[ii],0.8*w[i],h,
+				col="white")
+		else if(shape=="rect")
+			rect(xleft=obj$xx[ii]-0.5*rect.exp*w[i],
+				ybottom=obj$yy[ii]-0.5*rect.exp*h,
+				xright=obj$xx[ii]+0.5*rect.exp*w[i],
+				ytop=obj$yy[ii]+0.5*rect.exp*h,col="white",
+				ljoin=1)
+		text(obj$xx[ii],obj$yy[ii],label=text[i],cex=cex)
+	}
+	invisible(node)
+}
+
 ## convert object of class "birthdeath" into birth & death rates
 bd<-function(x){
 	if(class(x)!="birthdeath") stop("x should be an object of class 'birthdeath'")
