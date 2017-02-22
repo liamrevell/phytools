@@ -7,8 +7,8 @@ ratebytree<-function(trees,x,...){
 	else tol<-1e-8
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-FALSE
-	if(hasArg(digits)) dig<-list(...)$digits
-	else dig<-6
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-6
 	## check trees & x
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
@@ -29,7 +29,7 @@ ratebytree<-function(trees,x,...){
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
 				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
 		if(trace){
-			cat(paste(paste(round(sig,dig),collapse="\t"),round(logL,dig),"\n",sep="\t"))
+			cat(paste(paste(round(sig,digits),collapse="\t"),round(logL,digits),"\n",sep="\t"))
 			flush.console()
 		}
 		-logL
@@ -64,7 +64,7 @@ ratebytree<-function(trees,x,...){
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
 				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
 		if(trace){ 
-			cat(paste(round(sig,dig),round(logL,dig),"\n",sep="\t"))
+			cat(paste(round(sig,digits),round(logL,digits),"\n",sep="\t"))
 			flush.console()
 		}
 		-logL

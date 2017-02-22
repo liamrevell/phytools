@@ -1,5 +1,5 @@
 ## this function computes a phylogenetic reduced major axis (RMA) regression
-## written by Liam Revell 2010, 2011, 2012, 2015, 2016
+## written by Liam Revell 2010, 2011, 2012, 2015, 2016, 2017
 
 phyl.RMA<-function(x,y,tree,method="BM",lambda=NULL,fixed=FALSE,h0=1.0){
 	if(!inherits(tree,"phylo")) 
@@ -71,8 +71,8 @@ residuals.phyl.RMA<-function(object,...) object$resid[,1]
 plot.phyl.RMA<-function(x,...){
 	phylomorphospace(x$tree,x$data,node.size=c(0,0),ftype="off")
 	points(x$data,cex=1.2,pch=21,bg="grey")
-	x0<-ace(x$data[,1],tree,method="pic")$ace[1]
-	y0<-ace(x$data[,2],tree,method="pic")$ace[1]
+	x0<-ace(x$data[,1],x$tree,method="pic")$ace[1]
+	y0<-ace(x$data[,2],x$tree,method="pic")$ace[1]
 	a0<-y0-coef(x)[2]*x0
 	abline(a=a0,b=x$h0,lwd=2,col="grey",lty="dashed")
 	abline(a=coef(x)[1],b=coef(x)[2],lwd=2,col="red")
