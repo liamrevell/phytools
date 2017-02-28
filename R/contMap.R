@@ -156,3 +156,45 @@ drop.tip.contMap<-function(x,tip){
 		return(x)
 	}
 }
+
+## add error bars to contMap plot
+## written by Liam J. Revell 2017
+errorbar.contMap<-function(obj,...){
+	if(hasArg(x)) x<-list(...)$x
+	else x<-setNames(sapply(1:Ntip(obj$tree),function(x,obj){
+		ii<-which(obj$tree$edge[,2]==x)
+		ss<-names(obj$tree$maps[[ii]][length(obj$tree$maps[[ii]])])
+		obj$lims[1]+as.numeric(ss)/(length(obj$cols)-1)*diff(obj$lims)
+		},obj=obj),obj$tree$tip.label)
+	if(hasArg(scale.by.ci)) scale.by.ci<-list(...)$scale.by.ci
+	else scale.by.ci<-FALSE
+	tree<-obj$tree
+	aa<-fastAnc(tree,x,CI=TRUE)
+	xlim<-range(aa$CI95)
+	if(xlim[2]>obj$lims[2]||xlim[1]<obj$lims[1]){
+		cat(paste("  -----\n  The range of the contMap object, presently (",
+			round(obj$lims[1],4),",",
+			round(obj$lims[2],4),
+			"), should be equal to\n  or greater than the range of the CIs on ancestral states: (",
+			round(xlim[1],4),",",round(xlim[2],4),").\n",sep=""))
+		cat(paste("  To ensure that your error bars are correctly plotted, please recompute your\n", 
+			"  contMap object and increase lims.\n  -----\n",sep=""))
+	}
+	d<-diff(obj$lims)
+	if(scale.by.ci){
+		v<-aa$CI95[,2]-aa$CI95[,1]
+		v<-v/max(v)
+	} else v<-rep(0.5,tree$Nnode)
+	n<-length(obj$cols)-1
+	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	h<-max(nodeHeights(tree))
+	for(i in 1:tree$Nnode){
+		ii<-round((aa$CI95[i,1]-obj$lims[1])/d*n)
+		jj<-round((aa$CI95[i,2]-obj$lims[1])/d*(n+1))
+		cols<-obj$cols[ii:jj]   
+		add.color.bar(leg=0.1*h*v[i],cols=cols,prompt=FALSE,
+			x=lastPP$xx[i+Ntip(tree)]-0.05*h*v[i],
+			y=lastPP$yy[i+Ntip(tree)],title="",subtitle="",lims=NULL,
+			lwd=14)
+	}
+}
