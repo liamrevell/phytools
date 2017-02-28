@@ -167,7 +167,9 @@ errorbar.contMap<-function(obj,...){
 		obj$lims[1]+as.numeric(ss)/(length(obj$cols)-1)*diff(obj$lims)
 		},obj=obj),obj$tree$tip.label)
 	if(hasArg(scale.by.ci)) scale.by.ci<-list(...)$scale.by.ci
-	else scale.by.ci<-FALSE
+	else scale.by.ci<-TRUE
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-14
 	tree<-obj$tree
 	aa<-fastAnc(tree,x,CI=TRUE)
 	xlim<-range(aa$CI95)
@@ -195,6 +197,6 @@ errorbar.contMap<-function(obj,...){
 		add.color.bar(leg=0.1*h*v[i],cols=cols,prompt=FALSE,
 			x=lastPP$xx[i+Ntip(tree)]-0.05*h*v[i],
 			y=lastPP$yy[i+Ntip(tree)],title="",subtitle="",lims=NULL,
-			lwd=14)
+			lwd=lwd)
 	}
 }
