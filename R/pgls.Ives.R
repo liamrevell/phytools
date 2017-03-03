@@ -94,32 +94,31 @@ pgls.SEy<-function(model,data,corClass=corBrownian,tree=tree,
 	corfunc<-corClass
 	## preliminaries
 	data<-data[tree$tip.label,]
-	if(is.null(se)) se<-setNames(rep(0,Ntip(tree),
-		tree$tip.label))
+	if(is.null(se)) se<-setNames(rep(0,Ntip(tree)),
+		tree$tip.label)
 	## likelihood function
-	lk<-function(sig2e,data,tree,model,ve){
+	lk<-function(sig2e,data,tree,model,ve,corfunc){
 		tree$edge.length<-tree$edge.length*sig2e
 		ii<-sapply(1:Ntip(tree),function(x,e) which(e==x),
 			e=tree$edge[,2])
-		tree$edge.length[ii]<-tree$edge.length[ii]+
-			ve[tree$tip.label]
-		v<-diag(vcv(tree))
-		vf<-varFixed(~v)
+		tree$edge.length[ii]<-tree$edge.length[ii]+ve[tree$tip.label]
+		vf<-diag(vcv(tree))
+		w<-varFixed(~vf)
 		COR<-corfunc(1,tree,...)
-		fit<-gls(model,data=data,correlation=COR,weights=vf)
+		fit<-gls(model,data=cbind(data,vf),correlation=COR,method=method,weights=w)
 		-logLik(fit)
 	}
 	## estimate sig2[e]
 	fit<-optimize(lk,interval=interval,
-		data=data,tree=tree,model=model,ve=se^2)
+		data=data,tree=tree,model=model,ve=se^2,corfunc=corfunc)
 	tree$edge.length<-tree$edge.length*fit$minimum
 	ii<-sapply(1:Ntip(tree),function(x,e) which(e==x),
 		e=tree$edge[,2])
 	tree$edge.length[ii]<-tree$edge.length[ii]+
 		se[tree$tip.label]^2
-	v<-diag(vcv(tree))
-	vf<-varFixed(~v)
+	vf<-diag(vcv(tree))
+	w<-varFixed(~vf)
 	## fit & return model
-	gls(model,data,correlation=corfunc(1,tree),weights=vf,
+	gls(model,data=cbind(data,vf),correlation=corfunc(1,tree),weights=w,
 		method=method)
 }
