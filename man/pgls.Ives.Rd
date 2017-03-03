@@ -1,8 +1,11 @@
 \name{pgls.Ives}
 \alias{pgls.Ives}
+\alias{pgls.SEy}
 \title{Phylogenetic regression with intraspecific sampling error}
 \usage{
 pgls.Ives(tree, X, y, Vx=NULL, Vy=NULL, Cxy=NULL, lower=c(1e-8,1e-8))
+pgls.SEy(model, data, corClass=corBrownian, tree=tree,
+	se=NULL, method=c("REML","ML"), interval=c(0,1000), ...)
 }
 \arguments{
 	\item{tree}{a phylogeny as an object of class \code{"phylo"}.}
@@ -12,9 +15,18 @@ pgls.Ives(tree, X, y, Vx=NULL, Vy=NULL, Cxy=NULL, lower=c(1e-8,1e-8))
 	\item{Vy}{sampling variances for \code{y}. If \code{NULL}, then the within-species variance is computed from the data assuming that individual samples, not species means, have been provided in \code{y}.}
 	\item{Cxy}{sampling covariances between \code{X} and \code{y}. This will also be computed from the data if \code{Cxy==NULL}. Note than in this case - but not for the calculation of \code{Vx} and \code{Vy}, the same number of observations and the same ordering must be provided for \code{X} and \code{y}. If this is not the case, then it is assumed that different individuals have been sampled for \code{X} and \code{y} and thus \code{Cxy} is assumed to be zero for all species.}
 	\item{lower}{vector specifying the lower bounds for estimation for \code{sig2x} and \code{sig2y}, respectively. (Must be >0.)}
+	\item{model}{model to fit. (For \code{pgls.SEy}.)}
+	\item{data}{data frame. (For \code{pgls.SEy}.)}
+	\item{corClass}{correlation structure. (For \code{pgls.SEy}.)}
+	\item{se}{vector of standard errors in y. (For \code{pgls.SEy}.)}
+	\item{method}{optimization method. (For \code{pgls.SEy}.)}
+	\item{interval}{interval over which to perform optimization. (For \code{pgls.SEy}.)}
+	\item{...}{optional arguments. (For \code{pgls.SEy}.)}
 }
 \description{
 	This function fits the phylogenetic regression model with within-species sampling error following Ives et al. (2007).
+	
+	\code{pgls.SEy} fits a simpler model in which only sampling error in <code>y</code> is taken into account.
 }
 \details{
 	Presently only the bivariate regression model is implemented. Uses \code{optim(...,method="L-BFGS-B")} for optimization. Note that some problems have been reported with the optimization algorithm for this model, which is simple and thus may fail to find the ML solution.

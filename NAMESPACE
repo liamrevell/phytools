@@ -16,7 +16,7 @@ export(matchLabels, matchNodes, mergeMappedStates, midpoint.root, minRotate, min
 export(mrp.supertree, multi.mantel, multiC, multiRF)
 export(nodeheight, nodeHeights, nodelabels.cophylo, node.paths)
 export(optim.phylo.ls, orderMappedEdge)
-export(paintBranches, paintSubTree, paste.tree, pbtree, pgls.Ives,phenogram, phyl.cca, phyl.pairedttest, phyl.pca, phyl.resid, phyl.RMA)
+export(paintBranches, paintSubTree, paste.tree, pbtree, pgls.Ives, pgls.SEy, phenogram, phyl.cca, phyl.pairedttest, phyl.pca, phyl.resid, phyl.RMA)
 export(phyl.vcv, phylo.heatmap, phylo.toBackbone, phylo.to.map, phylANOVA, phyloDesign, phylomorphospace, phylomorphospace3d, phylosig)
 export(plotBranchbyTrait, plot.contMap, plot.cophylo, plot.densityMap, plot.fitMk, plot.fitPagel, plot.phylo.to.map, plot.gfit)
 export(plotSimmap, plotThresh, plotTree, plotTree.barplot, plotTree.boxplot, plotTree.errorbars, plotTree.singletons, plotTree.splits)
