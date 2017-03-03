@@ -104,7 +104,7 @@ S3method(print, ratebytree)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
-importFrom(ape, consensus, compute.brlen, cophenetic.phylo, di2multi, dist.dna, dist.nodes, drop.tip, edgelabels, extract.clade)
+importFrom(ape, consensus, compute.brlen, cophenetic.phylo, corBrownian, di2multi, dist.dna, dist.nodes, drop.tip, edgelabels, extract.clade)
 importFrom(ape, getMRCA, is.binary.tree)
 importFrom(ape, is.monophyletic, is.rooted, is.ultrametric, ladderize, matexpo, mrca, multi2di, neworder_phylo, neworder_pruningwise)
 importFrom(ape, nodelabels, Ntip, pic, plot.phylo, prop.part, read.tree, reorder.phylo, root, rotate, rtree, stree, tiplabels)
@@ -125,4 +125,4 @@ importFrom(grDevices, palette, colors, dev.hold, dev.flush, rainbow, heat.colors
 pdf, dev.off, col2rgb)
 importFrom(combinat, permn)
 importFrom(coda, HPDinterval)
-
+importFrom(nlme, gls, varFixed)
