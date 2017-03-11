@@ -1,5 +1,5 @@
 # function creates a stochastic character mapped tree as a modified "phylo" object
-# written by Liam Revell 2013, 2014, 2015
+# written by Liam Revell 2013, 2014, 2015, 2016, 2017
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -49,7 +49,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		root<-N+1
 		# get conditional likelihoods & model
 		if(is.character(Q)&&Q=="empirical"){
-			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi,...)
+			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			Q<-XX$Q
 			logL<-XX$loglik
@@ -79,7 +79,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			if(pm) printmessage(Reduce('+',Q)/length(Q),pi,method="mcmc")
 			mtrees<-mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE)
 		} else if(is.matrix(Q)){
-			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi)
+			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			logL<-XX$loglik
 			if(pi[1]=="equal") pi<-setNames(rep(1/m,m),colnames(L)) # set equal
@@ -150,14 +150,14 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	p<-rgamma(np,prior$alpha,prior$beta)
 	Q<-matrix(c(0,p)[rate+1],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi)
+	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi,args=list(...))
 	cat("Running MCMC burn-in. Please wait....\n")
 	flush.console()
 	for(i in 1:burnin){
 		pp<-update(p)
 		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args=list(...))
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -173,7 +173,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		pp<-update(p)
 		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args=list(...))
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -190,9 +190,11 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 }
 
 # get pars
-# written by Liam J. Revell 2013
-getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,...){
-	obj<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi,...)
+# written by Liam J. Revell 2013, 2017
+getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
+	if(!is.null(args$pi)) args$pi<-NULL
+	args<-c(list(tree=bt,x=xx,model=model,fixedQ=Q,output.liks=liks,pi=pi),args)
+	obj<-do.call(fitMk,args)
 	N<-length(bt$tip.label)
 	II<-obj$index.matrix+1
 	lvls<-obj$states
