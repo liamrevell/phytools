@@ -63,23 +63,20 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 				qq<-fitMk(bt,xx,model)$rates
 				prior$alpha<-qq*prior$beta
 			}
-			if(pi[1]=="equal"){
+			get.stationary<-if(pi[1]=="estimated") TRUE else FALSE
+			if(pi[1]%in%c("equal","estimated"))
 				pi<-setNames(rep(1/m,m),colnames(xx)) # set equal
-				## pi<-lapply(1:nsim,function(x,y) y, y=pi)
-			} else if(pi[1]=="estimated"){
-				pi<-lapply(Q,statdist) # set from stationary distribution
-			} else { 
-				pi<-pi/sum(pi) # obtain from input
-				pi<-lapply(1:nsim,function(x,y) y, y=pi)
-			}
+			else pi<-pi/sum(pi) # obtain from input
 			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi=pi)
 			L<-lapply(XX,function(x) x$L)
 			Q<-lapply(XX,function(x) x$Q)
 			logL<-lapply(XX,function(x) x$loglik)
+			pi<-if(get.stationary) lapply(Q,statdist) else lapply(1:nsim,function(x,y) y,
+				y=pi)
 			if(pm) printmessage(Reduce('+',Q)/length(Q),pi,method="mcmc")
 			mtrees<-if(nsim>1) mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=
 				list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE) else
-				list(smap(tree=tree,x=x,N=N,m=m,root=root,L=L[[1]],Q=Q[[1]],pi=pi,
+				list(smap(tree=tree,x=x,N=N,m=m,root=root,L=L[[1]],Q=Q[[1]],pi=pi[[1]],
 				logL=logL[[1]]))
 		} else if(is.matrix(Q)){
 			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi,args=list(...))
@@ -153,6 +150,8 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi,args=l
 	p<-rgamma(np,prior$alpha,prior$beta)
 	Q<-matrix(c(0,p)[rate+1],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
+	print(args)
+	print(pi)
 	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi,args=args)
 	cat("Running MCMC burn-in. Please wait....\n")
 	flush.console()
