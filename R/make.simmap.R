@@ -150,8 +150,6 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi,args=l
 	p<-rgamma(np,prior$alpha,prior$beta)
 	Q<-matrix(c(0,p)[rate+1],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	print(args)
-	print(pi)
 	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi,args=args)
 	cat("Running MCMC burn-in. Please wait....\n")
 	flush.console()
