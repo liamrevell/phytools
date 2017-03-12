@@ -63,21 +63,24 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 				qq<-fitMk(bt,xx,model)$rates
 				prior$alpha<-qq*prior$beta
 			}
-			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior)
-			L<-lapply(XX,function(x) x$L)
-			Q<-lapply(XX,function(x) x$Q)
-			logL<-lapply(XX,function(x) x$loglik)
 			if(pi[1]=="equal"){
-				pi<-setNames(rep(1/m,m),colnames(L)) # set equal
-				pi<-lapply(1:nsim,function(x,y) y, y=pi)
+				pi<-setNames(rep(1/m,m),colnames(xx)) # set equal
+				## pi<-lapply(1:nsim,function(x,y) y, y=pi)
 			} else if(pi[1]=="estimated"){
 				pi<-lapply(Q,statdist) # set from stationary distribution
 			} else { 
 				pi<-pi/sum(pi) # obtain from input
 				pi<-lapply(1:nsim,function(x,y) y, y=pi)
 			}
+			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi=pi)
+			L<-lapply(XX,function(x) x$L)
+			Q<-lapply(XX,function(x) x$Q)
+			logL<-lapply(XX,function(x) x$loglik)
 			if(pm) printmessage(Reduce('+',Q)/length(Q),pi,method="mcmc")
-			mtrees<-mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE)
+			mtrees<-if(nsim>1) mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=
+				list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE) else
+				list(smap(tree=tree,x=x,N=N,m=m,root=root,L=L[[1]],Q=Q[[1]],pi=pi,
+				logL=logL[[1]]))
 		} else if(is.matrix(Q)){
 			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
@@ -116,9 +119,8 @@ printmessage<-function(Q,pi,method){
 
 # mcmc for Q used in Q="mcmc"
 # written by Liam J. Revell 2013
-mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
+mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi,args=list()){
 	update<-function(x){
-		## x<-exp(log(x)+rnorm(n=np,mean=0,sd=sqrt(vQ)))
 		x<-abs(x+rnorm(n=np,mean=0,sd=sqrt(vQ)))
 		return(x)
 	}
@@ -142,7 +144,8 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		}
 	} else {
 		if(ncol(model)!=nrow(model)) stop("the matrix given as 'model' is not square")
-		if(ncol(model)!=m) stop("the matrix 'model' must have as many rows as the number of categories in 'x'")
+		if(ncol(model)!=m) 
+			stop("the matrix 'model' must have as many rows as the number of categories in 'x'")
 		rate<-model
 		np<-max(rate)
 	}
@@ -150,14 +153,14 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	p<-rgamma(np,prior$alpha,prior$beta)
 	Q<-matrix(c(0,p)[rate+1],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi,args=list(...))
+	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi,args=args)
 	cat("Running MCMC burn-in. Please wait....\n")
 	flush.console()
 	for(i in 1:burnin){
 		pp<-update(p)
 		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args=list(...))
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -173,7 +176,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		pp<-update(p)
 		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args=list(...))
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -183,7 +186,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		if(i%%samplefreq==0){
 			Qi<-matrix(c(0,p)[rate+1],m,m)
 			diag(Qi)<--rowSums(Qi,na.rm=TRUE)
-			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE,pi=pi)
+			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE,pi=pi,args)
 		}
 	}
 	return(XX)
