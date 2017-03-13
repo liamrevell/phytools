@@ -4,8 +4,7 @@
 \title{Brownian or OU simulation with multiple evolutionary regimes}
 \usage{
 sim.rates(tree, sig2, anc=0, nsim=1, internal=FALSE, plot=FALSE)
-multiOU(tree, alpha, sig2, theta=NULL, a0=NULL, nsim=1, internal=FALSE, ...){
-
+multiOU(tree, alpha, sig2, theta=NULL, a0=NULL, nsim=1, internal=FALSE, ...)
 }
 \arguments{
 	\item{tree}{is a stochastic map format phylogenetic tree in modified \code{"phylo"} format (e.g., see \code{\link{make.simmap}}).}
