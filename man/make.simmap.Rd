@@ -32,7 +32,7 @@ make.simmap(tree, x, model="SYM", nsim=1, ...)
 	If \code{tree} is an object of class \code{"multiPhylo"} then \code{nsim} stochastic maps are generated for each input tree.
 }
 \value{
- 	A modified phylogenetic tree of class \code{"phylo"} (or a modified \code{"multiPhylo"} object, for \code{nsim} > 1) with the following additional elements:
+ 	A object of class \code{"simmap"} or \code{"multiSimmap"} which consists of an object of class \code{"phylo"} (or a list of such objects with class \code{"multiPhylo"}), with the following additional elements:
  	\item{maps}{a list of named vectors containing the times spent in each state on each branch, in the order in which they occur.}
  	\item{mapped.edge}{a matrix containing the total time spent in each state along each edge of the tree.}
 	\item{Q}{the assumed or sampled value of \code{Q}.}
