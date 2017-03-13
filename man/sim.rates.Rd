@@ -13,10 +13,10 @@ multiOU(tree, alpha, sig2, theta=NULL, a0=NULL, nsim=1, internal=FALSE, ...)
 	\item{nsim}{number of simulations.}
 	\item{internal}{logical value indicating whether to return states at internal nodes.}
 	\item{plot}{logical value indicating whether or not to visual the rate heterogeneity (default value is \code{FALSE}.}
-	\code{alpha}{single value or vector of values of the OU alpha parameter.}
-	\code{theta}{single value or vector of values of the OU theta parameter.}
-	\code{a0}{optional value of the root state. Defaults to zero.}
-	\code{...}{optional arguments.}
+	\item{alpha}{single value or vector of values of the OU alpha parameter.}
+	\item{theta}{single value or vector of values of the OU theta parameter.}
+	\item{a0}{optional value of the root state. Defaults to zero.}
+	\item{...}{optional arguments.}
 }
 \description{
 	The function \code{sim.rates} conducts BM simulation on a tree with multiple rates.

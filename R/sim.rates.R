@@ -1,7 +1,7 @@
 # simulates with multiple evolutionary rates in different parts of the tree
 # written by Liam J. Revell 2011, 2013, 2015
 
-sim.rates<-function(tree,sig2,anc=0,nsim=1,internal=F,plot=F){
+sim.rates<-function(tree,sig2,anc=0,nsim=1,internal=FALSE,plot=FALSE){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(is.null(tree$mapped.edge)){
 		message("tree does not contain a mapped discrete character history, using fastBM")
