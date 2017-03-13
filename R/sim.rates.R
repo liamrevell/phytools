@@ -28,3 +28,47 @@ sim.rates<-function(tree,sig2,anc=0,nsim=1,internal=F,plot=F){
 	}
 	X
 }
+
+## function simulates multiple OU regimes using a difference equation approximation
+## written by Liam J. Revell 2017
+
+multiOU<-function(tree,alpha,sig2,theta=NULL,a0=NULL,nsim=1,internal=FALSE,...){
+	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(nsim>1) x<-replicate(nsim,multiOU(tree,alpha,sig2,theta,a0,nsim=1,internal,...))
+	else {
+		rt<-Ntip(tree)+1
+		if(!inherits(tree,"simmap")){
+			tree<-paintSubTree(tree,rt,"1")
+			names(alpha)<-names(sig2)<-"1"
+		}
+		if(hasArg(dt)) dt<-list(...)$dt
+		else dt<-1/1000*max(nodeHeights(tree))
+		ss<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
+		if(is.null(theta)) theta<-setNames(rep(0,length(ss)),ss)
+		if(is.null(a0)) a0<-0
+		tree<-reorder(tree,"cladewise")
+		S<-matrix(NA,nrow(tree$edge),2)
+		S[which(tree$edge[,1]==rt),1]<-a0
+		for(i in 1:nrow(tree$edge)){
+			x1<-S[i,1]
+			for(j in 1:length(tree$maps[[i]])){
+				t<-tree$maps[[i]][j]
+				ALPHA<-alpha[names(t)]
+				SIG2<-sig2[names(t)]
+				THETA<-theta[names(t)]
+				t<-c(rep(dt,floor(t/dt)),t%%dt)
+				for(k in 1:length(t))
+					x1<-x1+ALPHA*(THETA-x1)*t[k]+
+						rnorm(n=1,sd=sqrt(SIG2*t[k]))
+			}
+			S[i,2]<-x1
+			if(any(tree$edge[,1]==tree$edge[i,2]))
+				S[which(tree$edge[,1]==tree$edge[i,2]),1]<-S[i,2]
+		}
+		x<-setNames(c(S[1,1],S[,2]),c(tree$edge[1,1],
+			tree$edge[,2]))[as.character(1:(Ntip(tree)+tree$Nnode))]
+		names(x)[1:Ntip(tree)]<-tree$tip.label
+		if(!internal) x<-x[tree$tip.label]
+	}
+	x
+}
