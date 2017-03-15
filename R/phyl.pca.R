@@ -130,7 +130,7 @@ summary.phyl.pca<-function(object, ...){
 
 ## S3 biplot method for "phyl.pca"
 ## modified from code provided by Joan Maspons
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2017
 biplot.phyl.pca<-function(x,...){
 	to.do<-list(...)
 	if(hasArg(choices)){ 
