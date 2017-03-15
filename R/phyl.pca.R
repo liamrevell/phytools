@@ -138,7 +138,7 @@ biplot.phyl.pca<-function(x,...){
 		to.do$choices<-NULL
 	} else choices<-c(1,2)
 	to.do$x<-x$S[,choices]
-	to.do$y<-x$L[,choices]
+	to.do$y<-x$Evec[,choices]
 	do.call(biplot,to.do)
 }
 
