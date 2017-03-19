@@ -9,6 +9,8 @@ ratebytree<-function(trees,x,...){
 	else trace<-FALSE
 	if(hasArg(digits)) digits<-list(...)$digits
 	else digits<-6
+	if(hasArg(test)) test<-list(...)$test
+	else test<-"chisq"
 	## check trees & x
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
@@ -82,7 +84,30 @@ ratebytree<-function(trees,x,...){
 		lower=c(tol,rep(-Inf,N)),upper=c(Inf,rep(Inf,N)))
 	## compare models:
 	LR<-2*(-fit.multi$value+fit.onerate$value)
-	P.chisq<-pchisq(LR,df=N-1,lower.tail=FALSE)
+	if(test=="chisq") P.chisq<-pchisq(LR,df=N-1,lower.tail=FALSE)
+	else if(test=="simulation"){
+		cat("Generating null distribution via simulation -> |")
+		flush.console()
+		if(hasArg(nsim)) nsim<-list(...)$nsim
+		else nsim<-100
+		X<-mapply(fastBM,tree=trees,a=as.list(fit.onerate$par[1:N+1]),
+			MoreArgs=list(sig2=fit.onerate$par[1],nsim=nsim),
+			SIMPLIFY=FALSE)
+		P.sim<-1/(nsim+1)
+		pct<-0.1
+		for(i in 1:nsim){
+			x.sim<-lapply(X,function(x,ind) x[,ind],ind=i)
+			fit.sim<-ratebytree(trees,x.sim)
+			P.sim<-P.sim+(fit.sim$likelihood.ratio>=LR)/(nsim+1)
+			if(i/nsim>=pct){
+				cat(".")
+				flush.console()
+				pct<-pct+0.1
+			}
+		}
+		cat(".|\nDone!\n")
+		flush.console()
+	}
 	obj<-list(
 		multi.rate.model=list(sig2=fit.multi$par[1:N],
 			a=fit.multi$par[(N+1):(2*N)],
@@ -96,7 +121,9 @@ ratebytree<-function(trees,x,...){
 			logL=-fit.onerate$value,
 			counts=fit.onerate$counts,convergence=fit.onerate$convergence,
 			message=fit.onerate$message),
-		N=N,likelihood.ratio=LR,P.chisq=P.chisq)
+		N=N,likelihood.ratio=LR,
+		P.chisq=if(test=="chisq") P.chisq else NULL,
+		P.sim=if(test=="simulation") P.sim else NULL)
 	class(obj)<-"ratebytree"
 	obj
 }
@@ -122,7 +149,10 @@ print.ratebytree<-function(x,...){
 		x$multi.rate.model$k,round(x$multi.rate.model$logL,digits),
 		"\n\n",sep="\t"))
 	cat(paste("Likelihood ratio:",round(x$likelihood.ratio,digits),"\n"))
-	cat(paste("P-value (based on X^2):",round(x$P.chisq,digits),"\n\n"))
+	if(!is.null(x$P.chisq))
+		cat(paste("P-value (based on X^2):",round(x$P.chisq,digits),"\n\n"))
+	else if(!is.null(x$P.sim))
+		cat(paste("P-value (based on simulation):",round(x$P.sim,digits),"\n\n"))
 	if(x$multi.rate.model$convergence==0&&x$common.rate.model$convergence==0) 
         cat("R thinks it has found the ML solution.\n\n")
 	else cat("One or the other optimization may not have converged.\n\n")
