@@ -11,6 +11,8 @@ ratebytree<-function(trees,x,...){
 	else digits<-6
 	if(hasArg(test)) test<-list(...)$test
 	else test<-"chisq"
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
 	## check trees & x
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
@@ -86,7 +88,7 @@ ratebytree<-function(trees,x,...){
 	LR<-2*(-fit.multi$value+fit.onerate$value)
 	if(test=="chisq") P.chisq<-pchisq(LR,df=N-1,lower.tail=FALSE)
 	else if(test=="simulation"){
-		cat("Generating null distribution via simulation -> |")
+		if(!quiet) cat("Generating null distribution via simulation -> |")
 		flush.console()
 		if(hasArg(nsim)) nsim<-list(...)$nsim
 		else nsim<-100
@@ -100,12 +102,12 @@ ratebytree<-function(trees,x,...){
 			fit.sim<-ratebytree(trees,x.sim)
 			P.sim<-P.sim+(fit.sim$likelihood.ratio>=LR)/(nsim+1)
 			if(i/nsim>=pct){
-				cat(".")
+				if(!quiet) cat(".")
 				flush.console()
 				pct<-pct+0.1
 			}
 		}
-		cat(".|\nDone!\n")
+		if(!quiet) cat(".|\nDone!\n")
 		flush.console()
 	}
 	obj<-list(
