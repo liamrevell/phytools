@@ -5,7 +5,7 @@
 \usage{
 cladelabels(tree=NULL, text, node, offset=NULL, wing.length=NULL, cex=1,
 	orientation="vertical")
-arc.cladelabels<-function(tree=NULL, text, node, ln.offset=1.02,
+arc.cladelabels(tree=NULL, text, node, ln.offset=1.02,
 	lab.offset=1.06, cex=1, orientation="curved",...)
 }
 \arguments{
