@@ -1,6 +1,24 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## function forces a tree to be ultrametric using two different methods
+## written by Liam J. Revell 2017
+
+force.ultrametric<-function(tree,method=c("nnls","extend")){
+	method<-method[1]
+	if(method=="nnls") tree<-nnls.tree(cophenetic(tree),tree,
+		rooted=TRUE,trace=0)
+	else if(method=="extend"){
+		h<-diag(vcv(tree))
+		d<-max(h)-h
+		ii<-sapply(1:Ntip(tree),function(x,y) which(y==x),
+			y=tree$edge[,2])
+		tree$edge.length[ii]<-tree$edge.length[ii]+d
+	} else 
+		cat("method not recognized: returning input tree\n\n")
+	tree
+}
+
 ## function to create curved clade labels for a fan tree
 ## written by Liam J. Revell 2017
 
