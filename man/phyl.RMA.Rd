@@ -1,14 +1,15 @@
 \name{phyl.RMA}
 \alias{phyl.RMA}
+\alias{coef.phyl.RMA}
+\alias{plot.phyl.RMA}
 \title{Phylogenetic reduced major axis (RMA) regression}
 \usage{
 phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
-\method{coef}{phyl.RMA}{object, ...}
+\method{coef}{phyl.RMA}(object, ...)
 \method{plot}{phyl.RMA}(x, ...)
-\method{print}{phyl.RMA}{x, ...}
 }
 \arguments{
-	\item{x}{vector with names. In the case of \code{plot} and \code{print} methods, \code{x} is an object of class \code{"phyl.RMA"}.}
+	\item{x}{vector with names. In the case of the S3 \code{plot} method \code{x} is an object of class \code{"phyl.RMA"}.}
 	\item{y}{vector with names.}
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}
 	\item{method}{method to obtain the correlation structure: can be \code{"BM"} or \code{"lambda"}.}
@@ -16,6 +17,7 @@ phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
 	\item{fixed}{logical value indicating whether or not \eqn{\lambda} should be optimized using likelihood.}
 	\item{h0}{null hypothesis for \code{beta}. Defaults to 1.0. Note that a null hypothesis of 0.0 is not allowed.}
 	\item{object}{for \code{coef} method, an object of class \code{"phyl.RMA"}.}
+	\item{...}{optional arguments for S3 methods.}
 }
 \description{
 	This function performs phylogenetic RMA regression.
