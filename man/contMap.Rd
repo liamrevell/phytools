@@ -5,8 +5,8 @@
 \title{Map continuous trait evolution on the tree}
 \usage{
 contMap(tree, x, res=100, fsize=NULL, ftype=NULL, lwd=4, legend=NULL,
-	lims=NULL, outline=TRUE, sig=3, type="phylogram", direction="rightwards", 
-	plot=TRUE, ...)
+   lims=NULL, outline=TRUE, sig=3, type="phylogram", direction="rightwards", 
+   plot=TRUE, ...)
 \method{plot}{contMap}(x, ...)
 errorbar.contMap(obj, ...)
 }

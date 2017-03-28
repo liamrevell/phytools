@@ -3,15 +3,19 @@
 \title{Phylogenetic reduced major axis (RMA) regression}
 \usage{
 phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
+\method{coef}{phyl.RMA}{object, ...}
+\method{plot}{phyl.RMA}(x, ...)
+\method{print}{phyl.RMA}{x, ...}
 }
 \arguments{
-	\item{x}{vector with names.}
+	\item{x}{vector with names. In the case of \code{plot} and \code{print} methods, \code{x} is an object of class \code{"phyl.RMA"}.}
 	\item{y}{vector with names.}
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}
 	\item{method}{method to obtain the correlation structure: can be \code{"BM"} or \code{"lambda"}.}
 	\item{lambda}{value of \code{lambda} for fixed \eqn{\lambda}.}
 	\item{fixed}{logical value indicating whether or not \eqn{\lambda} should be optimized using likelihood.}
 	\item{h0}{null hypothesis for \code{beta}. Defaults to 1.0. Note that a null hypothesis of 0.0 is not allowed.}
+	\item{object}{for \code{coef} method, an object of class \code{"phyl.RMA"}.}
 }
 \description{
 	This function performs phylogenetic RMA regression.
@@ -22,7 +26,7 @@ phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
 	The statistical hypothesis testing is based on Clarke (1980; reviewed in McArdle 1988), which differs from some other implementations of non-phylogenetic major axis regression in R.
 }
 \value{
-	A list with the following components:
+	An object of class \code{"phyl.RMA"} consisting of a list with the following components:
 	\item{RMA.beta}{a vector of RMA regression coefficients.}
 	\item{V}{a VCV matrix for the traits.}
 	\item{lambda}{fitted value of lambda (\code{method="lambda"} only).}

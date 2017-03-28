@@ -5,8 +5,8 @@
 \title{Conducts a statistical test of cospeciation between two trees}
 \usage{
 cospeciation(t1, t2, distance=c("RF","SPR"),
-	method=c("simulation","permutation"), assoc=NULL,
-	nsim=100, ...)
+   method=c("simulation","permutation"), assoc=NULL,
+   nsim=100, ...)
 \method{plot}{cospeciation}(x, ...)
 \method{print}{cospeciation}(x, ...)
 }

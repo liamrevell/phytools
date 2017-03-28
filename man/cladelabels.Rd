@@ -4,9 +4,9 @@
 \title{Add labels to subtrees of a plotted phylogeny}
 \usage{
 cladelabels(tree=NULL, text, node, offset=NULL, wing.length=NULL, cex=1,
-	orientation="vertical")
+   orientation="vertical")
 arc.cladelabels(tree=NULL, text, node, ln.offset=1.02,
-	lab.offset=1.06, cex=1, orientation="curved",...)
+   lab.offset=1.06, cex=1, orientation="curved",...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. If not supplied, the function will obtain the last plotted phylogeny from the environmental variable \code{last_plot.phylo}.}

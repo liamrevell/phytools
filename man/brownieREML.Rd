@@ -11,10 +11,10 @@ brownieREML(tree, x, maxit=2000, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function takes a modified \code{"phylo"} object with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then uses restricted maximum likelihood (REML) to fit the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This function is similar to \code{\link{brownie.lite}} but uses REML (which is faster and unbiased) instead of ML.  REML optimization takes advantage of Felsenstein's (1985) contrasts algorithm.
+	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then uses restricted maximum likelihood (REML) to fit the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This function is similar to \code{\link{brownie.lite}} but uses REML (which is faster and unbiased) instead of ML.  REML optimization takes advantage of Felsenstein's (1985) contrasts algorithm.
 }
 \value{
-	A list with the following components:
+	An object of class \code{"brownieREML"} containing the following components:
 	\item{sig2.single}{is the rate for a single rate model - this is usually the "null" model.}
 	\item{logL1}{log-likelihood of the single-rate model.}
 	\item{sig2.multiple}{is a length \emph{p} (for \emph{p} rates) vector of BM rates from the multi-rate model.}
@@ -30,7 +30,7 @@ brownieREML(tree, x, maxit=2000, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{brownie.lite}}, \code{\link{evol.vcv}}, \code{\link{evol.rate.mcmc}}
+	\code{\link{brownie.lite}}, \code{\link{evol.vcv}}, \code{\link{evol.rate.mcmc}}, \code{\link{ratebytree}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

@@ -18,9 +18,7 @@ paintBranches(tree, edge, state, anc.state="1")
 	This function maps or "paints" an arbitrary, i.e., user-specified, discrete character history on the tree. \code{paintSubTree} paints the clade downstream of \code{node} with a particular state; whereas \code{paintBranches} paints only a specified branch.
 }
 \value{
-	A modified phylogenetic tree of class \code{"phylo"} with the following additional elements:
-	\item{maps}{a list of named vectors containing the times spent in each state on each branch, in the order in which they occur.}
-	\item{mapped.edge}{a matrix containing the total time spent in each state along each edge of the tree.}
+	An object of class \code{"simmap"} that contains the specified paintings as a mapped discrete character.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

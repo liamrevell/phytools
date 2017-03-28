@@ -18,7 +18,9 @@ rootedge.to.singleton(tree)
 	The function \code{map.to.singleton} takes an object of class \code{"phylo"} with a mapped discrete character and converts it to a tree with singleton nodes, in which edge has only one state. The states for each edge are stored in \code{names(tree$edge.length)}. \code{plotTree.singletons} plots a tree with singleton nodes. Finally, \code{drop.tip.singleton} drops tips from the tree leaving ancestral nodes for all remaining tips as singletons. \code{rootedge.to.singleton} converts a tree with a root edge to a tree with a singleton node instead.
 }
 \value{
-	An object of class \code{"phylo"} with singleton nodes. \code{plotTree.singletons} plots a tree. If \code{names(tree$edge.length)!=NULL} it will use a different color from \code{\link{palette}} for each mapped state.
+	An object of class \code{"phylo"} with singleton nodes. \code{plotTree.singletons} plots a tree. 
+	
+	If \code{names(tree$edge.length)!=NULL} it will use a different color from \code{\link{palette}} for each mapped state.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

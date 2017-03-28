@@ -3,8 +3,9 @@
 \alias{make.transparent}
 \title{Plots a posterior sample of trees}
 \usage{
-densityTree(trees, colors="blue", alpha=NULL, method="plotTree", fix.depth=FALSE,
-	use.edge.length=TRUE, compute.consensus=FALSE, ...)
+densityTree(trees, colors="blue", alpha=NULL, method="plotTree", 
+   fix.depth=FALSE, use.edge.length=TRUE, compute.consensus=FALSE, 
+   ...)
 make.transparent(color, alpha)
 }
 \arguments{

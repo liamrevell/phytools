@@ -23,7 +23,7 @@ phyl.pca(tree, Y, method="BM", mode="cov", ...)
 	S3 methods (\code{print}, \code{summary}, and \code{biplot}) are modified from code provided by Joan Maspons and are based on the same methods for objects of class \code{"prcomp"}. Function \code{biplot} now permits the argument \code{choices} to be supplied, which should be a vector of length two indicated the two PC axes to be plotted.
 }
 \value{
-	An object of class \code{phyl.pca} which is a list with some or all of the following components:
+	An object of class \code{"phyl.pca"} consisting of a list with some or all of the following components:
 	\item{Eval}{diagonal matrix of eigenvalues.}
 	\item{Evec}{matrix with eigenvectors in columns.}
 	\item{S}{matrix with scores.}

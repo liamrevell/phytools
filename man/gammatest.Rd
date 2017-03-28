@@ -5,7 +5,7 @@
 gammatest(x)
 }
 \arguments{
-	\item{x}{list from function call of \code{\link{ltt}} in which \code{ltt(...,gamma=F)}.}
+	\item{x}{an object of class \code{"ltt"} resulting from a call of the function \code{\link{ltt}}.}
 }
 \description{
 	Conducts \eqn{\gamma}-test of Pybus & Harvey (2000).

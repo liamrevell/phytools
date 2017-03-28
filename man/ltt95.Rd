@@ -4,7 +4,7 @@
 \title{Creates a (1-\eqn{\alpha})-percent CI for a set of LTTs}
 \usage{
 ltt95(trees, alpha=0.05, log=FALSE, method=c("lineages","times"),
-	mode=c("median","mean"), ...)
+   mode=c("median","mean"), ...)
 \method{plot}{ltt95}(x, ...)
 }
 \arguments{

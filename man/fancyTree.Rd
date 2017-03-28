@@ -3,7 +3,7 @@
 \title{Plots special types of phylogenetic trees}
 \usage{
 fancyTree(tree, type=c("extinction","traitgram3d","droptip","densitymap",
-	"contmap","phenogram95","scattergram"), ..., control=list())
+   "contmap","phenogram95","scattergram"), ..., control=list())
 }
 \arguments{
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}

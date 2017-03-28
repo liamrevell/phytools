@@ -35,8 +35,8 @@ Description: Package contains various functions for phylogenetic analysis.
 	canonical correlation analysis, and a phylogenetic ANOVA; projecting 
 	a tree onto a geographic map; simulating discrete character 
 	histories on the tree; fitting a model in which a discrete character 
-	evolves under the threshold model; visualization of cospeciation; a 
-	simple statistical test for cospeciation between two trees. In 
+	evolves under the threshold model; visualization of cospeciation; and 
+	a simple statistical test for cospeciation between two trees. In 
 	addition to this phylogenetic comparative method functionality, the 
 	package also contains functions for a wide range of other purposes in 
 	phylogenetic biology. For instance, functionality in this package 

@@ -2,7 +2,8 @@
 \alias{plotThresh}
 \title{Tree plotting with posterior probabilities of ancestral states from the threshold model}
 \usage{
-plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE, ...)
+plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE, 
+   ...)
 }
 \arguments{
 	\item{tree}{phylogenetic tree.}

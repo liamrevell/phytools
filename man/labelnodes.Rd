@@ -2,8 +2,8 @@
 \alias{labelnodes}
 \title{Function to interactively label nodes of a plotted tree}
 \usage{
-labelnodes(text,node=NULL,interactive=TRUE,
-	shape=c("circle","ellipse","rect"),...)
+labelnodes(text, node=NULL, interactive=TRUE, shape=c("circle","ellipse",
+   "rect"), ...)
 }
 \arguments{
 	\item{text}{text string or vector to be used as labels.}
@@ -17,6 +17,9 @@ labelnodes(text,node=NULL,interactive=TRUE,
 }
 \value{
 	Invisibly returns a vector of the node indices for the labeled nodes.
+}
+\seealso{
+	\code{\link{cladelabels}}, \code{\link{nodelabels}}
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

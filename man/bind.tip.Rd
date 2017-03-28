@@ -3,7 +3,7 @@
 \title{Attaches a new tip to a tree}
 \usage{
 bind.tip(tree, tip.label, edge.length=NULL, where=NULL, position=0,
-	interactive=FALSE, ...)
+   interactive=FALSE, ...)
 }
 \arguments{
 	\item{tree}{receptor tree.}

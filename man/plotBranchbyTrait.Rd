@@ -3,7 +3,7 @@
 \title{Plot branch colors by a quantitative trait or value}
 \usage{
 plotBranchbyTrait(tree, x, mode=c("edges","tips","nodes"), palette="rainbow", 
-	legend=TRUE, xlims=NULL, ...)
+   legend=TRUE, xlims=NULL, ...)
 }
 \arguments{
 	\item{tree}{an object of class "phylo".}

@@ -3,7 +3,7 @@
 \title{Plot phenogram (traitgram)}
 \usage{
 phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
-	add=FALSE, ...)
+   add=FALSE, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}, with or without a mapped discrete character.}

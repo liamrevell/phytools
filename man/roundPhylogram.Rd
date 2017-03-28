@@ -3,7 +3,7 @@
 \title{Plot a round phylogram}
 \usage{
 roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL, 
-	direction="rightwards", type="phylogram", xlim=NULL, ylim=NULL, ...)
+   direction="rightwards", type="phylogram", xlim=NULL, ylim=NULL, ...)
 }
 \arguments{
  	\item{tree}{an object of class "phylo" or "multiPhylo" containing one or multiple phylogenies.}

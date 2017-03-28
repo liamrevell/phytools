@@ -7,7 +7,7 @@
 rateshift(tree, x, nrates=1, niter=10, method="ML", ...)
 \method{plot}{rateshift}(x, ...)
 likSurface.rateshift(tree, x, nrates=2, shift.range=NULL,
-	density=20, plot=TRUE, ...)
+   density=20, plot=TRUE, ...)
 }
 \arguments{
  	\item{tree}{object of class \code{"phylo"}.}

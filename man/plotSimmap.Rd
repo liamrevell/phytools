@@ -5,10 +5,11 @@
 \title{Plot stochastic character mapped tree}
 \usage{
 plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE, 
-	node.numbers=FALSE, mar=NULL, add=FALSE, offset=NULL, direction="rightwards",
-	type="phylogram", setEnv=TRUE, part=1.0, xlim=NULL, ylim=NULL, 
-	nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE, split.vertical=FALSE,
-	lend=2,asp=NA)
+   node.numbers=FALSE, mar=NULL, add=FALSE, offset=NULL,
+   direction="rightwards", type="phylogram", setEnv=TRUE, part=1.0, 
+   xlim=NULL, ylim=NULL, nodes="intermediate", tips=NULL, maxY=NULL, 
+   hold=TRUE, split.vertical=FALSE,
+   lend=2,asp=NA)
 \method{plot}{simmap}(x, ...)
 \method{plot}{multiSimmap}(x, ...)
 }

@@ -2,7 +2,7 @@
 \alias{multiC}
 \title{Returns a list with phylogenetic VCV matrix for each mapped state}
 \usage{
-multiC(tree,internal=FALSE)
+multiC(tree, internal=FALSE)
 }
 \arguments{
 	\item{tree}{a phylogeny with mapped discrete state in a modified object of class \code{"phylo"} (e.g., see \code{\link{read.simmap}}.}

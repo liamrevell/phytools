@@ -20,7 +20,7 @@ getDescendants(tree, node, curr=NULL)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{paintSubTree}}
+	\code{\link{Descendants}}, \code{\link{paintSubTree}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

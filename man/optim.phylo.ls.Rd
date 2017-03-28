@@ -3,7 +3,7 @@
 \title{Phylogeny inference using the least squares method}
 \usage{
 optim.phylo.ls(D, stree=NULL, set.neg.to.zero=TRUE, fixed=FALSE,
-	tol=1e-10, collapse=TRUE)
+   tol=1e-10, collapse=TRUE)
 }
 \arguments{
 	\item{D}{a distance matrix.}

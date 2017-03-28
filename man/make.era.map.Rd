@@ -13,9 +13,7 @@ make.era.map(tree, limits, ...)
 	This function creates a temporal map on the tree based on \code{limits} provided by the user.
 }
 \value{
-	A modified phylogenetic tree of class \code{"phylo"} with the following additional elements:
-	\item{maps}{a list of named vectors containing the times spent in each state on each branch, in the order in which they occur.}
-	\item{mapped.edge}{a matrix containing the total time spent in each state along each edge of the tree.}
+	An object of class \code{"simmap"} with the specified eras mapped as different regimes.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

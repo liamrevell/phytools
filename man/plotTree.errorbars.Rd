@@ -15,8 +15,7 @@ plotTree.errorbars(tree, CI, ...)
 \details{
 	The matrix CI show contain (in rows) the lower & upper confidence bounds in time since the present.
 	
-	Optional arguments specific to the error bar plot include <code>gridlines</code>, <code>bar.lwd</code>,
-	<code>cex</code> (for the points plotted at nodes), and <code>bar.col</code>.
+	Optional arguments specific to the error bar plot include \code{gridlines}, \code{bar.lwd},\code{cex} (for the points plotted at nodes), and \code{bar.col}.
 }
 \value{
 	Plots a tree with error bars around internal nodes..

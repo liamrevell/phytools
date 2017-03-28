@@ -4,7 +4,8 @@
 \title{Creates a phylogenetic dot plot}
 \usage{
 dotTree(tree, x, legend=TRUE, method="plotTree", standardize=FALSE, ...)
-dot.legend(x, y, min, max, Ntip, length=5, prompt=FALSE, method="plotTree", ...)
+dot.legend(x, y, min, max, Ntip, length=5, prompt=FALSE, method="plotTree", 
+   ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}

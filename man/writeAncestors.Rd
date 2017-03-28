@@ -2,7 +2,8 @@
 \alias{writeAncestors}
 \title{Write a tree to file with ancestral states and (optionally) CIs at nodes}
 \usage{
-writeAncestors(tree, Anc=NULL, file="", digits=6, format=c("phylip","nexus"), ...)
+writeAncestors(tree, Anc=NULL, file="", digits=6, format=c("phylip","nexus"), 
+   ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree or set of trees as an object of class \code{"phylo"} or \code{"multiPhylo"}.}

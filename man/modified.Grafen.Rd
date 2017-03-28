@@ -3,8 +3,8 @@
 \alias{node.paths}
 \title{Computes modified Grafen edge lengths}
 \usage{
-modified.Grafen(tree,power=2)
-node.paths(tree,node)
+modified.Grafen(tree, power=2)
+node.paths(tree, node)
 }
 \arguments{
 	\item{tree}{object of class \code{"phylo"}.}

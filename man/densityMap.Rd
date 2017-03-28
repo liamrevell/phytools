@@ -4,8 +4,8 @@
 \title{Plot posterior density of stochastic mapping on a tree}
 \usage{
 densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
-	legend=NULL, outline=FALSE, type="phylogram", direction="rightwards",
-	plot=TRUE, ...)
+   legend=NULL, outline=FALSE, type="phylogram", direction="rightwards",
+   plot=TRUE, ...)
 \method{plot}{densityMap}(x, ...)
 }
 \arguments{
