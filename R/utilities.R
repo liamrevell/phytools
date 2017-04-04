@@ -1,6 +1,53 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
+## draw tip labels as linking lines to text
+## written by Liam J. Revell 2017
+
+linklabels<-function(text,tips,link.type=c("bent","curved","straight"),
+	...){
+	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(!(lastPP$direction%in%c("leftwards","rightwards")))
+		stop("direction should be \"rightwards\" or \"leftwards\".")
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-1
+	if(hasArg(col)) col<-list(...)$col
+	else col<-"black"
+	if(hasArg(lty)) lty<-list(...)$lty
+	else lty<-"dashed"
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-1
+	if(hasArg(link.offset)) link.offset<-list(...)$link.offset
+	else link.offset<-0.1*max(lastPP$xx)
+	if(hasArg(font)) font<-list(...)$font
+	else font<-3
+	link.type<-link.type[1]
+	xpos<-lastPP$xx[tips]+strwidth("i")
+	ypos<-lastPP$yy[tips]
+	xmax<-rep(max(lastPP$xx),length(tips))+link.offset
+	ylab<-seq(1,lastPP$Ntip,by=(lastPP$Ntip-1)/(length(tips)-1))
+	ylab<-ylab[rank(ypos)]
+	text(xmax,ylab,gsub("_"," ",text),pos=4,font=font,cex=cex,
+		offset=0)
+	if(link.type=="curved"){
+		for(i in 1:length(tips))
+			drawCurve(c(xpos[i],xmax[i]),c(ypos[i],ylab[i]),
+				scale=0.05,lty=lty,col=col,lwd=lwd)
+	} else if(link.type=="bent"){
+		tipmax<-max(lastPP$xx)
+		for(i in 1:length(tips)){
+			ff<-strwidth("W")
+			segments(xpos[i],ypos[i],tipmax+link.offset/2,ypos[i],
+				lty=lty,col=col,lwd=lwd)
+			segments(tipmax+link.offset/2,ypos[i],tipmax+
+				link.offset/2+ff,ylab[i],lty=lty,col=col,lwd=lwd)
+			segments(tipmax+link.offset/2+ff,ylab[i],xmax[i],ylab[i],
+				lty=lty,col=col,lwd=lwd)
+		}
+	} else if(link.type=="straight")
+		segments(xpos,ypos,xmax,ylab,lty=lty,col=col)
+}
+
 ## function forces a tree to be ultrametric using two different methods
 ## written by Liam J. Revell 2017
 
