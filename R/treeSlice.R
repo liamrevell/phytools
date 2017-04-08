@@ -1,6 +1,7 @@
-# function slices a tree at slice and returns all subtrees
-# it uses extract.clade(), if trivial==FALSE subtrees with length than 2 taxa are ignored
-# written by Liam Revell 2011, 2012, 2015, 2017
+## function slices a tree at slice and returns all subtrees
+## it uses extract.clade(), if trivial==FALSE subtrees with length than 2 taxa are ignored
+## for orientation="rootwards" it will return the tree rootward of the slice point
+## written by Liam J. Revell 2011, 2012, 2015, 2017
 
 treeSlice<-function(tree,slice=NULL,trivial=FALSE,prompt=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
