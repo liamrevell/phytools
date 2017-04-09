@@ -79,4 +79,15 @@ treeSlice<-function(tree,slice=NULL,trivial=FALSE,prompt=FALSE,...){
 	}
 }
 
-getParent<-function(tree,node)  tree$edge[which(tree$edge[,2]==node),1]
+
+## function returns the parent of node or NULL if node is the root
+getParent<-function(tree,node){
+	ind<-which(tree$edge[,2]==node)
+	if(length(ind)>0) pp<-tree$edge[which(tree$edge[,2]==node),1]
+	else {
+		pp<-NULL
+		cat("node is the root. returning NULL\n")
+	}
+	pp
+}
+		
