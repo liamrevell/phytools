@@ -1,5 +1,5 @@
 # function is simplified version of evol.vcv
-# written by Liam J. Revell 2011, 2012, 2013
+# written by Liam J. Revell 2011, 2012, 2013, 2017
 
 evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -108,7 +108,41 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10){
 				k=length(res4$par)+2,
 				AIC=2*(length(res4$par)+2)+2*res4$value)
 	
-	return(list(model1=m1,model2=m2,model3=m3,model4=m4))
+	obj<-list(model1=m1,model2=m2,model3=m3,model4=m4)
+	class(obj)<-"evolvcv.lite"
+	obj
+}
 
+## S3 print method for object of class "evolvcv.lite"
+## written by Liam J. Revell 2017
+print.evolvcv.lite<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-4
+	## MODEL 1	
+	m1<-lapply(x$model1,function(a,b) if(is.numeric(a)) round(a,b) else a,b=digits)
+	cat(paste("Model 1:",x$model1$description,"\n"))
+	nn<-paste("R[",t(sapply(1:ncol(m1$R),paste,1:ncol(m1$R),sep=","))[upper.tri(m1$R,
+		diag=TRUE)],"]",sep="")
+	cat(paste("\t",paste(nn,collapse="\t"),"\tk\tlog(L)\tAIC","\n",sep=""))
+	cat(paste("fitted",paste(m1$R[upper.tri(m1$R,diag=TRUE)],collapse="\t"),m1$k,
+		m1$logLik,m1$AIC,"\n",sep="\t"))
+	if(m1$convergence==0) cat("\n(R thinks it has found the ML solution for model 1.)\n\n")
+	else cat("\n(Model 1 optimization may not have converged.)\n\n")
+	## MODELS 2-4
+	for(i in 2:4){
+		m<-lapply(x[[i]],function(a,b) if(is.numeric(a)) round(a,b) else a,b=digits)
+		m$R<-lapply(m$R,function(a,b) if(is.numeric(a)) round(a,b) else a,b=digits)
+		cat(paste("Model ",i,": ",m$description,"\n",sep=""))
+		cat(paste("\t",paste(nn,collapse="\t"),"\tk\tlog(L)\tAIC","\n",sep=""))
+		for(j in 1:length(m$R)){
+			if(j==1) cat(paste(names(m$R)[j],paste(m$R[[j]][upper.tri(m$R[[j]],diag=TRUE)],
+				collapse="\t"),m$k,m$logLik,m$AIC,"\n",sep="\t"))
+			else cat(paste(names(m$R)[j],paste(m$R[[j]][upper.tri(m$R[[j]],diag=TRUE)],
+				collapse="\t"),"\n",sep="\t"))
+		}
+		if(m$convergence==0) 
+			cat(paste("\n(R thinks it has found the ML solution for model ",i,".)\n\n",sep=""))
+		else cat(paste("\n(Model ",i,"optimization may not have converged.)\n\n",sep=""))
+	}
 }
 

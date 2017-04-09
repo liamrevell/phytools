@@ -101,6 +101,7 @@ S3method(coef, phyl.RMA)
 S3method(residuals, phyl.RMA)
 S3method(plot, phyl.RMA)
 S3method(print, ratebytree)
+S3method(print, evolvcv.lite)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
