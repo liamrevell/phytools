@@ -73,7 +73,7 @@ plot.phyl.RMA<-function(x,...){
 	points(x$data,cex=1.2,pch=21,bg="grey")
 	x0<-ace(x$data[,1],x$tree,method="pic")$ace[1]
 	y0<-ace(x$data[,2],x$tree,method="pic")$ace[1]
-	a0<-y0-coef(x)[2]*x0
+	a0<-y0-x$h0*x0
 	abline(a=a0,b=x$h0,lwd=2,col="grey",lty="dashed")
 	abline(a=coef(x)[1],b=coef(x)[2],lwd=2,col="red")
 	tmp<-legend(x=0,y=0,legend=c(expression(beta[RMA]),expression(h[0])),
