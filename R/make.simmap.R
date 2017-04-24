@@ -396,53 +396,80 @@ density.multiSimmap<-function(x,...){
 	obj
 }
 
+## S3 plot method for "changesMap" object from density.multiSimmap
 plot.changesMap<-function(x,...){
-	p.ab<-x$p.ab
-	p.ba<-x$p.ba
-	hpd.ab<-x$hpd.ab
-	hpd.ba<-x$hpd.ba
+	p<-x$p
+	hpd<-x$hpd
 	bw<-x$bw
-	plot(p.ab$mids,p.ab$density,xlim=c(min(x$mins)-1,
-		max(x$maxs)+1),ylim=c(0,1.2*max(c(p.ab$density,
-		p.ba$density))),
-		type="n",xlab="number of changes",
-		ylab="relative frequency across stochastic maps")
-	y2<-rep(p.ab$density,each=2)
-	y2<-y2[-length(y2)]
-	x2<-rep(p.ab$mids-bw/2,each=2)[-1]
-	x3<-c(min(x2),x2,max(x2))
-	y3<-c(0,y2,0)
-	polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
-	lines(p.ab$mids-bw/2,p.ab$density,type="s")
-	y2<-rep(p.ba$density,each=2)
-	y2<-y2[-length(y2)]
-	x2<-rep(p.ba$mids-bw/2,each=2)[-1]
-	x3<-c(min(x2),x2,max(x2))
-	y3<-c(0,y2,0)
-	polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
-	lines(p.ba$mids-bw/2,p.ba$density,type="s")
-	add.simmap.legend(colors=setNames(c(make.transparent("red",0.3),
-		make.transparent("blue",0.3)),
-		c(paste(x$states[1],"->",x$states[2],sep=""),
-		paste(x$states[2],"->",x$states[1],sep=""))),
-		prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
-	dd<-0.01*diff(par()$usr[3:4])
-	lines(hpd.ab,rep(max(p.ab$density)+dd,2))
-	lines(rep(hpd.ab[1],2),c(max(p.ab$density)+dd,
-		max(p.ab$density)+dd-0.005))
-	lines(rep(hpd.ab[2],2),c(max(p.ab$density)+dd,
-		max(p.ab$density)+dd-0.005))
-	text(mean(hpd.ab),max(p.ab$density)+dd,
-		paste("HPD(",x$states[1],"->",x$states[2],")",sep=""),
-		pos=3)
-	lines(hpd.ba,rep(max(p.ba$density)+dd,2))
-	lines(rep(hpd.ba[1],2),c(max(p.ba$density)+dd,
-		max(p.ba$density)+dd-0.005))
-	lines(rep(hpd.ba[2],2),c(max(p.ba$density)+dd,
-		max(p.ba$density)+dd-0.005))
-	text(mean(hpd.ba),max(p.ba$density)+dd,
-		paste("HPD(",x$states[2],"->",x$states[1],")",sep=""),
-		pos=3)
+	if(length(x$trans)==2){
+		plot(p[[1]]$mids,p[[1]]$density,xlim=c(min(x$mins)-1,
+			max(x$maxs)+1),ylim=c(0,1.2*max(c(p[[1]]$density,
+			p[[2]]$density))),
+			type="n",xlab="number of changes",
+			ylab="relative frequency across stochastic maps")
+		y2<-rep(p[[1]]$density,each=2)
+		y2<-y2[-length(y2)]
+		x2<-rep(p[[1]]$mids-bw/2,each=2)[-1]
+		x3<-c(min(x2),x2,max(x2))
+		y3<-c(0,y2,0)
+		polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
+		lines(p[[1]]$mids-bw/2,p[[1]]$density,type="s")
+		y2<-rep(p[[2]]$density,each=2)
+		y2<-y2[-length(y2)]
+		x2<-rep(p[[2]]$mids-bw/2,each=2)[-1]
+		x3<-c(min(x2),x2,max(x2))
+		y3<-c(0,y2,0)
+		polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+		lines(p[[2]]$mids-bw/2,p[[2]]$density,type="s")
+		add.simmap.legend(colors=setNames(c(make.transparent("red",0.3),
+			make.transparent("blue",0.3)),x$trans[1:2]),
+			prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
+		dd<-0.01*diff(par()$usr[3:4])
+		lines(hpd[[1]],rep(max(p[[1]]$density)+dd,2))
+		lines(rep(hpd[[1]][1],2),c(max(p[[1]]$density)+dd,
+			max(p[[1]]$density)+dd-0.005))
+		lines(rep(hpd[[1]][2],2),c(max(p[[1]]$density)+dd,
+			max(p[[1]]$density)+dd-0.005))
+		text(mean(hpd[[1]]),max(p[[1]]$density)+dd,
+			paste("HPD(",x$trans[1],")",sep=""),
+			pos=3)
+		lines(hpd[[2]],rep(max(p[[2]]$density)+dd,2))
+		lines(rep(hpd[[2]][1],2),c(max(p[[2]]$density)+dd,
+			max(p[[2]]$density)+dd-0.005))
+		lines(rep(hpd[[2]][2],2),c(max(p[[2]]$density)+dd,
+			max(p[[2]]$density)+dd-0.005))
+		text(mean(hpd[[2]]),max(p[[2]]$density)+dd,
+			paste("HPD(",x$trans[2],")",sep=""),
+			pos=3)
+	} else {
+		k<-length(x$states)
+		par(mfrow=c(k,k))
+		ii<-1
+		max.d<-max(unlist(lapply(p,function(x) x$density)))
+		for(i in 1:k){
+			for(j in 1:k){
+				if(i==j) plot.new()
+				else {
+					plot(p[[ii]]$mids,p[[ii]]$density,xlim=c(min(x$mins)-1,
+						max(x$maxs)+1),ylim=c(0,1.2*max.d),
+						type="n",xlab="number of changes",
+						ylab="relative frequency",main=x$trans[ii],font.main=1)
+					##title(main=)
+					y2<-rep(p[[ii]]$density,each=2)
+					y2<-y2[-length(y2)]
+					x2<-rep(p[[ii]]$mids-bw/2,each=2)[-1]
+					x3<-c(min(x2),x2,max(x2))
+					y3<-c(0,y2,0)
+					polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+					lines(p[[ii]]$mids-bw/2,p[[ii]]$density,type="s")
+					dd<-0.03*diff(par()$usr[3:4])
+					lines(hpd[[ii]],rep(max(p[[ii]]$density)+dd,2))
+					text(mean(hpd[[ii]]),max(p[[ii]]$density)+dd,"HPD",pos=3)
+					ii<-ii+1
+				}
+			}
+		}
+	}
 }
 
 print.changesMap<-function(x, ...){
