@@ -114,6 +114,8 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,...){
 	if(hasArg(pts)) pts<-list(...)$pts
 	else pts<-TRUE
+	if(hasArg(edge.col)) edge.col<-list(...)$edge.col
+	else edge.col<-rep("black",nrow(tree$edge))
 	d<-if(direction=="rightwards") 1 else -1
 	## sub "_" for " "
 	tree$tip.label<-gsub("_"," ",tree$tip.label)
@@ -140,10 +142,22 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	## compute start & end points of each edge
 	X<-nodeHeights(cw)-0.5
 	## plot horizontal edges
-	for(i in 1:nrow(X)) lines(d*X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd,lend=2)
+	for(i in 1:nrow(X)) lines(d*X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd,lend=2,
+		col=edge.col[i])
 	## plot vertical relationships
-	for(i in 1:tree$Nnode+n) lines(d*X[which(cw$edge[,1]==i),1],
-		sort(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd,lend=2)
+	for(i in 1:tree$Nnode+n){
+		ee<-which(cw$edge[,1]==i)
+		p<-if(i%in%cw$edge[,2]) which(cw$edge[,2]==i) else NULL
+		if(!is.null(p)){
+			xx<-c(X[ee,1],X[p,2])
+			yy<-sort(c(y[cw$edge[ee,2]],y[cw$edge[p,2]]))
+		} else {
+			xx<-c(X[ee,1],X[ee[1],1])
+			yy<-sort(c(y[cw$edge[ee,2]],mean(y[cw$edge[ee,2]])))
+		}
+		segments(x0=d*xx[1:(length(xx)-1)],y0=yy[1:(length(yy)-1)],
+			x1=d*xx[2:length(xx)],y1=yy[2:length(yy)],lwd=lwd,lend=2,col=edge.col[ee])
+	}
 	## plot links to tips
 	h<-max(X)+0.1*(max(X)-min(X))+max(fsize*strwidth(tree$tip.label))-
 		fsize*strwidth(tree$tip.label)
@@ -195,7 +209,7 @@ plot.multiCophylo<-function(x,...){
 }
 
 ## plot an object of class "cophylo"
-## written by Liam J. Revell 2015, 2016
+## written by Liam J. Revell 2015, 2016, 2017
 plot.cophylo<-function(x,...){
 	plot.new()
 	if(hasArg(mar)) mar<-list(...)$mar
@@ -214,10 +228,16 @@ plot.cophylo<-function(x,...){
 	else link.col<-"black"
 	if(hasArg(link.lty))  link.lty<-list(...)$link.lty
 	else link.lty<-"dashed"
+	if(hasArg(edge.col)) edge.col<-list(...)$edge.col
+	else edge.col<-list(
+		left=rep("black",nrow(x$trees[[1]]$edge)),
+		right=rep("blue",nrow(x$trees[[1]]$edge)))
 	obj<-list(...)
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
 	leftArgs<-rightArgs<-obj
+	leftArgs$edge.col<-edge.col$left
+	rightArgs$edge.col<-edge.col$right
 	if(!is.null(obj$fsize)){
 		if(length(obj$fsize)>1){
 			leftArgs$fsize<-obj$fsize[1]
