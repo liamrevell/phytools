@@ -353,38 +353,45 @@ density.multiSimmap<-function(x,...){
 		if(hasArg(bw)) bw<-list(...)$bw
 		else bw<-1
 		tmp<-summary(x)
-		ab<-tmp$count[,2]
-		ba<-tmp$count[,3]
-		class(ab)<-class(ba)<-"mcmc"
+		ab<-lapply(2:ncol(tmp$count),function(i,x) x[,i],x=tmp$count)
+		names(ab)<-sapply(strsplit(colnames(tmp$count)[2:ncol(tmp$count)],
+			","),function(x) paste(x,collapse="->"))
+		ab<-lapply(ab,function(x){
+			class(x)<-"mcmc"
+			x })
 		if(.check.pkg("coda")){
-			hpd.ab<-HPDinterval(ab)
-			hpd.ba<-HPDinterval(ba)
+			hpd.ab<-lapply(ab,HPDinterval)
 		} else {
 			cat("  HPDinterval requires package coda.\n")
 			cat("  Computing 95% interval from samples only.\n\n")
-			hpd.ab<-c(sort(ab)[round(0.025*length(ab))],
-				sort(ab)[round(0.975*length(ab))])
-			hpd.ba<-c(sort(ba)[round(0.025*length(ba))],
-				sort(ba)[round(0.975*length(ba))])
+			hpd95<-function(x){
+				obj<-setNames(c(sort(x)[round(0.025*length(x))],
+					sort(x)[round(0.975*length(x))]),
+					c("lower","upper"))
+				attr(obj,"Probability")<-0.95
+				obj
+			}
+			hpd.ab<-lapply(ab,hpd95)
 		}
-		p.ab<-hist(ab,breaks=seq(min(c(ab,ba))-1.5,
-			max(c(ab,ba))+1.5,bw),plot=FALSE)
-		p.ba<-hist(ba,breaks=seq(min(c(ab,ba))-1.5,
-			max(c(ab,ba))+1.5,bw),plot=FALSE)
+		minmax<-range(unlist(ab))
+		pcalc<-function(x,mm)
+			hist(x,breaks=seq(mm[1]-1.5,mm[2]+1.5,bw),plot=FALSE)
+		p.ab<-lapply(ab,pcalc,mm=minmax)
 		states<-colnames(tmp$ace)
-		trans<-c(paste(states[1],"->",states[2],sep=""),
-			paste(states[2],"->",states[1],sep=""))
-		obj<-list(hpd.ab=hpd.ab,
-			hpd.ba=hpd.ba,
-			p.ab=p.ab,
-			p.ba=p.ba,
-			states=colnames(tmp$ace),trans=trans,
+		trans<-names(ab)
+		obj<-list(hpd=hpd.ab,
+			p=p.ab,
+			states=states,trans=trans,
 			bw=bw,
-			mins=setNames(c(min(ab),min(ba)),trans),
-			meds=setNames(c(median(ab),median(ba)),trans),
-			means=setNames(c(mean(ab),mean(ba)),trans),
-			maxs=setNames(c(max(ab),max(ba)),trans))
+			mins=sapply(ab,min),
+			meds=sapply(ab,median),
+			means=sapply(ab,mean),
+			maxs=sapply(ab,max))
 		class(obj)<-"changesMap"
+	}
+	else if(method=="timings"){
+		cat("This method doesn't work yet.\n")
+		obj<-NULL
 	}
 	obj
 }
@@ -442,18 +449,24 @@ print.changesMap<-function(x, ...){
 	if(hasArg(signif)) signif<-list(...)$signif
 	else signif<-2
 	cat("\nDistribution of changes from stochastic mapping:\n")
-	cat(paste("\t",x$trans[1],"\t\t",x$trans[2],"\n",sep=""))
-	cat(paste("\tMin.   :",round(x$mins[1],signif),
-		"\tMin.   :",round(x$mins[2],signif),"\n",sep=""))
-	cat(paste("\tMedian :",round(x$meds[1],signif),
-		"\tMedian :",round(x$meds[2],signif),"\n",sep=""))
-	cat(paste("\tMean   :",round(x$means[1],signif),
-		"\tMean   :",round(x$means[2],signif),"\n",sep=""))
-	cat(paste("\tMax.   :",round(x$maxs[1],signif),
-		"\tMax.   :",round(x$maxs[2],signif),"\n\n",sep=""))
-	cat("95% HPD interval(",x$trans[1],"): [",x$hpd.ab[1],", ",
-		x$hpd.ba[2],"]\n",sep="")
-	cat("95% HPD interval(",x$trans[2],"): [",x$hpd.ba[1],", ",
-		x$hpd.ba[2],"]\n\n",sep="")
+	NROW<-ceiling(length(x$trans)/2)
+	if(NROW>1) cat("\n")
+	for(i in 1:NROW){
+		ii<-2*i-1
+		jj<-ii+1
+		cat(paste("\t",x$trans[ii],"\t\t",x$trans[jj],"\n",sep=""))
+		cat(paste("\tMin.   :",round(x$mins[ii],signif),
+			"\tMin.   :",round(x$mins[jj],signif),"\n",sep=""))
+		cat(paste("\tMedian :",round(x$meds[ii],signif),
+			"\tMedian :",round(x$meds[jj],signif),"\n",sep=""))
+		cat(paste("\tMean   :",round(x$means[ii],signif),
+			"\tMean   :",round(x$means[jj],signif),"\n",sep=""))
+		cat(paste("\tMax.   :",round(x$maxs[ii],signif),
+			"\tMax.   :",round(x$maxs[jj],signif),"\n\n",sep=""))
+	}
+	for(i in 1:length(x$trans))
+		cat("95% HPD interval(",x$trans[i],"): [",x$hpd[[i]][1],", ",
+			x$hpd[[i]][2],"]\n",sep="")
+	cat("\n")
 }
 
