@@ -7,7 +7,7 @@ ratebytree(trees, x, ...)
 \arguments{
 	\item{trees}{an object of class \code{"multiPhylo"}.}
 	\item{x}{a list of trait vectors for a continuous trait in which the names of each vectors correspond to the tip labels of \code{trees}.}
-	\item{...}{optional arguments.}
+	\item{...}{optional arguments. Presently, these include the following: \code{tol}, used as a minimum value for the fitting rates, to prevent problems in optimization; \code{trace}, a logical value indicating whether or not to report progress in the optimization; \code{test}, the method for hypothesis testing (options are \code{"chisq"} and \code{"simulation"}); \code{quiet}, a logical value indicating whether or not to run perfectly quietly; and \code{se}, a list of vectors containing the standard errors for each value of \code{x}.}
 }
 \description{
 	This function takes a object of class \code{"multiPhylo"} containing two or more phylogenies (\code{trees}), and a list of trait vectors (\code{x}), and fits two models: one in which the rate of trait evolution is equal among all trees; and a second in which the rates can differ between trees.

@@ -17,17 +17,24 @@ ratebytree<-function(trees,x,...){
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
 	if(!is.list(x)) stop("x should be a list of vectors.")
+	if(hasArg(se)) se<-list(...)$se
+	else {
+		se<-x
+		for(i in 1:length(x)) se[[i]][1:length(se[[i]])]<-0
+	}
 	N<-length(trees)
-	## reorder the trait vectors in x
+	## reorder the trait vectors in x & SEs in se
 	x<-mapply(function(x,t) x<-x[t$tip.label],x=x,t=trees,SIMPLIFY=FALSE)
+	se<-mapply(function(x,t) x<-x[t$tip.label],x=se,t=trees,SIMPLIFY=FALSE)
 	## first, fit multi-rate model
-	lik.multi<-function(theta,trees,x,trace=FALSE){
+	lik.multi<-function(theta,trees,x,se,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
 		sig<-theta[1:N]
 		a<-theta[(N+1):(2*N)]
 		C<-lapply(trees,vcv)
-		V<-mapply("*",C,sig,SIMPLIFY=FALSE)
+		E<-lapply(se,diag)
+		V<-mapply("+",mapply("*",C,sig,SIMPLIFY=FALSE),E)
 		logL<-0
 		for(i in 1:N) 
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
@@ -53,16 +60,17 @@ ratebytree<-function(trees,x,...){
 		cat("\nOptimizing multi-rate model....\n")
 		cat(paste(paste("sig[",1:N,"]   ",sep="",collapse="\t"),"logL\n",sep="\t"))
 	}
-	fit.multi<-optim(p,lik.multi,trees=trees,x=x,trace=trace,method="L-BFGS-B",
+	fit.multi<-optim(p,lik.multi,trees=trees,x=x,se=se,trace=trace,method="L-BFGS-B",
 		lower=c(rep(tol,N),rep(-Inf,N)),upper=c(rep(Inf,N),rep(Inf,N)))
 	## now fit single-rate model
-	lik.onerate<-function(theta,trees,x,trace=FALSE){
+	lik.onerate<-function(theta,trees,x,se,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
 		sig<-theta[1]
 		a<-theta[1:N+1]
 		C<-lapply(trees,vcv)
-		V<-lapply(C,"*",sig)
+		E<-lapply(se,diag)
+		V<-mapply("+",lapply(C,"*",sig),E)
 		logL<-0
 		for(i in 1:N) 
 			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
@@ -82,7 +90,7 @@ ratebytree<-function(trees,x,...){
 		cat("\nOptimizing common-rate model....\n")
 		cat(paste("sig      ","logL\n",sep="\t"))
 	}
-	fit.onerate<-optim(p,lik.onerate,trees=trees,x=x,trace=trace,method="L-BFGS-B",
+	fit.onerate<-optim(p,lik.onerate,trees=trees,x=x,se=se,trace=trace,method="L-BFGS-B",
 		lower=c(tol,rep(-Inf,N)),upper=c(Inf,rep(Inf,N)))
 	## compare models:
 	LR<-2*(-fit.multi$value+fit.onerate$value)
@@ -99,7 +107,9 @@ ratebytree<-function(trees,x,...){
 		pct<-0.1
 		for(i in 1:nsim){
 			x.sim<-lapply(X,function(x,ind) x[,ind],ind=i)
-			fit.sim<-ratebytree(trees,x.sim)
+			foo<-function(x,se) sampleFrom(xbar=x,xvar=se^2,n=rep(1,length(x)))
+			x.sim<-mapply(foo,x=x.sim,se=se,SIMPLIFY=FALSE)
+			fit.sim<-ratebytree(trees,x.sim,se=se)
 			P.sim<-P.sim+(fit.sim$likelihood.ratio>=LR)/(nsim+1)
 			if(i/nsim>=pct){
 				if(!quiet) cat(".")
