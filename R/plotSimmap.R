@@ -188,7 +188,6 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
 	asp,plot){
-	print(plot)
 	if(split.vertical&&!setEnv){
 		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
 		spit.vertical<-FALSE
@@ -253,8 +252,6 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(direction=="leftwards") H<-max(H)-H
 	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	if(plot){
-		print(plot)
-		cat("plotting?\n")
 		####
 		if(!split.vertical){
 			for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
