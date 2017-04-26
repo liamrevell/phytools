@@ -78,9 +78,10 @@ densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",
 			}
 		}
 	} else if(use.gradient){
-		nulo<-capture.output(rf<-multiRF(trees),type="message")
+		rf<-multiRF(trees,quiet=TRUE)
 		mds<-cmdscale(rf,k=1)[,1]
 		trees<-trees[order(mds)]
+		h<-h[order(mds)]
 		args$ylim<-c(0,Ntip(trees[[1]])+1)
 		plotTree(trees[[which(h==max(h))[1]]],direction="leftwards",mar=args$mar,
 			ylim=args$ylim,plot=FALSE)
