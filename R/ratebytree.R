@@ -45,11 +45,11 @@ ratebytree<-function(trees,x,...){
 		}
 		-logL
 	}
-	foo<-function(tree,x){ 
+	f1<-function(tree,x){ 
 		pvcv<-phyl.vcv(as.matrix(x),vcv(tree),1)
 		c(pvcv$R[1,1],pvcv$a[1,1])
 	}
-	PP<-mapply(foo,trees,x)
+	PP<-mapply(f1,trees,x)
 	if(hasArg(init)){ 
 		init<-list(...)$init
 	 	if(!is.null(init$sigm)) PP[1,]<-init$sigm
@@ -107,8 +107,8 @@ ratebytree<-function(trees,x,...){
 		pct<-0.1
 		for(i in 1:nsim){
 			x.sim<-lapply(X,function(x,ind) x[,ind],ind=i)
-			foo<-function(x,se) sampleFrom(xbar=x,xvar=se^2,n=rep(1,length(x)))
-			x.sim<-mapply(foo,x=x.sim,se=se,SIMPLIFY=FALSE)
+			f2<-function(x,se) sampleFrom(xbar=x,xvar=se^2,n=rep(1,length(x)))
+			x.sim<-mapply(f2,x=x.sim,se=se,SIMPLIFY=FALSE)
 			fit.sim<-ratebytree(trees,x.sim,se=se)
 			P.sim<-P.sim+(fit.sim$likelihood.ratio>=LR)/(nsim+1)
 			if(i/nsim>=pct){
