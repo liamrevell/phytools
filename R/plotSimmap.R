@@ -494,10 +494,8 @@ plotTree<-function(tree,...){
 	else lend<-2
 	if(hasArg(asp)) asp<-list(...)$asp
 	else asp<-NA
-	if(hasArg(plot)){ 
-		plot<-list(...)$plot
-		print(plot)
-	} else plot<-TRUE
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		if(!is.null(color)) names(color)<-"1"
