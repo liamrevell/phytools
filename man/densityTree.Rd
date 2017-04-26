@@ -4,8 +4,8 @@
 \title{Plots a posterior sample of trees}
 \usage{
 densityTree(trees, colors="blue", alpha=NULL, method="plotTree", 
-   fix.depth=FALSE, use.edge.length=TRUE, compute.consensus=FALSE, 
-   ...)
+   fix.depth=FALSE, use.edge.length=TRUE, compute.consensus=TRUE, 
+   use.gradient=FALSE, show.axis=TRUE, ...)
 make.transparent(color, alpha)
 }
 \arguments{
@@ -15,8 +15,10 @@ make.transparent(color, alpha)
 	\item{method}{plotting method to be used internally. Can be \code{"plotTree"} or \code{"plotSimmap"}.}
 	\item{fix.depth}{logical value indicating whether or not to plot trees with a fixed depth or to permit plotted trees to have different depths.}
 	\item{use.edge.length}{logical value indicating whether to use the edge lengths of the input tree. Defaults to \code{use.edge.length=TRUE} unless any input tree edge lengths are \code{NULL}.}
-	\item{compute.consensus}{logical value indicating whether or not to use the tip order from a consensus tree. (Defaults to \code{compute.consensus=FALSE}.}
-	\item{...}{arguments to be passed to \code{plotTree} or \code{plotSimmap}.}
+	\item{compute.consensus}{logical value indicating whether or not to use the tip order from a consensus tree. (Defaults to \code{compute.consensus=TRUE} Defaulted to \code{FALSE} in earlier version of this function.)}
+	\item{use.gradient}{logical value indicating whether to plot all trees slightly offset using a rainbow color gradient. (Defaults to \code{use.gradient=FALSE}.)}
+	\item{show.axis}{logical value indicating whether or not to include a horizontal axis in the plot.}
+	\item{...}{arguments to be passed to \code{plotTree} or \code{plotSimmap}. Some may be ignored if they are incompatible with the method.}
 	\item{color}{in \code{make.transparent}, the color to render transparent.}
 }
 \description{
