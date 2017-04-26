@@ -4,12 +4,12 @@
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
 	type="phylogram",setEnv=TRUE,part=1.0,xlim=NULL,ylim=NULL,nodes="intermediate",
-	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA){
+	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA,plot=TRUE){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,ftype=ftype,
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar,add,offset,direction,type,
-			setEnv,part,xlim,ylim,nodes,tips,maxY,hold,split.vertical,lend)
+			setEnv,part,xlim,ylim,nodes,tips,maxY,hold,split.vertical,lend,plot)
 	} else {
 		# check tree
 		if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\"")
@@ -35,12 +35,12 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		if(type=="phylogram"){
 			if(direction%in%c("upwards","downwards"))
 				updownPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,add,offset,
-					direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend,asp)
+					direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend,asp,plot)
 			else plotPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,add,offset,
-					direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend,asp)
+					direction,setEnv,xlim,ylim,nodes,tips,split.vertical,lend,asp,plot)
 		} else if(type=="fan"){
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,
-				maxY,lend)
+				maxY,lend,plot)
 		}
 		if(hold) null<-dev.flush()
 	}
@@ -50,7 +50,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 ## written by Liam J. Revell 2011-2017
 updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
-	asp){
+	asp,plot){
 	if(split.vertical&&!setEnv){
 		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
 		spit.vertical<-FALSE
@@ -115,57 +115,59 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(direction=="downwards") H<-max(H)-H
 	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	####
-	if(!split.vertical){
-		for(i in 1:m) lines(Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],
-			H[which(cw$edge[,1]==nodes[i]),1],
-			col=colors[names(cw$maps[[match(nodes[i],
-			cw$edge[,1])]])[1]],lwd=lwd)
-	}
-	for(i in 1:nrow(cw$edge)){
-		x<-H[i,1]
- 		for(j in 1:length(cw$maps[[i]])){
-			if(direction=="downwards")
-				lines(c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),c(x,x-cw$maps[[i]][j]),
-					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
-			else lines(c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),c(x,x+cw$maps[[i]][j]),
-					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
-			if(pts) points(c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),c(x,x+cw$maps[[i]][j]),
-				pch=20,lwd=(lwd-1))
-			x<-x+if(direction=="downwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
-			j<-j+1
+	if(plot){
+		if(!split.vertical){
+			for(i in 1:m) lines(Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],
+				H[which(cw$edge[,1]==nodes[i]),1],
+				col=colors[names(cw$maps[[match(nodes[i],
+				cw$edge[,1])]])[1]],lwd=lwd)
 		}
-	}
-	if(node.numbers){
-		symbols(mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),
-			if(direction=="downwards") max(H) else 0,
-			rectangles=matrix(c(1.2*fsize*strwidth(as.character(Ntip(cw)+1)),
-			1.4*fsize*strheight(as.character(Ntip(cw)+1))),1,2),inches=FALSE,
-			bg="white",add=TRUE)
-		text(mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),
-			if(direction=="downwards") max(H) else 0,Ntip(cw)+1,
-			cex=fsize)
 		for(i in 1:nrow(cw$edge)){
-			x<-H[i,2]
-			if(cw$edge[i,2]>Ntip(cw)){
-				symbols(Y[cw$edge[i,2]],x,
-					rectangles=matrix(c(1.2*fsize*strwidth(as.character(cw$edge[i,2])),
-					1.4*fsize*strheight(as.character(cw$edge[i,2]))),1,2),inches=FALSE,
-					bg="white",add=TRUE)
-				text(Y[cw$edge[i,2]],x,cw$edge[i,2],cex=fsize)
+			x<-H[i,1]
+			for(j in 1:length(cw$maps[[i]])){
+				if(direction=="downwards")
+					lines(c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),c(x,x-cw$maps[[i]][j]),
+						col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
+				else lines(c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),c(x,x+cw$maps[[i]][j]),
+						col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
+				if(pts) points(c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),c(x,x+cw$maps[[i]][j]),
+					pch=20,lwd=(lwd-1))
+				x<-x+if(direction=="downwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
+				j<-j+1
 			}
 		}
-	}
-	if(direction=="downwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
-	if(direction=="upwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
-	for(i in 1:n){
-		shift<-offset*fsize*strwidth("W")*(diff(par()$usr[3:4])/diff(par()$usr[1:2]))
-		if((direction=="downwards"&&diff(par()$usr[3:4])>0) ||
-			(direction=="upwards"&&diff(par()$usr[3:4])<0)) shift<--shift
-		if(ftype){
-			text(labels=cw$tip.label[i],Y[i],
-				H[which(cw$edge[,2]==i),2]+shift,
-				pos=pos,offset=0,cex=fsize,font=ftype,
-				srt=if(direction=="downwards") 270 else 90)
+		if(node.numbers){
+			symbols(mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),
+				if(direction=="downwards") max(H) else 0,
+				rectangles=matrix(c(1.2*fsize*strwidth(as.character(Ntip(cw)+1)),
+				1.4*fsize*strheight(as.character(Ntip(cw)+1))),1,2),inches=FALSE,
+				bg="white",add=TRUE)
+			text(mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),
+				if(direction=="downwards") max(H) else 0,Ntip(cw)+1,
+				cex=fsize)
+			for(i in 1:nrow(cw$edge)){
+				x<-H[i,2]
+				if(cw$edge[i,2]>Ntip(cw)){
+					symbols(Y[cw$edge[i,2]],x,
+						rectangles=matrix(c(1.2*fsize*strwidth(as.character(cw$edge[i,2])),
+						1.4*fsize*strheight(as.character(cw$edge[i,2]))),1,2),inches=FALSE,
+						bg="white",add=TRUE)
+					text(Y[cw$edge[i,2]],x,cw$edge[i,2],cex=fsize)
+				}
+			}
+		}
+		if(direction=="downwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
+		if(direction=="upwards") pos<-if(par()$usr[3]>par()$usr[4]) 2 else 4
+		for(i in 1:n){
+			shift<-offset*fsize*strwidth("W")*(diff(par()$usr[3:4])/diff(par()$usr[1:2]))
+			if((direction=="downwards"&&diff(par()$usr[3:4])>0) ||
+				(direction=="upwards"&&diff(par()$usr[3:4])<0)) shift<--shift
+			if(ftype){
+				text(labels=cw$tip.label[i],Y[i],
+					H[which(cw$edge[,2]==i),2]+shift,
+					pos=pos,offset=0,cex=fsize,font=ftype,
+					srt=if(direction=="downwards") 270 else 90)
+			}
 		}
 	}
 	if(setEnv){
@@ -178,14 +180,15 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge))
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
-	if(split.vertical) splitEdgeColor(cw,colors,lwd)
+	if(plot) if(split.vertical) splitEdgeColor(cw,colors,lwd)
 }
 
 # function to plot simmap tree in type "phylogram"
 # written by Liam J. Revell 2011-2015
 plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
-	asp){
+	asp,plot){
+	print(plot)
 	if(split.vertical&&!setEnv){
 		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
 		spit.vertical<-FALSE
@@ -249,50 +252,54 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(is.null(ylim)) ylim=range(Y)
 	if(direction=="leftwards") H<-max(H)-H
 	plot.window(xlim=xlim,ylim=ylim,asp=asp)
-	####
-	if(!split.vertical){
-		for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
-			Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],col=colors[names(cw$maps[[match(nodes[i],
-			cw$edge[,1])]])[1]],lwd=lwd)
-	}
-	for(i in 1:nrow(cw$edge)){
-		x<-H[i,1]
- 		for(j in 1:length(cw$maps[[i]])){
-			if(direction=="leftwards")
-				lines(c(x,x-cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
-					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
-			else lines(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
-					col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
-			if(pts) points(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
-				pch=20,lwd=(lwd-1))
-			x<-x+if(direction=="leftwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
-			j<-j+1
+	if(plot){
+		print(plot)
+		cat("plotting?\n")
+		####
+		if(!split.vertical){
+			for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
+				Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],col=colors[names(cw$maps[[match(nodes[i],
+				cw$edge[,1])]])[1]],lwd=lwd)
 		}
-	}
-	if(node.numbers){
-		symbols(if(direction=="leftwards") max(H) else 0,
-			mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),
-			rectangles=matrix(c(1.2*fsize*strwidth(as.character(Ntip(cw)+1)),
-			1.4*fsize*strheight(as.character(Ntip(cw)+1))),1,2),inches=FALSE,
-			bg="white",add=TRUE)
-		text(if(direction=="leftwards") max(H) else 0,
-			mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),Ntip(cw)+1,
-			cex=fsize)
 		for(i in 1:nrow(cw$edge)){
-			x<-H[i,2]
-			if(cw$edge[i,2]>Ntip(cw)){
-				symbols(x,Y[cw$edge[i,2]],
-					rectangles=matrix(c(1.2*fsize*strwidth(as.character(cw$edge[i,2])),
-					1.4*fsize*strheight(as.character(cw$edge[i,2]))),1,2),inches=FALSE,
-					bg="white",add=TRUE)
-				text(x,Y[cw$edge[i,2]],cw$edge[i,2],cex=fsize)
+			x<-H[i,1]
+			for(j in 1:length(cw$maps[[i]])){
+				if(direction=="leftwards")
+					lines(c(x,x-cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+						col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
+				else lines(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+						col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
+				if(pts) points(c(x,x+cw$maps[[i]][j]),c(Y[cw$edge[i,2]],Y[cw$edge[i,2]]),
+					pch=20,lwd=(lwd-1))
+				x<-x+if(direction=="leftwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
+				j<-j+1
 			}
 		}
+		if(node.numbers){
+			symbols(if(direction=="leftwards") max(H) else 0,
+				mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),
+				rectangles=matrix(c(1.2*fsize*strwidth(as.character(Ntip(cw)+1)),
+				1.4*fsize*strheight(as.character(Ntip(cw)+1))),1,2),inches=FALSE,
+				bg="white",add=TRUE)
+			text(if(direction=="leftwards") max(H) else 0,
+				mean(Y[cw$edge[cw$edge[,1]==(Ntip(cw)+1),2]]),Ntip(cw)+1,
+				cex=fsize)
+			for(i in 1:nrow(cw$edge)){
+				x<-H[i,2]
+				if(cw$edge[i,2]>Ntip(cw)){
+					symbols(x,Y[cw$edge[i,2]],
+						rectangles=matrix(c(1.2*fsize*strwidth(as.character(cw$edge[i,2])),
+						1.4*fsize*strheight(as.character(cw$edge[i,2]))),1,2),inches=FALSE,
+						bg="white",add=TRUE)
+					text(x,Y[cw$edge[i,2]],cw$edge[i,2],cex=fsize)
+				}
+			}
+		}
+		if(direction=="leftwards") pos<-if(par()$usr[1]>par()$usr[2]) 4 else 2
+		if(direction=="rightwards") pos<-if(par()$usr[1]>par()$usr[2]) 2 else 4
+		for(i in 1:n) if(ftype) text(H[which(cw$edge[,2]==i),2],Y[i],cw$tip.label[i],pos=pos,
+			offset=offset,cex=fsize,font=ftype)
 	}
-	if(direction=="leftwards") pos<-if(par()$usr[1]>par()$usr[2]) 4 else 2
-	if(direction=="rightwards") pos<-if(par()$usr[1]>par()$usr[2]) 2 else 4
-	for(i in 1:n) if(ftype) text(H[which(cw$edge[,2]==i),2],Y[i],cw$tip.label[i],pos=pos,
-		offset=offset,cex=fsize,font=ftype)
 	if(setEnv){
 		PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 			show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
@@ -303,12 +310,13 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
-	if(split.vertical) splitEdgeColor(cw,colors,lwd)
+	if(plot) if(split.vertical) splitEdgeColor(cw,colors,lwd)
 }
 
 # function to plot simmap tree in type "fan"
 # written by Liam J. Revell 2013-2015
-plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend){
+plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot){
+	if(!plot) cat("plot=FALSE option is not permitted for type=\"fan\". Tree will be plotted.\n")
 	# reorder
 	cw<-reorder(tree)
 	pw<-reorder(tree,"pruningwise")
@@ -489,13 +497,17 @@ plotTree<-function(tree,...){
 	else lend<-2
 	if(hasArg(asp)) asp<-list(...)$asp
 	else asp<-NA
+	if(hasArg(plot)){ 
+		plot<-list(...)$plot
+		print(plot)
+	} else plot<-TRUE
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		if(!is.null(color)) names(color)<-"1"
 		for(i in 1:length(tree)) plotTree(tree[[i]],color=color,fsize=fsize,ftype=ftype,
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar=mar,add=add,offset=offset,
 			direction=direction,type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,
-			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend,asp=asp)
+			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend,asp=asp,plot=plot)
 	} else {
 		if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 		tree$maps<-as.list(tree$edge.length)
@@ -504,7 +516,7 @@ plotTree<-function(tree,...){
 		plotSimmap(tree,colors=color,fsize=fsize,ftype=ftype,lwd=lwd,pts=pts,
 			node.numbers=node.numbers,mar=mar,add=add,offset=offset,direction=direction,
 			type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,nodes=nodes,tips=tips,maxY=maxY,
-			hold=hold,lend=lend,asp=asp)
+			hold=hold,lend=lend,asp=asp,plot=plot)
 	}
 }
 
