@@ -17,7 +17,10 @@ densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",
 	N<-length(trees)
 	if(any(sapply(trees,function(x) is.null(x$edge.length)))) 
 		use.edge.length<-FALSE
-	if(!use.edge.length) trees<-lapply(trees,compute.brlen)
+	if(!use.edge.length){ 
+		trees<-lapply(trees,compute.brlen)
+		class(trees)<-"multiPhylo"
+	}
 	h<-sapply(trees,function(x) max(nodeHeights(x)))
 	if(fix.depth){
 		if(method=="plotTree"){
