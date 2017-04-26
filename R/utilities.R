@@ -765,12 +765,13 @@ rep.multiPhylo<-function(x,...){
 }
 
 ## function to rescale simmap style trees
-## written by Liam J. Revell 2012, 2013, 2014, 2015
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017
 rescaleSimmap<-function(tree,...){
 	if(inherits(tree,"multiPhylo")){
+		cls<-class(tree)
 		trees<-unclass(tree)
 		trees<-lapply(trees,rescaleSimmap,...)
-		class(trees)<-"multiPhylo"
+		class(trees)<-cls
 		return(trees)
 	} else if(inherits(tree,"phylo")){
 		if(hasArg(lambda)) lambda<-list(...)$lambda
