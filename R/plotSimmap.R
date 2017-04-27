@@ -41,6 +41,9 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		} else if(type=="fan"){
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,
 				maxY,lend,plot)
+		} else if(type=="cladogram"){
+			plotCladogram(tree,colors,fsize,ftype,lwd,mar,add,offset,direction,xlim,ylim,
+				nodes,tips,lend,asp,plot)
 		}
 		if(hold) null<-dev.flush()
 	}
@@ -184,7 +187,7 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 }
 
 # function to plot simmap tree in type "phylogram"
-# written by Liam J. Revell 2011-2015
+# written by Liam J. Revell 2011-2017
 plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
 	asp,plot){
@@ -311,7 +314,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 }
 
 # function to plot simmap tree in type "fan"
-# written by Liam J. Revell 2013-2015
+# written by Liam J. Revell 2013-2017
 plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot){
 	if(!plot) cat("plot=FALSE option is not permitted for type=\"fan\". Tree will be plotted.\n")
 	# reorder
@@ -412,6 +415,109 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 	}
 }
 
+## internal function for slanted cladogram
+## written by Liam J. Revell 2017
+plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
+	add=FALSE,offset=NULL,direction="rightwards",xlim=NULL,ylim=NULL,
+	nodes="intermediate",tips=NULL,lend=2,asp=NA,plot=TRUE){
+	placement<-nodes
+	# set offset fudge (empirically determined)
+	offsetFudge<-1.37
+	# reorder
+	cw<-reorderSimmap(tree)
+	pw<-reorderSimmap(tree,"postorder")
+	# count nodes and tips
+	n<-Ntip(cw)
+ 	m<-cw$Nnode
+	# Y coordinates for nodes
+	Y<-matrix(NA,m+n,1)
+	# first, assign y coordinates to all the tip nodes
+	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
+	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
+		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
+		else tips[gsub(" ","_",cw$tip.label)]
+	# get Y coordinates of the nodes
+	nodes<-unique(pw$edge[,1])
+	for(i in 1:m){
+		if(placement=="intermediate"){ 
+			desc<-pw$edge[which(pw$edge[,1]==nodes[i]),2]
+			Y[nodes[i]]<-(min(Y[desc])+max(Y[desc]))/2
+		} else if(placement=="centered"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			Y[nodes[i]]<-(min(Y[desc])+max(Y[desc]))/2
+		} else if(placement=="weighted"){
+			desc<-pw$edge[which(pw$edge[,1]==nodes[i]),2]
+			n1<-desc[which(Y[desc]==min(Y[desc]))]
+			n2<-desc[which(Y[desc]==max(Y[desc]))]
+			v1<-pw$edge.length[which(pw$edge[,2]==n1)]
+			v2<-pw$edge.length[which(pw$edge[,2]==n2)]
+			Y[nodes[i]]<-((1/v1)*Y[n1]+(1/v2)*Y[n2])/(1/v1+1/v2)
+		} else if(placement=="inner"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(abs(Y[desc]-median(Y[1:Ntip(pw)]))==min(abs(Y[desc]-
+				median(Y[1:Ntip(pw)]))))
+			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
+			Y[nodes[i]]<-Y[desc][mm]
+		}
+	}
+	# compute node heights
+	H<-nodeHeights(cw)
+	# open plot
+	par(mar=mar)
+	if(is.null(offset)) offset<-0.2*lwd/3+0.2/3
+	if(!add) plot.new()
+	###
+	if(is.null(xlim)){
+		pp<-par("pin")[1]
+		sw<-fsize*(max(strwidth(cw$tip.label,units="inches")))+
+			offsetFudge*fsize*strwidth("W",units="inches")
+		alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=H,sw=sw,pp=pp,
+			interval=c(0,1e6))$minimum
+		xlim<-if(direction=="leftwards") c(min(H)-sw/alp,max(H)) else c(min(H),max(H)+sw/alp)
+	}
+	if(is.null(ylim)) ylim=range(Y)
+	if(direction=="leftwards") H<-max(H)-H
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)
+	if(plot){
+		####
+		for(i in 1:nrow(cw$edge)){
+			x<-H[i,1]
+			y<-Y[cw$edge[i,1]]
+			m<-(Y[cw$edge[i,2]]-Y[cw$edge[i,1]])/(H[i,2]-H[i,1])
+			if(is.finite(m)){
+				for(j in 1:length(cw$maps[[i]])){
+					if(direction=="leftwards")
+						lines(c(x,x-cw$maps[[i]][j]),c(y,y-cw$maps[[i]][j]*m),
+							col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
+					else lines(c(x,x+cw$maps[[i]][j]),c(y,y+cw$maps[[i]][j]*m),
+						col=colors[names(cw$maps[[i]])[j]],lwd=lwd,lend=lend)
+					x<-x+if(direction=="leftwards") -cw$maps[[i]][j] else cw$maps[[i]][j]
+					y<-y+if(direction=="leftwards") -m*cw$maps[[i]][j] else m*cw$maps[[i]][j]
+					j<-j+1
+				}
+			} else {
+				lines(rep(x,2),Y[cw$edge[i,]],col=colors[names(cw$maps[[i]])[1]],lwd=lwd,
+					lend=lend)
+			}
+		}
+		if(direction=="leftwards") pos<-if(par()$usr[1]>par()$usr[2]) 4 else 2
+		if(direction=="rightwards") pos<-if(par()$usr[1]>par()$usr[2]) 2 else 4
+		for(i in 1:n) if(ftype) text(H[which(cw$edge[,2]==i),2],Y[i],cw$tip.label[i],pos=pos,
+			offset=offset,cex=fsize,font=ftype)
+	}
+	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
+		show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
+		font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
+		x.lim=xlim,y.lim=ylim,
+		direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+		function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
+	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
+}
+
+
 ## adds legend to an open stochastic map style plot
 ## written by Liam J. Revell 2013, 2016
 add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
@@ -450,7 +556,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 }
 
 # function plots a tree; in the new version this is just a wrapper for plotSimmap
-# written by Liam Revell 2012-2015
+# written by Liam Revell 2012-2017
 plotTree<-function(tree,...){
 	if(hasArg(color)) color<-list(...)$color
 	else color<-NULL
@@ -541,4 +647,5 @@ splitEdgeColor<-function(tree,colors,lwd=2){
 		for(j in 1:length(x0)) segments(x0[j],y0[j],x1[j],y1[j],col=cols[j],lwd=lwd,lend=2)
 	}
 }
+
 
