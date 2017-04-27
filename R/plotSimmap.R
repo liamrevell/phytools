@@ -519,7 +519,7 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 
 
 ## adds legend to an open stochastic map style plot
-## written by Liam J. Revell 2013, 2016
+## written by Liam J. Revell 2013, 2016, 2017
 add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	if(hasArg(shape)) shape<-list(...)$shape
 	else shape<-"square"
@@ -539,13 +539,15 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	if(is.null(leg)) leg<-names(colors)
 	h<-fsize*strheight(LETTERS[1])
 	w<-par()$mfcol[2]*h*abs(diff(par()$usr[1:2])/diff(par()$usr[3:4]))
+	flipped<-par()$usr[1]>par()$usr[2]
+	print(flipped)
 	if(vertical){
 		y<-y-0:(length(leg)-1)*1.5*h
-		x<-rep(x+w/2,length(y))		
-		text(x+w,y,leg,pos=4,cex=fsize/par()$cex)
+		x<-rep(x+w/2,length(y))
+		text(x + if(flipped) -w else w,y,leg,pos=4,cex=fsize/par()$cex)
 	} else {
-		sp<-fsize*max(strwidth(leg))
-		x<-x-w/2+0:(length(leg)-1)*1.5*(sp+w)
+		sp<-abs(fsize*max(strwidth(leg)))
+		x<-x + if(flipped) w/2-0:(length(leg)-1)*1.5*(sp+w) else -w/2+0:(length(leg)-1)*1.5*(sp+w)
 		y<-rep(y+w/2,length(x))
 		text(x,y,leg,pos=4,cex=fsize/par()$cex)
 	}

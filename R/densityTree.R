@@ -28,8 +28,6 @@ densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",
 			class(trees)<-"multiPhylo"
 		} else if(method=="plotSimmap"){ 
 			trees<-rescaleSimmap(trees,depth=mean(h))
-			print(class(trees))
-			print(class(trees[[1]]))
 		}
 		h<-sapply(trees,function(x) max(nodeHeights(x)))
 	}
@@ -62,8 +60,6 @@ densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",
 			}
 		} else if(method=="plotSimmap"){
 			states<-sort(unique(as.vector(mapped.states(trees))))
-			print(states)
-			print(colors)
 			if(length(colors)!=length(states)){
 				colors<-setNames(c("grey",palette()[2:length(states)]),
 					states)
