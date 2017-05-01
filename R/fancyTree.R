@@ -8,7 +8,7 @@
 # "contmap" maps reconstructed trait evolution for a continuous character on the tree
 # "phenogram95" plots a 95% CI phenogram
 # "scattergram" plots a phylogenetic scatterplot matrix
-# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2017
 
 fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip","densitymap","contmap","phenogram95","scattergram"),...,control=list()){
 	type<-matchType(type,c("extinction","traitgram3d","droptip","densitymap","contmap","phenogram95","scattergram"))
@@ -24,12 +24,13 @@ fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip","densitymap
 	else stop(paste("do not recognize type = \"",type,"\"",sep=""))
 }
 
-# phyloScattergram internal function
-# written by Liam J. Revell 2013, 2014
+## phyloScattergram internal function
+## written by Liam J. Revell 2013, 2014, 2017
 
 phyloScattergram<-function(tree,...){
 	if(hasArg(X)) X<-list(...)$X
 	else stop("phenotypic data should be provided in the matrix X")
+	if(is.data.frame(X)) X<-as.matrix(X)
 	if(hasArg(fsize)) fsize<-list(...)$fsize
 	else fsize<-0.7
 	if(hasArg(colors)) colors<-list(...)$colors

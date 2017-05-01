@@ -540,7 +540,6 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 	h<-fsize*strheight(LETTERS[1])
 	w<-par()$mfcol[2]*h*abs(diff(par()$usr[1:2])/diff(par()$usr[3:4]))
 	flipped<-par()$usr[1]>par()$usr[2]
-	print(flipped)
 	if(vertical){
 		y<-y-0:(length(leg)-1)*1.5*h
 		x<-rep(x+w/2,length(y))

@@ -664,13 +664,13 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 }
 
 ## function to add an arrow pointing to a tip or node in the tree
-## written by Liam J. Revell 2014
+## written by Liam J. Revell 2014, 2017
 
 add.arrow<-function(tree=NULL,tip,...){
 	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(!is.null(tree)){
-		if(class(tree)=="contMap") tree<-tree$tree
-		else if(class(tree)=="densityMap") tree<-tree$tree
+		if(inherits(tree,"contMap")) tree<-tree$tree
+		else if(inherits(tree,"densityMap")) tree<-tree$tree
 	}
 	if(is.numeric(tip)){
 		ii<-tip

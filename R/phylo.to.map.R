@@ -1,5 +1,5 @@
-# function depends on phytools (& dependencies) and maps (& dependencies)
-# written by Liam J. Revell 2013
+## function depends on phytools (& dependencies) and maps (& dependencies)
+## written by Liam J. Revell 2013, 2017
 
 phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -19,6 +19,7 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	# if rotate
 	if(hasArg(type)) type<-list(...)$type else type<-"phylogram"
 	if(hasArg(direction)) direction<-list(...)$direction else direction<-"downwards"
+	if(is.data.frame(coords)) coords<-as.matrix(coords)
 	if(rotate&&type=="phylogram") tree<-minRotate(tree,coords[,if(direction=="rightwards") 1 else 2])
 	x<-list(tree=tree,map=map,coords=coords)
 	class(x)<-"phylo.to.map"
