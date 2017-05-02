@@ -133,7 +133,7 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 			add.simmap.legend(colors=color,prompt=FALSE,
 				vertical=FALSE,shape="circle",
 				x=par()$usr[1]+0.1*max(nodeHeights(tree)),
-				y=mean(c(1,-1/25*Ntip(tree))))
+				y=-1/25*Ntip(tree))
 		}
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
