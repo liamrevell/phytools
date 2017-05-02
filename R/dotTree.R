@@ -129,13 +129,11 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 			strwidth("W")*fsize/2)
 		nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W"),y=y.tip,
 			col=color[as.character(x)],MoreArgs=list(nv=200,radius=r))
-		## draw.circle(x.tip+1.2*strwidth("W"),y.tip,nv=200,
-		##	radius=r,col=color[as.character(x)])
 		if(legend){ 
 			add.simmap.legend(colors=color,prompt=FALSE,
 				vertical=FALSE,shape="circle",
 				x=par()$usr[1]+0.1*max(nodeHeights(tree)),
-				y=0.1*(1+par()$usr[3]))
+				y=mean(c(1,-1/25*Ntip(tree))))
 		}
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
