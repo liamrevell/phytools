@@ -712,8 +712,10 @@ add.arrow<-function(tree=NULL,tip,...){
 		x1=lastPP$xx[ii]+cos(theta)*strw,
 		y1=lastPP$yy[ii]+sin(theta)*strw,
 		col=col,lwd=lwd,lend="round")
-	invisible(list(x=lastPP$xx[ii]+cos(theta)*(strw+arrl),
-		y=lastPP$yy[ii]+sin(theta)*(strw+arrl)))
+	invisible(list(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
+		y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
+		x1=lastPP$xx[ii]+cos(theta)*strw,
+		y1=lastPP$yy[ii]+sin(theta)*strw))
 }
 
 ## function to ladderize phylogeny with mapped discrete character
