@@ -5,7 +5,7 @@ compare.chronograms<-function(t1,t2,...){
 	if(hasArg(colors)) colors<-list(...)$colors
 	else colors<-sapply(c("blue","red"),make.transparent,alpha=0.4)
 	if(hasArg(arr.colors)) arr.colors<-list(...)$arr.colors
-	else arr.colors<-sapply("blue","red"),make.transparent,alpha=0.7))
+	else arr.colors<-sapply(c("blue","red"),make.transparent,alpha=0.7)
 	h1<-max(nodeHeights(t1))
 	h2<-max(nodeHeights(t2))
 	plotTree(if(h1>h2) t1 else t2,plot=FALSE,mar=c(4.1,1.1,1.1,1.1))
