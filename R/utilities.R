@@ -1,8 +1,7 @@
 # some utility functions
 # written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
 
-round.polygon<-function(c(x0,x1,x1,x0),c(y0,y0,y1,y1),
-	col="transparent"){
+round.polygon<-function(x,y,col="transparent"){
 	## just space holding for now	
 }
 
