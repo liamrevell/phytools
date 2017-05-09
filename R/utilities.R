@@ -1,5 +1,93 @@
-# some utility functions
-# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
+## some utility functions
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017
+
+geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-par()$cex
+	if(is.null(colors)){
+		colors<-setNames(c(
+			rgb(255,242,127,255,maxColorValue=255),
+			rgb(255,230,25,255,maxColorValue=255),
+			rgb(253,154,82,255,maxColorValue=255),
+			rgb(127,198,78,255,maxColorValue=255),
+			rgb(52,178,201,255,maxColorValue=255),
+			rgb(129,43,146,255,maxColorValue=255),
+			rgb(240,64,40,255,maxColorValue=255),
+			rgb(103,165,153,255,maxColorValue=255),
+			rgb(203,140,55,255,maxColorValue=255),
+			rgb(179,225,182,255,maxColorValue=255),
+			rgb(0,146,112,255,maxColorValue=255),
+			rgb(127,160,86,255,maxColorValue=255),
+			rgb(247,67,112,255,maxColorValue=255)),
+			c("Quaternary","Neogene","Paleogene",
+			"Cretaceous","Jurassic","Triassic",
+			"Permian","Carboniferous","Devonian",
+			"Silurian","Ordovician","Cambrian",
+			"Precambrian"))
+	}
+	if(is.null(leg)){
+		leg<-rbind(c(2.588,0),
+			c(23.03,2.588),
+			c(66.0,23.03),
+			c(145.0,66.0),
+			c(201.3,145.0),
+			c(252.17,201.3),
+			c(298.9,252.17),
+			c(358.9,298.9),
+			c(419.2,358.9),
+			c(443.8,419.2),
+			c(485.4,443.8),
+			c(541.0,485.4),
+			c(4600,541.0))
+		rownames(leg)<-c("Quaternary","Neogene","Paleogene",
+			"Cretaceous","Jurassic","Triassic",
+			"Permian","Carboniferous","Devonian",
+			"Silurian","Ordovician","Cambrian",
+			"Precambrian")
+	}
+	colors<-sapply(colors,make.transparent,alpha=alpha)
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	t.max<-max(obj$x.lim)
+	ii<-which(leg[,2]<=t.max)
+	leg<-leg[ii,]
+	leg[max(ii),1]<-t.max
+	y<-c(rep(0,2),rep(par()$usr[4],2))
+	for(i in 1:nrow(leg)){
+		polygon(c(leg[i,1:2],leg[i,2:1]),y,col=colors[rownames(leg)[i]],
+			border=NA)
+		lines(x=rep(leg[i,1],2),y=c(0,par()$usr[4]),lty="dotted",
+			col="grey")
+		lines(x=c(leg[i,1],mean(leg[i,])-0.8*cex*
+			get.asp()*strheight(rownames(leg)[i])),
+			y=c(0,-1),lty="dotted",col="grey")
+		lines(x=c(leg[i,2],mean(leg[i,])+0.8*cex*
+			get.asp()*strheight(rownames(leg)[i])),
+			y=c(0,-1),lty="dotted",col="grey")
+		lines(x=rep(mean(leg[i,])-0.8*cex*
+			get.asp()*strheight(rownames(leg)[i]),2),
+			y=c(-1,par()$usr[3]),lty="dotted",col="grey")
+		lines(x=rep(mean(leg[i,])+0.8*cex*
+			get.asp()*strheight(rownames(leg)[i]),2),
+			y=c(-1,par()$usr[3]),lty="dotted",col="grey")
+		polygon(x=c(leg[i,1],
+			mean(leg[i,])-0.8*cex*get.asp()*strheight(rownames(leg)[i]),
+			mean(leg[i,])-0.8*cex*get.asp()*strheight(rownames(leg)[i]),
+			mean(leg[i,])+0.8*cex*get.asp()*strheight(rownames(leg)[i]),
+			mean(leg[i,])+0.8*cex*get.asp()*strheight(rownames(leg)[i]),
+			leg[i,2]),y=c(0,-1,par()$usr[3],par()$usr[3],-1,0),
+			col=colors[rownames(leg)[i]],border=NA)
+		text(x=mean(leg[i,]),y=-1,labels=rownames(leg)[i],srt=90,
+			adj=c(1,0.5),cex=cex)
+	}
+}
+
+## borrowed from mapplots
+get.asp<-function(){
+	pin<-par("pin")
+	usr<-par("usr")
+	asp<-(pin[2]/(usr[4]-usr[3]))/(pin[1]/(usr[2]-usr[1]))
+	asp
+}	
 
 round.polygon<-function(x,y,col="transparent"){
 	## just space holding for now	

@@ -3,7 +3,6 @@
 \title{Compares to chronograms with precisely matching nodes in a visual manner}
 \usage{
 compare.chronograms(t1, t2, ...)
-make.transparent(color, alpha)
 }
 \arguments{
 	\item{t1}{object of class \code{"phylo"}.}
