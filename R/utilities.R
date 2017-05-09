@@ -1,9 +1,14 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017
 
+## function to add a geological or other temporal legend to a plotted tree
+## written by Liam J. Revell 2017
 geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-par()$cex
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(is.null(colors)){
 		colors<-setNames(c(
 			rgb(255,242,127,255,maxColorValue=255),
@@ -44,41 +49,48 @@ geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 			"Permian","Carboniferous","Devonian",
 			"Silurian","Ordovician","Cambrian",
 			"Precambrian")
+		t.max<-max(obj$xx)
+		ii<-which(leg[,2]<=t.max)
+		leg<-leg[ii,]
+		leg[max(ii),1]<-t.max
 	}
 	colors<-sapply(colors,make.transparent,alpha=alpha)
-	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	t.max<-max(obj$x.lim)
-	ii<-which(leg[,2]<=t.max)
-	leg<-leg[ii,]
-	leg[max(ii),1]<-t.max
-	y<-c(rep(0,2),rep(par()$usr[4],2))
-	for(i in 1:nrow(leg)){
-		polygon(c(leg[i,1:2],leg[i,2:1]),y,col=colors[rownames(leg)[i]],
-			border=NA)
-		lines(x=rep(leg[i,1],2),y=c(0,par()$usr[4]),lty="dotted",
-			col="grey")
-		lines(x=c(leg[i,1],mean(leg[i,])-0.8*cex*
-			get.asp()*strheight(rownames(leg)[i])),
-			y=c(0,-1),lty="dotted",col="grey")
-		lines(x=c(leg[i,2],mean(leg[i,])+0.8*cex*
-			get.asp()*strheight(rownames(leg)[i])),
-			y=c(0,-1),lty="dotted",col="grey")
-		lines(x=rep(mean(leg[i,])-0.8*cex*
-			get.asp()*strheight(rownames(leg)[i]),2),
-			y=c(-1,par()$usr[3]),lty="dotted",col="grey")
-		lines(x=rep(mean(leg[i,])+0.8*cex*
-			get.asp()*strheight(rownames(leg)[i]),2),
-			y=c(-1,par()$usr[3]),lty="dotted",col="grey")
-		polygon(x=c(leg[i,1],
-			mean(leg[i,])-0.8*cex*get.asp()*strheight(rownames(leg)[i]),
-			mean(leg[i,])-0.8*cex*get.asp()*strheight(rownames(leg)[i]),
-			mean(leg[i,])+0.8*cex*get.asp()*strheight(rownames(leg)[i]),
-			mean(leg[i,])+0.8*cex*get.asp()*strheight(rownames(leg)[i]),
-			leg[i,2]),y=c(0,-1,par()$usr[3],par()$usr[3],-1,0),
-			col=colors[rownames(leg)[i]],border=NA)
-		text(x=mean(leg[i,]),y=-1,labels=rownames(leg)[i],srt=90,
-			adj=c(1,0.5),cex=cex)
+	if(plot){	
+		y<-c(rep(0,2),rep(par()$usr[4],2))
+		ylabel<--1/25*Ntip(tree)
+		for(i in 1:nrow(leg)){
+			strh<-strheight(rownames(leg)[i])
+			polygon(c(leg[i,1:2],leg[i,2:1]),y,
+				col=colors[rownames(leg)[i]],border=NA)
+			lines(x=rep(leg[i,1],2),y=c(0,par()$usr[4]),lty="dotted",
+				col="grey")
+			lines(x=c(leg[i,1],mean(leg[i,])-0.8*cex*
+				get.asp()*strheight(rownames(leg)[i])),
+				y=c(0,ylabel),lty="dotted",col="grey")
+			lines(x=c(leg[i,2],mean(leg[i,])+0.8*cex*
+				get.asp()*strheight(rownames(leg)[i])),
+				y=c(0,ylabel),lty="dotted",col="grey")
+			lines(x=rep(mean(leg[i,])-0.8*cex*
+				get.asp()*strheight(rownames(leg)[i]),2),
+				y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+			lines(x=rep(mean(leg[i,])+0.8*cex*
+				get.asp()*strheight(rownames(leg)[i]),2),
+				y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+			polygon(x=c(leg[i,1],
+				mean(leg[i,])-0.8*cex*get.asp()*strh,
+				mean(leg[i,])-0.8*cex*get.asp()*strh,
+				mean(leg[i,])+0.8*cex*get.asp()*strh,
+				mean(leg[i,])+0.8*cex*get.asp()*strh,
+				leg[i,2]),y=c(0,ylabel,par()$usr[3],
+				par()$usr[3],ylabel,0),
+				col=colors[rownames(leg)[i]],border=NA)
+			text(x=mean(leg[i,])+
+				if(obj$direction=="leftwards") 0.12*strh else -0.12*strh,
+				y=ylabel,labels=rownames(leg)[i],
+				srt=90,adj=c(1,0.5),cex=cex)
+		}
 	}
+	invisible(list(leg=leg,colors=colors))
 }
 
 ## borrowed from mapplots
@@ -87,7 +99,7 @@ get.asp<-function(){
 	usr<-par("usr")
 	asp<-(pin[2]/(usr[4]-usr[3]))/(pin[1]/(usr[2]-usr[1]))
 	asp
-}	
+}
 
 round.polygon<-function(x,y,col="transparent"){
 	## just space holding for now	
