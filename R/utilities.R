@@ -8,6 +8,8 @@ geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 	else cex<-par()$cex
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
+	if(hasArg(show.lines)) show.lines<-list(...)$show.lines
+	else show.lines<-TRUE
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(is.null(colors)){
 		colors<-setNames(c(
@@ -62,20 +64,22 @@ geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 			strh<-strheight(rownames(leg)[i])
 			polygon(c(leg[i,1:2],leg[i,2:1]),y,
 				col=colors[rownames(leg)[i]],border=NA)
-			lines(x=rep(leg[i,1],2),y=c(0,par()$usr[4]),lty="dotted",
-				col="grey")
-			lines(x=c(leg[i,1],mean(leg[i,])-0.8*cex*
-				get.asp()*strheight(rownames(leg)[i])),
-				y=c(0,ylabel),lty="dotted",col="grey")
-			lines(x=c(leg[i,2],mean(leg[i,])+0.8*cex*
-				get.asp()*strheight(rownames(leg)[i])),
-				y=c(0,ylabel),lty="dotted",col="grey")
-			lines(x=rep(mean(leg[i,])-0.8*cex*
-				get.asp()*strheight(rownames(leg)[i]),2),
-				y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
-			lines(x=rep(mean(leg[i,])+0.8*cex*
-				get.asp()*strheight(rownames(leg)[i]),2),
-				y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+			if(show.lines){
+				lines(x=rep(leg[i,1],2),y=c(0,par()$usr[4]),
+					lty="dotted",col="grey")
+				lines(x=c(leg[i,1],mean(leg[i,])-0.8*cex*
+					get.asp()*strheight(rownames(leg)[i])),
+					y=c(0,ylabel),lty="dotted",col="grey")
+				lines(x=c(leg[i,2],mean(leg[i,])+0.8*cex*
+					get.asp()*strheight(rownames(leg)[i])),
+					y=c(0,ylabel),lty="dotted",col="grey")
+				lines(x=rep(mean(leg[i,])-0.8*cex*
+					get.asp()*strheight(rownames(leg)[i]),2),
+					y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+				lines(x=rep(mean(leg[i,])+0.8*cex*
+					get.asp()*strheight(rownames(leg)[i]),2),
+					y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+			}
 			polygon(x=c(leg[i,1],
 				mean(leg[i,])-0.8*cex*get.asp()*strh,
 				mean(leg[i,])-0.8*cex*get.asp()*strh,
