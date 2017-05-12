@@ -77,15 +77,19 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	invisible(xx)
 }
 
-# function
-# written by Liam J. Revell 2012
+## internally used function
+## written by Liam J. Revell 2012, 2017
 getState<-function(x,trans){
-	i<-1
-	while(x>trans[i]){
-		state<-names(trans)[i]
-		i<-i+1
+	if(x<=trans[1]) state<-names(trans)[1]
+	else if(x>=trans[length(trans)]) state<-names(trans)[length(trans)]
+	else {
+		i<-1
+		while(x>trans[i]){
+			state<-names(trans)[i]
+			i<-i+1
+		}
 	}
-	return(state)
+	state
 }
 
 ## S3 print method for objects of class "contMap"
