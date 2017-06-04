@@ -150,7 +150,8 @@ linklabels<-function(text,tips,link.type=c("bent","curved","straight"),
 	xpos<-lastPP$xx[tips]+strwidth("i")
 	ypos<-lastPP$yy[tips]
 	xmax<-rep(max(lastPP$xx),length(tips))+link.offset
-	ylab<-seq(1,lastPP$Ntip,by=(lastPP$Ntip-1)/(length(tips)-1))
+    ylab<-seq(min(lastPP$yy),max(lastPP$yy),
+		by=(max(lastPP$yy)-min(lastPP$yy))/(length(tips)-1))
 	ylab<-ylab[rank(ypos)]
 	text(xmax,ylab,gsub("_"," ",text),pos=4,font=font,cex=cex,
 		offset=0)
