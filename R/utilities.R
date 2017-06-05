@@ -1,6 +1,46 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017
 
+## function to expand clades in a plot by a given factor
+## written by Liam J. Revell 2017
+expand.clade<-function(tree,node,factor=5){
+	cw<-reorder(tree)
+	tips<-setNames(rep(1,Ntip(tree)),cw$tip.label)
+	get.tips<-function(node,tree){
+    		dd<-getDescendants(tree,node)
+    		tree$tip.label[dd[dd<=Ntip(tree)]]
+	}
+	desc<-unlist(lapply(node,get.tips,tree=cw))
+	for(i in 2:Ntip(cw)){
+		tips[i]<-tips[i-1]+
+			if(names(tips)[i]%in%desc){
+				1 
+			} else if(names(tips)[i-1]%in%desc){
+				1
+			} else 1/factor
+	}
+	obj<-list(tree=tree,tips=tips)
+	class(obj)<-"expand.clade"
+	obj
+}
+
+## S3 print method for the object class "expand.clade"
+print.expand.clade<-function(x,...){
+	cat("An object of class \"expand.clade\" consisting of:\n")
+	cat(paste("(1) A phylogenetic tree (x$tree) with",Ntip(x$tree),
+		"tips and\n   ",x$tree$Nnode,"internal nodes.\n"))
+	cat("(2) A vector (x$tips) containing the desired tip-spacing.\n\n")
+}
+
+## S3 plot method for the object class "expand.clade"
+plot.expand.clade<-function(x,...){
+	args<-list(...)
+	args$tree<-x$tree
+	args$tips<-x$tips
+	if(inherits(args$tree,"simmap")) do.call(plotSimmap,args)
+	else do.call(plotTree,args)
+}
+
 ## function to add a geological or other temporal legend to a plotted tree
 ## written by Liam J. Revell 2017
 geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
@@ -59,7 +99,7 @@ geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 	colors<-sapply(colors,make.transparent,alpha=alpha)
 	if(plot){	
 		y<-c(rep(0,2),rep(par()$usr[4],2))
-		ylabel<--1/25*Ntip(tree)
+		ylabel<--1/25*obj$Ntip
 		for(i in 1:nrow(leg)){
 			strh<-strheight(rownames(leg)[i])
 			polygon(c(leg[i,1:2],leg[i,2:1]),y,
@@ -150,7 +190,7 @@ linklabels<-function(text,tips,link.type=c("bent","curved","straight"),
 	xpos<-lastPP$xx[tips]+strwidth("i")
 	ypos<-lastPP$yy[tips]
 	xmax<-rep(max(lastPP$xx),length(tips))+link.offset
-    ylab<-seq(min(lastPP$yy),max(lastPP$yy),
+	ylab<-seq(min(lastPP$yy),max(lastPP$yy),
 		by=(max(lastPP$yy)-min(lastPP$yy))/(length(tips)-1))
 	ylab<-ylab[rank(ypos)]
 	text(xmax,ylab,gsub("_"," ",text),pos=4,font=font,cex=cex,
