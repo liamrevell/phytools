@@ -2,3 +2,5 @@
 .gitattributes
 .git*
 README.md
+.travis.yml
+

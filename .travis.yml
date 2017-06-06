@@ -1,0 +1,20 @@
+language: r
+
+sudo: required
+
+r_binary_packages:
+  - animation
+  - clusterGeneration
+  - mnormt
+  - msm
+  - numDeriv
+  - phangorn
+  - plotrix
+  - scatterplot3d
+
+r_packages:
+  - covr
+
+after_success:
+  - Rscript -e 'library(covr); coveralls()'
+
