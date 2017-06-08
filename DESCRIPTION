@@ -1,6 +1,6 @@
 Package: phytools
-Version: 0.6-15
-Date: 2017-06-04
+Version: 0.6-16
+Date: 2017-06-08
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
@@ -56,6 +56,6 @@ Description: Package contains various functions for phylogenetic analysis.
 	research.
 License: GPL (>= 2)
 URL: http://github.com/liamrevell/phytools
-Packaged: 2017-06-04 12:00:00 EST
+Packaged: 2017-06-08 12:00:00 EST
 Repository: 
-Date/Publication: 2017-06-04 12:00:00 EST
+Date/Publication: 2017-06-08 12:00:00 EST
