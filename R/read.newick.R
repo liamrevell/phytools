@@ -1,5 +1,5 @@
-# function to read a Newick string with node labels & (possible) singles
-# written by Liam J. Revell 2013, 2014, 2015
+## function to read a Newick string with node labels & (possible) singles
+## written by Liam J. Revell 2013, 2014, 2015, 2017
 
 read.newick<-function(file="",text,...){
 	# check to see if reading from file
@@ -54,7 +54,7 @@ newick<-function(text){
 				temp<-getLabel(text,i)
 				node.label[currnode]<-temp$label
 				i<-temp$end
-			}
+			} else node.label[currnode]<-NA
 			ii<-ei[currnode]
 			# is there a branch length?
 			if(text[i]==":"){
@@ -95,13 +95,14 @@ newick<-function(text){
 	edge[edge<0]<--edge[edge<0]
 	edge.length[is.na(edge.length)]<-0
 	if(length(edge.length)==0) edge.length<-NULL
-	node.label[is.na(node.label)]<-""
-	if(length(node.label)==0) node.label<-NULL
+	if(all(is.na(node.label))) node.label<-NULL
+	else node.label[is.na(node.label)]<-""
 	# assemble into "phylo" object
-	tree<-list(edge=edge,Nnode=as.integer(Nnode),tip.label=tip.label,edge.length=edge.length,node.label=node.label)
+	tree<-list(edge=edge,Nnode=as.integer(Nnode),tip.label=tip.label,
+		edge.length=edge.length,node.label=node.label)
 	class(tree)<-"phylo"
 	attr(tree,"order")<-"cladewise"
-	return(tree)
+	tree
 }
 
 # function gets label
