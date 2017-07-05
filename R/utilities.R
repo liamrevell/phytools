@@ -235,13 +235,23 @@ force.ultrametric<-function(tree,method=c("nnls","extend")){
 ## function to create curved clade labels for a fan tree
 ## written by Liam J. Revell 2017
 
-arc.cladelabels<-function(tree=NULL,text,node,ln.offset=1.02,
+arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	lab.offset=1.06,cex=1,orientation="curved",...){
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(obj$type!="fan") stop("method works only for type=\"fan\"")
 	h<-max(sqrt(obj$xx^2+obj$yy^2))
 	if(hasArg(mark.node)) mark.node<-list(...)$mark.node
 	else mark.node<-TRUE
+	if(hasArg(interactive)) interactive<-list(...)$interactive
+	else {
+		if(is.null(node)) interactive<-TRUE
+		else interactive<-TRUE
+	}
+	if(interactive) node<-getnode()
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-par()$lwd
+	if(hasArg(col)) col<-list(...)$col
+	else col<-par()$col
 	if(mark.node) points(obj$xx[node],obj$yy[node],pch=21,
 		bg="red")
 	if(is.null(tree)){
@@ -259,7 +269,7 @@ arc.cladelabels<-function(tree=NULL,text,node,ln.offset=1.02,
 	ii<-intersect(which(obj$yy[d]<0),which(obj$xx[d]>=0))
 	deg[ii]<-360+deg[ii]
 	draw.arc(x=0,y=0,radius=ln.offset*h,deg1=min(deg),
-		deg2=max(deg))
+		deg2=max(deg),lwd=lwd,col=col)
 	if(orientation=="curved")
 		arctext(text,radius=lab.offset*h,
 			middle=mean(range(deg*pi/180)),cex=cex)
