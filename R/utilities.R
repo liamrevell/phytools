@@ -287,8 +287,10 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 getnode<-function(...){
 	if(hasArg(env)) env<-list(...)$env
 	else env<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(hasArg(show.pt)) show.pt<-list(...)$show.pt
+	else show.pt<-FALSE
 	xy<-unlist(locator(n=1))
-	points(xy[1],xy[2])
+	if(show.pt) points(xy[1],xy[2])
 	d<-sqrt((xy[1]-env$xx)^2+(xy[2]-env$yy)^2)
 	ii<-which(d==min(d))[1]
 	ii
