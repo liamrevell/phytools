@@ -5,13 +5,13 @@
 \usage{
 cladelabels(tree=NULL, text, node, offset=NULL, wing.length=NULL, cex=1,
    orientation="vertical")
-arc.cladelabels(tree=NULL, text, node, ln.offset=1.02,
+arc.cladelabels(tree=NULL, text, node=NULL, ln.offset=1.02,
    lab.offset=1.06, cex=1, orientation="curved",...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. If not supplied, the function will obtain the last plotted phylogeny from the environmental variable \code{last_plot.phylo}.}
 	\item{text}{desired clade label text.}
-	\item{node}{node number for the most recent common ancestor of members of the clade.}
+	\item{node}{node number for the most recent common ancestor of members of the clade. For \code{arc.cladelabels} this defaults to \code{NULL} which means that the node of the clade to be labeled should be specified interactively (that is, by clicking on the graphical device).}
 	\item{offset}{offset (as a multiplier of character width) for the label. Defaults to \code{offset=1} if \code{tree} is supplied or \code{offset=8} otherwise.}
 	\item{wing.length}{length of the wings to add to the top & bottom of the label bar (in character widths).}
 	\item{cex}{character expansion factor.}
