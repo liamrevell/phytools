@@ -245,7 +245,7 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	if(hasArg(interactive)) interactive<-list(...)$interactive
 	else {
 		if(is.null(node)) interactive<-TRUE
-		else interactive<-TRUE
+		else interactive<-FALSE
 	}
 	if(interactive) node<-getnode()
 	if(hasArg(lwd)) lwd<-list(...)$lwd
