@@ -278,7 +278,7 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 		y0<-lab.offset*sin(median(deg)*pi/180)*h
 		text(x=x0,y=y0,label=text,
 		adj=c(if(x0>=0) 0 else 1,if(y0>=0) 0 else 1),
-		offset=0)
+		offset=0,cex=cex)
 	}
 }
 
