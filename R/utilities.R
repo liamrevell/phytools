@@ -254,6 +254,8 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	else col<-par()$col
 	if(hasArg(lend)) lend<-list(...)$lend
 	else lend<-par()$lend
+	if(hasArg(clockwise)) clockwise<-list(...)$clockwise
+	else clockwise<-TRUE
 	if(mark.node) points(obj$xx[node],obj$yy[node],pch=21,
 		bg="red")
 	if(is.null(tree)){
@@ -274,7 +276,8 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 		deg2=max(deg),lwd=lwd,col=col,lend=lend)
 	if(orientation=="curved")
 		arctext(text,radius=lab.offset*h,
-			middle=mean(range(deg*pi/180)),cex=cex)
+			middle=mean(range(deg*pi/180)),cex=cex,
+			clockwise=clockwise)
 	else if(orientation=="horizontal"){
 		x0<-lab.offset*cos(median(deg)*pi/180)*h
 		y0<-lab.offset*sin(median(deg)*pi/180)*h
