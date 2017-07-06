@@ -252,6 +252,8 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	else lwd<-par()$lwd
 	if(hasArg(col)) col<-list(...)$col
 	else col<-par()$col
+	if(hasArg(lend)) lend<-list(...)$lend
+	else lend<-par()$lend
 	if(mark.node) points(obj$xx[node],obj$yy[node],pch=21,
 		bg="red")
 	if(is.null(tree)){
@@ -269,7 +271,7 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	ii<-intersect(which(obj$yy[d]<0),which(obj$xx[d]>=0))
 	deg[ii]<-360+deg[ii]
 	draw.arc(x=0,y=0,radius=ln.offset*h,deg1=min(deg),
-		deg2=max(deg),lwd=lwd,col=col)
+		deg2=max(deg),lwd=lwd,col=col,lend=lend)
 	if(orientation=="curved")
 		arctext(text,radius=lab.offset*h,
 			middle=mean(range(deg*pi/180)),cex=cex)
