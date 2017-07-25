@@ -1,5 +1,5 @@
 ## function to plot a tree with dots/circles for a plotted phenotype
-## written by Liam J. Revell 2016
+## written by Liam J. Revell 2016, 2017
 
 dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
 	if(is.data.frame(x)) x<-as.matrix(x)
@@ -33,6 +33,8 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 	else fsize<-1
 	if(hasArg(x.space)) x.space<-list(...)$x.space
 	else x.space<-0.1
+	if(hasArg(k)) k<-list(...)$k
+	else k<-0.8
 	## reorder tree
 	tree<-reorder(tree,"cladewise")
 	## if standardize==TRUE
@@ -57,13 +59,12 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		x.tip<-obj$xx[1:obj$Ntip]
 		y.tip<-obj$yy[1:obj$Ntip]
 		## plot points
-		rr<-(0.8*x/max(x)+x.space)/2*diff(par()$usr[1:2])/
+		rr<-(k*x/max(x)+x.space)/2*diff(par()$usr[1:2])/
 			diff(par()$usr[3:4])
-		if(any(rr>(strwidth("W")*fsize/2))) rr<-rr/max(rr)*strwidth("W")*fsize/2
+		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
+			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W"),y=y.tip,
 			radius=rr,MoreArgs=list(nv=200,col=color))
-		## draw.circle(x.tip+1.2*strwidth("W"),y=y.tip,nv=200,
-		##	radius=rr,col=color)
 		## add legend
 		if(legend){ 
 			h<-dot.legend(x=par()$usr[1]+0.1*max(nodeHeights(tree)),
@@ -85,9 +86,10 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		x.tip<-rep(h,obj$Ntip)
 		y.tip<-obj$yy[1:obj$Ntip]
 		## plot points
-		rr<-(0.8*x/max(x)+x.space)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])/
+		rr<-(k*x/max(x)+x.space)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])/
 			(Ntip(tree)-1)
-		if(any(rr>(strwidth("W")*fsize/2))) rr<-rr/max(rr)*strwidth("W")*fsize/2
+		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
+			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		for(i in 1:ncol(x)){
 			nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W")+x.space*(i-1),
 				y=y.tip,radius=rr[,i],MoreArgs=list(nv=200,col=color))
@@ -169,7 +171,8 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 ## dot legend
 ## written by Liam J. Revell 2016
 
-dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,method="plotTree",...){
+dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,
+	method="plotTree",...){
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-1
 	if(hasArg(fsize)) fsize<-list(...)$fsize
@@ -178,6 +181,8 @@ dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,method="plotTree",..
 	else colors<-"blue"
 	if(hasArg(leg.space)) leg.space<-list(...)$leg.space
 	else leg.space<-0.2
+	if(hasArg(k)) k<-list(...)$k
+	else k<-0.8
 	if(prompt){
 		obj<-locator(1)
 		x<-obj$x
@@ -185,11 +190,12 @@ dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,method="plotTree",..
 	}
 	if(method=="plotTree"){
 		text(x,y-0.5*(Ntip/25),round(min,2),pos=1,cex=cex)
-		s<-(0.8*max(min,0)/min(max,max+min)+0.1)/2*diff(par()$usr[1:2])/
+		s<-(k*max(min,0)/min(max,max+min)+0.1)/2*diff(par()$usr[1:2])/
 			diff(par()$usr[3:4])
-		e<-(0.8+0.1)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])
+		e<-(k+0.1)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])
 		rr<-seq(s,e,length.out=length)
-		if(any(rr>(strwidth("W")*fsize/2))) rr<-rr/max(rr)*strwidth("W")*fsize/2
+		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
+			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		temp<-c(0,cumsum((1+leg.space)*rep(2*max(rr),length-1)))
 		nulo<-mapply(draw.circle,x=x+temp,y=rep(y,length),radius=rr,
 			MoreArgs=list(nv=200,col=colors))
@@ -201,11 +207,12 @@ dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,method="plotTree",..
 		lines(c(max(x+temp),max(x+temp)),y-c(y1+0.5*(Ntip/25),2*y1+0.5*(Ntip/25)))
 	} else if(method=="phylogram"){
 		text(x,y-0.04,round(min,2),pos=1,cex=cex)		
-		s<-(0.8*max(min,0)/(min(max,max+min))+0.1)/2*
+		s<-(k*max(min,0)/(min(max,max+min))+0.1)/2*
 			diff(par()$usr[1:2])/diff(par()$usr[3:4])/(Ntip-1)
-		e<-(0.8+0.1)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])/(Ntip-1)
+		e<-(k+0.1)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])/(Ntip-1)
 		rr<-seq(s,e,length.out=length)
-		if(any(rr>(strwidth("W")*fsize/2))) rr<-rr/max(rr)*strwidth("W")*fsize/2
+		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
+			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		temp<-c(0,cumsum((1+leg.space)*rep(2*max(rr),length-1)))
 		nulo<-mapply(draw.circle,x=x+temp,y=rep(y,length),radius=rr,
 			MoreArgs=list(nv=200,col=colors))
