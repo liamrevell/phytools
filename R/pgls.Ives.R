@@ -1,9 +1,16 @@
-# implements method of Ives et al. 2007 for PGLS regression with sampling error
-# written by Liam J. Revell 2012, 2013, 2015
+## implements method of Ives et al. 2007 for PGLS regression with sampling error
+## written by Liam J. Revell 2012, 2013, 2015 (warning added 2017)
 
 pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	
+	cat("---------------------------------------------------------------\n")
+	cat("| **Warning:                                                  |\n")
+	cat("|   User reports suggest that this method may frequently      |\n")
+	cat("|   fail to find the ML solution. Please use with caution.    |\n")
+	cat("---------------------------------------------------------------\n\n")
+
 	
 	# likelihood function
 	lik<-function(theta,C,x,y,Mx,My,Mxy){
