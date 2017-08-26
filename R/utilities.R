@@ -1,6 +1,18 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017
 
+## function to rescale a tree according to an EB model
+## written by Liam J. Revell 2017
+
+ebTree<-function(tree,r){
+	if(r!=0){
+		H<-nodeHeights(tree)
+		e<-(exp(r*H[,2])-exp(r*H[,1]))/r
+		tree$edge.length<-e
+	}
+	tree
+}
+
 ## function to expand clades in a plot by a given factor
 ## written by Liam J. Revell 2017
 expand.clade<-function(tree,node,factor=5){
@@ -1222,7 +1234,6 @@ vcvPhylo<-function(tree,anc.nodes=TRUE,...){
 	}
 	if(hasArg(model)) model<-list(...)$model
 	else model<-"BM"
-
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-12
 	if(model=="OU"){
@@ -1236,7 +1247,13 @@ vcvPhylo<-function(tree,anc.nodes=TRUE,...){
 			tree<-lambdaTree(tree,lambda)
 		} else model<-"BM"
 		model<-"BM"
-	}	
+	}
+	if(model=="EB"){
+		if(hasArg(r)){
+			r<-list(...)$r
+			tree<-ebTree(tree,r)
+		} else model<-"BM"
+	}
 	# done settings
 	n<-length(tree$tip.label)
 	h<-nodeHeights(tree)[order(tree$edge[,2]),2]
