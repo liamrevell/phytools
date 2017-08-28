@@ -231,7 +231,7 @@ plot.cophylo<-function(x,...){
 	if(hasArg(edge.col)) edge.col<-list(...)$edge.col
 	else edge.col<-list(
 		left=rep("black",nrow(x$trees[[1]]$edge)),
-		right=rep("black",nrow(x$trees[[1]]$edge)))
+		right=rep("black",nrow(x$trees[[2]]$edge)))
 	obj<-list(...)
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
