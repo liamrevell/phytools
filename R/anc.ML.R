@@ -98,8 +98,6 @@ anc.OU<-function(tree,x,maxit=2000,...){
 		alpha<-par[2]
 		a0<-par[3]
 		a<-par[1:(tree$Nnode-1)+3]
-		## logLik<-sum(dmnorm(c(x,a),mean=rep(a0,length(tree$tip.label)+tree$Nnode-1),
-		##	varcov=sig2*vcvPhylo(tree,model="OU",alpha=alpha),log=TRUE))
 		logLik<-logMNORM(c(x,a),rep(a0,Ntip(tree)+tree$Nnode-1),sig2*vcvPhylo(tree,model="OU",alpha=alpha))
 		if(trace) print(c(sig2,alpha,logLik))
 		-logLik
@@ -137,6 +135,10 @@ anc.EB<-function(tree,x,maxit=2000,...){
 	else tol<-1e-8
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-FALSE
+	if(hasArg(vars)) vars<-list(...)$vars
+	else vars<-FALSE
+	if(hasArg(CI)) CI<-list(...)$CI
+	else CI<-FALSE
 	if(hasArg(r.init)){ 
 		r.init<-list(...)$r.init
 		obj<-phyl.vcv(as.matrix(x[tree$tip.label]),
@@ -177,6 +179,24 @@ anc.EB<-function(tree,x,maxit=2000,...){
 		ace=unclass(fastAnc(ebTree(tree,fit$par[2]),x)),
 		logLik=-fit$value,counts=fit$counts,convergence=fit$convergence,
 		message=fit$message,model="EB")
+	if(vars||CI){
+		likEB.hessian<-function(par,tree,y){
+			sig2<-par[1]
+			r<-par[2]
+			a<-par[3:length(par)]
+			logLik<-logMNORM(c(y,a[2:length(a)]),rep(a[1],Ntip(tree)+tree$Nnode-1),
+				sig2*vcvPhylo(tree,model="EB",r=r))
+			-logLik
+		}
+		H<-hessian(likEB.hessian,c(fit$par,obj$ace),tree=tree,y=x)
+		vcv<-solve(H)
+		if(vars) obj$var<-setNames(diag(vcv)[1:tree$Nnode+1],1:tree$Nnode+Ntip(tree))
+		if(CI){
+			obj$CI95<-cbind(obj$ace-1.96*sqrt(diag(vcv)[1:tree$Nnode+2]),
+				obj$ace+1.96*sqrt(diag(vcv)[1:tree$Nnode+2]))
+			rownames(obj$CI95)<-1:tree$Nnode+Ntip(tree)
+		}
+	}
 	class(obj)<-"anc.ML"
 	obj
 }
