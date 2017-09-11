@@ -3,6 +3,143 @@
 ## written by Liam J. Revell 2017
 
 ratebytree<-function(trees,x,...){
+	if(hasArg(type)) type<-list(...)$type
+	else {
+		if(is.factor(unlist(x))||is.character(unlist(x))) 
+			type<-"discrete"
+		else type<-"continuous"
+	}
+	if(type=="continuous") obj<-rbt.cont(trees,x,...)
+	else if(type=="discrete") obj<-rbt.disc(trees,x,...)
+	else {
+		cat(paste("type =",type,"not recognized.\n"))
+		obj<-NULL
+	}
+	obj
+}
+
+## discrete character ratebytree
+rbt.disc<-function(trees,x,...){
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-FALSE
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-4
+	if(hasArg(test)) test<-list(...)$test
+	else test<-"chisq"
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
+	if(hasArg(model)) model<-list(...)$model
+	else model<-"ER"
+	if(!inherits(trees,"multiPhylo")) 
+		stop("trees should be object of class \"multiPhylo\".")
+	if(!is.list(x)) stop("x should be a list of vectors.")
+	N<-length(trees)
+	fit.multi<-mapply(fitMk,tree=trees,x=x,MoreArgs=list(model=model),
+		SIMPLIFY=FALSE)
+	logL.multi<-sum(sapply(fit.multi,logLik))
+	lik.onerate<-function(theta,trees,x,model,trace=FALSE){
+		ss<-sort(unique(unlist(x)))
+		m<-length(ss)
+		if(is.character(model)){
+			rate<-matrix(NA,m,m)
+			if(model=="ER"){
+				k<-rate[]<-1
+				diag(rate)<-NA
+			}
+			else if(model=="ARD") {
+				k<-m*(m-1)
+				rate[col(rate)!=row(rate)]<-1:k
+			}
+			else if(model=="SYM") {
+				k<-m*(m-1)/2
+				ii<-col(rate)<row(rate)
+				rate[ii]<-1:k
+				rate<-t(rate)
+				rate[ii]<-1:k
+			}
+		} else {
+			rate<-model
+			k<-max(rate)
+		}
+		Q <- matrix(0, m, m)
+		index.matrix <- rate
+		tmp <- cbind(1:m, 1:m)
+		rate[tmp] <- 0
+		rate[rate == 0] <- k + 1
+		Q[]<-c(theta,0)[rate]
+		diag(Q)<--rowSums(Q)
+		colnames(Q)<-rownames(Q)<-ss
+		fit.onerate<-mapply(fitMk,tree=trees,x=x,MoreArgs=list(fixedQ=Q),
+			SIMPLIFY=FALSE)
+		-sum(sapply(fit.onerate,logLik))
+	}
+	pp<-sapply(fit.multi,function(x) x$rates)
+	pp<-if(is.matrix(pp)) rowMeans(pp) else mean(pp)
+	if(length(pp)>1){
+		fit.onerate<-optim(pp,lik.onerate,trees=trees,x=x,model=model)
+	} else {
+		fit.onerate<-optimize(lik.onerate,c(0,1000*pp),trees=trees,x=x,
+			model=model)
+		names(fit.onerate)<-c("par","value")
+	}
+	rates.multi<-t(sapply(fit.multi,function(x) x$rates))
+	if(is.character(model)){
+		m<-length(fit.multi[[1]]$states)
+		if(model=="ER"){
+			rates.multi<-t(rates.multi)
+			colnames(rates.multi)<-"q"
+		} else if(model=="SYM"){
+			if(length(fit.multi[[1]]$states)==2) rates.multi<-t(rates.multi)
+			colnames(rates.multi)<-
+				sapply(fit.multi[[1]]$states,function(x,y) 
+					sapply(y,function(y,x) paste(x,"<->",y,sep=""),x=x),
+					y=fit.multi[[1]]$states)[lower.tri(matrix(0,m,m))]
+		} else if(model=="ARD"){
+			ii<-(upper.tri(matrix(0,m,m))+lower.tri(matrix(0,m,m))==TRUE)
+			colnames(rates.multi)<-
+				sapply(fit.multi[[1]]$states,function(x,y) 
+					sapply(y,function(y,x) paste(y,"->",x,sep=""),x=x),
+					y=fit.multi[[1]]$states)[ii]
+		}			
+	} else {
+		k<-max(fit.multi[[1]]$index.matrix,na.rm=TRUE)
+		if(k==1) rates.multi<-t(rates.multi)
+		foo<-function(i,index.matrix,states){
+			rc<-which(index.matrix==i,arr.ind=TRUE)
+			lab<-apply(rc,1,function(ind,ss) paste(ss[ind],collapse="->"),
+				ss=states)
+			if(length(lab)>1) paste(lab,collapse=",") else lab
+		}
+		colnames(rates.multi)<-sapply(1:k,
+			foo,fit.multi[[1]]$index.matrix,fit.multi[[1]]$states)
+	}
+	if(!is.null(names(trees))) rownames(trees)<-names(trees)
+	else rownames(rates.multi)<-paste("tree",1:length(trees),sep="")
+	LR<-2*(logL.multi+fit.onerate$value)
+	km<-sum(sapply(fit.multi,function(x) max(x$index.matrix,na.rm=TRUE)))
+	k1<-length(pp)
+	P.chisq<-pchisq(LR,df=km-k1,lower.tail=FALSE)
+	obj<-list(
+		multi.rate.model=list(
+			logL=logL.multi,
+			rates=rates.multi,
+			method=fit.multi[[1]]$method),
+		common.rate.model=list(
+			logL=-fit.onerate$value,
+			rates=setNames(fit.onerate$par,colnames(rates.multi)),
+			method=if(length(pp)>1) "optim" else "optimize"),
+		index.matrix=fit.multi[[1]]$index.matrix,
+		states=fit.multi[[1]]$states,
+		pi=fit.multi[[1]]$pi,
+		model=model,N=N,likelihood.ratio=LR,P.chisq=P.chisq,
+		type="discrete")
+	class(obj)<-"ratebytree"
+	obj
+}
+
+
+## continuous character ratebytree
+rbt.cont<-function(trees,x,...){
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8
 	if(hasArg(trace)) trace<-list(...)$trace
@@ -11,7 +148,7 @@ ratebytree<-function(trees,x,...){
 	else digits<-4
 	if(hasArg(test)) test<-list(...)$test
 	else test<-"chisq"
-	if(hasArg(quiet)) quiet<-list(...)$quiet
+	if(hasArg(quiet)) quiet<-list(...)$quiet	
 	else quiet<-FALSE
 	if(hasArg(model)) model<-list(...)$model
 	else model<-"BM"
@@ -198,7 +335,8 @@ ratebytree<-function(trees,x,...){
 		model=model,
 		N=N,likelihood.ratio=LR,
 		P.chisq=if(test=="chisq") P.chisq else NULL,
-		P.sim=if(test=="simulation") P.sim else NULL)
+		P.sim=if(test=="simulation") P.sim else NULL,
+		type="continuous")
 	class(obj)<-"ratebytree"
 	obj
 }
@@ -207,6 +345,11 @@ ratebytree<-function(trees,x,...){
 print.ratebytree<-function(x,...){
 	if(hasArg(digits)) digits<-list(...)$digits
 	else digits<-4
+	if(x$type=="continuous") prbt.cont(x,digits=digits)
+	else if(x$type=="discrete") prbt.disc(x,digits=digits)
+}
+
+prbt.cont<-function(x,digits=digits){
 	N<-x$N
 	if(x$model=="BM"){
 		cat("ML common-rate model:\n")
@@ -271,4 +414,32 @@ print.ratebytree<-function(x,...){
 	if(x$multi.rate.model$convergence==0&&x$common.rate.model$convergence==0) 
         cat("R thinks it has found the ML solution.\n\n")
 	else cat("One or the other optimization may not have converged.\n\n")
+}
+
+prbt.disc<-function(x,digits=digits){
+	cat("ML common-rate model:\n")
+	
+	cat(paste("\t",paste(names(x$common.rate.model$rates),collapse="\t"),
+		"\tk\tlogL\n",sep=""))
+	cat(paste("value\t",paste(round(x$common.rate.model$rates,digits),
+		collapse="\t"),"\t",max(x$index.matrix,na.rm=T),"\t",
+		round(x$common.rate.model$logL,digits),"\n",sep=""))
+	cat(paste("\nModel fitting method was \"",x$common.rate.model$method,
+		"\".\n",sep=""))
+	cat("\nML multi-rate model:\n")
+	cat(paste("\t",paste(colnames(x$multi.rate.model$rates),collapse="\t"),
+		"\tk\tlogL\n",sep=""))
+	for(i in 1:nrow(x$multi.rate.model$rates)){
+		if(i>1) cat(paste(rownames(x$multi.rate.model$rates)[i],"\t",
+			paste(round(x$multi.rate.model$rates[i,],
+			digits),collapse="\t"),"\n",sep=""))
+		else if(i==1) cat(paste(rownames(x$multi.rate.model$rates)[i],"\t",
+			paste(round(x$multi.rate.model$rates[i,],
+			digits),collapse="\t"),"\t",x$N*max(x$index.matrix,na.rm=T),"\t",
+			round(x$multi.rate.model$logL,digits),"\n",sep=""))
+	}
+	cat(paste("\nModel fitting method was \"",x$multi.rate.model$method,
+		"\".\n",sep=""))
+	cat(paste("\nLikelihood ratio:",round(x$likelihood.ratio,digits),"\n"))
+	cat(paste("P-value (based on X^2):",round(x$P.chisq,digits),"\n\n"))
 }
