@@ -36,10 +36,13 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		# check
 		if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
 		# if vector convert to binary matrix
-		if(!is.matrix(x)) xx<-to.matrix(x,sort(unique(x)))
+		k<-sort(unique(x))
+		if(is.matrix(Q)) k<-dimnames(Q)[[1]]
+		if(!is.matrix(x)) xx<-to.matrix(x,k)
 		else xx<-x
 		xx<-xx[tree$tip.label,]
-		xx<-xx/rowSums(xx)
+		if(is.null(dim(xx))) dim(xx) <- length(xx)
+		xx<-xx/apply(xx,1,sum)
 		# reorder to cladewise
 		tree<-bt<-reorder.phylo(tree,"cladewise")
 		if(!is.binary.tree(bt)) bt<-multi2di(bt)
