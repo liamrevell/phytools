@@ -105,6 +105,7 @@ S3method(print, ratebytree)
 S3method(print, evolvcv.lite)
 S3method(print, expand.clade)
 S3method(plot, expand.clade)
+S3method(posthoc, ratebytree)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)

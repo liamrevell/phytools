@@ -131,7 +131,8 @@ rbt.disc<-function(trees,x,...){
 		index.matrix=fit.multi[[1]]$index.matrix,
 		states=fit.multi[[1]]$states,
 		pi=fit.multi[[1]]$pi,
-		model=model,N=N,likelihood.ratio=LR,P.chisq=P.chisq,
+		model=model,N=N,n=sapply(trees,Ntip),
+		likelihood.ratio=LR,P.chisq=P.chisq,
 		type="discrete")
 	class(obj)<-"ratebytree"
 	obj
@@ -170,7 +171,7 @@ rbt.cont<-function(trees,x,...){
 	x<-mapply(function(x,t) x<-x[t$tip.label],x=x,t=trees,SIMPLIFY=FALSE)
 	se<-mapply(function(x,t) x<-x[t$tip.label],x=se,t=trees,SIMPLIFY=FALSE)
 	## first, fit multi-rate model
-	lik.multi<-function(theta,trees,x,se,model,trace=FALSE){
+	lik.multi<-function(theta,trees,y,se,model,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
 		sig<-theta[1:N]
@@ -186,7 +187,7 @@ rbt.cont<-function(trees,x,...){
 		V<-mapply("+",mapply("*",C,sig,SIMPLIFY=FALSE),E,SIMPLIFY=FALSE)
 		logL<-0
 		for(i in 1:N) 
-			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
+			logL<-logL-t(y[[i]]-a[i])%*%solve(V[[i]])%*%(y[[i]]-
 				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
 		if(trace){
 			cat(paste(paste(round(sig,digits),collapse="\t"),
@@ -225,12 +226,16 @@ rbt.cont<-function(trees,x,...){
 				paste("r[",1:N,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
 		}
 	}
-	fit.multi<-optim(p,lik.multi,trees=trees,x=x,se=se,model=model,trace=trace,
+	fit.multi<-optim(p,lik.multi,trees=trees,y=x,se=se,model=model,trace=trace,
 		method="L-BFGS-B",lower=c(rep(tol,N),rep(-Inf,N),
 			if(model%in%c("OU","EB")) rep(-Inf,N)),upper=c(rep(Inf,N),rep(Inf,N),
 			if(model%in%c("OU","EB")) rep(Inf,N)))
+	## compute covariance matrix
+	H.multi<-hessian(lik.multi,fit.multi$par,trees=trees,y=x,
+		se=se,model=model,trace=FALSE)
+	Cov.multi<-solve(H.multi)
 	## now fit single-rate model
-	lik.onerate<-function(theta,trees,x,se,model,trace=FALSE){
+	lik.onerate<-function(theta,trees,y,se,model,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
 		sig<-theta[1]
@@ -246,7 +251,7 @@ rbt.cont<-function(trees,x,...){
 		V<-mapply("+",lapply(C,"*",sig),E,SIMPLIFY=FALSE)
 		logL<-0
 		for(i in 1:N) 
-			logL<-logL-t(x[[i]]-a[i])%*%solve(V[[i]])%*%(x[[i]]-
+			logL<-logL-t(y[[i]]-a[i])%*%solve(V[[i]])%*%(y[[i]]-
 				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
 		if(trace){ 
 			cat(paste(round(sig,digits),
@@ -257,8 +262,8 @@ rbt.cont<-function(trees,x,...){
 		}
 		-logL
 	}
-	p<-c(mean(fit.multi$par[1:N]),fit.multi$par[1:N+1])
-	if(model%in%c("OU","EB")) p<-c(p,mean(fit.multi$par[N+2]))
+	p<-c(mean(fit.multi$par[1:N]),fit.multi$par[1:N+N])
+	if(model%in%c("OU","EB")) p<-c(p,mean(fit.multi$par[1:N+2*N]))
 	if(hasArg(init)){
 		if(!is.null(init$sigc)) p[1]<-init$sigc
 		if(!is.null(init$ac)) p[1:N+1]<-init$ac
@@ -277,10 +282,14 @@ rbt.cont<-function(trees,x,...){
 			cat(paste("sig  ","r    ","logL\n",sep="\t"))
 		}
 	}
-	fit.onerate<-optim(p,lik.onerate,trees=trees,x=x,se=se,model=model,
+	fit.onerate<-optim(p,lik.onerate,trees=trees,y=x,se=se,model=model,
 		trace=trace,method="L-BFGS-B",
 		lower=c(tol,rep(-Inf,N),if(model=="OU") tol else if(model=="EB") -Inf),
 		upper=c(Inf,rep(Inf,N),if(model%in%c("OU","EB")) Inf))
+		## compute covariance matrix
+	H.onerate<-hessian(lik.onerate,fit.onerate$par,trees=trees,y=x,
+		se=se,model=model,trace=FALSE)
+	Cov.onerate<-solve(H.onerate)
 	## compare models:
 	LR<-2*(-fit.multi$value+fit.onerate$value)
 	km<-2*N+if(model=="BM") 0 else if(model%in%c("OU","EB")) N
@@ -317,23 +326,31 @@ rbt.cont<-function(trees,x,...){
 	}
 	obj<-list(
 		multi.rate.model=list(sig2=fit.multi$par[1:N],
+			SE.sig2=sqrt(diag(Cov.multi)[1:N]),
 			a=fit.multi$par[1:N+N],
+			SE.a=sqrt(diag(Cov.multi)[1:N+N]),
 			alpha=if(model=="OU") fit.multi$par[1:N+2*N] else NULL,
+			SE.alpha=if(model=="OU") sqrt(diag(Cov.multi)[1:N+2*N]) else NULL,
 			r=if(model=="EB") fit.multi$par[1:N+2*N] else NULL,
+			SE.r=if(model=="EB") sqrt(diag(Cov.multi)[1:N+2*N]) else NULL,
 			k=km,
 			logL=-fit.multi$value,
 			counts=fit.multi$counts,convergence=fit.multi$convergence,
 			message=fit.multi$message),
 		common.rate.model=list(sig2=fit.onerate$par[1],
+			SE.sig2=sqrt(diag(Cov.onerate)[1]),
 			a=fit.onerate$par[1:N+1],
+			SE.a=sqrt(diag(Cov.onerate)[1:N+1]),
 			alpha=if(model=="OU") fit.onerate$par[N+2] else NULL,
+			SE.alpha=if(model=="OU") sqrt(diag(Cov.onerate)[N+2]) else NULL,
 			r=if(model=="EB") fit.onerate$par[N+2] else NULL,
+			SE.r=if(model=="EB") sqrt(diag(Cov.onerate)[N+2]) else NULL,
 			k=k1,
 			logL=-fit.onerate$value,
 			counts=fit.onerate$counts,convergence=fit.onerate$convergence,
 			message=fit.onerate$message),
 		model=model,
-		N=N,likelihood.ratio=LR,
+		N=N,n=sapply(trees,Ntip),likelihood.ratio=LR,
 		P.chisq=if(test=="chisq") P.chisq else NULL,
 		P.sim=if(test=="simulation") P.sim else NULL,
 		type="continuous")
@@ -358,6 +375,9 @@ prbt.cont<-function(x,digits=digits){
 		cat(paste("value",round(x$common.rate.model$sig2,digits),
 			paste(round(x$common.rate.model$a,digits),collapse="\t"),
 			x$common.rate.model$k,round(x$common.rate.model$logL,digits),
+			"\n",sep="\t"))
+		cat(paste("SE   ",round(x$common.rate.model$SE.sig2,digits),
+			paste(round(x$common.rate.model$SE.a,digits),collapse="\t"),
 			"\n\n",sep="\t"))
 		cat("ML multi-rate model:\n")
 		cat(paste("\t",paste(paste("s^2[",1:N,"]",sep=""),collapse="\t"),"\t",
@@ -366,6 +386,9 @@ prbt.cont<-function(x,digits=digits){
 		cat(paste("value",paste(round(x$multi.rate.model$sig2,digits),collapse="\t"),
 			paste(round(x$multi.rate.model$a,digits),collapse="\t"),
 			x$multi.rate.model$k,round(x$multi.rate.model$logL,digits),
+			"\n",sep="\t"))
+		cat(paste("SE   ",paste(round(x$multi.rate.model$SE.sig2,digits),collapse="\t"),
+			paste(round(x$multi.rate.model$SE.a,digits),collapse="\t"),
 			"\n\n",sep="\t"))
 	} else if(x$model=="OU"){
 		cat("ML common-regime OU model:\n")
@@ -375,6 +398,10 @@ prbt.cont<-function(x,digits=digits){
 			paste(round(x$common.rate.model$a,digits),collapse="\t"),
 			round(x$common.rate.model$alpha,digits),
 			x$common.rate.model$k,round(x$common.rate.model$logL,digits),
+			"\n",sep="\t"))
+		cat(paste("SE   ",round(x$common.rate.model$SE.sig2,digits),
+			paste(round(x$common.rate.model$SE.a,digits),collapse="\t"),
+			round(x$common.rate.model$SE.alpha,digits),
 			"\n\n",sep="\t"))
 		cat("ML multi-regime OU model:\n")
 		cat(paste("\t",paste(paste("s^2[",1:N,"]",sep=""),collapse="\t"),"\t",
@@ -385,6 +412,10 @@ prbt.cont<-function(x,digits=digits){
 			paste(round(x$multi.rate.model$a,digits),collapse="\t"),
 			paste(round(x$multi.rate.model$alpha,digits),collapse="\t"),
 			x$multi.rate.model$k,round(x$multi.rate.model$logL,digits),
+			"\n",sep="\t"))
+		cat(paste("SE   ",paste(round(x$multi.rate.model$SE.sig2,digits),collapse="\t"),
+			paste(round(x$multi.rate.model$SE.a,digits),collapse="\t"),
+			paste(round(x$multi.rate.model$SE.alpha,digits),collapse="\t"),
 			"\n\n",sep="\t"))
 	} else if(x$model=="EB"){
 		cat("ML common-regime EB model:\n")
@@ -394,6 +425,10 @@ prbt.cont<-function(x,digits=digits){
 			paste(round(x$common.rate.model$a,digits),collapse="\t"),
 			round(x$common.rate.model$r,digits),
 			x$common.rate.model$k,round(x$common.rate.model$logL,digits),
+			"\n",sep="\t"))
+		cat(paste("SE   ",round(x$common.rate.model$SE.sig2,digits),
+			paste(round(x$common.rate.model$SE.a,digits),collapse="\t"),
+			round(x$common.rate.model$SE.r,digits),
 			"\n\n",sep="\t"))
 		cat("ML multi-regime EB model:\n")
 		cat(paste("\t",paste(paste("s^2[",1:N,"]",sep=""),collapse="\t"),"\t",
@@ -404,6 +439,10 @@ prbt.cont<-function(x,digits=digits){
 			paste(round(x$multi.rate.model$a,digits),collapse="\t"),
 			paste(round(x$multi.rate.model$r,digits),collapse="\t"),
 			x$multi.rate.model$k,round(x$multi.rate.model$logL,digits),
+			"\n",sep="\t"))
+		cat(paste("SE   ",paste(round(x$multi.rate.model$SE.sig2,digits),collapse="\t"),
+			paste(round(x$multi.rate.model$SE.a,digits),collapse="\t"),
+			paste(round(x$multi.rate.model$SE.r,digits),collapse="\t"),
 			"\n\n",sep="\t"))
 	}
 	cat(paste("Likelihood ratio:",round(x$likelihood.ratio,digits),"\n"))
@@ -442,4 +481,75 @@ prbt.disc<-function(x,digits=digits){
 		"\".\n",sep=""))
 	cat(paste("\nLikelihood ratio:",round(x$likelihood.ratio,digits),"\n"))
 	cat(paste("P-value (based on X^2):",round(x$P.chisq,digits),"\n\n"))
+}
+
+## posthoc comparison S3 method
+
+posthoc<-function(x, ...) UseMethod("posthoc")
+
+posthoc.ratebytree<-function(x,...){
+	if(hasArg(p.adjust.method)) p.adjust.method<-list(...)$p.adjust.method
+	else p.adjust.method<-"none"
+	if(x$type!="continuous"){
+		cat("Sorry. No posthoc method yet implemented for this data type.\n\n")
+	} else {
+		if(x$model=="BM") k<-2
+		else if(x$model%in%c("EB","OU")) k<-3
+		t<-df<-P<-matrix(0,x$N,x$N)
+		for(i in 1:x$N){
+			for(j in 1:x$N){
+				x1<-if(x$model=="BM") x$multi.rate.model$sig2[i]
+					else if(x$model=="OU") x$multi.rate.model$alpha[i]
+					else if(x$model=="EB") x$multi.rate.model$r[i]
+				x2<-if(x$model=="BM") x$multi.rate.model$sig2[j]
+					else if(x$model=="OU") x$multi.rate.model$alpha[j]
+					else if(x$model=="EB") x$multi.rate.model$r[j]
+				s1<-x$multi.rate.model$SE.sig2[i]^2
+				s2<-x$multi.rate.model$SE.sig2[j]^2
+				n1<-x$n[i]
+				n2<-x$n[j]
+				se<-sqrt(s1+s2)
+				df[i,j]<-(s1/n1+s2/n2)^2/
+					((s1/n1)^2/(n1-k)+(s2/n2)^2/(n2-k))
+				t[i,j]<-(x1-x2)/se
+				P[i,j]<-2*pt(abs(t[i,j]),df[i,j],lower.tail=FALSE)
+				p<-P[upper.tri(P)]
+				p<-p.adjust(p,method=p.adjust.method)
+				P[upper.tri(P)]<-p
+				P[lower.tri(P)]<-p				
+			}
+		}
+	}
+	obj<-list(t=t,df=df,P=P,model=x$model,type=x$type,
+		p.adjust.method=p.adjust.method)
+	class(obj)<-"posthoc.ratebytree"
+	obj
+}
+
+print.posthoc.ratebytree<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-4
+	t<-x$t[upper.tri(x$t)]
+	df<-x$df[upper.tri(x$df)]
+	P<-x$P[upper.tri(x$P)]
+	N<-nrow(x$P)
+	paste("tree",1:(N-1),"vs.",2:N)
+	nn<-vector(mode="character",length=N*(N-1)/2)
+	k<-1
+	for(i in 1:N) for(j in i:N){
+		if(i!=j){
+			nn[k]<-paste("tree",i," vs. ",j,sep="")
+			k<-k+1
+		}
+	}
+	X<-data.frame(t=t,df=df,P=P)
+	rownames(X)<-nn
+	cat(paste("\nPost-hoc test for \"",x$model,"\" model.\n",sep=""))
+	cat(paste("(Comparison is of estimated values of",
+		if(x$model=="BM") "sigma^2.)\n\n"
+		else if(x$model=="OU") "alpha.)\n\n"
+		else if(x$model=="EB") "r.)\n\n"))
+	print(round(X,digits))
+	cat(paste("\nP-values adjusted using method=\"",x$p.adjust.method,
+		"\".\n\n",sep=""))
 }
