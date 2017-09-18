@@ -512,13 +512,13 @@ posthoc.ratebytree<-function(x,...){
 				df[i,j]<-(s1/n1+s2/n2)^2/
 					((s1/n1)^2/(n1-k)+(s2/n2)^2/(n2-k))
 				t[i,j]<-(x1-x2)/se
-				P[i,j]<-2*pt(abs(t[i,j]),df[i,j],lower.tail=FALSE)
-				p<-P[upper.tri(P)]
-				p<-p.adjust(p,method=p.adjust.method)
-				P[upper.tri(P)]<-p
-				P[lower.tri(P)]<-p				
+				P[i,j]<-2*pt(abs(t[i,j]),df[i,j],lower.tail=FALSE)		
 			}
 		}
+		p<-P[upper.tri(P)]
+		p<-p.adjust(p,method=p.adjust.method)
+		P[upper.tri(P)]<-p
+		P[lower.tri(P)]<-p		
 	}
 	obj<-list(t=t,df=df,P=P,model=x$model,type=x$type,
 		p.adjust.method=p.adjust.method)
