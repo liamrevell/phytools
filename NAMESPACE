@@ -21,7 +21,7 @@ export(paintBranches, paintSubTree, paste.tree, pbtree, pgls.Ives, pgls.SEy, phe
 export(phyl.vcv, phylo.heatmap, phylo.toBackbone, phylo.to.map, phylANOVA, phyloDesign, phylomorphospace, phylomorphospace3d, phylosig)
 export(plot.changesMap, plot.contMap, plot.cophylo, plot.densityMap, plot.fitMk, plot.fitPagel, plot.phyl.RMA, plot.phylo.to.map, plot.gfit)
 export(plotBranchbyTrait, plotSimmap, plotThresh, plotTree, plotTree.barplot, plotTree.boxplot, plotTree.errorbars, plotTree.singletons)
-export(plotTree.splits, plotTree.wBars, posterior.evolrate)
+export(plotTree.splits, plotTree.wBars, posterior.evolrate, posthoc, posthoc.ratebytree)
 export(ratebystate, ratebytree, rateshift, read.newick, read.simmap, reorder.backbonePhylo, reorderSimmap, rep.multiPhylo, rep.phylo)
 export(repPhylo, reroot, rerootingMethod, rescaleSimmap, resolveAllNodes, resolveNode, rotate.multi, rotateNodes, rootedge.to.singleton)
 export(roundBranches, roundPhylogram, rstate)
