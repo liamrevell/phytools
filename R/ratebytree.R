@@ -233,7 +233,7 @@ rbt.cont<-function(trees,x,...){
 	## compute covariance matrix
 	H.multi<-hessian(lik.multi,fit.multi$par,trees=trees,y=x,
 		se=se,model=model,trace=FALSE)
-	Cov.multi<-solve(H.multi)
+	Cov.multi<-if(qr(H.multi)$rank!=ncol(H.multi)) ginv(H.multi) else solve(H.multi)
 	## now fit single-rate model
 	lik.onerate<-function(theta,trees,y,se,model,trace=FALSE){
 		n<-sapply(trees,Ntip)
@@ -289,7 +289,7 @@ rbt.cont<-function(trees,x,...){
 		## compute covariance matrix
 	H.onerate<-hessian(lik.onerate,fit.onerate$par,trees=trees,y=x,
 		se=se,model=model,trace=FALSE)
-	Cov.onerate<-solve(H.onerate)
+	Cov.onerate<-if(qr(H.onerate)$rank!=ncol(H.onerate)) ginv(H.onerate) else solve(H.onerate)
 	## compare models:
 	LR<-2*(-fit.multi$value+fit.onerate$value)
 	km<-2*N+if(model=="BM") 0 else if(model%in%c("OU","EB")) N

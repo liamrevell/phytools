@@ -27,11 +27,13 @@ posthoc.ratebytree(x, ...)
 }
 \details{
 	At present it is not possible to specify different models to fit for the different trees - although if (for instance) character evolution on tree 1 proceeded by a strong \emph{OU} process while character evolution on tree 2 was by \emph{BM}, we would probably reject a constant-process model and tree 2 should show a very low value of \code{alpha}.
+	
+	To compute the standard errors for each fitted paramater value, the function computes the negative inverse of the Hessian matrix at the MLEs; however, if this matrix is computationally singular generalized inverse (\code{\link{ginv}}) will be used instead without warning.
 
 	The function also conducts a likelihood-ratio test to compare the two models.
 }
 \value{
-	An object of class \code{"ratebytree"}.
+	An object of class \code{"ratebytree"} or an object of class \code{"posthoc.ratebytree"} in the case of the method \code{posthoc}.
 }
 \references{
 	Adams, D. C. (2012) Comparing evolutionary rates for different phenotypic traits on a phylogeny using likelihood. \emph{Syst. Biol.}, \bold{62}, 181-192.
