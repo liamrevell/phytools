@@ -138,7 +138,6 @@ rbt.disc<-function(trees,x,...){
 	obj
 }
 
-
 ## continuous character ratebytree
 rbt.cont<-function(trees,x,...){
 	if(hasArg(tol)) tol<-list(...)$tol
@@ -151,6 +150,8 @@ rbt.cont<-function(trees,x,...){
 	else test<-"chisq"
 	if(hasArg(quiet)) quiet<-list(...)$quiet	
 	else quiet<-FALSE
+	if(hasArg(maxit)) maxit<-list(...)$maxit
+	else maxit<-500
 	if(hasArg(model)) model<-list(...)$model
 	else model<-"BM"
 	if(!(model%in%c("BM","OU","EB"))){
@@ -229,7 +230,7 @@ rbt.cont<-function(trees,x,...){
 	fit.multi<-optim(p,lik.multi,trees=trees,y=x,se=se,model=model,trace=trace,
 		method="L-BFGS-B",lower=c(rep(tol,N),rep(-Inf,N),
 			if(model%in%c("OU","EB")) rep(-Inf,N)),upper=c(rep(Inf,N),rep(Inf,N),
-			if(model%in%c("OU","EB")) rep(Inf,N)))
+			if(model%in%c("OU","EB")) rep(Inf,N)),control=list(maxit=maxit))
 	## compute covariance matrix
 	H.multi<-hessian(lik.multi,fit.multi$par,trees=trees,y=x,
 		se=se,model=model,trace=FALSE)
@@ -285,7 +286,8 @@ rbt.cont<-function(trees,x,...){
 	fit.onerate<-optim(p,lik.onerate,trees=trees,y=x,se=se,model=model,
 		trace=trace,method="L-BFGS-B",
 		lower=c(tol,rep(-Inf,N),if(model=="OU") tol else if(model=="EB") -Inf),
-		upper=c(Inf,rep(Inf,N),if(model%in%c("OU","EB")) Inf))
+		upper=c(Inf,rep(Inf,N),if(model%in%c("OU","EB")) Inf),
+		control=list(maxit=maxit))
 		## compute covariance matrix
 	H.onerate<-hessian(lik.onerate,fit.onerate$par,trees=trees,y=x,
 		se=se,model=model,trace=FALSE)
