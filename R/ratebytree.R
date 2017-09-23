@@ -152,6 +152,10 @@ rbt.cont<-function(trees,x,...){
 	else quiet<-FALSE
 	if(hasArg(maxit)) maxit<-list(...)$maxit
 	else maxit<-500
+	if(hasArg(regimes)){ 
+		regimes<-list(...)$regimes
+		if(!is.factor(regimes)) regimes<-as.factor(regimes)
+	} else regimes<-as.factor(1:length(trees))
 	if(hasArg(model)) model<-list(...)$model
 	else model<-"BM"
 	if(!(model%in%c("BM","OU","EB"))){
@@ -168,74 +172,33 @@ rbt.cont<-function(trees,x,...){
 		for(i in 1:length(x)) se[[i]][1:length(se[[i]])]<-0
 	}
 	N<-length(trees)
+	m<-length(levels(regimes))
 	## reorder the trait vectors in x & SEs in se
 	x<-mapply(function(x,t) x<-x[t$tip.label],x=x,t=trees,SIMPLIFY=FALSE)
 	se<-mapply(function(x,t) x<-x[t$tip.label],x=se,t=trees,SIMPLIFY=FALSE)
-	## first, fit multi-rate model
-	lik.multi<-function(theta,trees,y,se,model,trace=FALSE){
-		n<-sapply(trees,Ntip)
-		N<-length(trees)
-		sig<-theta[1:N]
-		a<-theta[1:N+N]
-		if(model=="OU") alpha<-theta[1:N+2*N]
-		if(model=="EB") r<-theta[1:N+2*N]
-		if(model=="BM") C<-lapply(trees,vcv)
-		else if(model=="OU") C<-mapply(vcvPhylo,tree=trees,alpha=alpha,MoreArgs=list(model="OU",
-			anc.nodes=FALSE),SIMPLIFY=FALSE)
-		else if(model=="EB") C<-mapply(vcvPhylo,tree=trees,r=r,MoreArgs=list(model="EB",
-			anc.nodes=FALSE),SIMPLIFY=FALSE)
-		E<-lapply(se,diag)
-		V<-mapply("+",mapply("*",C,sig,SIMPLIFY=FALSE),E,SIMPLIFY=FALSE)
+	## likelihood functions
+	lik.multi<-function(theta,trees,y,se,model,regimes,trace=FALSE){
+		m<-length(unique(regimes))
+		ind<-setNames(lapply(levels(regimes),function(x,y) which(y==x),y=regimes),
+			levels(regimes))
+		THETA<-list()
+		for(i in 1:m){
+			THETA[[i]]<-c(theta[i],theta[ind[[i]]+m])
+			if(model%in%c("OU","EB")) THETA[[i]]<-c(THETA[[i]],theta[i+m+N])
+		}
 		logL<-0
-		for(i in 1:N) 
-			logL<-logL-t(y[[i]]-a[i])%*%solve(V[[i]])%*%(y[[i]]-
-				a[i])/2-n[i]*log(2*pi)/2-determinant(V[[i]])$modulus[1]/2
+		for(i in 1:m)
+			logL<-logL-lik.onerate(THETA[[i]],trees[ind[[i]]],y[ind[[i]]],se[ind[[i]]],
+				model=model,trace=FALSE)
 		if(trace){
-			cat(paste(paste(round(sig,digits),collapse="\t"),
-				if(model=="OU") paste(round(alpha,digits),collapse="\t"),
-				if(model=="EB") paste(round(r,digits),collapse="\t"),
+			cat(paste(paste(round(theta[1:m],digits),collapse="\t"),
+				if(model=="OU") paste(round(theta[1:m+m+N],digits),collapse="\t"),
+				if(model=="EB") paste(round(theta[1:m+m+N],digits),collapse="\t"),
 				round(logL,digits),"\n",sep="\t"))
 			flush.console()
 		}
 		-logL
-	}	
-	f1<-function(tree,x){ 
-		pvcv<-phyl.vcv(as.matrix(x),vcv(tree),1)
-		c(pvcv$R[1,1],pvcv$a[1,1])
 	}
-	PP<-mapply(f1,trees,x)
-	if(hasArg(init)){ 
-		init<-list(...)$init
-	 	if(!is.null(init$sigm)) PP[1,]<-init$sigm
-		if(!is.null(init$am)) PP[2,]<-init$am
-		if(model=="OU") if(!is.null(init$alpham)) PP<-rbind(PP,init$alpham)
-		if(model=="EB") if(!is.null(init$rm)) PP<-rbind(PP,init$rm)
-	}
-	if((model%in%c("OU","EB"))&&nrow(PP)==2) PP<-rbind(PP,rep(0,ncol(PP)))
-	p<-as.vector(t(PP))
-	if(trace){
-		if(model=="BM"){
-			cat("\nOptimizing multi-rate model....\n")
-			cat(paste(paste("sig[",1:N,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
-		} else if(model=="OU"){
-			cat("\nOptimizing multi-regime model....\n")
-			cat(paste(paste("sig[",1:N,"]",sep="",collapse="\t"),
-				paste("alpha[",1:N,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
-		} else if(model=="EB"){
-			cat("\nOptimizing multi-regime model....\n")
-			cat(paste(paste("sig[",1:N,"]",sep="",collapse="\t"),
-				paste("r[",1:N,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
-		}
-	}
-	fit.multi<-optim(p,lik.multi,trees=trees,y=x,se=se,model=model,trace=trace,
-		method="L-BFGS-B",lower=c(rep(tol,N),rep(-Inf,N),
-			if(model%in%c("OU","EB")) rep(-Inf,N)),upper=c(rep(Inf,N),rep(Inf,N),
-			if(model%in%c("OU","EB")) rep(Inf,N)),control=list(maxit=maxit))
-	## compute covariance matrix
-	H.multi<-hessian(lik.multi,fit.multi$par,trees=trees,y=x,
-		se=se,model=model,trace=FALSE)
-	Cov.multi<-if(qr(H.multi)$rank!=ncol(H.multi)) ginv(H.multi) else solve(H.multi)
-	## now fit single-rate model
 	lik.onerate<-function(theta,trees,y,se,model,trace=FALSE){
 		n<-sapply(trees,Ntip)
 		N<-length(trees)
@@ -263,8 +226,52 @@ rbt.cont<-function(trees,x,...){
 		}
 		-logL
 	}
-	p<-c(mean(fit.multi$par[1:N]),fit.multi$par[1:N+N])
-	if(model%in%c("OU","EB")) p<-c(p,mean(fit.multi$par[1:N+2*N]))
+	## first, fit multi-rate model
+	f1<-function(tree,x){ 
+		pvcv<-phyl.vcv(as.matrix(x),vcv(tree),1)
+		c(pvcv$R[1,1],pvcv$a[1,1])
+	}
+	P<-mapply(f1,trees,x,SIMPLIFY=FALSE)
+	PP<-list()
+	PP[[1]]<-vector()
+	for(i in 1:m)
+		PP[[1]][i]<-mean(sapply(P,function(x) x[1])[which(regimes==levels(regimes)[i])])
+	PP[[2]]<-sapply(P,function(x) x[2])
+	if(model%in%c("OU","EB")) PP[[3]]<-rep(0,m)
+	if(hasArg(init)){ 
+		init<-list(...)$init
+	 	if(!is.null(init$sigm)) PP[[1]]<-init$sigm
+		if(!is.null(init$am)) PP[[2]]<-init$am
+		if(model=="OU") if(!is.null(init$alpham)) PP[[3]]<-init$alpham
+		if(model=="EB") if(!is.null(init$rm)) PP[[3]]<-init$rm
+	}
+	p<-unlist(PP)
+	if(trace){
+		if(model=="BM"){
+			cat("\nOptimizing multi-rate model....\n")
+			cat(paste(paste("sig[",1:m,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
+		} else if(model=="OU"){
+			cat("\nOptimizing multi-regime model....\n")
+			cat(paste(paste("sig[",1:m,"]",sep="",collapse="\t"),
+				paste("alpha[",1:m,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
+		} else if(model=="EB"){
+			cat("\nOptimizing multi-regime model....\n")
+			cat(paste(paste("sig[",1:m,"]",sep="",collapse="\t"),
+				paste("r[",1:m,"]",sep="",collapse="\t"),"logL\n",sep="\t"))
+		}
+	}
+	fit.multi<-optim(p,lik.multi,trees=trees,y=x,se=se,model=model,
+		regimes=regimes,trace=trace,
+		method="L-BFGS-B",lower=c(rep(tol,m),rep(-Inf,N),
+			if(model%in%c("OU","EB")) rep(-Inf,m)),upper=c(rep(Inf,m),rep(Inf,N),
+			if(model%in%c("OU","EB")) rep(Inf,m)),control=list(maxit=maxit))
+	## compute covariance matrix
+	H.multi<-hessian(lik.multi,fit.multi$par,trees=trees,y=x,
+		se=se,model=model,regimes=regimes,trace=FALSE)
+	Cov.multi<-if(qr(H.multi)$rank!=ncol(H.multi)) ginv(H.multi) else solve(H.multi)
+	## now fit single-rate model
+	p<-c(mean(fit.multi$par[1:m]),fit.multi$par[1:N+m])
+	if(model%in%c("OU","EB")) p<-c(p,mean(fit.multi$par[1:m+m+N]))
 	if(hasArg(init)){
 		if(!is.null(init$sigc)) p[1]<-init$sigc
 		if(!is.null(init$ac)) p[1:N+1]<-init$ac
@@ -288,13 +295,13 @@ rbt.cont<-function(trees,x,...){
 		lower=c(tol,rep(-Inf,N),if(model=="OU") tol else if(model=="EB") -Inf),
 		upper=c(Inf,rep(Inf,N),if(model%in%c("OU","EB")) Inf),
 		control=list(maxit=maxit))
-		## compute covariance matrix
+	## compute covariance matrix
 	H.onerate<-hessian(lik.onerate,fit.onerate$par,trees=trees,y=x,
 		se=se,model=model,trace=FALSE)
 	Cov.onerate<-if(qr(H.onerate)$rank!=ncol(H.onerate)) ginv(H.onerate) else solve(H.onerate)
 	## compare models:
 	LR<-2*(-fit.multi$value+fit.onerate$value)
-	km<-2*N+if(model=="BM") 0 else if(model%in%c("OU","EB")) N
+	km<-N+m+if(model=="BM") 0 else if(model%in%c("OU","EB")) m
 	k1<-N+if(model=="BM") 1 else if(model%in%c("OU","EB")) 2
 	if(test=="simulation"&&model%in%c("OU","EB")){
 		cat("Simulation test not yet available for chosen model. Using chi-square test.\n")
@@ -327,14 +334,14 @@ rbt.cont<-function(trees,x,...){
 		flush.console()
 	}
 	obj<-list(
-		multi.rate.model=list(sig2=fit.multi$par[1:N],
-			SE.sig2=sqrt(diag(Cov.multi)[1:N]),
-			a=fit.multi$par[1:N+N],
-			SE.a=sqrt(diag(Cov.multi)[1:N+N]),
-			alpha=if(model=="OU") fit.multi$par[1:N+2*N] else NULL,
-			SE.alpha=if(model=="OU") sqrt(diag(Cov.multi)[1:N+2*N]) else NULL,
-			r=if(model=="EB") fit.multi$par[1:N+2*N] else NULL,
-			SE.r=if(model=="EB") sqrt(diag(Cov.multi)[1:N+2*N]) else NULL,
+		multi.rate.model=list(sig2=fit.multi$par[1:m],
+			SE.sig2=sqrt(diag(Cov.multi)[1:m]),
+			a=fit.multi$par[1:N+m],
+			SE.a=sqrt(diag(Cov.multi)[1:N+m]),
+			alpha=if(model=="OU") fit.multi$par[1:m+m+N] else NULL,
+			SE.alpha=if(model=="OU") sqrt(diag(Cov.multi)[1:m+m+N]) else NULL,
+			r=if(model=="EB") fit.multi$par[1:N+m+N] else NULL,
+			SE.r=if(model=="EB") sqrt(diag(Cov.multi)[1:N+m+N]) else NULL,
 			k=km,
 			logL=-fit.multi$value,
 			counts=fit.multi$counts,convergence=fit.multi$convergence,
@@ -353,6 +360,7 @@ rbt.cont<-function(trees,x,...){
 			message=fit.onerate$message),
 		model=model,
 		N=N,n=sapply(trees,Ntip),likelihood.ratio=LR,
+		regimes=regimes,m=m,
 		P.chisq=if(test=="chisq") P.chisq else NULL,
 		P.sim=if(test=="simulation") P.sim else NULL,
 		type="continuous")
@@ -370,6 +378,7 @@ print.ratebytree<-function(x,...){
 
 prbt.cont<-function(x,digits=digits){
 	N<-x$N
+	m<-x$m
 	if(x$model=="BM"){
 		cat("ML common-rate model:\n")
 		cat(paste("\ts^2\t",paste(paste("a[",1:N,"]",sep=""),collapse="\t")),
@@ -382,7 +391,7 @@ prbt.cont<-function(x,digits=digits){
 			paste(round(x$common.rate.model$SE.a,digits),collapse="\t"),
 			"\n\n",sep="\t"))
 		cat("ML multi-rate model:\n")
-		cat(paste("\t",paste(paste("s^2[",1:N,"]",sep=""),collapse="\t"),"\t",
+		cat(paste("\t",paste(paste("s^2[",levels(x$regimes),"]",sep=""),collapse="\t"),"\t",
 			paste(paste("a[",1:N,"]",sep=""),collapse="\t")),
 			"\tk\tlogL\n")
 		cat(paste("value",paste(round(x$multi.rate.model$sig2,digits),collapse="\t"),
@@ -406,9 +415,9 @@ prbt.cont<-function(x,digits=digits){
 			round(x$common.rate.model$SE.alpha,digits),
 			"\n\n",sep="\t"))
 		cat("ML multi-regime OU model:\n")
-		cat(paste("\t",paste(paste("s^2[",1:N,"]",sep=""),collapse="\t"),"\t",
+		cat(paste("\t",paste(paste("s^2[",levels(x$regimes),"]",sep=""),collapse="\t"),"\t",
 			paste(paste("a[",1:N,"]",sep=""),collapse="\t"),"\t",
-			paste(paste("alp[",1:N,"]",sep=""),collapse="\t")),
+			paste(paste("alp[",levels(x$regimes),"]",sep=""),collapse="\t")),
 			"\tk\tlogL\n")
 		cat(paste("value",paste(round(x$multi.rate.model$sig2,digits),collapse="\t"),
 			paste(round(x$multi.rate.model$a,digits),collapse="\t"),
@@ -433,9 +442,9 @@ prbt.cont<-function(x,digits=digits){
 			round(x$common.rate.model$SE.r,digits),
 			"\n\n",sep="\t"))
 		cat("ML multi-regime EB model:\n")
-		cat(paste("\t",paste(paste("s^2[",1:N,"]",sep=""),collapse="\t"),"\t",
+		cat(paste("\t",paste(paste("s^2[",levels(x$regimes),"]",sep=""),collapse="\t"),"\t",
 			paste(paste("a[",1:N,"]",sep=""),collapse="\t"),"\t",
-			paste(paste("r[",1:N,"]",sep=""),collapse="\t")),
+			paste(paste("r[",levels(x$regimes),"]",sep=""),collapse="\t")),
 			"\tk\tlogL\n")
 		cat(paste("value",paste(round(x$multi.rate.model$sig2,digits),collapse="\t"),
 			paste(round(x$multi.rate.model$a,digits),collapse="\t"),
@@ -497,9 +506,9 @@ posthoc.ratebytree<-function(x,...){
 	} else {
 		if(x$model=="BM") k<-2
 		else if(x$model%in%c("EB","OU")) k<-3
-		t<-df<-P<-matrix(0,x$N,x$N)
-		for(i in 1:x$N){
-			for(j in 1:x$N){
+		t<-df<-P<-matrix(0,x$m,x$m)
+		for(i in 1:x$m){
+			for(j in 1:x$m){
 				x1<-if(x$model=="BM") x$multi.rate.model$sig2[i]
 					else if(x$model=="OU") x$multi.rate.model$alpha[i]
 					else if(x$model=="EB") x$multi.rate.model$r[i]
@@ -535,12 +544,12 @@ print.posthoc.ratebytree<-function(x,...){
 	df<-x$df[upper.tri(x$df)]
 	P<-x$P[upper.tri(x$P)]
 	N<-nrow(x$P)
-	paste("tree",1:(N-1),"vs.",2:N)
+	paste("reg.",1:(N-1),"vs.",2:N)
 	nn<-vector(mode="character",length=N*(N-1)/2)
 	k<-1
 	for(i in 1:N) for(j in i:N){
 		if(i!=j){
-			nn[k]<-paste("tree",i," vs. ",j,sep="")
+			nn[k]<-paste("reg.",i," vs. ",j,sep="")
 			k<-k+1
 		}
 	}
