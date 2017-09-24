@@ -564,3 +564,18 @@ print.posthoc.ratebytree<-function(x,...){
 	cat(paste("\nP-values adjusted using method=\"",x$p.adjust.method,
 		"\".\n\n",sep=""))
 }
+
+AIC.ratebytree<-function(object,...,k=2){
+	aic<-data.frame(AIC=c(k*object$common.rate.model$k-2*object$common.rate.model$logL,
+		k*object$multi.rate.model$k-2*object$multi.rate.model$logL),
+		df=c(object$common.rate.model$k,object$multi.rate.model$k))
+	addtl.obj<-list(...)
+	if(length(addtl.obj)>0){
+		for(i in 1:length(addtl.obj)) aic<-rbind(aic,
+			c(k*addtl.obj[[i]]$multi.rate.model$k-2*addtl.obj[[i]]$multi.rate.model$logL,
+			addtl.obj[[i]]$multi.rate.model$k))
+		rownames(aic)<-c("common-rate",paste("multi-rate:",1:(length(addtl.obj)+1),sep=""))
+	} else rownames(aic)<-c("common-rate","multi-rate")
+	aic
+}
+	

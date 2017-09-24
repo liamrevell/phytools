@@ -4,7 +4,6 @@
 \title{Likelihood test for rate variation among trees}
 \usage{
 ratebytree(trees, x, ...)
-posthoc.ratebytree(x, ...)
 \method{posthoc}{ratebytree}(x, ...)
 }
 \arguments{
