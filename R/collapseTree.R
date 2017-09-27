@@ -1,6 +1,6 @@
 ## function to interactively expand and contract subtrees on a phylogeny
 ## inspired by the phylogeny interface of sharksrays.org by Gavin Naylor
-## written by Liam J. Revell 2015, 2016
+## written by Liam J. Revell 2015, 2016, 2017
 
 collapseTree<-function(tree,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -10,6 +10,10 @@ collapseTree<-function(tree,...){
 	else hold<-TRUE
 	if(hasArg(drop.extinct)) drop.extinct<-list(...)$drop.extinct
 	else drop.extinct=FALSE
+	if(is.null(tree$edge.length)){
+		no.edge<-TRUE
+		tree<-compute.brlen(tree,power=0.5)
+	} else no.edge<-FALSE
 	cat("Click on the nodes that you would like to collapse...\n")
 	## turn off locator bell (it's annoying)
 	options(locatorBell=FALSE)
@@ -139,6 +143,7 @@ collapseTree<-function(tree,...){
 			tree<-drop.tip(tree,tips)
 		}
 	}
+	if(no.edge) tree$edge.length<-NULL
 	tree
 }
 
