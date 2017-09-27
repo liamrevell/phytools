@@ -578,4 +578,3 @@ AIC.ratebytree<-function(object,...,k=2){
 	} else rownames(aic)<-c("common-rate","multi-rate")
 	aic
 }
-	
