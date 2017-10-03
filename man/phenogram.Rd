@@ -3,7 +3,7 @@
 \title{Plot phenogram (traitgram)}
 \usage{
 phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
-	add=FALSE, ...)
+   add=FALSE, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}, with or without a mapped discrete character.}
@@ -22,7 +22,7 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 	For \code{spread.labels=TRUE} numerical optimization is performed to optimize the distribution of the labels vertically, where the solution depends on the vector \code{spread.cost} containing the cost of overlap (first) and the cost of deviation from the vertical position of the tip. Note that because this is done via numerical optimization, plotting may hang briefly while the best solution is found (especially for large trees).
 }
 \value{
-	Plots a traitgram, optionally with a mapped discrete character.
+	Plots a traitgram, optionally with a mapped discrete character, and (invisibly) returns a matrix containing the coordinates of the plotted tip labels.
 }
 \references{
 	Evans, M. E. K., Smith, S. A., Flynn, R. S., Donoghue, M. J. (2009) Climate, niche evolution, and diversification of the "bird-cage" evening primroses (Oenothera, sections Anogra and Kleinia). \emph{American Naturalist}, \bold{173}, 225-240.
@@ -31,6 +31,7 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+\dontrun{
 tree<-pbtree(n=20,scale=2)
 x<-fastBM(tree)
 phenogram(tree,x)
@@ -43,6 +44,7 @@ phenogram(tree,x)
 tree<-pbtree(n=40)
 x<-fastBM(tree)
 phenogram(tree,x,spread.labels=TRUE,spread.cost=c(1,0))
+}
 }
 \keyword{phylogenetics}
 \keyword{plotting}

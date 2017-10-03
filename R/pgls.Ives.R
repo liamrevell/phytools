@@ -1,9 +1,16 @@
-# implements method of Ives et al. 2007 for PGLS regression with sampling error
-# written by Liam J. Revell 2012, 2013, 2015
+## implements method of Ives et al. 2007 for PGLS regression with sampling error
+## written by Liam J. Revell 2012, 2013, 2015 (warning added 2017)
 
 pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	
+	cat("---------------------------------------------------------------\n")
+	cat("| **Warning:                                                  |\n")
+	cat("|   User reports suggest that this method may frequently      |\n")
+	cat("|   fail to find the ML solution. Please use with caution.    |\n")
+	cat("---------------------------------------------------------------\n\n")
+
 	
 	# likelihood function
 	lik<-function(theta,C,x,y,Mx,My,Mxy){
@@ -84,4 +91,41 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 
 	# return r
 	return(list(beta=c(r$par[5]-r$par[3]*r$par[4],r$par[3]),sig2x=r$par[1],sig2y=r$par[2],a=r$par[4:5],logL=-r$value,convergence=r$convergence,message=r$message))
+}
+
+## simpler function to take sampling error into account for y only
+## written by Liam J. Revell 2017
+
+pgls.SEy<-function(model,data,corClass=corBrownian,tree=tree,
+	se=NULL,method=c("REML","ML"),interval=c(0,1000),...){
+	corfunc<-corClass
+	## preliminaries
+	data<-data[tree$tip.label,]
+	if(is.null(se)) se<-setNames(rep(0,Ntip(tree)),
+		tree$tip.label)
+	## likelihood function
+	lk<-function(sig2e,data,tree,model,ve,corfunc){
+		tree$edge.length<-tree$edge.length*sig2e
+		ii<-sapply(1:Ntip(tree),function(x,e) which(e==x),
+			e=tree$edge[,2])
+		tree$edge.length[ii]<-tree$edge.length[ii]+ve[tree$tip.label]
+		vf<-diag(vcv(tree))
+		w<-varFixed(~vf)
+		COR<-corfunc(1,tree,...)
+		fit<-gls(model,data=cbind(data,vf),correlation=COR,method=method,weights=w)
+		-logLik(fit)
+	}
+	## estimate sig2[e]
+	fit<-optimize(lk,interval=interval,
+		data=data,tree=tree,model=model,ve=se^2,corfunc=corfunc)
+	tree$edge.length<-tree$edge.length*fit$minimum
+	ii<-sapply(1:Ntip(tree),function(x,e) which(e==x),
+		e=tree$edge[,2])
+	tree$edge.length[ii]<-tree$edge.length[ii]+
+		se[tree$tip.label]^2
+	vf<-diag(vcv(tree))
+	w<-varFixed(~vf)
+	## fit & return model
+	gls(model,data=cbind(data,vf),correlation=corfunc(1,tree),weights=w,
+		method=method)
 }

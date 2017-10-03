@@ -1,12 +1,14 @@
 \name{contMap}
 \alias{contMap}
 \alias{plot.contMap}
+\alias{errorbar.contMap}
 \title{Map continuous trait evolution on the tree}
 \usage{
 contMap(tree, x, res=100, fsize=NULL, ftype=NULL, lwd=4, legend=NULL,
-	lims=NULL, outline=TRUE, sig=3, type="phylogram", direction="rightwards", 
-	plot=TRUE, ...)
+   lims=NULL, outline=TRUE, sig=3, type="phylogram", direction="rightwards", 
+   plot=TRUE, ...)
 \method{plot}{contMap}(x, ...)
+errorbar.contMap(obj, ...)
 }
 \arguments{
  	\item{tree}{object of class \code{"phylo"}.}
@@ -22,13 +24,18 @@ contMap(tree, x, res=100, fsize=NULL, ftype=NULL, lwd=4, legend=NULL,
 	\item{type}{type of plot desired. Options are \code{"phylogram"} for a rightward square phylogram; and \code{"fan"} for a circular phylogram.}
 	\item{direction}{plotting direction for \code{type="phylogram"}.}
 	\item{plot}{logical value indicating whether or not to plot the tree. If \code{plot=FALSE} then an object of class \code{"contMap"} will be returned without plotting.}
-	\item{...}{optional arguments for \code{plot.contMap} which include all the arguments of \code{contMap} except for \code{tree}, \code{x}, \code{res}, and \code{lims}. Also \code{method}, \code{"fastAnc"}, \code{"anc.ML"}, or \code{"user"} (for user-supplied states) specifying which function to use for ancestral state estimation; \code{hold} specifies whether or not to hold output to graphical device before plotting (defaults to \code{hold=TRUE}); and \code{anc.states} a vector containing some or multiple ancestral user-supplied ancestral states at nodes.}
+	\item{obj}{object of class \code{"contMap"}.}
+	\item{...}{optional arguments for \code{plot.contMap} which include all the arguments of \code{contMap} except for \code{tree}, \code{x}, \code{res}, and \code{lims}. Also \code{method}, \code{"fastAnc"}, \code{"anc.ML"}, or \code{"user"} (for user-supplied states) specifying which function to use for ancestral state estimation; \code{hold} specifies whether or not to hold output to graphical device before plotting (defaults to \code{hold=TRUE}); and \code{anc.states} a vector containing some or multiple ancestral user-supplied ancestral states at nodes. Some other plotting arguments, such as \code{xlim} and \code{ylim}, may also work. Optional arguments for \code{errorbar.contMap} include \code{x}, a vector containing the original trait values mapped onto the tree (otherwise these will be obtained from \code{obj}), \code{scale.by.ci}, a logical argument (defaulting to \code{TRUE}) that determines whether or not the length of the error bars will be scaled by the CI width, and \code{lwd}, which detemines the line width of the plotted error bars.}
 }
 \description{
 	Function plots a tree with a mapped continuous character. The mapping is accomplished by estimating states at internal nodes using ML with \code{\link{fastAnc}}, and the interpolating the states along each edge using equation [2] of Felsenstein (1985).
+	
+	\code{errorbar.contMap} adds error bars to an existing plot.
 }
 \value{
 	Plots a tree. An object of class \code{"contMap"} is returned invisibly.
+	
+	\code{errorbar.contMap} adds colorful error bars to a plotted tree.
 }
 \references{
 	Felsenstein, J. 1985. Phylogenies and the comparative method. \emph{American Naturalist}, \bold{125}, 1-15. 

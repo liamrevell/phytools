@@ -185,3 +185,37 @@ plot.rateshift<-function(x,...){
 		text(x=5.5*strwidth("W"),y=-0.05*Ntip(x$tree),round(x$sig2,3))
 	}
 }
+
+## function to visualize the likelihood surface for 2 & 3 rate models (1 & 2 rate-shifts)
+## written by Liam J. Revell 2016
+
+likSurface.rateshift<-function(tree,x,nrates=2,shift.range=NULL,
+	density=20,plot=TRUE,...){
+	h<-max(nodeHeights(tree))
+	if(is.null(shift.range)) shift.range<-c(0.01*h,0.99*h)
+	shift<-seq(shift.range[1],shift.range[2],length.out=density)
+	if(nrates==2){
+		cat("Computing likelihood surface for 2-rate (1 rate-shift) model....\n")
+		flush.console()
+		logL1<-sapply(shift,function(s,tree,x) logLik(rateshift(tree,x,fixed.shift=s,
+			quiet=TRUE)),tree=tree,x=x)
+		if(plot) plot(shift,logL1,type="l",lwd=2,xlab="shift point",ylab="log(L)",...)
+		cat("Done.\n")
+		obj<-list(shift=shift,logL=logL1)
+	} else if(nrates==3){
+		cat("Computing likelihood surface for 3-rate (2 rate-shift) model....\n")
+		flush.console()
+		logL2<-sapply(shift,function(s1,s2,tree,x) 
+			sapply(s2,function(s2,s1,tree,x) 
+			logLik(rateshift(tree,x,fixed.shift=if(s1!=s2) c(s1,s2) else s1,
+			quiet=TRUE)),s1=s1,tree=tree,x=x),s2=shift,tree=tree,x=x)
+		if(plot) contour(shift,shift,logL2,nlevels=20,xlab="shift 1 (or 2)",
+			ylab="shift 2 (or 1)",...)
+		cat("Done.\n")
+		obj<-list(shift=shift,logL=logL2)
+	} else if((nrates%in%c(2,3))==FALSE){
+		cat("Method only available for nrates==2 and nrates==3\n")
+		obj<-NULL
+	}
+	invisible(obj)
+}

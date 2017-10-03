@@ -1,5 +1,5 @@
-# function to plot probability or trait value by branch
-# written by Liam J. Revell 2013, 2014
+## function to plot probability or trait value by branch
+## written by Liam J. Revell 2013, 2014, 2016
 
 plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainbow",legend=TRUE,xlims=NULL,...){
 	mode<-mode[1]
@@ -62,9 +62,12 @@ plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainb
 	if(hasArg(open.angle)) open.angle<-list(...)$open.angle
 	else open.angle<-0
 	# end optional arguments
-	if(palette=="heat.colors") cols<-heat.colors(n=1000)
-	if(palette=="gray") cols<-gray(1000:1/1000)
-	if(palette=="rainbow")	cols<-rainbow(1000,start=0.7,end=0) # blue->red
+	if(is.function(palette)) cols<-palette(n=1000)
+	else {
+		if(palette=="heat.colors") cols<-heat.colors(n=1000)
+		if(palette=="gray") cols<-gray(1000:1/1000)
+		if(palette=="rainbow")	cols<-rainbow(1000,start=0.7,end=0) # blue->red
+	}
 	if(is.null(xlims)) xlims<-range(x)+c(-tol,tol)
 	breaks<-0:1000/1000*(xlims[2]-xlims[1])+xlims[1]
 	whichColor<-function(p,cols,breaks){
@@ -92,7 +95,7 @@ plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainb
 }
 
 # function to add color bar
-# written by Liam J. Revell 2013, 2015
+# written by Liam J. Revell 2013, 2015, 2016
 
 add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd=4,outline=TRUE,...){
 	if(prompt){
@@ -111,14 +114,49 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 	else fsize<-1.0
 	if(hasArg(subtitle)) subtitle<-list(...)$subtitle
 	else subtitle<-NULL
-	X<-x+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
-	Y<-cbind(rep(y,length(cols)),rep(y,length(cols))) 		
+	if(hasArg(direction)) direction<-list(...)$direction
+	else direction<-"rightwards"
+	if(direction%in%c("rightwards","leftwards")){
+		X<-x+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
+		if(direction=="leftwards"){ 
+			X<-X[nrow(X):1,]
+			if(!is.null(lims)) lims<-lims[2:1]
+		}
+		Y<-cbind(rep(y,length(cols)),rep(y,length(cols)))
+	} else if(direction%in%c("upwards","downwards")){
+		Y<-y+cbind(0:(length(cols)-1)/length(cols),1:length(cols)/length(cols))*(leg)
+		if(direction=="downwards"){ 
+			X<-X[nrow(X):1,]
+			if(!is.null(lims)) lims<-lims[2:1]
+		}
+		X<-cbind(rep(x,length(cols)),rep(x,length(cols)))
+	}
 	if(outline) lines(c(X[1,1],X[nrow(X),2]),c(Y[1,1],Y[nrow(Y),2]),lwd=lwd+2,lend=2) 
 	for(i in 1:length(cols)) lines(X[i,],Y[i,],col=cols[i],lwd=lwd,lend=2)
-	text(x=x,y=y,round(lims[1],digits),pos=3,cex=fsize)
-	text(x=x+leg,y=y,round(lims[2],digits),pos=3,cex=fsize)
-	if(is.null(title)) title<-"P(state=1)"
-	text(x=(2*x+leg)/2,y=y,title,pos=3,cex=fsize)
-	if(is.null(subtitle)) text(x=(2*x+leg)/2,y=y,paste("length=",round(leg,3),sep=""),pos=1,cex=fsize)
-	else text(x=(2*x+leg)/2,y=y,subtitle,pos=1,cex=fsize)
+	if(direction%in%c("rightwards","leftwards")){
+		if(!is.null(lims)) text(x=x,y=y,
+			round(lims[1],digits),pos=3,cex=fsize)
+		if(!is.null(lims)) text(x=x+leg,y=y,
+			round(lims[2],digits),pos=3,cex=fsize)
+		if(is.null(title)) title<-"P(state=1)"
+		text(x=(2*x+leg)/2,y=y,title,pos=3,cex=fsize)
+		if(is.null(subtitle)) 
+			text(x=(2*x+leg)/2,y=y,paste("length=",round(leg,3),sep=""),pos=1,cex=fsize)
+		else text(x=(2*x+leg)/2,y=y,subtitle,pos=1,cex=fsize)
+	} else if(direction%in%c("upwards","downwards")){
+		if(!is.null(lims)) text(x=x,y=y-0.02*diff(par()$usr[3:4]),round(lims[1],digits),
+			pos=1,cex=fsize)
+		if(!is.null(lims)) text(x=x,y=y+leg+0.02*diff(par()$usr[3:4]),
+			round(lims[2],digits),
+			pos=3,cex=fsize)
+		if(is.null(title)) title<-"P(state=1)"
+		text(x=x-0.04*diff(par()$usr[1:2]),y=(2*y+leg)/2,title,
+			pos=3,cex=fsize,srt=90)
+		if(is.null(subtitle)) 
+			text(x=x+0.04*diff(par()$usr[1:2]),y=(2*y+leg)/2,
+				paste("length=",round(leg,3),sep=""),pos=1,
+				srt=90,cex=fsize)
+		else text(x=x+0.04*diff(par()$usr[1:2]),y=(2*y+leg)/2,
+			subtitle,pos=1,cex=fsize,srt=90)
+	}
 }

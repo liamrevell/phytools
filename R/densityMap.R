@@ -1,5 +1,5 @@
 # function plots posterior density of mapped states from stochastic mapping
-# written by Liam J. Revell 2012, 2013, 2014, 2015
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
 
 densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legend=NULL,
 	outline=FALSE,type="phylogram",direction="rightwards",plot=TRUE,...){
@@ -38,6 +38,7 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 	}	
 	H<-nodeHeights(tree)
 	message("sorry - this might take a while; please be patient")
+	tree$maps<-vector(mode="list",length=nrow(tree$edge))
 	for(i in 1:nrow(tree$edge)){
 		YY<-cbind(c(H[i,1],steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))]),
 			c(steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))],H[i,2]))-H[i,1]
@@ -79,7 +80,7 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 
 ## S3 plot method for objects of class "densityMap"
 ## also used internally by plot.contMap
-## written by Liam J. Revell 2012, 2013, 2014, 2015
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
 
 plot.densityMap<-function(x,...){
 	if(class(x)=="densityMap"){
@@ -110,6 +111,8 @@ plot.densityMap<-function(x,...){
 	else direction<-"rightwards"
 	if(hasArg(offset)) offset<-list(...)$offset
 	else offset<-NULL
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
 	if(hasArg(hold)) hold<-list(...)$hold
@@ -128,18 +131,33 @@ plot.densityMap<-function(x,...){
 	}
 	if(hold) null<-dev.hold()
 	if(type=="phylogram"){
+		if(direction%in%c("upwards","downwards")&&legend){
+			par(mar=mar)
+			plot.new()
+		}
 		N<-length(tree$tip.label)
-		if(legend&&is.null(ylim)) ylim<-c(1-0.12*(N-1),N)
-		else if(is.null(ylim)) ylim<-NULL
+		if(legend&&is.null(ylim)){
+			if(direction%in%c("rightwards","leftwards")) ylim<-c(1-0.12*(N-1),N)
+			else {
+				pp<-par("pin")[2]
+				sw<-(fsize*(max(strwidth(x$tree$tip.label,units="inches")))+
+					1.37*fsize*strwidth("W",units="inches"))[1]
+				alp<-optimize(function(a,H,sw,pp) (a*1.2*max(H)+sw-pp)^2,H=H,sw=sw,pp=pp,
+					interval=c(0,1e6))$minimum
+				ylim<-if(direction=="downwards") c(min(H)-sw/alp-0.16*max(H),max(H)) else 
+					c(min(H)-0.16*max(H),max(H)+sw/alp)
+			}
+		} else if(is.null(ylim)) ylim<-NULL
 		if(outline){
 			par(col="transparent")
 			plotTree(tree,fsize=fsize[1],lwd=lwd[1]+2,
-				offset=offset+0.2*lwd[1]/3+0.2/3,ftype=ftype[1],
-				ylim=ylim,mar=mar,direction=direction,hold=FALSE)
+				offset=offset+0.2*lwd[1]/3+0.2/3,ftype=ftype[1],xlim=xlim,
+				ylim=ylim,mar=mar,direction=direction,hold=FALSE,
+				add=direction%in%c("upwards","downwards")&&legend)
 			par(col="black")
 		}
 		plotSimmap(tree,cols,pts=FALSE,lwd=lwd[1],fsize=fsize[1],mar=mar,ftype=ftype[1],add=outline,
-			ylim=ylim,direction=direction,offset=offset,hold=FALSE)
+			xlim=xlim,ylim=ylim,direction=direction,offset=offset,hold=FALSE)
 		if(legend){
 			ff<-function(dd){
 				if(!("."%in%dd)) dig<-0
@@ -147,21 +165,33 @@ plot.densityMap<-function(x,...){
 				dig
 			}
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
-			add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
-				digits=dig,prompt=FALSE,x=0,y=1-0.08*(N-1),lwd=lwd[2],
-				fsize=fsize[2])
+			if(direction%in%c("rightwards","leftwards"))
+				add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
+					digits=dig,prompt=FALSE,x=if(direction=="leftwards") max(H)-legend else 0,
+					y=1-0.08*(N-1),lwd=lwd[2],
+					fsize=fsize[2],
+					direction=if(!is.null(xlim)) if(xlim[2]<xlim[1]) "leftwards" else 
+					"rightwards" else "rightwards")
+			else if(direction%in%c("upwards","downwards")){
+				sf<-abs(diff(par()$usr[1:2])/diff(par()$usr[3:4]))*
+					par()$pin[2]/par()$pin[1]
+				add.color.bar(legend*sf,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
+					digits=dig,prompt=FALSE,x=1,y=ylim[1]+0.04*max(nodeHeights(x$tree)),lwd=lwd[2],
+					fsize=fsize[2],direction="rightwards",subtitle=paste("length=",round(legend,
+					3),sep=""))
+			}
 		}
 	} else if(type=="fan"){
 		if(outline){
 			par(col="white")
 			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd[1]+2,
 				mar=mar,fsize=fsize[1],
-				ftype=ftype[1],ylim=ylim,hold=FALSE)))
+				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE)))
 			par(col="black")
 		}
 		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd[1],
 			mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
-			type="fan",ylim=ylim,hold=FALSE)))
+			type="fan",xlim=xlim,ylim=ylim,hold=FALSE)))
 		if(legend){
 			ff<-function(dd){
 				if(!("."%in%dd)) dig<-0

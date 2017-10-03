@@ -2,8 +2,8 @@
 \alias{pbtree}
 \title{Simulate pure-birth or birth-death stochastic tree or trees}
 \usage{
-pbtree(b=1, d=0, n=NULL, t=NULL, scale=NULL, nsim=1,
-	type=c("continuous","discrete"), ...)
+pbtree(b=1, d=0, n=NULL, t=NULL, scale=NULL, nsim=1, type=c("continuous",
+   "discrete"), ...)
 }
 \arguments{
 	\item{b}{birth rate or speciation rate for \code{type="continuous"}; the probability of speciating per time-step for \code{type="discrete"}.}

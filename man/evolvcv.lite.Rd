@@ -5,13 +5,13 @@
 evolvcv.lite(tree, X, maxit=2000, tol=1e-10)
 }
 \arguments{
-	\item{tree}{a phylogenetic tree in modified \code{"phylo"} format (see \code{\link{read.simmap}}).}
+	\item{tree}{an object of class \code{"simmap"}.}
 	\item{X}{an \code{n} x \code{m} matrix of tip values for \code{m} continuously valued traits in \code{n} species - row names should be species names.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization - may need to be increased for large trees.}
 	\item{tol}{tolerance value for \code{"L-BFGS-B"} optimization.}
 }
 \description{
-	This function takes a modified \code{"phylo"} object with a mapped binary or multistate trait and data for two and only two continuously valued character. It then fits four different evolutionary models: common rates and correlation; different rates, common correlation; different correlations, common rates; no common structure.
+	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for two and only two continuously valued character. It then fits four different evolutionary models: common rates and correlation; different rates, common correlation; different correlations, common rates; no common structure.
 }
 \value{
 	A list with the results summarized for each model.

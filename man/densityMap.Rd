@@ -4,8 +4,8 @@
 \title{Plot posterior density of stochastic mapping on a tree}
 \usage{
 densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
-	legend=NULL, outline=FALSE, type="phylogram", direction="rightwards",
-	plot=TRUE, ...)
+   legend=NULL, outline=FALSE, type="phylogram", direction="rightwards",
+   plot=TRUE, ...)
 \method{plot}{densityMap}(x, ...)
 }
 \arguments{
@@ -21,7 +21,7 @@ densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
 	\item{plot}{logical value indicating whether or not to plot the tree. If \code{plot=FALSE} then an object of class \code{"densityMap"} will be returned without plotting.}
 	\item{direction}{plotting direction for \code{type="phylogram"}.}
 	\item{x}{for \code{plot.densityMap}, an object of class \code{"densityMap"}.}
-	\item{...}{optional arguments for \code{plot.densityMap}. These include all the arguments of \code{densityMap} except \code{trees} and \code{res}. Additional optional arguments include \code{mar} (margins), \code{offset} (tip label offset), and \code{hold} (whether or not to use \code{dev.hold} to hold output to graphical device before plotting; defaults to \code{hold=TRUE}). Also, the argument \code{states} can be used to 'order' the states on the probability axis (that is, which state should correspond to a posterior probability of 0 or 1).}
+	\item{...}{optional arguments for \code{plot.densityMap}. These include all the arguments of \code{densityMap} except \code{trees} and \code{res}. Additional optional arguments include \code{mar} (margins), \code{offset} (tip label offset), and \code{hold} (whether or not to use \code{dev.hold} to hold output to graphical device before plotting; defaults to \code{hold=TRUE}). Also, the argument \code{states} can be used to 'order' the states on the probability axis (that is, which state should correspond to a posterior probability of 0 or 1). Some other plotting arguments, such as \code{xlim} and \code{ylim}, may also work.}
 }
 \description{
 	Function plots a tree with the posterior density for a mapped character from stochastic character mapping on the tree. Since the mapped value is the probability of being in state "1", only binary [0,1] characters are allowed.

@@ -1,16 +1,23 @@
-# function writes a modified "phylo" object to a simmap Newick string
-# written by Liam Revell 2011, 2013, 2015
+## function writes a modified "phylo" object to a simmap Newick string
+## written by Liam Revell 2011, 2013, 2015, 2017
 
 write.simmap<-function(tree,file=NULL,append=FALSE,map.order=NULL,quiet=FALSE){
-	if(inherits(tree,"multiPhylo")) for(i in 1:length(tree)) write.simmap(tree,file,if(i==1) append else TRUE,map.order)
-	else {
+	if(inherits(tree,"multiPhylo")){
+		if(is.null(file)) obj<-vector(mode="character",length=length(tree))
+		for(i in 1:length(tree)){
+			if(is.null(file)) obj[i]<-write.simmap(tree[[i]],file,if(i==1) append else TRUE,map.order,quiet)
+			else write.simmap(tree[[i]],file,if(i==1) append else TRUE,map.order,quiet)
+		}
+		if(is.null(file)) return(obj)
+	} else {
 		if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
 		if(is.null(tree$maps)) stop("tree is does not contain a stochastic character map.")
 		if(is.null(map.order)){
 			if(!is.null(attr(tree,"map.order")))
 				map.order<-attr(tree,"map.order")
 			else {
-				if(!quiet) message("map order should be specified in function call or by tree attribute \"map.order\".\nAssuming right-to-left order.")
+				if(!quiet) 
+					message("map order should be specified in function call or by tree attribute \"map.order\".\nAssuming right-to-left order.")
 				map.order<-"R"
 			}
 		}

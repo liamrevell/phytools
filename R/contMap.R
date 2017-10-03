@@ -1,5 +1,5 @@
-# function plots reconstructed values for ancestral characters along the edges of the tree
-# written by Liam J. Revell 2012, 2013, 2014, 2015
+## function plots reconstructed values for ancestral characters along the edges of the tree
+## written by Liam J. Revell 2012-2017
 contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	lims=NULL,outline=TRUE,sig=3,type="phylogram",direction="rightwards",
 	plot=TRUE,...){
@@ -53,6 +53,7 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	if(is.null(lims)) lims<-c(min(y),max(y))
 	trans<-0:1000/1000*(lims[2]-lims[1])+lims[1]
 	names(trans)<-0:1000
+	tree$maps<-vector(mode="list",length=nrow(tree$edge))
 	for(i in 1:nrow(tree$edge)){
 		XX<-cbind(c(H[i,1],steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))]),
 			c(steps[intersect(which(steps>H[i,1]),which(steps<H[i,2]))],H[i,2]))-H[i,1]
@@ -76,20 +77,24 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	invisible(xx)
 }
 
-# function
-# written by Liam J. Revell 2012
+## internally used function
+## written by Liam J. Revell 2012, 2017
 getState<-function(x,trans){
-	i<-1
-	while(x>trans[i]){
-		state<-names(trans)[i]
-		i<-i+1
+	if(x<=trans[1]) state<-names(trans)[1]
+	else if(x>=trans[length(trans)]) state<-names(trans)[length(trans)]
+	else {
+		i<-1
+		while(x>trans[i]){
+			state<-names(trans)[i]
+			i<-i+1
+		}
 	}
-	return(state)
+	state
 }
 
 ## S3 print method for objects of class "contMap"
 ## uses print.densityMap internally
-## written by Liam J. Revell 2012, 2013, 2014, 2015
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
 
 plot.contMap<-function(x,...){
 	if(inherits(x,"contMap")){
@@ -119,6 +124,8 @@ plot.contMap<-function(x,...){
 	else direction<-"rightwards"
 	if(hasArg(offset)) offset<-list(...)$offset
 	else offset<-NULL
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
 	if(hasArg(hold)) hold<-list(...)$hold
@@ -133,7 +140,7 @@ plot.contMap<-function(x,...){
 	# done optional arguments
 	leg.txt<-c(round(lims[1],sig),leg.txt,round(lims[2],sig))
 	plot(x,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,leg.txt=leg.txt,
-		type=type,mar=mar,direction=direction,offset=offset,ylim=ylim,hold=hold)
+		type=type,mar=mar,direction=direction,offset=offset,xlim=xlim,ylim=ylim,hold=hold)
 }
 
 ## S3 print method for object of class 'contMap'
@@ -151,5 +158,49 @@ drop.tip.contMap<-function(x,tip){
 	else {
 		x$tree<-drop.tip.simmap(x$tree,tip)
 		return(x)
+	}
+}
+
+## add error bars to contMap plot
+## written by Liam J. Revell 2017
+errorbar.contMap<-function(obj,...){
+	if(hasArg(x)) x<-list(...)$x
+	else x<-setNames(sapply(1:Ntip(obj$tree),function(x,obj){
+		ii<-which(obj$tree$edge[,2]==x)
+		ss<-names(obj$tree$maps[[ii]][length(obj$tree$maps[[ii]])])
+		obj$lims[1]+as.numeric(ss)/(length(obj$cols)-1)*diff(obj$lims)
+		},obj=obj),obj$tree$tip.label)
+	if(hasArg(scale.by.ci)) scale.by.ci<-list(...)$scale.by.ci
+	else scale.by.ci<-TRUE
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-14
+	tree<-obj$tree
+	aa<-fastAnc(tree,x,CI=TRUE)
+	xlim<-range(aa$CI95)
+	if(xlim[2]>obj$lims[2]||xlim[1]<obj$lims[1]){
+		cat(paste("  -----\n  The range of the contMap object, presently (",
+			round(obj$lims[1],4),",",
+			round(obj$lims[2],4),
+			"), should be equal to\n  or greater than the range of the CIs on ancestral states: (",
+			round(xlim[1],4),",",round(xlim[2],4),").\n",sep=""))
+		cat(paste("  To ensure that your error bars are correctly plotted, please recompute your\n", 
+			"  contMap object and increase lims.\n  -----\n",sep=""))
+	}
+	d<-diff(obj$lims)
+	if(scale.by.ci){
+		v<-aa$CI95[,2]-aa$CI95[,1]
+		v<-v/max(v)
+	} else v<-rep(0.5,tree$Nnode)
+	n<-length(obj$cols)-1
+	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	h<-max(nodeHeights(tree))
+	for(i in 1:tree$Nnode){
+		ii<-round((aa$CI95[i,1]-obj$lims[1])/d*n)
+		jj<-round((aa$CI95[i,2]-obj$lims[1])/d*(n+1))
+		cols<-obj$cols[ii:jj]   
+		add.color.bar(leg=0.1*h*v[i],cols=cols,prompt=FALSE,
+			x=lastPP$xx[i+Ntip(tree)]-0.05*h*v[i],
+			y=lastPP$yy[i+Ntip(tree)],title="",subtitle="",lims=NULL,
+			lwd=lwd)
 	}
 }

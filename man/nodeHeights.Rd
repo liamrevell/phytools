@@ -3,12 +3,13 @@
 \alias{nodeheight}
 \title{Compute the heights above the root of each node}
 \usage{
-nodeHeights(tree)
-nodeheight(tree, node)
+nodeHeights(tree, ...)
+nodeheight(tree, node, ...)
 }
 \arguments{
 	\item{tree}{a phylogeny as an object of class \code{"phylo"}.}
-	\item{node}{for \code{nodeheight}, the node for which we want to compute a height above the root.}
+	\item{node}{for \code{nodeheight}, the node for which we want to compute a height above the root (or including the root edge, for \code{root.edge=TRUE}).}
+	\item{...}{optional arguments - presently only \code{root.edge}, a logical value indicating whether or not to include the root edge length in the calculation of node heights.}
 }
 \description{
 	\code{nodeHeights} computes the height above the root for all nodes in the tree. \code{nodeheight} computes the height above the root for a single node.

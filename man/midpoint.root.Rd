@@ -25,7 +25,7 @@ midpoint.root(tree)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{reroot}}, \code{\link{root}}
+	\code{\link{midpoint}}, \code{\link{reroot}}, \code{\link{root}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

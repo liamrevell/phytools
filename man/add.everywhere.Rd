@@ -9,7 +9,7 @@ add.everywhere(tree, tip.name)
 	\item{tip.name}{a string containing the name of the tip to add.}
 }
 \description{
-	This function adds a tip to all branches to the tree and returns a a list of trees as an object of class \code{"multiPhylo"}.
+	This function adds a tip to all branches of the tree and returns a a list of trees as an object of class \code{"multiPhylo"}.
 }
 \value{
 	A list of trees as an object of class \code{"multiPhylo"}.  Since the tip can be added to any branch, the length of the list is equal to the number of edges in \code{tree}.

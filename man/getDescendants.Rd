@@ -1,8 +1,10 @@
 \name{getDescendants}
 \alias{getDescendants}
+\alias{getParent}
 \title{Get descendant node numbers}
 \usage{
 getDescendants(tree, node, curr=NULL)
+getParent(tree, node)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"}.}
@@ -11,16 +13,18 @@ getDescendants(tree, node, curr=NULL)
 }
 \description{
 	This function returns the set of node & tip numbers descended from \code{node}.
+	
+	\code{getParent} instead returns the single parent node of a specified node number (or \code{NULL} if \code{node} is already the root).
 }
 \value{
-	The set of node and tip numbers for the nodes and tips descended from \code{node} in a vector.
+	The set of node and tip numbers for the nodes and tips descended from \code{node} in a vector, or for \code{getParent} the single node preceding \code{node} in the tree.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{paintSubTree}}
+	\code{\link{Descendants}}, \code{\link{paintSubTree}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

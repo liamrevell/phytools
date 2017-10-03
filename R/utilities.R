@@ -1,5 +1,580 @@
-# some utility functions
-# written by Liam J. Revell 2011, 2012, 2013, 2014, 2015
+## some utility functions
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017
+
+## function to rescale a tree according to an EB model
+## written by Liam J. Revell 2017
+
+ebTree<-function(tree,r){
+	if(r!=0){
+		H<-nodeHeights(tree)
+		e<-(exp(r*H[,2])-exp(r*H[,1]))/r
+		tree$edge.length<-e
+	}
+	tree
+}
+
+## function to expand clades in a plot by a given factor
+## written by Liam J. Revell 2017
+expand.clade<-function(tree,node,factor=5){
+	cw<-reorder(tree)
+	tips<-setNames(rep(1,Ntip(tree)),cw$tip.label)
+	get.tips<-function(node,tree){
+    		dd<-getDescendants(tree,node)
+    		tree$tip.label[dd[dd<=Ntip(tree)]]
+	}
+	desc<-unlist(lapply(node,get.tips,tree=cw))
+	for(i in 2:Ntip(cw)){
+		tips[i]<-tips[i-1]+
+			if(names(tips)[i]%in%desc){
+				1 
+			} else if(names(tips)[i-1]%in%desc){
+				1
+			} else 1/factor
+	}
+	obj<-list(tree=tree,tips=tips)
+	class(obj)<-"expand.clade"
+	obj
+}
+
+## S3 print method for the object class "expand.clade"
+print.expand.clade<-function(x,...){
+	cat("An object of class \"expand.clade\" consisting of:\n")
+	cat(paste("(1) A phylogenetic tree (x$tree) with",Ntip(x$tree),
+		"tips and\n   ",x$tree$Nnode,"internal nodes.\n"))
+	cat("(2) A vector (x$tips) containing the desired tip-spacing.\n\n")
+}
+
+## S3 plot method for the object class "expand.clade"
+plot.expand.clade<-function(x,...){
+	args<-list(...)
+	args$tree<-x$tree
+	args$tips<-x$tips
+	if(inherits(args$tree,"simmap")) do.call(plotSimmap,args)
+	else do.call(plotTree,args)
+}
+
+## function to add a geological or other temporal legend to a plotted tree
+## written by Liam J. Revell 2017
+geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-par()$cex
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
+	if(hasArg(show.lines)) show.lines<-list(...)$show.lines
+	else show.lines<-TRUE
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(is.null(colors)){
+		colors<-setNames(c(
+			rgb(255,242,127,255,maxColorValue=255),
+			rgb(255,230,25,255,maxColorValue=255),
+			rgb(253,154,82,255,maxColorValue=255),
+			rgb(127,198,78,255,maxColorValue=255),
+			rgb(52,178,201,255,maxColorValue=255),
+			rgb(129,43,146,255,maxColorValue=255),
+			rgb(240,64,40,255,maxColorValue=255),
+			rgb(103,165,153,255,maxColorValue=255),
+			rgb(203,140,55,255,maxColorValue=255),
+			rgb(179,225,182,255,maxColorValue=255),
+			rgb(0,146,112,255,maxColorValue=255),
+			rgb(127,160,86,255,maxColorValue=255),
+			rgb(247,67,112,255,maxColorValue=255)),
+			c("Quaternary","Neogene","Paleogene",
+			"Cretaceous","Jurassic","Triassic",
+			"Permian","Carboniferous","Devonian",
+			"Silurian","Ordovician","Cambrian",
+			"Precambrian"))
+	}
+	if(is.null(leg)){
+		leg<-rbind(c(2.588,0),
+			c(23.03,2.588),
+			c(66.0,23.03),
+			c(145.0,66.0),
+			c(201.3,145.0),
+			c(252.17,201.3),
+			c(298.9,252.17),
+			c(358.9,298.9),
+			c(419.2,358.9),
+			c(443.8,419.2),
+			c(485.4,443.8),
+			c(541.0,485.4),
+			c(4600,541.0))
+		rownames(leg)<-c("Quaternary","Neogene","Paleogene",
+			"Cretaceous","Jurassic","Triassic",
+			"Permian","Carboniferous","Devonian",
+			"Silurian","Ordovician","Cambrian",
+			"Precambrian")
+		t.max<-max(obj$xx)
+		ii<-which(leg[,2]<=t.max)
+		leg<-leg[ii,]
+		leg[max(ii),1]<-t.max
+	}
+	colors<-sapply(colors,make.transparent,alpha=alpha)
+	if(plot){	
+		y<-c(rep(0,2),rep(par()$usr[4],2))
+		ylabel<--1/25*obj$Ntip
+		for(i in 1:nrow(leg)){
+			strh<-strheight(rownames(leg)[i])
+			polygon(c(leg[i,1:2],leg[i,2:1]),y,
+				col=colors[rownames(leg)[i]],border=NA)
+			if(show.lines){
+				lines(x=rep(leg[i,1],2),y=c(0,par()$usr[4]),
+					lty="dotted",col="grey")
+				lines(x=c(leg[i,1],mean(leg[i,])-0.8*cex*
+					get.asp()*strheight(rownames(leg)[i])),
+					y=c(0,ylabel),lty="dotted",col="grey")
+				lines(x=c(leg[i,2],mean(leg[i,])+0.8*cex*
+					get.asp()*strheight(rownames(leg)[i])),
+					y=c(0,ylabel),lty="dotted",col="grey")
+				lines(x=rep(mean(leg[i,])-0.8*cex*
+					get.asp()*strheight(rownames(leg)[i]),2),
+					y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+				lines(x=rep(mean(leg[i,])+0.8*cex*
+					get.asp()*strheight(rownames(leg)[i]),2),
+					y=c(ylabel,par()$usr[3]),lty="dotted",col="grey")
+			}
+			polygon(x=c(leg[i,1],
+				mean(leg[i,])-0.8*cex*get.asp()*strh,
+				mean(leg[i,])-0.8*cex*get.asp()*strh,
+				mean(leg[i,])+0.8*cex*get.asp()*strh,
+				mean(leg[i,])+0.8*cex*get.asp()*strh,
+				leg[i,2]),y=c(0,ylabel,par()$usr[3],
+				par()$usr[3],ylabel,0),
+				col=colors[rownames(leg)[i]],border=NA)
+			text(x=mean(leg[i,])+
+				if(obj$direction=="leftwards") 0.12*strh else -0.12*strh,
+				y=ylabel,labels=rownames(leg)[i],
+				srt=90,adj=c(1,0.5),cex=cex)
+		}
+	}
+	invisible(list(leg=leg,colors=colors))
+}
+
+## borrowed from mapplots
+get.asp<-function(){
+	pin<-par("pin")
+	usr<-par("usr")
+	asp<-(pin[2]/(usr[4]-usr[3]))/(pin[1]/(usr[2]-usr[1]))
+	asp
+}
+
+round.polygon<-function(x,y,col="transparent"){
+	## just space holding for now	
+}
+
+## draw a box around a clade
+## written by Liam J. Revell 2017
+
+cladebox<-function(tree,node,color=NULL,...){
+	if(is.null(color)) color<-make.transparent("yellow",0.2)
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	h<-max(nodeHeights(tree))
+	parent<-tree$edge[which(tree$edge[,2]==node),1]
+	x0<-max(c(obj$xx[node]+obj$xx[parent])/2,obj$xx[node]-0.05*h)
+	x1<-obj$x.lim[2]
+	dd<-getDescendants(tree,node)
+	y0<-min(range(obj$yy[dd]))-0.5
+	y1<-max(range(obj$yy[dd]))+0.5
+	polygon(c(x0,x1,x1,x0),c(y0,y0,y1,y1),col=color,
+		border=0)
+}
+
+## draw tip labels as linking lines to text
+## written by Liam J. Revell 2017
+
+linklabels<-function(text,tips,link.type=c("bent","curved","straight"),
+	...){
+	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(!(lastPP$direction%in%c("leftwards","rightwards")))
+		stop("direction should be \"rightwards\" or \"leftwards\".")
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-1
+	if(hasArg(col)) col<-list(...)$col
+	else col<-"black"
+	if(hasArg(lty)) lty<-list(...)$lty
+	else lty<-"dashed"
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-1
+	if(hasArg(link.offset)) link.offset<-list(...)$link.offset
+	else link.offset<-0.1*max(lastPP$xx)
+	if(hasArg(font)) font<-list(...)$font
+	else font<-3
+	link.type<-link.type[1]
+	xpos<-lastPP$xx[tips]+strwidth("i")
+	ypos<-lastPP$yy[tips]
+	xmax<-rep(max(lastPP$xx),length(tips))+link.offset
+	ylab<-seq(min(lastPP$yy),max(lastPP$yy),
+		by=(max(lastPP$yy)-min(lastPP$yy))/(length(tips)-1))
+	ylab<-ylab[rank(ypos)]
+	text(xmax,ylab,gsub("_"," ",text),pos=4,font=font,cex=cex,
+		offset=0)
+	if(link.type=="curved"){
+		for(i in 1:length(tips))
+			drawCurve(c(xpos[i],xmax[i]),c(ypos[i],ylab[i]),
+				scale=0.05,lty=lty,col=col,lwd=lwd)
+	} else if(link.type=="bent"){
+		tipmax<-max(lastPP$xx)
+		for(i in 1:length(tips)){
+			ff<-strwidth("W")
+			segments(xpos[i],ypos[i],tipmax+link.offset/2,ypos[i],
+				lty=lty,col=col,lwd=lwd)
+			segments(tipmax+link.offset/2,ypos[i],tipmax+
+				link.offset/2+ff,ylab[i],lty=lty,col=col,lwd=lwd)
+			segments(tipmax+link.offset/2+ff,ylab[i],xmax[i],ylab[i],
+				lty=lty,col=col,lwd=lwd)
+		}
+	} else if(link.type=="straight")
+		segments(xpos,ypos,xmax,ylab,lty=lty,col=col)
+}
+
+## function forces a tree to be ultrametric using two different methods
+## written by Liam J. Revell 2017
+
+force.ultrametric<-function(tree,method=c("nnls","extend")){
+	method<-method[1]
+	if(method=="nnls") tree<-nnls.tree(cophenetic(tree),tree,
+		rooted=TRUE,trace=0)
+	else if(method=="extend"){
+		h<-diag(vcv(tree))
+		d<-max(h)-h
+		ii<-sapply(1:Ntip(tree),function(x,y) which(y==x),
+			y=tree$edge[,2])
+		tree$edge.length[ii]<-tree$edge.length[ii]+d
+	} else 
+		cat("method not recognized: returning input tree\n\n")
+	tree
+}
+
+## function to create curved clade labels for a fan tree
+## written by Liam J. Revell 2017
+
+arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
+	lab.offset=1.06,cex=1,orientation="curved",...){
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(obj$type!="fan") stop("method works only for type=\"fan\"")
+	h<-max(sqrt(obj$xx^2+obj$yy^2))
+	if(hasArg(mark.node)) mark.node<-list(...)$mark.node
+	else mark.node<-TRUE
+	if(hasArg(interactive)) interactive<-list(...)$interactive
+	else {
+		if(is.null(node)) interactive<-TRUE
+		else interactive<-FALSE
+	}
+	if(interactive) node<-getnode()
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-par()$lwd
+	if(hasArg(col)) col<-list(...)$col
+	else col<-par()$col
+	if(hasArg(lend)) lend<-list(...)$lend
+	else lend<-par()$lend
+	if(hasArg(clockwise)) clockwise<-list(...)$clockwise
+	else clockwise<-TRUE
+	if(hasArg(n)) n<-list(...)$n
+	else n<-0.05
+	if(mark.node) points(obj$xx[node],obj$yy[node],pch=21,
+		bg="red")
+	if(is.null(tree)){
+		tree<-list(edge=obj$edge,tip.label=1:obj$Ntip,
+			Nnode=obj$Nnode)
+		class(tree)<-"phylo"
+	}
+	d<-getDescendants(tree,node)
+	d<-sort(d[d<=Ntip(tree)])
+	deg<-atan(obj$yy[d]/obj$xx[d])*180/pi
+	ii<-intersect(which(obj$yy[d]>=0),which(obj$xx[d]<0))
+	deg[ii]<-180+deg[ii]
+	ii<-intersect(which(obj$yy[d]<0),which(obj$xx[d]<0))
+	deg[ii]<-180+deg[ii]
+	ii<-intersect(which(obj$yy[d]<0),which(obj$xx[d]>=0))
+	deg[ii]<-360+deg[ii]
+	draw.arc(x=0,y=0,radius=ln.offset*h,deg1=min(deg),
+		deg2=max(deg),lwd=lwd,col=col,lend=lend,n=n)
+	if(orientation=="curved")
+		arctext(text,radius=lab.offset*h,
+			middle=mean(range(deg*pi/180)),cex=cex,
+			clockwise=clockwise)
+	else if(orientation=="horizontal"){
+		x0<-lab.offset*cos(median(deg)*pi/180)*h
+		y0<-lab.offset*sin(median(deg)*pi/180)*h
+		text(x=x0,y=y0,label=text,
+		adj=c(if(x0>=0) 0 else 1,if(y0>=0) 0 else 1),
+		offset=0,cex=cex)
+	}
+}
+
+## function to return a node index interactively from a plotted tree
+## written by Liam J. Revell 2017
+getnode<-function(...){
+	if(hasArg(env)) env<-list(...)$env
+	else env<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	if(hasArg(show.pt)) show.pt<-list(...)$show.pt
+	else show.pt<-FALSE
+	xy<-unlist(locator(n=1))
+	if(show.pt) points(xy[1],xy[2])
+	d<-sqrt((xy[1]-env$xx)^2+(xy[2]-env$yy)^2)
+	ii<-which(d==min(d))[1]
+	ii
+}
+
+## function mostly to interactively label nodes by clicking
+## written by Liam J. Revell 2017
+labelnodes<-function(text,node=NULL,interactive=TRUE,
+	shape=c("circle","ellipse","rect"),...){
+	shape<-shape[1]
+	if(hasArg(circle.exp)) circle.exp<-list(...)$circle.exp
+	else circle.exp<-1.3
+	if(hasArg(rect.exp)) rect.exp<-list(...)$rect.exp
+	else rect.exp<-1.6
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-1
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	h<-cex*strheight("A")
+	w<-cex*strwidth(text)
+	rad<-circle.exp*h*diff(par()$usr[1:2])/diff(par()$usr[3:4])
+	if(is.null(node)){
+		if(!interactive){
+			cat("No nodes provided. Setting interactive mode to TRUE.\n")
+			interactive<-TRUE
+		}
+		node<-vector(length=length(text))
+	}
+	for(i in 1:length(text)){
+		if(interactive){
+			cat(paste("Click on the node you would like to label ",
+				text[i],".\n",sep=""))
+			flush.console()
+			ii<-getnode(env=obj)
+			node[i]<-ii
+		} else ii<-node[i]
+		if(shape=="circle")
+			draw.circle(obj$xx[ii],obj$yy[ii],rad,col="white")
+		else if(shape=="ellipse")
+			draw.ellipse(obj$xx[ii],obj$yy[ii],0.8*w[i],h,
+				col="white")
+		else if(shape=="rect")
+			rect(xleft=obj$xx[ii]-0.5*rect.exp*w[i],
+				ybottom=obj$yy[ii]-0.5*rect.exp*h,
+				xright=obj$xx[ii]+0.5*rect.exp*w[i],
+				ytop=obj$yy[ii]+0.5*rect.exp*h,col="white",
+				ljoin=1)
+		text(obj$xx[ii],obj$yy[ii],label=text[i],cex=cex)
+	}
+	invisible(node)
+}
+
+## convert object of class "birthdeath" into birth & death rates
+bd<-function(x){
+	if(class(x)!="birthdeath") stop("x should be an object of class 'birthdeath'")
+	b<-x$para[2]/(1-x$para[1])
+	d<-b-x$para[2]
+	setNames(c(b,d),c("b","d"))
+}
+
+## compute AIC weights
+aic.w<-function(aic){
+	d.aic<-aic-min(aic)
+	x<-exp(-1/2*d.aic)/sum(exp(-1/2*d.aic))
+	class(x)<-"aic.w"
+	x
+}
+
+print.aic.w<-function(x,...){
+	if(hasArg(signif)) signif<-list(...)$signif
+	else signif<-8
+	print(round(unclass(x),signif))
+}
+
+## function to compute all paths towards the tips from a node
+## written by  Liam J. Revell
+node.paths<-function(tree,node){
+	d<-Descendants(tree,node,"children")
+	paths<-as.list(d)
+	while(any(d>Ntip(tree))){
+		jj<-1
+		new.paths<-list()
+		for(i in 1:length(paths)){
+			if(paths[[i]][length(paths[[i]])]<=Ntip(tree)){ 
+				new.paths[[jj]]<-paths[[i]]
+				jj<-jj+1
+			} else {
+				ch<-Descendants(tree,paths[[i]][length(paths[[i]])],
+					"children")
+				for(j in 1:length(ch)){
+					new.paths[[jj]]<-c(paths[[i]],ch[j])
+					jj<-jj+1
+				}
+			}
+		}
+		paths<-new.paths
+		d<-sapply(paths,function(x) x[length(x)])
+	}
+	paths
+}
+
+## function to compute a modification of Grafen's edge lengths
+## written by Liam J. Revell 2016
+modified.Grafen<-function(tree,power=2){
+	max.np<-function(tree,node){
+		np<-node.paths(tree,node)
+		if(length(np)>0) max(sapply(np,length)) else 0
+	}
+	nn<-1:(Ntip(tree)+tree$Nnode)
+	h<-sapply(nn,max.np,tree=tree)+1
+	h<-(h/max(h))^power
+	edge.length<-vector()
+	for(i in 1:nrow(tree$edge)) 
+		edge.length[i]<-diff(h[tree$edge[i,2:1]])
+	tree$edge.length<-edge.length
+	tree
+}
+
+## function to compute all rotations
+## written by Liam J. Revell 2016
+allRotations<-function(tree){
+	if(!is.binary.tree(tree)){
+		was.binary<-FALSE
+		if(is.null(tree$edge.length)){ 
+			tree<-compute.brlen(tree)
+			had.edge.lengths<-FALSE
+		} else had.edge.lengths<-TRUE
+		tree<-multi2di(tree)
+	} else was.binary<-TRUE
+	nodes<-1:tree$Nnode+Ntip(tree)
+	trees<-vector(mode="list",length=2^length(nodes))
+	ii<-2
+	trees[[1]]<-tree
+	for(i in 1:length(nodes)){
+		N<-ii-1
+		for(j in 1:N){
+			trees[[ii]]<-rotate(trees[[j]],nodes[i])
+			ii<-ii+1
+		}
+	}
+	trees<-lapply(trees,untangle,"read.tree")
+	if(!was.binary){
+		trees<-lapply(trees,di2multi)
+		if(!had.edge.lengths) trees<-lapply(trees,
+			function(x){
+				x$edge.length<-NULL
+				x
+			})
+	}
+	class(trees)<-"multiPhylo"
+	trees
+}
+
+## function to rotate a multifurcation in all possible ways
+## written by Liam J. Revell 2016
+rotate.multi<-function(tree,node){
+	kids<-Children(tree,node)
+	if(length(kids)>2){
+		ii<-sapply(kids,function(x,y) which(y==x),y=tree$edge[,2])
+		jj<-permn(ii)
+		foo<-function(j,i,t){
+			t$edge[i,]<-t$edge[j,]
+			if(!is.null(t$edge.length))
+				t$edge.length[i]<-t$edge.length[j]
+			untangle(t,"read.tree")
+		}
+		obj<-lapply(jj[2:length(jj)],foo,i=ii,t=tree)
+		class(obj)<-"multiPhylo"
+	} else obj<-untangle(rotate(tree,node),"read.tree")
+	obj
+}
+
+## wrapper for bind.tree that takes objects of class "simmap"
+## written by Liam J. Revell 2016
+bind.tree.simmap<-function(x,y,where="root"){
+	x<-reorder(x)
+	y<-reorder(y)
+	rootx<-x$edge[1,1]
+	rooty<-y$edge[1,1]
+	xy<-read.tree(text=write.tree(bind.tree(x,y,where)))
+	Mx<-rbind(matchLabels(x,xy),matchNodes(x,xy,"distances"))
+	My<-rbind(matchLabels(y,xy),matchNodes(y,xy,"distances"))
+	if(where!="root"&&where<=Ntip(x))
+		Mx[which(is.na(Mx[,2])),2]<-findMRCA(xy,y$tip.label)
+	xy$maps<-vector(mode="list",length=nrow(xy$edge))
+	ix<-sapply(Mx[-which(Mx[,1]==rootx),1],
+		function(x,y) which(y==x),y=x$edge[,2])
+	ixy<-sapply(Mx[-which(Mx[,1]==rootx),2],
+		function(x,y) which(y==x),y=xy$edge[,2])
+	xy$maps[ixy]<-x$maps[ix]
+	iy<-sapply(My[-which(My[,1]==rooty),1],
+		function(x,y) which(y==x),y=y$edge[,2])
+	ixy<-sapply(My[-which(My[,1]==rooty),2],
+		function(x,y) which(y==x),y=xy$edge[,2])
+	xy$maps[ixy]<-y$maps[iy]
+	xy$mapped.edge<-makeMappedEdge(xy$edge,xy$maps)
+	ns<-c(setNames(getStates(xy,"tips"),1:Ntip(xy)),
+		getStates(xy,"nodes"))
+	xy$node.states<-cbind(ns[as.character(xy$edge[,1])],
+		ns[as.character(xy$edge[,2])])
+	xy$states<-getStates(xy,"tips")
+	attr(xy,"class")<-c("simmap",class(xy))
+	xy
+}
+
+## generic function to convert an object of class "simmap" to "phylo"
+## written by Liam J. Revell 2016
+as.phylo.simmap<-function(x,...){
+	x$maps<-NULL
+	x$mapped.edge<-NULL
+	if(!is.null(x$node.states)) x$node.states<-NULL
+	if(!is.null(x$states)) x$states<-NULL
+	if(!is.null(x$Q)) x$Q<-NULL
+	if(!is.null(x$logL)) x$logL<-NULL
+	if(!is.null(attr(x,"map.order"))) attr(x,"map.order")<-NULL
+	class(x)<-setdiff(class(x),"simmap")
+	x
+}
+
+## generic function to convert an object of class "multiSimmap" to "multiPhylo"
+## written by Liam J. Revell 2016
+as.multiPhylo.multiSimmap<-function(x,...){
+	obj<-lapply(x,as.phylo)
+	class(obj)<-setdiff(class(x),"multiSimmap")
+	obj
+}
+
+## generic function to convert object of class "phylo" to "multiPhylo"
+## written by Liam J. Revell 2016
+as.multiPhylo.phylo<-function(x,...){
+	obj<-list(x)
+	class(obj)<-"multiPhylo"
+	obj
+}
+
+as.multiPhylo<-function(x,...){
+	if (identical(class(x),"multiPhylo")) return(x)
+	UseMethod("as.multiPhylo")
+}
+
+## get mapped states
+## written by Liam J. Revell 2016
+mapped.states<-function(tree,...){
+	if(!(inherits(tree,"simmap")||inherits(tree,"multiSimmap")))
+		stop("tree should be an object of class \"simmap\" or \"multiSimmap\".")
+	else {
+		if(inherits(tree,"simmap")){
+			if(!is.null(tree$mapped.edge)) 
+				obj<-sort(colnames(tree$mapped.edge))
+			else 
+				obj<-sort(unique(unlist(lapply(tree$maps,function(x) names(x)))))
+		} else if(inherits(tree,"multiSimmap")) {
+			obj<-sapply(tree,mapped.states,...)
+		}
+	}
+	obj
+}
+
+## match labels between trees (equivalent to matchNodes)
+## written by Liam J. Revell 2016
+matchLabels<-function(tr1,tr2){
+	foo<-function(x,y) if(length(obj<-which(y==x))>0) obj else NA
+	M<-cbind(1:Ntip(tr1),sapply(tr1$tip.label,foo,y=tr2$tip.label))
+	colnames(M)<-c("tr1","tr2")
+	M
+}
 
 ## compute the probability of states changes along edges of the tree
 ## written by Liam J. Revell 2015
@@ -35,17 +610,23 @@ edgeProbs<-function(trees){
 }
 
 ## get a position in the tree interactively
-## written by Liam J. Revell 2015
-get.treepos<-function(message=TRUE){
+## written by Liam J. Revell 2015, 2016
+get.treepos<-function(message=TRUE,...){
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(obj$type=="phylogram"&&obj$direction=="rightwards"){
 		if(message){ 
 			cat("Click on the tree position you want to capture...\n")
 			flush.console()
 		}
-		x<-unlist(locator(1)) 	
-		y<-x[2] 	
-		x<-x[1]
+		if(hasArg(x)) x<-list(...)$x
+		else x<-NULL
+		if(hasArg(y)) y<-list(...)$y
+		else y<-NULL
+		if(is.null(x)||is.null(y)){
+			x<-unlist(locator(1)) 	
+			y<-x[2] 	
+			x<-x[1]
+		}
 		d<-pos<-c()
 		for(i in 1:nrow(obj$edge)){
 			x0<-obj$xx[obj$edge[i,]]
@@ -248,10 +829,10 @@ drop.clade<-function(tree,tip){
 }
 
 
-# function to re-root a phylogeny along an edge
-# written by Liam Revell 2011-2015
+## function to re-root a phylogeny along an edge
+## written by Liam J. Revell 2011-2016
 
-reroot<-function(tree,node.number,position,interactive=FALSE,...){
+reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(interactive){
 		plotTree(tree,...)
@@ -261,6 +842,7 @@ reroot<-function(tree,node.number,position,interactive=FALSE,...){
 		node.number<-obj$where
 		position<-tree$edge.length[which(tree$edge[,2]==node.number)]-obj$pos
 	}
+	if(is.null(position)) position<-tree$edge.length[which(tree$edge[,2]==node.number)]
 	tt<-splitTree(tree,list(node=node.number,bp=position))
 	p<-tt[[1]]
 	d<-tt[[2]]
@@ -279,13 +861,13 @@ reroot<-function(tree,node.number,position,interactive=FALSE,...){
 }
 
 ## function to add an arrow pointing to a tip or node in the tree
-## written by Liam J. Revell 2014
+## written by Liam J. Revell 2014, 2017
 
 add.arrow<-function(tree=NULL,tip,...){
 	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(!is.null(tree)){
-		if(class(tree)=="contMap") tree<-tree$tree
-		else if(class(tree)=="densityMap") tree<-tree$tree
+		if(inherits(tree,"contMap")) tree<-tree$tree
+		else if(inherits(tree,"densityMap")) tree<-tree$tree
 	}
 	if(is.numeric(tip)){
 		ii<-tip
@@ -326,7 +908,11 @@ add.arrow<-function(tree=NULL,tip,...){
 		y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta-arra/2)*hedl*asp,
 		x1=lastPP$xx[ii]+cos(theta)*strw,
 		y1=lastPP$yy[ii]+sin(theta)*strw,
-		col=col,lwd=lwd,lend="round") 
+		col=col,lwd=lwd,lend="round")
+	invisible(list(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
+		y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
+		x1=lastPP$xx[ii]+cos(theta)*strw,
+		y1=lastPP$yy[ii]+sin(theta)*strw))
 }
 
 ## function to ladderize phylogeny with mapped discrete character
@@ -380,12 +966,13 @@ rep.multiPhylo<-function(x,...){
 }
 
 ## function to rescale simmap style trees
-## written by Liam J. Revell 2012, 2013, 2014, 2015
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017
 rescaleSimmap<-function(tree,...){
 	if(inherits(tree,"multiPhylo")){
+		cls<-class(tree)
 		trees<-unclass(tree)
 		trees<-lapply(trees,rescaleSimmap,...)
-		class(trees)<-"multiPhylo"
+		class(trees)<-cls
 		return(trees)
 	} else if(inherits(tree,"phylo")){
 		if(hasArg(lambda)) lambda<-list(...)$lambda
@@ -483,7 +1070,8 @@ plot.describe.simmap<-function(x,...){
 		nodelabels(pie=x$ace,piecol=colors[colnames(x$ace)],cex=cex[1])
 		if(!is.null(x$tips)) tips<-x$tips else tips<-to.matrix(getStates(x$tree[[1]],"tips"),
 			seq=states) 
-		tiplabels(pie=tips,piecol=colors[colnames(tips)],cex=cex[2])
+		tiplabels(pie=tips[if(is.null(x$ref.tree)) x$tree[[1]]$tip.label else 
+			x$ref.tree$tip.label,],piecol=colors[colnames(tips)],cex=cex[2])
 	} else if(inherits(x$tree,"phylo")){
 		states<-colnames(x$Tr)
 		if(hasArg(colors)) colors<-list(...)$colors
@@ -549,15 +1137,19 @@ describe.simmap<-function(tree,...){
 }
 
 ## function finds the height of a given node
-## written by Liam Revell 2014, 2015
-nodeheight<-function(tree,node){
+## written by Liam Revell 2014, 2015, 2016
+nodeheight<-function(tree,node,...){
+	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+	else root.edge<-FALSE
+	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(node==(length(tree$tip.label)+1)) h<-0
 	else {
 		a<-setdiff(c(getAncestors(tree,node),node),length(tree$tip.label)+1)
 		h<-sum(tree$edge.length[sapply(a,function(x,e) which(e==x),e=tree$edge[,2])])
 	}
-	h
+	h+ROOT
 }
 
 # fast pairwise MRCA function
@@ -642,7 +1234,6 @@ vcvPhylo<-function(tree,anc.nodes=TRUE,...){
 	}
 	if(hasArg(model)) model<-list(...)$model
 	else model<-"BM"
-
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-12
 	if(model=="OU"){
@@ -656,7 +1247,13 @@ vcvPhylo<-function(tree,anc.nodes=TRUE,...){
 			tree<-lambdaTree(tree,lambda)
 		} else model<-"BM"
 		model<-"BM"
-	}	
+	}
+	if(model=="EB"){
+		if(hasArg(r)){
+			r<-list(...)$r
+			tree<-ebTree(tree,r)
+		} else model<-"BM"
+	}
 	# done settings
 	n<-length(tree$tip.label)
 	h<-nodeHeights(tree)[order(tree$edge[,2]),2]
@@ -688,21 +1285,23 @@ lambdaTree<-function(tree,lambda){
 }
 
 ## di2multi method for tree with mapped state
-## written by Liam J. Revell 2013, 2015
-di2multi.simmap<-function(tree,tol=1e-08){
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(is.null(tree$maps)){
+## written by Liam J. Revell 2013, 2015, 2016
+di2multi.simmap<-function(phy,...){
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-08
+	if(!inherits(phy,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(is.null(phy$maps)){
 		cat("Warning: tree does not contain mapped state. Using di2multi.\n")
-		return(di2multi(tree,tol))
+		return(di2multi(phy,tol))
 	}
-	N<-length(tree$tip.label)
-	n<-length(intersect(which(tree$edge.length<tol),which(tree$edge[,2]>N)))
-	if(n==0) return(tree)
-	edge<-tree$edge
+	N<-length(phy$tip.label)
+	n<-length(intersect(which(phy$edge.length<tol),which(phy$edge[,2]>N)))
+	if(n==0) return(phy)
+	edge<-phy$edge
 	edge[edge>N]<--edge[edge>N]+N
-	edge.length<-tree$edge.length
-	maps<-tree$maps
-	Nnode<-tree$Nnode
+	edge.length<-phy$edge.length
+	maps<-phy$maps
+	Nnode<-phy$Nnode
 	for(i in 1:n){
 		ii<-intersect(which(edge.length<tol),which(edge[,2]<0))[1]
 		node<-edge[ii,2]
@@ -717,18 +1316,22 @@ di2multi.simmap<-function(tree,tol=1e-08){
 	mm<-1:Nnode+N
 	for(i in 1:length(edge)) if(edge[i]%in%nn) edge[i]<-mm[which(nn==edge[i])]
 	mapped.edge<-makeMappedEdge(edge,maps)
-	tt<-list(edge=edge,Nnode=Nnode,tip.label=tree$tip.label,edge.length=edge.length,
+	tt<-list(edge=edge,Nnode=Nnode,tip.label=phy$tip.label,edge.length=edge.length,
 		maps=maps,mapped.edge=mapped.edge)
 	class(tt)<-"phylo"
-	if(!is.null(attr(tree,"order"))) attr(tt,"order")<-attr(tree,"order")
-	if(!is.null(tree$node.states)) tt$node.states<-getStates(tt,"nodes")
-	if(!is.null(tree$states)) tt$states<-getStates(tt,"tips")
+	if(!is.null(attr(phy,"order"))) attr(tt,"order")<-attr(phy,"order")
+	if(!is.null(phy$node.states)) tt$node.states<-getStates(tt,"nodes")
+	if(!is.null(phy$states)) tt$states<-getStates(tt,"tips")
 	return(tt)
 }
 
 # returns the heights of each node
-# written by Liam J. Revell 2011, 2012, 2013, 2015
-nodeHeights<-function(tree){
+# written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
+nodeHeights<-function(tree,...){
+	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+	else root.edge<-FALSE
+	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order"))) t<-reorder(tree)
 	else t<-tree
@@ -746,7 +1349,7 @@ nodeHeights<-function(tree){
 	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order")))
 		o<-apply(matrix(tree$edge[,2]),1,function(x,y) which(x==y),y=t$edge[,2])
 	else o<-1:nrow(t$edge)
-	return(X[o,])
+	return(X[o,]+ROOT)
 }
 
 ## function drops all the leaves from the tree & collapses singleton nodes
@@ -958,8 +1561,8 @@ collapse.to.star<-function(tree,node){
 	tree
 }
 
-# function returns the MRCA, or its height above the root, for a set of taxa (in tips)
-# written by Liam Revell 2012, 2013, 2015
+## function returns the MRCA, or its height above the root, for a set of taxa (in tips)
+## written by Liam Revell 2012, 2013, 2015, 2016
 findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 	type<-type[1]
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -970,12 +1573,10 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 			X<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
 		}
 		return(X)
-	} else {
-		H<-nodeHeights(tree)
-		X<-sapply(tips,function(x,y,z) sapply(y,fastMRCA,sp1=x,tree=z),y=tips,z=tree)
-		Y<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
-
-		if(type=="height") return(Y[which.min(Y)]) else return(X[which.min(Y)])
+    } else {
+		node<-getMRCA(tree,tips)
+		if (type == "node") return(node)
+		else if(type=="height") return(nodeheight(tree,node))
 	}
 }
 
@@ -1308,19 +1909,23 @@ getDescendants<-function(tree,node,curr=NULL){
 }
 
 # function computes vcv for each state, and stores in array
-# written by Liam J. Revell 2011/2012
-multiC<-function(tree){
+# written by Liam J. Revell 2011, 2012, 2016
+multiC<-function(tree,internal=FALSE){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	n<-length(tree$tip.label)
+	if(!inherits(tree,"simmap")) stop("tree should be an object of class \"simmap\".")
 	m<-ncol(tree$mapped.edge)
 	# compute separate C for each state
 	mC<-list()
 	for(i in 1:m){
-		mtree<-list(edge=tree$edge,Nnode=tree$Nnode,tip.label=tree$tip.label,edge.length=tree$mapped.edge[,i])
+		mtree<-list(edge=tree$edge,
+			Nnode=tree$Nnode,
+			tip.label=tree$tip.label,
+			edge.length=tree$mapped.edge[,i])
 		class(mtree)<-"phylo"
-		mC[[i]]<-vcv.phylo(mtree)
+		mC[[i]]<-if(internal) vcvPhylo(mtree,internal=TRUE) else vcv.phylo(mtree)
 	}
-	return(mC)
+	names(mC)<-colnames(tree$mapped.edge)
+	mC
 }
 
 # function pastes subtree onto tip
@@ -1364,7 +1969,7 @@ untangle<-function(tree,method=c("reorder","read.tree")){
 		if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
 		else if(method=="read.tree"){
 			if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
-			else tree<-read.tree(text=write.tree(tree))
+			else tree<-if(Ntip(tree)>1) read.tree(text=write.tree(tree)) else read.newick(text=write.tree(tree))
 		}
 		ii<-!names(obj)%in%names(attributes(tree))
 		attributes(tree)<-c(attributes(tree),obj[ii])

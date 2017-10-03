@@ -8,7 +8,7 @@
 # "contmap" maps reconstructed trait evolution for a continuous character on the tree
 # "phenogram95" plots a 95% CI phenogram
 # "scattergram" plots a phylogenetic scatterplot matrix
-# written by Liam J. Revell 2012, 2013, 2014, 2015
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2017
 
 fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip","densitymap","contmap","phenogram95","scattergram"),...,control=list()){
 	type<-matchType(type,c("extinction","traitgram3d","droptip","densitymap","contmap","phenogram95","scattergram"))
@@ -20,20 +20,23 @@ fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip","densitymap
 	else if(type=="densitymap") plotDensityMap(tree,...)
 	else if(type=="contmap") plotContMap(tree,...)
 	else if(type=="phenogram95") phenogram95(tree,...)
-	else if(type=="scattergram") phyloScattergram(tree,...)
+	else if(type=="scattergram") invisible(phyloScattergram(tree,...))
 	else stop(paste("do not recognize type = \"",type,"\"",sep=""))
 }
 
-# phyloScattergram internal function
-# written by Liam J. Revell 2013, 2014
+## phyloScattergram internal function
+## written by Liam J. Revell 2013, 2014, 2017
 
 phyloScattergram<-function(tree,...){
 	if(hasArg(X)) X<-list(...)$X
 	else stop("phenotypic data should be provided in the matrix X")
+	if(is.data.frame(X)) X<-as.matrix(X)
 	if(hasArg(fsize)) fsize<-list(...)$fsize
 	else fsize<-0.7
 	if(hasArg(colors)) colors<-list(...)$colors
-	else if(!is.null(tree$maps)) colors<-setNames(palette()[1:ncol(tree$mapped.edge)],sort(colnames(tree$mapped.edge)))
+	else if(!is.null(tree$maps)) 
+		colors<-setNames(palette()[1:ncol(tree$mapped.edge)],
+		sort(colnames(tree$mapped.edge)))
 	if(hasArg(label)) label<-list(...)$label
 	else label<-"radial"
 	if(hasArg(hold)) hold<-list(...)$hold
@@ -51,10 +54,15 @@ phyloScattergram<-function(tree,...){
 	par(mar=c(0,0,0,0))
 	par(oma=c(5,5,3,3))
 	m<-ncol(X)
+	A<-apply(X,2,fastAnc,tree=tree)
+	cmaps<-list()
 	for(i in 1:m) for(j in 1:m){
-		if(i==j) contMap(tree,X[,i],legend=FALSE,lwd=2,outline=F,fsize=fsize)
+		if(i==j) cmaps[[i]]<-contMap(tree,X[,i],
+			legend=FALSE,lwd=2,outline=F,fsize=fsize)
 		else { 
-			phylomorphospace(tree,X[,c(j,i)],lwd=1,node.by.map=TRUE,axes=FALSE,node.size=c(0,1),colors=colors,label=label,xlab="",ylab="")
+			phylomorphospace(tree,X[,c(j,i)],A=A[,c(j,i)],lwd=1,
+				node.by.map=TRUE,axes=FALSE,node.size=c(0,1),
+				colors=colors,label=label,xlab="",ylab="")
 			if(i==1) axis(side=3) # top row
 			if(i==m) axis(side=1) # first column
 			if(j==1) axis(side=2) # bottom row
@@ -63,10 +71,54 @@ phyloScattergram<-function(tree,...){
 	}
 	par(cex=0.9)
 	if(is.null(colnames(X))) colnames(X)<-paste("V",1:m,sep="")
-	invisible(mapply(title,xlab=colnames(X),adj=seq(0,(m-1)/m,1/m)+1/(2*m),MoreArgs=list(outer=TRUE,cex=0.9)))
-	invisible(mapply(title,ylab=colnames(X)[m:1],adj=seq(0,(m-1)/m,1/m)+1/(2*m),MoreArgs=list(outer=TRUE,cex=0.9)))
+	invisible(mapply(title,xlab=colnames(X),
+		adj=seq(0,(m-1)/m,1/m)+1/(2*m),MoreArgs=list(outer=TRUE,cex=0.9)))
+	invisible(mapply(title,ylab=colnames(X)[m:1],
+		adj=seq(0,(m-1)/m,1/m)+1/(2*m),MoreArgs=list(outer=TRUE,cex=0.9)))
 	if(hold) null<-dev.flush()
+	obj<-list(tree=tree,contMaps=cmaps,X=X,A=A)
+	class(obj)<-"phyloScattergram"
+	obj
 }
+
+plot.phyloScattergram<-function(x,...){
+	if(hasArg(fsize)) fsize<-list(...)$fsize
+	else fsize<-0.7
+	if(hasArg(colors)) colors<-list(...)$colors
+	else if(!is.null(x$tree$maps)) 
+		colors<-setNames(palette()[1:ncol(x$tree$mapped.edge)],
+		sort(colnames(x$tree$mapped.edge)))
+	if(hasArg(label)) label<-list(...)$label
+	else label<-"radial"
+	m<-ncol(x$X)
+	par(mfrow=c(m,m))
+	par(cex=fsize)
+	par(mar=c(0,0,0,0))
+	par(oma=c(5,5,3,3))
+	for(i in 1:m) for(j in 1:m){
+		if(i==j) plot(x$contMaps[[i]],legend=FALSE,
+			lwd=2,outline=FALSE,fsize=fsize)
+		else { 
+			phylomorphospace(x$tree,x$X[,c(j,i)],A=x$A[,c(j,i)],lwd=1,
+				node.by.map=TRUE,axes=FALSE,node.size=c(0,1),
+				colors=colors,label=label,xlab="",ylab="")
+			if(i==1) axis(side=3) # top row
+			if(i==m) axis(side=1) # first column
+			if(j==1) axis(side=2) # bottom row
+			if(j==m) axis(side=4) # last column
+		}
+	}
+	par(cex=0.9)
+	if(is.null(colnames(x$X))) colnames(x$X)<-paste("V",1:m,sep="")
+	invisible(mapply(title,xlab=colnames(x$X),
+		adj=seq(0,(m-1)/m,1/m)+1/(2*m),MoreArgs=list(outer=TRUE,cex=0.9)))
+	invisible(mapply(title,ylab=colnames(x$X)[m:1],
+		adj=seq(0,(m-1)/m,1/m)+1/(2*m),MoreArgs=list(outer=TRUE,cex=0.9)))
+}
+
+print.phyloScattergram<-function(x,...)
+	cat(paste("\nObject of class \"phyloScattergram\" for",ncol(x$X),
+		"continuous traits.\n\n"))
 
 # phenogram95 internal function
 # written by Liam J. Revell 2013, 2014

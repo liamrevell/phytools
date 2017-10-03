@@ -3,7 +3,7 @@
 \title{Animation of branching random diffusion}
 \usage{
 branching.diffusion(sig2=1, b=0.0023, time.stop=1000, ylim=NULL, 
-	smooth=TRUE, pause=0.02, record=NULL, path=NULL)
+   smooth=TRUE, pause=0.02, record=NULL, path=NULL)
 }
 \arguments{
 	\item{sig2}{variance of BM process.}

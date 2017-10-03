@@ -1,13 +1,15 @@
-# Simulates BM evolution more quickly.
-# A trend can be simulated by mu!=0.
-# mu=0 is standard BM; mu<0 downward trend; mu>0 upward trend.
-# Bounds can be simulated by bounds=c(>-Inf,<Inf).
-# OU can be simulated by alpha>0.
-# Written by Liam J. Revell 2011, 2013, 2015
+## Simulates BM evolution more quickly.
+## A trend can be simulated by mu!=0.
+## mu=0 is standard BM; mu<0 downward trend; mu>0 upward trend.
+## Bounds can be simulated by bounds=c(>-Inf,<Inf).
+## OU can be simulated by alpha>0.
+## Written by Liam J. Revell 2011, 2013, 2015, 2017
 
 fastBM<-function(tree,a=0,mu=0,sig2=1,bounds=c(-Inf,Inf),internal=FALSE,nsim=1,...){
 	# some minor error checking
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+	## order
+	if(is.null(attr(tree,"order"))||attr(tree,"order")!="cladewise") tree<-reorder(tree)
 	## check to see if alpha & theta
 	if(hasArg(alpha)) alpha<-list(...)$alpha
 	else alpha<-NULL

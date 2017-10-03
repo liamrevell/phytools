@@ -3,7 +3,7 @@
 \title{Phylogenetic paired t-test}
 \usage{
 phyl.pairedttest(tree, x1, x2=NULL, se1=NULL, se2=NULL, lambda=1.0, h0=0.0,
-	fixed=FALSE)
+   fixed=FALSE)
 }
 \arguments{
 	\item{tree}{a phylogeny as an object of class \code{"phylo"}.}

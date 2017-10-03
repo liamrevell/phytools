@@ -1,5 +1,5 @@
 # function creates a stochastic character mapped tree as a modified "phylo" object
-# written by Liam Revell 2013, 2014, 2015
+# written by Liam Revell 2013, 2014, 2015, 2016, 2017
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -49,7 +49,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		root<-N+1
 		# get conditional likelihoods & model
 		if(is.character(Q)&&Q=="empirical"){
-			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi)
+			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			Q<-XX$Q
 			logL<-XX$loglik
@@ -63,23 +63,23 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 				qq<-fitMk(bt,xx,model)$rates
 				prior$alpha<-qq*prior$beta
 			}
-			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior)
+			get.stationary<-if(pi[1]=="estimated") TRUE else FALSE
+			if(pi[1]%in%c("equal","estimated"))
+				pi<-setNames(rep(1/m,m),colnames(xx)) # set equal
+			else pi<-pi/sum(pi) # obtain from input
+			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi=pi)
 			L<-lapply(XX,function(x) x$L)
 			Q<-lapply(XX,function(x) x$Q)
 			logL<-lapply(XX,function(x) x$loglik)
-			if(pi[1]=="equal"){
-				pi<-setNames(rep(1/m,m),colnames(L)) # set equal
-				pi<-lapply(1:nsim,function(x,y) y, y=pi)
-			} else if(pi[1]=="estimated"){
-				pi<-lapply(Q,statdist) # set from stationary distribution
-			} else { 
-				pi<-pi/sum(pi) # obtain from input
-				pi<-lapply(1:nsim,function(x,y) y, y=pi)
-			}
+			pi<-if(get.stationary) lapply(Q,statdist) else lapply(1:nsim,function(x,y) y,
+				y=pi)
 			if(pm) printmessage(Reduce('+',Q)/length(Q),pi,method="mcmc")
-			mtrees<-mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE)
+			mtrees<-if(nsim>1) mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=
+				list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE) else
+				list(smap(tree=tree,x=x,N=N,m=m,root=root,L=L[[1]],Q=Q[[1]],pi=pi[[1]],
+				logL=logL[[1]]))
 		} else if(is.matrix(Q)){
-			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi)
+			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			logL<-XX$loglik
 			if(pi[1]=="equal") pi<-setNames(rep(1/m,m),colnames(L)) # set equal
@@ -116,9 +116,8 @@ printmessage<-function(Q,pi,method){
 
 # mcmc for Q used in Q="mcmc"
 # written by Liam J. Revell 2013
-mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
+mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi,args=list()){
 	update<-function(x){
-		## x<-exp(log(x)+rnorm(n=np,mean=0,sd=sqrt(vQ)))
 		x<-abs(x+rnorm(n=np,mean=0,sd=sqrt(vQ)))
 		return(x)
 	}
@@ -142,7 +141,8 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		}
 	} else {
 		if(ncol(model)!=nrow(model)) stop("the matrix given as 'model' is not square")
-		if(ncol(model)!=m) stop("the matrix 'model' must have as many rows as the number of categories in 'x'")
+		if(ncol(model)!=m) 
+			stop("the matrix 'model' must have as many rows as the number of categories in 'x'")
 		rate<-model
 		np<-max(rate)
 	}
@@ -150,14 +150,14 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 	p<-rgamma(np,prior$alpha,prior$beta)
 	Q<-matrix(c(0,p)[rate+1],m,m)
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi)
+	yy<-getPars(bt,xx,model,Q,tree,tol,m,pi=pi,args=args)
 	cat("Running MCMC burn-in. Please wait....\n")
 	flush.console()
 	for(i in 1:burnin){
 		pp<-update(p)
 		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -173,7 +173,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		pp<-update(p)
 		Qp<-matrix(c(0,pp)[rate+1],m,m)
 		diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi)
+		zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE,pi=pi,args)
 		p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
 			yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
 		if(p.odds>=runif(n=1)){
@@ -183,16 +183,18 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 		if(i%%samplefreq==0){
 			Qi<-matrix(c(0,p)[rate+1],m,m)
 			diag(Qi)<--rowSums(Qi,na.rm=TRUE)
-			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE,pi=pi)
+			XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE,pi=pi,args)
 		}
 	}
 	return(XX)
 }
 
 # get pars
-# written by Liam J. Revell 2013
-getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi){
-	obj<-fitMk(bt,xx,model,fixedQ=Q,output.liks=liks,pi=pi)
+# written by Liam J. Revell 2013, 2017
+getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
+	if(!is.null(args$pi)) args$pi<-NULL
+	args<-c(list(tree=bt,x=xx,model=model,fixedQ=Q,output.liks=liks,pi=pi),args)
+	obj<-do.call(fitMk,args)
 	N<-length(bt$tip.label)
 	II<-obj$index.matrix+1
 	lvls<-obj$states
@@ -225,8 +227,8 @@ to.matrix<-function(x,seq){
 	return(X)
 }
 
-# function does the stochastic mapping, conditioned on our model & given the conditional likelihoods
-# written by Liam J. Revell 2013
+## function does the stochastic mapping, conditioned on our model & given the conditional likelihoods
+## written by Liam J. Revell 2013, 2017
 smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 	# create the map tree object
 	mtree<-tree; mtree$maps<-list()
@@ -252,6 +254,7 @@ smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 	mtree$Q<-Q
 	mtree$logL<-logL
 	if(!inherits(mtree,"simmap")) class(mtree)<-c("simmap",setdiff(class(mtree),"simmap"))
+	attr(mtree,"map.order")<-"right-to-left"
 	return(mtree)
 }
 
@@ -332,4 +335,165 @@ apeAce<-function(tree,x,model,fixedQ=NULL,...){
 	}
 }
 
+## S3 logLik methods for "simmap" & "multiSimmap"
+logLik.simmap<-function(object,...) object$logL
+logLik.multiSimmap<-function(object,...)
+	sapply(object,function(x) x$logL)
+	
+## S3 density method for "multiSimmap"
+density.multiSimmap<-function(x,...){
+	if(hasArg(method)) method<-list(...)$method
+	else method<-"changes"
+	if(!method%in%c("densityMap","changes")){
+		cat("method not recognized. Setting to default method.\n\n")
+		method<-"changes"
+	}
+	if(method=="densityMap") obj<-densityMap(x,plot=FALSE,...)
+	else if(method=="changes"){
+		if(hasArg(bw)) bw<-list(...)$bw
+		else bw<-1
+		tmp<-summary(x)
+		ab<-lapply(2:ncol(tmp$count),function(i,x) x[,i],x=tmp$count)
+		names(ab)<-sapply(strsplit(colnames(tmp$count)[2:ncol(tmp$count)],
+			","),function(x) paste(x,collapse="->"))
+		ab<-lapply(ab,function(x){
+			class(x)<-"mcmc"
+			x })
+		if(.check.pkg("coda")){
+			hpd.ab<-lapply(ab,HPDinterval)
+		} else {
+			cat("  HPDinterval requires package coda.\n")
+			cat("  Computing 95% interval from samples only.\n\n")
+			hpd95<-function(x){
+				obj<-setNames(c(sort(x)[round(0.025*length(x))],
+					sort(x)[round(0.975*length(x))]),
+					c("lower","upper"))
+				attr(obj,"Probability")<-0.95
+				obj
+			}
+			hpd.ab<-lapply(ab,hpd95)
+		}
+		minmax<-range(unlist(ab))
+		pcalc<-function(x,mm)
+			hist(x,breaks=seq(mm[1]-1.5,mm[2]+1.5,bw),plot=FALSE)
+		p.ab<-lapply(ab,pcalc,mm=minmax)
+		states<-colnames(tmp$ace)
+		trans<-names(ab)
+		obj<-list(hpd=hpd.ab,
+			p=p.ab,
+			states=states,trans=trans,
+			bw=bw,
+			mins=sapply(ab,min),
+			meds=sapply(ab,median),
+			means=sapply(ab,mean),
+			maxs=sapply(ab,max))
+		class(obj)<-"changesMap"
+	}
+	else if(method=="timings"){
+		cat("This method doesn't work yet.\n")
+		obj<-NULL
+	}
+	obj
+}
+
+## S3 plot method for "changesMap" object from density.multiSimmap
+plot.changesMap<-function(x,...){
+	p<-x$p
+	hpd<-x$hpd
+	bw<-x$bw
+	if(length(x$trans)==2){
+		plot(p[[1]]$mids,p[[1]]$density,xlim=c(min(x$mins)-1,
+			max(x$maxs)+1),ylim=c(0,1.2*max(c(p[[1]]$density,
+			p[[2]]$density))),
+			type="n",xlab="number of changes",
+			ylab="relative frequency across stochastic maps")
+		y2<-rep(p[[1]]$density,each=2)
+		y2<-y2[-length(y2)]
+		x2<-rep(p[[1]]$mids-bw/2,each=2)[-1]
+		x3<-c(min(x2),x2,max(x2))
+		y3<-c(0,y2,0)
+		polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
+		lines(p[[1]]$mids-bw/2,p[[1]]$density,type="s")
+		y2<-rep(p[[2]]$density,each=2)
+		y2<-y2[-length(y2)]
+		x2<-rep(p[[2]]$mids-bw/2,each=2)[-1]
+		x3<-c(min(x2),x2,max(x2))
+		y3<-c(0,y2,0)
+		polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+		lines(p[[2]]$mids-bw/2,p[[2]]$density,type="s")
+		add.simmap.legend(colors=setNames(c(make.transparent("red",0.3),
+			make.transparent("blue",0.3)),x$trans[1:2]),
+			prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
+		dd<-0.01*diff(par()$usr[3:4])
+		lines(hpd[[1]],rep(max(p[[1]]$density)+dd,2))
+		lines(rep(hpd[[1]][1],2),c(max(p[[1]]$density)+dd,
+			max(p[[1]]$density)+dd-0.005))
+		lines(rep(hpd[[1]][2],2),c(max(p[[1]]$density)+dd,
+			max(p[[1]]$density)+dd-0.005))
+		text(mean(hpd[[1]]),max(p[[1]]$density)+dd,
+			paste("HPD(",x$trans[1],")",sep=""),
+			pos=3)
+		lines(hpd[[2]],rep(max(p[[2]]$density)+dd,2))
+		lines(rep(hpd[[2]][1],2),c(max(p[[2]]$density)+dd,
+			max(p[[2]]$density)+dd-0.005))
+		lines(rep(hpd[[2]][2],2),c(max(p[[2]]$density)+dd,
+			max(p[[2]]$density)+dd-0.005))
+		text(mean(hpd[[2]]),max(p[[2]]$density)+dd,
+			paste("HPD(",x$trans[2],")",sep=""),
+			pos=3)
+	} else {
+		k<-length(x$states)
+		par(mfrow=c(k,k))
+		ii<-1
+		max.d<-max(unlist(lapply(p,function(x) x$density)))
+		for(i in 1:k){
+			for(j in 1:k){
+				if(i==j) plot.new()
+				else {
+					plot(p[[ii]]$mids,p[[ii]]$density,xlim=c(min(x$mins)-1,
+						max(x$maxs)+1),ylim=c(0,1.2*max.d),
+						type="n",xlab="number of changes",
+						ylab="relative frequency",main=x$trans[ii],font.main=1)
+					##title(main=)
+					y2<-rep(p[[ii]]$density,each=2)
+					y2<-y2[-length(y2)]
+					x2<-rep(p[[ii]]$mids-bw/2,each=2)[-1]
+					x3<-c(min(x2),x2,max(x2))
+					y3<-c(0,y2,0)
+					polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+					lines(p[[ii]]$mids-bw/2,p[[ii]]$density,type="s")
+					dd<-0.03*diff(par()$usr[3:4])
+					lines(hpd[[ii]],rep(max(p[[ii]]$density)+dd,2))
+					text(mean(hpd[[ii]]),max(p[[ii]]$density)+dd,"HPD",pos=3)
+					ii<-ii+1
+				}
+			}
+		}
+	}
+}
+
+print.changesMap<-function(x, ...){
+	if(hasArg(signif)) signif<-list(...)$signif
+	else signif<-2
+	cat("\nDistribution of changes from stochastic mapping:\n")
+	NROW<-ceiling(length(x$trans)/2)
+	if(NROW>1) cat("\n")
+	for(i in 1:NROW){
+		ii<-2*i-1
+		jj<-ii+1
+		cat(paste("\t",x$trans[ii],"\t\t",x$trans[jj],"\n",sep=""))
+		cat(paste("\tMin.   :",round(x$mins[ii],signif),
+			"\tMin.   :",round(x$mins[jj],signif),"\n",sep=""))
+		cat(paste("\tMedian :",round(x$meds[ii],signif),
+			"\tMedian :",round(x$meds[jj],signif),"\n",sep=""))
+		cat(paste("\tMean   :",round(x$means[ii],signif),
+			"\tMean   :",round(x$means[jj],signif),"\n",sep=""))
+		cat(paste("\tMax.   :",round(x$maxs[ii],signif),
+			"\tMax.   :",round(x$maxs[jj],signif),"\n\n",sep=""))
+	}
+	for(i in 1:length(x$trans))
+		cat("95% HPD interval(",x$trans[i],"): [",x$hpd[[i]][1],", ",
+			x$hpd[[i]][2],"]\n",sep="")
+	cat("\n")
+}
 

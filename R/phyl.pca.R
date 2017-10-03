@@ -1,52 +1,74 @@
-# function to perform phylogenetic principal components analysis
-# multiple morphological traits in Y
-# also can use lambda transformation in which lambda is optimized by ML or REML(in progress)
-# written by Liam Revell 2010, 2011, 2013, 2015 ref. Revell (2009; Evolution)
+## function to perform phylogenetic principal components analysis
+## multiple morphological traits in Y
+## also can use lambda transformation in which lambda is optimized by ML or REML (in progress)
+## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017 ref. Revell (2009; Evolution)
 
 phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
 	## get optional argument
 	if(hasArg(opt)) opt<-list(...)$opt
 	else opt<-"ML"
 	# check tree
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(!inherits(tree,"phylo")) 
+		stop("tree should be an object of class \"phylo\".")
 	# check mode
 	if(length(strsplit(mode,split="")[[1]])<=2){ 
-		message(paste("mode = '",mode,"' not a valid option; setting mode = 'cov'",sep=""))
-		mode="cov"
+		message(paste("mode = \"",mode,
+			"\" not a valid option; setting mode = \"cov\"",sep=""))
+		mode<-"cov"
 	}
-	if(all(strsplit(mode,split="")[[1]]==strsplit("correlation",split="")[[1]][1:length(strsplit(mode,split="")[[1]])]))
-		mode="corr"
-	else if(all(strsplit(mode,split="")[[1]]==strsplit("covariance",split="")[[1]][1:length(strsplit(mode,split="")[[1]])]))
-		mode="cov"
+	if(all(strsplit(mode,split="")[[1]]==strsplit("correlation",
+		split="")[[1]][1:length(strsplit(mode,split="")[[1]])])) mode<-"corr"
+	else if(all(strsplit(mode,split="")[[1]]==strsplit("covariance",
+		split="")[[1]][1:length(strsplit(mode,split="")[[1]])])) mode<-"cov"
 	else {
-		message(paste("mode = '",mode,"' not a valid option; setting mode = 'cov'",sep=""))
+		message(paste("mode = \"",mode,
+			"\" not a valid option; setting mode = \"cov\"",sep=""))
 		mode="cov"
 	}
 	# preliminaries
-	n<-nrow(Y); m<-ncol(Y)
+	n<-nrow(Y)
+	m<-ncol(Y)
 	# check and sort data
-	if(n>length(tree$tip)) stop("number of rows in Y cannot be greater than number of taxa in your tree")
+	if(n>Ntip(tree)) 
+		stop("number of rows in Y cannot be greater than number of taxa in your tree")
 	Y<-as.matrix(Y)
 	if(is.null(rownames(Y))){
 		if(nrow(Y)==n){ 
 			print("Y has no names. function will assume that the row order of Y matches tree$tip.label")
 			rownames(Y)<-tree$tip.label
-		} else stop("Y has no names and does not have the same number of rows as tips in tree")
+		} else 
+			stop("Y has no names and does not have the same number of rows as tips in tree")
 	} else if(length(setdiff(rownames(Y),tree$tip.label))!=0) 
 		stop("Y has rownames, but some rownames of Y not found in tree")
 	# analyze
 	C<-vcv.phylo(tree)[rownames(Y),rownames(Y)]
 	if(method=="BM"){ 
 		temp<-phyl.vcv(Y,C,1.0)
-		V<-temp$R; a<-t(temp$alpha); C<-temp$C
+		V<-temp$R
+		a<-t(temp$alpha)
+		C<-temp$C
 	} else if(method=="lambda"){
-		if(opt=="ML") temp<-optimize(f=likMlambda,interval=c(0,maxLambda(tree)),X=Y,C=C,maximum=TRUE)
-		else if(opt=="REML") temp<-optimize(f=remlMlambda,interval=c(0,maxLambda(tree)),tree=tree,X=Y,maximum=TRUE)
-		lambda<-temp$maximum; logL<-as.numeric(temp$objective)
+		if(opt=="ML") temp<-optimize(f=likMlambda,interval=c(0,maxLambda(tree)),X=Y,
+			C=C,maximum=TRUE)
+		else if(opt=="REML") temp<-optimize(f=remlMlambda,interval=c(0,maxLambda(tree)),
+			tree=tree,X=Y,maximum=TRUE)
+		else if(opt=="fixed"){
+			if(hasArg(lambda)) lambda<-list(...)$lambda
+			else {
+				cat("  opt=\"fixed\" requires the user to specify lambda.\n")
+				cat("  setting lambda to 1.0.\n")
+				lambda<-1.0
+			}
+			temp<-list(maximum=lambda,objective=likMlambda(lambda,X=Y,C=C))
+		}	
+		lambda<-temp$maximum
+		logL<-as.numeric(temp$objective)
 		temp<-phyl.vcv(Y,C,lambda)
-		V<-temp$R; a<-t(temp$alpha); C<-temp$C
+		V<-temp$R
+		a<-t(temp$alpha)
+		C<-temp$C
 	}
-	invC<-solve(C)
+	invC<-solve(C) ## get inverse of C
 	# if correlation matrix
 	if(mode=="corr"){
 		Y=Y/matrix(rep(sqrt(diag(V)),n),n,m,byrow=T) # standardize Y
@@ -54,22 +76,25 @@ phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
 		a<-matrix(colSums(invC%*%Y)/sum(invC),m,1) # recalculate a
 	}
 	es=eigen(V) # eigenanalyze
-	result<-list(); result$Eval<-diag(es$values); result$Evec<-es$vectors
-	dimnames(result$Eval)<-list(paste("PC",1:ncol(Y),sep=""),paste("PC",1:ncol(Y),sep=""))
-	dimnames(result$Evec)<-list(colnames(Y),paste("PC",1:ncol(Y),sep=""))
+	obj<-list()
+	obj$Eval<-diag(es$values[1:min(n-1,m)])
+	obj$Evec<-es$vectors[,1:min(n-1,m)]
+	dimnames(obj$Eval)<-list(paste("PC",1:min(n-1,m),sep=""),
+		paste("PC",1:min(n-1,m),sep=""))
+	dimnames(obj$Evec)<-list(colnames(Y),paste("PC",1:min(n-1,m),sep=""))
 	A<-matrix(rep(a,n),n,m,byrow=T)
-	result$S<-(Y-A)%*%result$Evec # compute scores in the species space
-	Ccv<-t(Y-A)%*%invC%*%result$S/(n-1) # compute cross covariance matrix and loadings
-	result$L<-matrix(,m,m,dimnames=list(colnames(Y),paste("PC",1:ncol(Y),sep="")))
-	for(i in 1:m) for(j in 1:m) result$L[i,j]<-Ccv[i,j]/sqrt(V[i,i]*result$Eval[j,j])
+	obj$S<-(Y-A)%*%obj$Evec # compute scores in the species space
+	Ccv<-t(Y-A)%*%invC%*%obj$S/(n-1) # compute cross covariance matrix and loadings
+	obj$L<-matrix(,m,min(n-1,m),dimnames=list(colnames(Y),paste("PC",1:min(n-1,m),sep="")))
+	for(i in 1:m) for(j in 1:min(n-1,m)) obj$L[i,j]<-Ccv[i,j]/sqrt(V[i,i]*obj$Eval[j,j])
 	if(method=="lambda"){ 
-		result$lambda<-lambda
-		result$logL.lambda<-logL
+		obj$lambda<-lambda
+		obj$logL.lambda<-logL
 	}
 	## assign class attribute (for S3 methods)
-	class(result)<-"phyl.pca"
-	# return result
-	return(result)
+	class(obj)<-"phyl.pca"
+	# return obj
+	obj
 }
 
 ## S3 method for object of class "phyl.pca
@@ -79,7 +104,7 @@ phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
 ## modified from code provided by Joan Maspons
 print.phyl.pca<-function(x, ...){
 	cat("Phylogenetic pca\n")
-	cat("Starndard deviations:\n")
+	cat("Standard deviations:\n")
 	print(sqrt(diag(x$Eval)))
 	cat("Loads:\n")
 	print(x$L)
@@ -105,7 +130,7 @@ summary.phyl.pca<-function(object, ...){
 
 ## S3 biplot method for "phyl.pca"
 ## modified from code provided by Joan Maspons
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2017
 biplot.phyl.pca<-function(x,...){
 	to.do<-list(...)
 	if(hasArg(choices)){ 
@@ -113,7 +138,7 @@ biplot.phyl.pca<-function(x,...){
 		to.do$choices<-NULL
 	} else choices<-c(1,2)
 	to.do$x<-x$S[,choices]
-	to.do$y<-x$L[,choices]
+	to.do$y<-x$Evec[,choices]
 	do.call(biplot,to.do)
 }
 
@@ -144,10 +169,10 @@ remlMlambda<-function(lambda,tree,X){
 	logL
 }
 
+## S3 plot method (does screeplot)
 plot.phyl.pca<- function(x,...){
 	if(hasArg(main)) main<-list(...)$main
 	else main="screeplot"
 	x$sdev<-sqrt(diag(x$Eval))
 	screeplot(x,main=main)
 }
-

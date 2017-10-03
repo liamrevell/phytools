@@ -44,7 +44,7 @@ map.to.singleton<-function(tree){
 }
 
 ## function plots tree with singleton nodes
-## written by Liam J. Revell 2013, 2015
+## written by Liam J. Revell 2013, 2015, 2017
 plotTree.singletons<-function(tree){
 	## preliminaries
 	n<-length(tree$tip.label)
@@ -79,9 +79,6 @@ plotTree.singletons<-function(tree){
 	# plot vertical relationships
 	for(i in 1:tree$Nnode+n){
 		xx<-X[which(cw$edge[,1]==i),1]
-		## yy<-range(y[cw$edge[which(cw$edge[,1]==i),2]]) ## breaks for polytomies
-		## fixes that tolerate polytomies
-		## yy<-seq(min(y[cw$edge[which(cw$edge[,1]==i),2]]),max(y[cw$edge[which(cw$edge[,1]==i),2]]),length=length(xx))
 		yy<-y[cw$edge[which(cw$edge[,1]==i),2]]
 		if(length(xx)>1) lines(xx,yy,lwd=2,lend=2,col=colors[which(cw$edge[,1]==i)])
 	}
@@ -89,11 +86,18 @@ plotTree.singletons<-function(tree){
 	for(i in 1:nrow(X)) points(X[i,],rep(y[cw$edge[i,2]],2),pch=21,bg="gray")
 	# plot tip labels
 	for(i in 1:n) text(X[which(cw$edge[,2]==i),2],y[i],tree$tip.label[i],pos=4,offset=0.3)
+	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
+		show.tip.label=TRUE,show.node.label=FALSE,
+		font=par()$font,cex=par()$cex,adj=0,srt=0,no.margin=FALSE,label.offset=0.3,
+		x.lim=xlim,y.lim=c(1,max(y)),
+		direction="rightward",tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
+	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }
 
-## function to reorder the edges of the tree for postorder traversal		
-## should *only* be used internally to plotTree.singletons (i.e., is not designed for general
-## use).
+## function to reorder the edges of the tree for postorder traversal should *only* be used internally to 
+## plotTree.singletons (i.e., is not designed for general use).
 ## written by Liam J. Revell 2013
 reorderPhylo<-function(x,order="pruningwise",index.only=FALSE,...){
 	if(index.only) stop("index.only=TRUE not permitted")
@@ -108,4 +112,14 @@ reorderPhylo<-function(x,order="pruningwise",index.only=FALSE,...){
 	return(x)
 }
 
-
+## function converts a tree with a root edge to a tree with a singleton node instead
+## written by Liam J. Revell 2016
+rootedge.to.singleton<-function(tree){
+	cw<-reorder(tree,"cladewise")
+	root.edge<-if(!is.null(cw$root.edge)) cw$root.edge else 0
+	cw$edge[which(cw$edge>Ntip(cw))]<-cw$edge[which(cw$edge>Ntip(cw))]+1
+	cw$edge<-rbind(Ntip(cw)+c(1,2),cw$edge)
+	cw$Nnode<-cw$Nnode+1
+	cw$edge.length<-c(root.edge,cw$edge.length)
+	cw
+}
