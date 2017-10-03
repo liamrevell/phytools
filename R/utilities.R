@@ -1327,29 +1327,22 @@ di2multi.simmap<-function(phy,...){
 
 # returns the heights of each node
 # written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
+# Klaus Schliep 2017
 nodeHeights<-function(tree,...){
-	if(hasArg(root.edge)) root.edge<-list(...)$root.edge
-	else root.edge<-FALSE
-	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
-	else ROOT<-0 
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order"))) t<-reorder(tree)
-	else t<-tree
-	root<-length(t$tip.label)+1
-	X<-matrix(NA,nrow(t$edge),2)
-	for(i in 1:nrow(t$edge)){
-		if(t$edge[i,1]==root){
-			X[i,1]<-0.0
-			X[i,2]<-t$edge.length[i]
-		} else {
-			X[i,1]<-X[match(t$edge[i,1],t$edge[,2]),2]
-			X[i,2]<-X[i,1]+t$edge.length[i]
-		}
-	}
-	if(attr(tree,"order")!="cladewise"||is.null(attr(tree,"order")))
-		o<-apply(matrix(tree$edge[,2]),1,function(x,y) which(x==y),y=t$edge[,2])
-	else o<-1:nrow(t$edge)
-	return(X[o,]+ROOT)
+    if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+    else root.edge<-FALSE
+    if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+    else ROOT<-0 
+    nHeight <- function(tree){
+        tree <- reorder(tree)
+        edge <- tree$edge
+        el <- tree$edge.length
+        res <- numeric(max(tree$edge))
+        for(i in seq_len(nrow(edge))) res[edge[i,2]] <- res[edge[i,1]] + el[i] 
+        res
+    }
+    nh <- nHeight(tree)
+    return(matrix(nh[tree$edge], ncol=2L)+ROOT)
 }
 
 ## function drops all the leaves from the tree & collapses singleton nodes
