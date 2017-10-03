@@ -1327,7 +1327,7 @@ di2multi.simmap<-function(phy,...){
 
 # returns the heights of each node
 # written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
-# Klaus Schliep 2017
+# modified by Klaus Schliep 2017
 nodeHeights<-function(tree,...){
     if(hasArg(root.edge)) root.edge<-list(...)$root.edge
     else root.edge<-FALSE
