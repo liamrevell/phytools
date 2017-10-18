@@ -7,8 +7,8 @@
 plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", 
    method="plotTree", tip.labels=FALSE, col="grey", border=NULL, 
    ...)
-plotTree.barplot(tree,x,args.plotTree=list(),args.barplot=list())
-plotTree.boxplot(tree,x,args.plotTree=list(),args.boxplot=list())
+plotTree.barplot(tree, x, args.plotTree=list(), args.barplot=list(), ...)
+plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list())
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
@@ -23,7 +23,7 @@ plotTree.boxplot(tree,x,args.plotTree=list(),args.boxplot=list())
 	\item{args.plotTree}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{plotTree}}.}
 	\item{args.barplot}{in \code{plotTree.barplot}, arguments to be passed to \code{\link{barplot}}.}
 	\item{args.boxplot}{in \code{plotTree.boxplot}, arguments to be passed to \code{\link{boxplot}}.}
-	\item{...}{optional arguments to be passed to \code{\link{plotTree}} or \code{\link{plotSimmap}}.}
+	\item{...}{optional arguments to be passed to \code{\link{plotTree}} or \code{\link{plotSimmap}} in the case of \code{plotTree.wBars}. For \code{plotTree.barplot}, the only optional argument is \code{add}. Generally this should not be used; however it can be used to tell the function to draw the tree & barplot, respectively, in the next two open plotting devices - rather than creating a table of figures in the current plotting device.}
 }
 \description{
 	\code{plotTree.wbars} plots a phylogeny in phylogram or fan style with bars at the tips representing the values for a phenotypic trait.
