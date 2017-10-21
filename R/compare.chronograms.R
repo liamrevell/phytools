@@ -11,7 +11,7 @@ compare.chronograms<-function(t1,t2,...){
 	plotTree(if(max(h1)>max(h2)) t1 else t2,plot=FALSE,
 		mar=c(4.1,1.1,1.1,1.1),direction="leftwards")
 	xlim<-get("last_plot.phylo",envir=.PlotPhyloEnv)$x.lim[2:1]
-	par(fg="transparent")
+	par(fg="transparent",new=TRUE)
 	plotTree(t1,color=colors[1],mar=c(4.1,1.1,1.1,1.1),
 		xlim=xlim,direction="leftwards",lwd=3)
 	T1<-get("last_plot.phylo",envir=.PlotPhyloEnv)
