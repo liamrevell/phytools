@@ -91,6 +91,7 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	if(is.null(args.plotTree$lwd)) args.plotTree$lwd<-1
 	if(!add) par(mfrow=c(1,2))
 	do.call(plotTree,args.plotTree)
+	if(!is.null(args.plotTree$plot)&&args.plotTree$plot==FALSE) par(new=TRUE)
 	par(mar=args.barplot$mar)
 	obj<-do.call(barplot,args.barplot)
 	axis(1)
