@@ -29,7 +29,7 @@ fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
 		lower=rep(0,2),upper=rep(Inf,2))
     obj<-list(b=fit$par[1],d=fit$par[2],rho=rho,logL=-fit$value[1],
         opt=list(counts=fit$counts,convergence=fit$convergence,
-        message=fit$message))
+        message=fit$message),model="birth-death")
     class(obj)<-"fit.bd"
     obj
 }
@@ -43,7 +43,7 @@ fit.yule<-function(tree,b=NULL,d=NULL,rho=1,...){
     T<-sort(branching.times(tree),decreasing=TRUE)
 	fit<-optimize(lik.bd,interval,t=T,rho=rho)
 	obj<-list(b=fit$minimum,d=0,rho=rho,logL=-fit$objective,
-		opt=list(convergence=0))
+		opt=list(convergence=0),model="Yule")
     class(obj)<-"fit.bd"
     obj
 }
@@ -53,9 +53,10 @@ fit.yule<-function(tree,b=NULL,d=NULL,rho=1,...){
 print.fit.bd<-function(x, ...){
     if(hasArg(digits)) digits<-list(...)$digits
     else digits<-4
-    cat("\nFitted birth-death model:\n\n")
+	cat(paste("\nFitted",x$model,"model:\n\n"))
     cat(paste("ML(b/lambda) =",round(x$b,digits),"\n"))
-    cat(paste("ML(d/mu) =",round(x$d,digits),"\n"))
+    if(x$model=="birth-death") 
+		cat(paste("ML(d/mu) =",round(x$d,digits),"\n"))
     cat(paste("log(L) =",round(x$logL,digits),"\n"))
     cat(paste("\nAssumed sampling fraction (rho) =",x$rho,"\n"))
     if(x$opt$convergence==0) cat("\nR thinks it has converged.\n\n")
