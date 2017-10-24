@@ -19,14 +19,14 @@ lik.bd<-function(theta,t,rho=1,N=NULL){
 
 fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
     init<-vector(length=2)
-    if(hasArg(init.b)) init[1]<-init.b
-    else init[1]<-(log(Ntip(tree))-log(2))/max(nodeHeights(tree))
-    if(hasArg(init.d)) init[2]<-init.d
-    else init[2]<-0
-    if(!is.binary(tree)) tree<-multi2di(tree)
+    if(hasArg(init.b)) init.b<-init.b
+    else init.b<-(log(Ntip(tree))-log(2))/max(nodeHeights(tree))
+    if(hasArg(init.d)) init.d<-init.d
+    else init.d<-0
+    if(!is.binary.tree(tree)) tree<-multi2di(tree)
     T<-sort(branching.times(tree),decreasing=TRUE)
-    fit<-optim(init,lik.bd,t=T,rho=rho,method="L-BFGS-B",lower=rep(0,2),
-        upper=rep(Inf,2))
+    fit<-optim(c(init.b,init.d),lik.bd,t=T,rho=rho,method="L-BFGS-B",
+		lower=rep(0,2),upper=rep(Inf,2))
     obj<-list(b=fit$par[1],d=fit$par[2],rho=rho,logL=-fit$value[1],
         opt=list(counts=fit$counts,convergence=fit$convergence,
         message=fit$message))
