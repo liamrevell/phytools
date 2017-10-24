@@ -6,6 +6,7 @@
 \title{Fits birth-death (speciation/extinction) model to reconstructed phylogeny}
 \usage{
 fit.bd(tree, b=NULL, d=NULL, rho=1, ...)
+fit.yule(tree, b=NULL, d=NULL, rho=1, ...)
 lik.bd(theta, t, rho=1, N=NULL)
 \method{print}{fit.bd}(x, ...)
 }
