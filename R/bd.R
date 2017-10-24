@@ -1,6 +1,6 @@
-## likelihood function for birth-death model with incomplete sampling
+## likelihood functions for birth-death & Yule model with incomplete sampling
 ## written by Liam J. Revell 2017
-## based on Stadler (2012)
+## based on likelihood functions in Stadler (2012)
 
 lik.bd<-function(theta,t,rho=1,N=NULL){
     lam<-theta[1]
@@ -61,5 +61,13 @@ print.fit.bd<-function(x, ...){
     cat(paste("\nAssumed sampling fraction (rho) =",x$rho,"\n"))
     if(x$opt$convergence==0) cat("\nR thinks it has converged.\n\n")
     else cat("\nR thinks optimization may not have converged.\n\n")
+}
+
+## S3 logLik method
+
+logLik.fit.bd<-function(object, ...){
+	logLik<-object$logL
+	attr(logLik,"df")<-if(object$model=="birth-death") 2 else 1
+	logLik
 }
 
