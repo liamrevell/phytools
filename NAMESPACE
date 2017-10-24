@@ -110,7 +110,7 @@ S3method(posthoc, ratebytree)
 S3method(print, posthoc.ratebytree)
 S3method(AIC, ratebytree)
 S3method(print, fit.bd)
-S3method(logLik, fitbd)
+S3method(logLik, fit.bd)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
