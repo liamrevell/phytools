@@ -1,5 +1,6 @@
 \name{fit.bd}
 \alias{fit.bd}
+\alias{fit.yule}
 \alias{lik.bd}
 \alias{print.fit.bd}
 \title{Fits birth-death (speciation/extinction) model to reconstructed phylogeny}

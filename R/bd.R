@@ -4,7 +4,7 @@
 
 lik.bd<-function(theta,t,rho=1,N=NULL){
     lam<-theta[1]
-    mu<-theta[2]
+    mu<-if(length(theta==2)) theta[2] else 0
     if(is.null(N)) N<-length(t)+1
     p0ti<-function(rho,lam,mu,t)
         1-rho*(lam-mu)/(rho*lam+(lam*(1-rho)-mu)*exp(-(lam-mu)*t))
@@ -30,6 +30,20 @@ fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
     obj<-list(b=fit$par[1],d=fit$par[2],rho=rho,logL=-fit$value[1],
         opt=list(counts=fit$counts,convergence=fit$convergence,
         message=fit$message))
+    class(obj)<-"fit.bd"
+    obj
+}
+
+## fit Yule model
+
+fit.yule<-function(tree,b=NULL,d=NULL,rho=1,...){
+	if(hasArg(interval)) interval<-list(...)$interval
+	else interval<-c(0,10*(log(Ntip(tree))-log(2))/max(nodeHeights(tree)))
+    if(!is.binary.tree(tree)) tree<-multi2di(tree)
+    T<-sort(branching.times(tree),decreasing=TRUE)
+	fit<-optimize(lik.bd,interval,t=T,rho=rho)
+	obj<-list(b=fit$objective,d=0,rho=rho,logL=-fit$minimum,
+		opt=list(convergence=0))
     class(obj)<-"fit.bd"
     obj
 }
