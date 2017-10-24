@@ -61,3 +61,4 @@ print.fit.bd<-function(x, ...){
     if(x$opt$convergence==0) cat("\nR thinks it has converged.\n\n")
     else cat("\nR thinks optimization may not have converged.\n\n")
 }
+
