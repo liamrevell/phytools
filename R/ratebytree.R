@@ -4,17 +4,77 @@
 
 ratebytree<-function(trees,x,...){
 	if(hasArg(type)) type<-list(...)$type
-	else {
+	else if(!missing(x)&&!is.null(x)) {
 		if(is.factor(unlist(x))||is.character(unlist(x))) 
 			type<-"discrete"
 		else type<-"continuous"
-	}
+	} else type<-"diversification"
 	if(type=="continuous") obj<-rbt.cont(trees,x,...)
 	else if(type=="discrete") obj<-rbt.disc(trees,x,...)
+	else if(type=="diversification") obj<-rbt.div(trees,...)
 	else {
 		cat(paste("type =",type,"not recognized.\n"))
 		obj<-NULL
 	}
+	obj
+}
+
+rbt.div<-function(trees,...){
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-FALSE
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-4
+	if(hasArg(test)) test<-list(...)$test
+	else test<-"chisq"
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
+	if(hasArg(model)) model<-list(...)$model
+	else model<-"birth-death"
+	if(hasArg(rho)) rho<-list(...)$rho
+	else rho<-rep(1,length(trees))
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-12
+	if(!inherits(trees,"multiPhylo")) 
+		stop("trees should be object of class \"multiPhylo\".")
+	foo<-if(model=="birth-death") fit.bd else 
+		if(model=="Yule"||model=="yule") fit.yule
+	fit.multi<-mapply(foo,tree=trees,rho=rho,SIMPLIFY=FALSE)
+	logL.multi<-sum(sapply(fit.multi,logLik))
+	t<-lapply(trees,function(phy) sort(branching.times(phy),
+		decreasing=TRUE))
+	lik.onerate<-function(theta,t,rho,model,trace=FALSE){
+		logL<-sum(-mapply(lik.bd,t=t,rho=rho,
+			MoreArgs=list(theta=theta)))
+		if(trace) cat(paste(theta[1],"\t",theta[2],"\t",logL,"\n"))
+		-logL
+	}
+	init.b<-mean(sapply(fit.multi,function(x) x$b))
+	init.d<-mean(sapply(fit.multi,function(x) x$d))
+	fit.onerate<-nlminb(c(init.b,init.d),lik.onerate,t=t,rho=rho,
+		model=model,trace=trace,lower=c(0,0),upper=rep(Inf,2))
+	rates.multi<-cbind(sapply(fit.multi,function(x) x$b),
+			sapply(fit.multi,function(x) x$d))
+	if(!is.null(names(trees))) rownames(trees)<-names(trees)
+	else rownames(rates.multi)<-paste("tree",1:length(trees),sep="")
+	colnames(rates.multi)<-c("b","d")
+	LR<-2*(logL.multi+fit.onerate$objective)
+	km<-2*length(trees)
+	k1<-2
+	P.chisq<-pchisq(LR,df=km-k1,lower.tail=FALSE)
+	obj<-list(
+		multi.rate.model=list(
+			logL=logL.multi,
+			rates=rates.multi,
+			method="nlminb"),
+		common.rate.model=list(
+			logL=-fit.onerate$objective,
+			rates=setNames(fit.onerate$par,c("b","d")),
+			method="nlminb"),
+		model=model,N=length(trees),
+		n=sapply(trees,Ntip),
+		likelihood.ratio=LR,P.chisq=P.chisq,
+		type="diversification")
+	class(obj)<-"ratebytree"
 	obj
 }
 
@@ -113,7 +173,7 @@ rbt.disc<-function(trees,x,...){
 		colnames(rates.multi)<-sapply(1:k,
 			foo,fit.multi[[1]]$index.matrix,fit.multi[[1]]$states)
 	}
-	if(!is.null(names(trees))) rownames(trees)<-names(trees)
+	if(!is.null(names(trees))) rownames(rates.multi)<-names(trees)
 	else rownames(rates.multi)<-paste("tree",1:length(trees),sep="")
 	LR<-2*(logL.multi+fit.onerate$value)
 	km<-sum(sapply(fit.multi,function(x) max(x$index.matrix,na.rm=TRUE)))
@@ -374,6 +434,28 @@ print.ratebytree<-function(x,...){
 	else digits<-4
 	if(x$type=="continuous") prbt.cont(x,digits=digits)
 	else if(x$type=="discrete") prbt.disc(x,digits=digits)
+	else if(x$type=="diversification") prbt.div(x,digits=digits)
+	else print(x)
+}
+
+prbt.div<-function(x,digits=digits){
+	cat("ML common diversification-rate model:")
+	cat("\n\tb\td\tk\tlog(L)")
+	cat(paste("\nvalue",round(x$common.rate.model$rates[1],digits),
+		round(x$common.rate.model$rates[2],digits),
+		2,round(x$common.rate.model$logL,digits),sep="\t"))
+	cat("\n\nML multi diversification-rate model:")
+	cat(paste("\n",paste(paste("b[",1:x$N,"]",sep=""),collapse="\t"),
+		paste(paste("d[",1:x$N,"]",sep=""),collapse="\t"),"k\tlog(L)",
+		sep="\t"))
+	cat(paste("\nvalue",paste(round(x$multi.rate.model$rates[,"b"],digits),
+		collapse="\t"),paste(round(x$multi.rate.model$rates[,"d"],digits),
+		collapse="\t"),2*x$N,round(x$multi.rate.model$logL,digits),
+		sep="\t"))
+	cat(paste("\n\nModel fitting method was \"",x$multi.rate.model$method,
+		"\".\n",sep=""))
+	cat(paste("\nLikelihood ratio:",round(x$likelihood.ratio,digits),"\n"))
+	cat(paste("P-value (based on X^2):",round(x$P.chisq,digits),"\n\n"))
 }
 
 prbt.cont<-function(x,digits=digits){
