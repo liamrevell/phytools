@@ -25,9 +25,9 @@ fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
     else init.d<-0
     if(!is.binary.tree(tree)) tree<-multi2di(tree)
     T<-sort(branching.times(tree),decreasing=TRUE)
-    fit<-optim(c(init.b,init.d),lik.bd,t=T,rho=rho,method="L-BFGS-B",
-		lower=rep(0,2),upper=rep(Inf,2))
-    obj<-list(b=fit$par[1],d=fit$par[2],rho=rho,logL=-fit$value[1],
+	fit<-nlminb(c(init.b,init.d),lik.bd,t=T,rho=rho,lower=rep(0,2),
+		upper=rep(Inf,2))
+    obj<-list(b=fit$par[1],d=fit$par[2],rho=rho,logL=-fit$objective,
         opt=list(counts=fit$counts,convergence=fit$convergence,
         message=fit$message),model="birth-death")
     class(obj)<-"fit.bd"
@@ -50,7 +50,7 @@ fit.yule<-function(tree,b=NULL,d=NULL,rho=1,...){
 
 ## S3 print method for object class 'fit.bd'
 
-print.fit.bd<-function(x, ...){
+print.fit.bd<-function(x,...){
     if(hasArg(digits)) digits<-list(...)$digits
     else digits<-4
 	cat(paste("\nFitted",x$model,"model:\n\n"))
@@ -65,7 +65,7 @@ print.fit.bd<-function(x, ...){
 
 ## S3 logLik method
 
-logLik.fit.bd<-function(object, ...){
+logLik.fit.bd<-function(object,...){
 	logLik<-object$logL
 	attr(logLik,"df")<-if(object$model=="birth-death") 2 else 1
 	logLik
