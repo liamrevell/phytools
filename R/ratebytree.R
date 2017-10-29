@@ -36,12 +36,49 @@ rbt.div<-function(trees,...){
 	else tol<-1e-12
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
-	foo<-if(model=="birth-death") fit.bd else 
-		if(model=="Yule"||model=="yule") fit.yule
-	fit.multi<-mapply(foo,tree=trees,rho=rho,SIMPLIFY=FALSE)
-	logL.multi<-sum(sapply(fit.multi,logLik))
 	t<-lapply(trees,function(phy) sort(branching.times(phy),
 		decreasing=TRUE))
+	if(model=="birth-death"){
+		fit.multi<-mapply(fit.bd,tree=trees,rho=rho,SIMPLIFY=FALSE)
+		logL.multi<-sum(sapply(fit.multi,logLik))
+	} else if(model=="equal-extinction"){
+		lik.eqmu<-function(theta,t,rho,trace=FALSE){
+			lam<-theta[1:length(t)]
+			mu<-theta[length(t)+1]
+			logL<-0
+			for(i in 1:length(t)) logL<-logL-lik.bd(c(lam[i],mu),t[[i]],rho[i])
+			if(trace) cat(paste(paste(c(lam,mu,logL),collapse="\t"),"\n",sep=""))
+			-logL
+		}
+		init.b<-sapply(trees,qb)
+		obj<-nlminb(c(init.b,0),lik.eqmu,t=t,rho=rho,trace=trace,
+			lower=rep(0,length(trees)+1),upper=rep(Inf,length(trees)+1))
+		fit.multi<-vector(mode="list",length=length(t))
+		for(i in 1:length(fit.multi)){ 
+			fit.multi[[i]]$b<-obj$par[i]
+			fit.multi[[i]]$d<-obj$par[length(obj$par)]
+		}
+		logL.multi<--obj$objective
+	} else if(model=="equal-speciation"){
+		lik.eqlam<-function(theta,t,rho,trace=FALSE){
+			lam<-theta[1]
+			mu<-theta[1:length(t)+1]
+			logL<-0
+			for(i in 1:length(t)) logL<-logL-lik.bd(c(lam,mu[i]),t[[i]],rho[i])
+			if(trace) cat(paste(paste(c(lam,mu,logL),collapse="\t"),"\n",sep=""))
+			-logL
+		}
+		init.b<-mean(sapply(trees,qb))
+		obj<-nlminb(c(init.b,rep(0,length(trees))),lik.eqlam,t=t,rho=rho,
+			trace=trace,lower=rep(0,length(trees)+1),
+			upper=rep(Inf,length(trees)+1))
+		fit.multi<-vector(mode="list",length=length(t))
+		for(i in 1:length(fit.multi)){ 
+			fit.multi[[i]]$b<-obj$par[1]
+			fit.multi[[i]]$d<-obj$par[i+1]
+		}
+		logL.multi<--obj$objective
+	}
 	lik.onerate<-function(theta,t,rho,model,trace=FALSE){
 		logL<-sum(-mapply(lik.bd,t=t,rho=rho,
 			MoreArgs=list(theta=theta)))
@@ -58,17 +95,22 @@ rbt.div<-function(trees,...){
 	else rownames(rates.multi)<-paste("tree",1:length(trees),sep="")
 	colnames(rates.multi)<-c("b","d")
 	LR<-2*(logL.multi+fit.onerate$objective)
-	km<-2*length(trees)
-	k1<-2
+	km<-if(model=="birth-death") 2*length(trees) else 
+		if(model=="equal-extinction") length(trees)+1 else
+		if(model=="equal-speciation") length(trees)+1 else
+		if(model=="Yule") length(trees)
+	k1<-if(model=="Yule") 1 else 2
 	P.chisq<-pchisq(LR,df=km-k1,lower.tail=FALSE)
 	obj<-list(
 		multi.rate.model=list(
 			logL=logL.multi,
 			rates=rates.multi,
+			k=km,
 			method="nlminb"),
 		common.rate.model=list(
 			logL=-fit.onerate$objective,
 			rates=setNames(fit.onerate$par,c("b","d")),
+			k=k1,
 			method="nlminb"),
 		model=model,N=length(trees),
 		n=sapply(trees,Ntip),
@@ -77,6 +119,9 @@ rbt.div<-function(trees,...){
 	class(obj)<-"ratebytree"
 	obj
 }
+
+## used (for now) to get a starting value for optimization in type="diversification"
+qb<-function(tree) (log(Ntip(tree))-log(2))/max(nodeHeights(tree))
 
 ## discrete character ratebytree
 rbt.disc<-function(trees,x,...){
@@ -443,16 +488,18 @@ prbt.div<-function(x,digits=digits){
 	cat("\n\tb\td\tk\tlog(L)")
 	cat(paste("\nvalue",round(x$common.rate.model$rates[1],digits),
 		round(x$common.rate.model$rates[2],digits),
-		2,round(x$common.rate.model$logL,digits),sep="\t"))
+		x$common.rate.model$k,round(x$common.rate.model$logL,digits),
+		sep="\t"))
 	cat("\n\nML multi diversification-rate model:")
 	cat(paste("\n",paste(paste("b[",1:x$N,"]",sep=""),collapse="\t"),
 		paste(paste("d[",1:x$N,"]",sep=""),collapse="\t"),"k\tlog(L)",
 		sep="\t"))
 	cat(paste("\nvalue",paste(round(x$multi.rate.model$rates[,"b"],digits),
 		collapse="\t"),paste(round(x$multi.rate.model$rates[,"d"],digits),
-		collapse="\t"),2*x$N,round(x$multi.rate.model$logL,digits),
-		sep="\t"))
-	cat(paste("\n\nModel fitting method was \"",x$multi.rate.model$method,
+		collapse="\t"),x$multi.rate.model$k,round(x$multi.rate.model$logL,
+		digits),sep="\t"))
+	cat(paste("\n\nDiversification model was \"",x$model,"\".\n",sep=""))
+	cat(paste("Model fitting method was \"",x$multi.rate.model$method,
 		"\".\n",sep=""))
 	cat(paste("\nLikelihood ratio:",round(x$likelihood.ratio,digits),"\n"))
 	cat(paste("P-value (based on X^2):",round(x$P.chisq,digits),"\n\n"))
