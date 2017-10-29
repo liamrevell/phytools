@@ -19,14 +19,22 @@ lik.bd<-function(theta,t,rho=1,N=NULL){
 
 fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
     init<-vector(length=2)
-    if(hasArg(init.b)) init.b<-init.b
-    else init.b<-(log(Ntip(tree))-log(2))/max(nodeHeights(tree))
-    if(hasArg(init.d)) init.d<-init.d
-    else init.d<-0
+    if(hasArg(init.b)) init.b<-list(...)$init.b
+    else init.b<-1.1*qb(tree)
+    if(hasArg(init.d)) init.d<-list(...)$init.d
+    else init.d<-0.1*qb(tree)
     if(!is.binary.tree(tree)) tree<-multi2di(tree)
     T<-sort(branching.times(tree),decreasing=TRUE)
 	fit<-nlminb(c(init.b,init.d),lik.bd,t=T,rho=rho,lower=rep(0,2),
 		upper=rep(Inf,2))
+	if(!is.finite(fit$objective)){
+		count<-0
+		while(!is.finite(fit$objective)&&count<10){
+			fit<-nlminb(runif(n=2,0,2)*c(init.b,init.d),lik.bd,t=T,rho=rho,
+				lower=rep(0,2),upper=rep(Inf,2))
+			count<-count+1
+		}
+	}
     obj<-list(b=fit$par[1],d=fit$par[2],rho=rho,logL=-fit$objective,
         opt=list(counts=fit$counts,convergence=fit$convergence,
         message=fit$message),model="birth-death")
