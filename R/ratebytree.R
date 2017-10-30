@@ -53,6 +53,13 @@ rbt.div<-function(trees,...){
 		init.b<-sapply(trees,qb)
 		obj<-nlminb(c(init.b,0),lik.eqmu,t=t,rho=rho,trace=trace,
 			lower=rep(0,length(trees)+1),upper=rep(Inf,length(trees)+1))
+		count<-0
+		while(!is.finite(obj$objective)&&count<10){
+			obj<-nlminb(runif(n=2,0,2)*c(init.b,0),lik.eqmu,t=t,rho=rho,
+				trace=trace,lower=rep(0,length(trees)+1),
+				upper=rep(Inf,length(trees)+1))
+			count<-count+1
+		}
 		fit.multi<-vector(mode="list",length=length(t))
 		for(i in 1:length(fit.multi)){ 
 			fit.multi[[i]]$b<-obj$par[i]
@@ -72,6 +79,13 @@ rbt.div<-function(trees,...){
 		obj<-nlminb(c(init.b,rep(0,length(trees))),lik.eqlam,t=t,rho=rho,
 			trace=trace,lower=rep(0,length(trees)+1),
 			upper=rep(Inf,length(trees)+1))
+		count<-0
+		while(!is.finite(obj$objective)&&count<10){
+			obj<-nlminb(c(init.b,rep(0,length(trees))),lik.eqlam,t=t,rho=rho,
+				trace=trace,lower=rep(0,length(trees)+1),
+				upper=rep(Inf,length(trees)+1))
+			count<-count+1
+		}
 		fit.multi<-vector(mode="list",length=length(t))
 		for(i in 1:length(fit.multi)){ 
 			fit.multi[[i]]$b<-obj$par[1]
@@ -89,6 +103,12 @@ rbt.div<-function(trees,...){
 	init.d<-mean(sapply(fit.multi,function(x) x$d))
 	fit.onerate<-nlminb(c(init.b,init.d),lik.onerate,t=t,rho=rho,
 		model=model,trace=trace,lower=c(0,0),upper=rep(Inf,2))
+	count<-0
+	while(!is.finite(fit.onerate$objective)&&count<10){
+		fit.onerate<-nlminb(c(init.b,init.d),lik.onerate,t=t,rho=rho,
+			model=model,trace=trace,lower=c(0,0),upper=rep(Inf,2))
+		count<-count+1
+	}
 	rates.multi<-cbind(sapply(fit.multi,function(x) x$b),
 			sapply(fit.multi,function(x) x$d))
 	if(!is.null(names(trees))) rownames(trees)<-names(trees)
