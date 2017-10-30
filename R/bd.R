@@ -18,6 +18,12 @@ lik.bd<-function(theta,t,rho=1,N=NULL){
 ## model-fitting function for birth-death model
 
 fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
+	if(!is.ultrametric(tree)){
+		cat("tree fails is.ultrametric.\n")
+		cat("If you believe your tree actually is ultrametric ")
+		cat("use force.ultrametric & try again.\n")
+		stop()
+	}
     init<-vector(length=2)
     if(hasArg(init.b)) init.b<-list(...)$init.b
     else init.b<-1.1*qb(tree)

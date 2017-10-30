@@ -36,6 +36,12 @@ rbt.div<-function(trees,...){
 	else tol<-1e-12
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
+	if(any(!sapply(trees,is.ultrametric))){
+		cat("One or more trees fails check is.ultrametric.\n")
+		cat("If you believe your tree to be ultrametric ")
+		cat("use force.ultrametric.\n")
+		stop()
+	}
 	t<-lapply(trees,function(phy) sort(branching.times(phy),
 		decreasing=TRUE))
 	if(model=="birth-death"){
