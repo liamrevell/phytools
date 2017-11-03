@@ -41,11 +41,11 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 		col=colors,...)
 	if(add.grid){
 	    dx <- (END - START)/(ncol(X) - 1)
-        x <- seq(START - dx/2, END + dx/2, by = dx) 
-        nTips <- length(tree$tip.label)
-        y <- c(-1/(2*(nTips-1)), seq(0, 1, length = nTips) + 1/(2*(nTips-1)) )
-        segments(x, y[1], x, y[length(y)])
-        segments(x[1], y, x[length(x)], y)
+	    x <- seq(START - dx/2, END + dx/2, by = dx) 
+	    nTips <- length(tree$tip.label)
+	    y <- c(-1/(2*(nTips-1)), seq(0, 1, length = nTips) + 1/(2*(nTips-1)) )
+	    segments(x, y[1], x, y[length(y)])
+	    segments(x[1], y, x[length(x)], y)
 	}
 	if(legend) add.color.bar(leg=END-START,cols=colors,lims=range(X,na.rm=TRUE),
 		title=if(standardize) "standardized value" else "value",
