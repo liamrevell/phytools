@@ -24,6 +24,8 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	if(hasArg(mar)) mar<-list(...)$mar
 	else mar<-rep(1.1,4)
 	if(is.null(colors)) colors<-heat.colors(n=20)[20:1]
+	if(hasArg(grid)) add.grid <- list(...)$grid
+	else add.grid <- FALSE
 	cw<-untangle(tree,"read.tree")
 	plot.new()
 	par(mar=mar)
@@ -37,6 +39,14 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	image(x=seq(START,END,by=(END-START)/(ncol(X)-1)),
 		z=t(X[cw$tip.label,]),add=TRUE,
 		col=colors,...)
+	if(add.grid){
+	    dx <- (END - START)/(ncol(X) - 1)
+	    x <- seq(START - dx/2, END + dx/2, by = dx) 
+	    nTips <- length(tree$tip.label)
+	    y <- c(-1/(2*(nTips-1)), seq(0, 1, length = nTips) + 1/(2*(nTips-1)) )
+	    segments(x, y[1], x, y[length(y)])
+	    segments(x[1], y, x[length(x)], y)
+	}
 	if(legend) add.color.bar(leg=END-START,cols=colors,lims=range(X,na.rm=TRUE),
 		title=if(standardize) "standardized value" else "value",
 		subtitle=if(standardize) "SD units" else "",prompt=FALSE,x=START,
