@@ -34,6 +34,8 @@ rbt.div<-function(trees,...){
 	else rho<-rep(1,length(trees))
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-12
+	if(hasArg(iter)) iter<-list(...)$iter
+	else iter<-10
 	if(!inherits(trees,"multiPhylo")) 
 		stop("trees should be object of class \"multiPhylo\".")
 	if(any(!sapply(trees,is.ultrametric))){
@@ -45,7 +47,7 @@ rbt.div<-function(trees,...){
 	t<-lapply(trees,function(phy) sort(branching.times(phy),
 		decreasing=TRUE))
 	if(model=="birth-death"){
-		fit.multi<-mapply(fit.bd,tree=trees,rho=rho,SIMPLIFY=FALSE)
+		fit.multi<-mapply(fit.bd,tree=trees,rho=rho,iter=iter,SIMPLIFY=FALSE)
 		logL.multi<-sum(sapply(fit.multi,logLik))
 	} else if(model=="equal-extinction"){
 		lik.eqmu<-function(theta,t,rho,trace=FALSE){
@@ -60,7 +62,7 @@ rbt.div<-function(trees,...){
 		obj<-nlminb(c(init.b,0),lik.eqmu,t=t,rho=rho,trace=trace,
 			lower=rep(0,length(trees)+1),upper=rep(Inf,length(trees)+1))
 		count<-0
-		while(!is.finite(obj$objective)&&count<10){
+		while(!is.finite(obj$objective)&&count<iter){
 			obj<-nlminb(runif(n=2,0,2)*c(init.b,0),lik.eqmu,t=t,rho=rho,
 				trace=trace,lower=rep(0,length(trees)+1),
 				upper=rep(Inf,length(trees)+1))
@@ -86,7 +88,7 @@ rbt.div<-function(trees,...){
 			trace=trace,lower=rep(0,length(trees)+1),
 			upper=rep(Inf,length(trees)+1))
 		count<-0
-		while(!is.finite(obj$objective)&&count<10){
+		while(!is.finite(obj$objective)&&count<iter){
 			obj<-nlminb(runif(n=2,0,2)*c(init.b,rep(0,length(trees))),lik.eqlam,
 				t=t,rho=rho,trace=trace,lower=rep(0,length(trees)+1),
 				upper=rep(Inf,length(trees)+1))
@@ -110,7 +112,7 @@ rbt.div<-function(trees,...){
 	fit.onerate<-nlminb(c(init.b,init.d),lik.onerate,t=t,rho=rho,
 		model=model,trace=trace,lower=c(0,0),upper=rep(Inf,2))
 	count<-0
-	while(!is.finite(fit.onerate$objective)&&count<10){
+	while(!is.finite(fit.onerate$objective)&&count<iter){
 		fit.onerate<-nlminb(runif(n=2,0,2)*c(init.b,init.d),lik.onerate,
 			t=t,rho=rho,model=model,trace=trace,lower=c(0,0),
 			upper=rep(Inf,2))

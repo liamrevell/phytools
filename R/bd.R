@@ -29,13 +29,15 @@ fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
     else init.b<-1.1*qb(tree)
     if(hasArg(init.d)) init.d<-list(...)$init.d
     else init.d<-0.1*qb(tree)
+	if(hasArg(iter)) iter<-list(...)$iter
+	else iter<-10
     if(!is.binary.tree(tree)) tree<-multi2di(tree)
     T<-sort(branching.times(tree),decreasing=TRUE)
 	fit<-nlminb(c(init.b,init.d),lik.bd,t=T,rho=rho,lower=rep(0,2),
 		upper=rep(Inf,2))
 	if(!is.finite(fit$objective)){
 		count<-0
-		while(!is.finite(fit$objective)&&count<10){
+		while(!is.finite(fit$objective)&&count<iter){
 			fit<-nlminb(runif(n=2,0,2)*c(init.b,init.d),lik.bd,t=T,rho=rho,
 				lower=rep(0,2),upper=rep(Inf,2))
 			count<-count+1
