@@ -87,6 +87,7 @@ rbt.div<-function(trees,...){
 		obj<-nlminb(c(init.b,rep(0,length(trees))),lik.eqlam,t=t,rho=rho,
 			trace=trace,lower=rep(0,length(trees)+1),
 			upper=rep(Inf,length(trees)+1))
+		print(obj)
 		count<-0
 		while(!is.finite(obj$objective)&&count<iter){
 			obj<-nlminb(runif(n=2,0,2)*c(init.b,rep(0,length(trees))),lik.eqlam,
@@ -100,27 +101,48 @@ rbt.div<-function(trees,...){
 			fit.multi[[i]]$d<-obj$par[i+1]
 		}
 		logL.multi<--obj$objective
+	} else if(model=="Yule"){
+		interval<-if(hasArg(interval)) list(...)$interval else c(0,10*mean(sapply(trees,qb)))
+		fit.multi<-mapply(fit.yule,tree=trees,rho=rho,MoreArgs=list(interval=interval),
+			SIMPLIFY=FALSE)
+		logL.multi<-sum(sapply(fit.multi,logLik))
 	}
-	lik.onerate<-function(theta,t,rho,model,trace=FALSE){
-		logL<-sum(-mapply(lik.bd,t=t,rho=rho,
-			MoreArgs=list(theta=theta)))
-		if(trace) cat(paste(theta[1],"\t",theta[2],"\t",logL,"\n"))
-		-logL
-	}
-	init.b<-mean(sapply(fit.multi,function(x) x$b))
-	init.d<-mean(sapply(fit.multi,function(x) x$d))
-	fit.onerate<-nlminb(c(init.b,init.d),lik.onerate,t=t,rho=rho,
-		model=model,trace=trace,lower=c(0,0),upper=rep(Inf,2))
-	count<-0
-	while(!is.finite(fit.onerate$objective)&&count<iter){
-		fit.onerate<-nlminb(runif(n=2,0,2)*c(init.b,init.d),lik.onerate,
-			t=t,rho=rho,model=model,trace=trace,lower=c(0,0),
-			upper=rep(Inf,2))
-		count<-count+1
-	}
-	rates.multi<-cbind(sapply(fit.multi,function(x) x$b),
+	if(model!="Yule"){
+		lik.onerate<-function(theta,t,rho,model,trace=FALSE){
+			logL<-sum(-mapply(lik.bd,t=t,rho=rho,
+				MoreArgs=list(theta=theta)))
+			if(trace) cat(paste(theta[1],"\t",theta[2],"\t",logL,"\n"))
+			-logL
+		}
+		init.b<-mean(sapply(fit.multi,function(x) x$b))
+		init.d<-mean(sapply(fit.multi,function(x) x$d))
+		fit.onerate<-nlminb(c(init.b,init.d),lik.onerate,t=t,rho=rho,
+			model=model,trace=trace,lower=c(0,0),upper=rep(Inf,2))
+		count<-0
+		while(!is.finite(fit.onerate$objective)&&count<iter){
+			fit.onerate<-nlminb(runif(n=2,0,2)*c(init.b,init.d),lik.onerate,
+				t=t,rho=rho,model=model,trace=trace,lower=c(0,0),
+				upper=rep(Inf,2))
+			count<-count+1
+		}
+		rates.multi<-cbind(sapply(fit.multi,function(x) x$b),
 			sapply(fit.multi,function(x) x$d))
-	if(!is.null(names(trees))) rownames(trees)<-names(trees)
+	} else {
+		lik.onerate<-function(theta,t,rho,trace=FALSE){
+			logL<-sum(-mapply(lik.bd,t=t,rho=rho,MoreArgs=list(theta=c(theta,0))))
+			if(trace) cat(paste(theta,logL,"\n",sep="\t"))
+			-logL
+		}
+		obj<-optimize(lik.onerate,interval,t=t,rho=rho,trace=trace)
+		TOL<-diff(interval)*1e-3
+		convergence<-if((obj$minimum-TOL)<interval[1]||(obj$minimum+TOL)>interval[2]) 52 else 0
+		fit.onerate<-list(par=c(obj$minimum,0),objective=obj$objective,convergence=convergence,
+			message=if(convergence!=0) "Estimate at may be at limits of interval." else 
+			"Probably converged.")
+		rates.multi<-cbind(sapply(fit.multi,function(x) x$b),
+			rep(0,length(trees)))
+	}
+	if(!is.null(names(trees))) rownames(rates.multi)<-names(trees)
 	else rownames(rates.multi)<-paste("tree",1:length(trees),sep="")
 	colnames(rates.multi)<-c("b","d")
 	LR<-2*(logL.multi+fit.onerate$objective)
@@ -135,12 +157,12 @@ rbt.div<-function(trees,...){
 			logL=logL.multi,
 			rates=rates.multi,
 			k=km,
-			method="nlminb"),
+			method=if(model=="Yule") "optimize" else "nlminb"),
 		common.rate.model=list(
 			logL=-fit.onerate$objective,
 			rates=setNames(fit.onerate$par,c("b","d")),
 			k=k1,
-			method="nlminb"),
+			method=if(model=="Yule") "optimize" else "nlminb"),
 		model=model,N=length(trees),
 		n=sapply(trees,Ntip),
 		likelihood.ratio=LR,P.chisq=P.chisq,
