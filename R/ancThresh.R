@@ -1,7 +1,7 @@
-# function performs ancestral character estimation under the threshold model
-# written by Liam J. Revell 2012, 2013, 2014
+## function performs ancestral character estimation under the threshold model
+## written by Liam J. Revell 2012, 2013, 2014, 2017
 
-ancThresh<-function(tree,x,ngen=1000,sequence=NULL,method="mcmc",model=c("BM","OU","lambda"),control=list(),...){
+ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","OU","lambda"),control=list(),...){
 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	
@@ -165,8 +165,65 @@ ancThresh<-function(tree,x,ngen=1000,sequence=NULL,method="mcmc",model=c("BM","O
 		temp<-summary(mcmc[burnin:nrow(mcmc),i])/(nrow(mcmc)-burnin+1)
 		ace[i,names(temp)]<-temp
 	}
-	if(con$plot) plotThresh(tree,X,list(ace=ace,mcmc=mcmc,par=param,liab=liab),burnin=con$burnin,piecol=con$piecol,tipcol=con$tipcol,...)
-	return(list(ace=ace,mcmc=mcmc,par=param,liab=liab))
+	obj<-list(ace=ace,mcmc=mcmc,par=param,liab=liab,
+		tree=tree,x=x,model=model,
+		seq=seq,
+		ngen=ngen,sample=con$sample,
+		burnin=con$burnin)
+	class(obj)<-"ancThresh"
+	if(con$plot) plot(obj)
+	obj
+}
+
+## some S3 methods (added in 2017)
+
+print.ancThresh<-function(x,...){
+	cat("\nObject containing the results from an MCMC analysis\nof the threshold model using ancThresh.\n\n")
+	cat("List with the following components:\n")
+	cat(paste("ace:\tmatrix with posterior probabilities assuming",x$burnin,
+		"\n\tburn-in generations.\n"))
+	cat("mcmc:\tposterior sample of liabilities at tips & internal\n")
+	cat(paste("\tnodes (a matrix with",nrow(x$mcmc),"rows &",ncol(x$mcmc),"columns).\n"))
+	cat("par:\tposterior sample of the relative positions of the\n")
+	cat(paste("\tthresholds, the log-likelihoods, and any other\n",
+		"\tmodel variables (a matrix with",nrow(x$par),"rows).\n\n"))
+	cat("The MCMC was run under the following conditions:\n")
+	cat(paste("\tseq =",paste(x$seq,collapse=" <-> "),
+		"\n\tmodel =",x$model,"\n\tnumber of generations =",x$ngen,
+		"\n\tsample interval=",x$sample,
+		"\n\tburn-in =",x$burnin,"\n\n"))
+}
+
+plot.ancThresh<-function(x,...){
+	if(hasArg(burnin)) burnin<-list(...)$burnin 
+	else burnin<-x$burnin
+	args<-list(...)
+	if(is.null(args$lwd)) args$lwd<-1
+	if(is.null(args$ylim)) args$ylim<-c(-0.1*Ntip(x$tree),Ntip(x$tree))
+	if(is.null(args$offset)) args$offset<-0.5
+	if(is.null(args$ftype)) args$ftype="i"
+	args$tree<-x$tree	
+	do.call(plotTree,args)
+	ii<-which(x$par[,1]==burnin)+1
+	LIAB<-as.matrix(x$liab)[ii:nrow(x$liab),]
+	THRESH<-as.matrix(x$par)[ii:nrow(x$par),1:length(x$seq)+1]
+	STATES<-matrix(NA,nrow(LIAB),ncol(LIAB),dimnames=dimnames(LIAB))
+	for(i in 1:nrow(LIAB)) STATES[i,]<-threshState(LIAB[i,],THRESH[i,])
+	PP<-t(apply(STATES,2,function(x,levs) summary(factor(x,levels=levs))/length(x),
+		levs=x$seq))
+	if(hasArg(piecol)) piecol<-list(...)$piecol
+	else piecol<-setNames(colorRampPalette(c("blue",
+		"yellow"))(length(x$seq)),x$seq)
+	if(hasArg(node.cex)) node.cex<-list(...)$node.cex
+	else node.cex<-0.6
+	nodelabels(pie=PP[1:x$tree$Nnode+Ntip(x$tree),],
+		piecol=piecol,cex=node.cex)
+	if(hasArg(tip.cex)) tip.cex<-list(...)$tip.cex
+	else tip.cex<-0.4
+	tiplabels(pie=PP[x$tree$tip.label,],piecol=piecol,
+		cex=tip.cex)
+	legend(x=par()$usr[1],y=par()$usr[1],legend=x$seq,pch=21,pt.bg=piecol,
+		pt.cex=2.2,bty="n")
 }
 
 # plots ancestral states from the threshold model
@@ -277,12 +334,16 @@ threshDIC<-function(tree,x,mcmc,burnin=NULL,sequence=NULL,method="pD"){
 
 # internal functions for ancThresh, plotThresh, and threshDIC
 
-# returns a state based on position relative to thresholds
-threshState<-function(x,thresholds){
+## returns a state based on position relative to thresholds
+## threshStateC is a function from phangorn>=2.3.1
+threshState<-if(packageVersion("phangorn")>='2.3.1'){
+	function(x,thresholds) names(thresholds)[threshStateC(x,thresholds)]
+} else function(x,thresholds){
 	t<-c(-Inf,thresholds,Inf)
 	names(t)[length(t)]<-names(t)[length(t)-1] 
-	i<-1; while(x>t[i]) i<-i+1
-	return(names(t)[i])
+	i<-1
+	while(x>t[i]) i<-i+1
+	names(t)[i]
 }
 
 # likelihood function for the liabilities
