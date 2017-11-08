@@ -1,9 +1,9 @@
-# these functions uses a Bayesian MCMC approach to estimate heterogeneity in the evolutionary rate for a
-# continuous character (Revell, Mahler, Peres-Neto, & Redelings. In revision.)
-# code written by Liam J. Revell 2010, 2011, 2013, 2015
+## these functions uses a Bayesian MCMC approach to estimate heterogeneity in the evolutionary rate for a
+## continuous character (Revell, Mahler, Peres-Neto, & Redelings. 2012.)
+## code written by Liam J. Revell 2010, 2011, 2013, 2015, 2017
 
-# function for Bayesian MCMC
-# written by Liam Revell 2010/2011
+## function for Bayesian MCMC
+## written by Liam J. Revell 2010, 2011, 2017
 evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){	
 	# some minor error checking
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -269,7 +269,23 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){
 	} 
 	message("Done MCMC run.")
 	# return results
-	return(list(mcmc=results,tips=tips))
+	obj<-list(mcmc=results,tips=tips,ngen=ngen,sample=con$sample)
+	class(obj)<-"evol.rate.mcmc"
+}
+
+## S3 print method
+print.evol.rate.mcmc<-function(x, ...){
+	cat("\nObject of class \"evol.rate.mcmc\" containing the results from a\n")
+	cat("the Bayesian MCMC analysis of a Brownian-motion rate-shift model.\n\n")
+	cat(paste("MCMC was conducted for",x$ngen,"generations sampling every",x$sample,"\n"))
+	cat("generations.\n\n")
+	cat("The most commonly sampled rate shift(s) occurred on the edge(s)\n")
+	pp<-table(x$mcmc[,"node"])/nrow(x$mcmc)
+	node<-names(pp)[which(pp==max(pp))]
+	if(length(node)==1) cat(paste("to node(s) ",node,".\n\n",sep=""))
+	else cat(paste("leading to node(s) ",paste(node,collapse=", "),".\n\n",sep=""))
+	cat("Use the functions posterior.evolrate and minSplit for more detailed\n")
+	cat("analysis of the posterior sample from this analysis.\n\n")
 }
 
 # this function finds the split with the minimum the distance to all the other splits in the sample

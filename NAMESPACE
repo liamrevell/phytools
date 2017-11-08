@@ -115,6 +115,7 @@ S3method(print, anc.trend)
 S3method(logLik, anc.trend)
 S3method(print, ancThresh)
 S3method(plot, ancThresh)
+S3method(print, evol.rate.mcmc)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)

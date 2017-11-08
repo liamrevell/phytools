@@ -1,5 +1,7 @@
 ## method to compare the rate of evolution for a character between trees
-## closely related to 'censored' approach of O'Meara et al. (2006; Evolution)
+## continuous character method closely related to 'censored' approach of O'Meara et al. (2006; Evolution)
+## discrete character method fits Mk model of Lewis 2001
+## diversification method fits Yule or birth-death model of Nee et al. (1994) & Stadler (2012)
 ## written by Liam J. Revell 2017
 
 ratebytree<-function(trees,x,...){
