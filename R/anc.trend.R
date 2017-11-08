@@ -1,11 +1,12 @@
-# this function estimates ancestral traits with a trend
-# written by Liam J. Revell 2011, 2013, 2015
+## this function estimates ancestral traits with a trend
+## written by Liam J. Revell 2011, 2013, 2015, 2017
 
 anc.trend<-function(tree,x,maxit=2000){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 
 	## check if tree is ultretric
-	if(is.ultrametric(tree)) cat("Warning: the trend model is generally non-identifiable for ultrametric trees.\n")
+	if(is.ultrametric(tree)) 
+		cat("Warning: the trend model is generally non-identifiable for ultrametric trees.\n")
 
 	# preliminaries
 	# set global
@@ -32,7 +33,8 @@ anc.trend<-function(tree,x,maxit=2000){
 		u<-theta[2]
 		sig2<-theta[3]
 		y<-theta[4:length(theta)]
-		logLik<-dmnorm(x=c(x,y),mean=(a+diag(C)*u),varcov=sig2*C,log=TRUE)
+		logLik<-dmnorm(x=c(x,y),mean=(a+diag(C)*u),
+			varcov=sig2*C,log=TRUE)
 		return(-logLik)
 	}
 
@@ -41,10 +43,41 @@ anc.trend<-function(tree,x,maxit=2000){
 	sig2<-var(x)/max(C)
 
 	# perform ML optimization
-	result<-optim(par=c(a,0,sig2,rep(a,tree$Nnode-1)),likelihood,x=x,C=C,method="L-BFGS-B",lower=c(-Inf,-Inf,tol,rep(-Inf,tree$Nnode-1)),control=list(maxit=maxit))
+	result<-optim(par=c(a,0,sig2,rep(a,tree$Nnode-1)),likelihood,
+		x=x,C=C,method="L-BFGS-B",lower=c(-Inf,-Inf,tol,rep(-Inf,tree$Nnode-1)),
+		control=list(maxit=maxit))
 
 	# return the result
-	ace<-c(result$par[c(1,4:length(result$par))]); names(ace)<-c(as.character(tree$edge[1,1]),rownames(C)[(length(tree$tip.label)+1):nrow(C)])
-	return(list(ace=ace,mu=result$par[2],sig2=result$par[3],logL=-result$value,convergence=result$convergence,message=result$message))
+	ace<-c(result$par[c(1,4:length(result$par))])
+	names(ace)<-c(as.character(tree$edge[1,1]),
+		rownames(C)[(length(tree$tip.label)+1):nrow(C)])
+	obj<-list(ace=ace,mu=result$par[2],sig2=result$par[3],
+		logL=-result$value,convergence=result$convergence,
+		message=result$message)
+	class(obj)<-"anc.trend"
+	obj
+}
 
+
+## print method for "anc.trend"
+## written by Liam J. Revell 2015, 2017
+print.anc.trend<-function(x,digits=6,printlen=NULL,...){
+	cat("Ancestral character estimates using anc.trend:\n")
+	Nnode<-length(x$ace)
+	if(is.null(printlen)||printlen>=Nnode) print(round(x$ace,digits))
+	else printDotDot(x$ace,digits,printlen)
+	cat("\nParameter estimates:\n")
+	cat(paste("\tmu",paste(rep(" ",digits),collapse=""),"\tsig^2",
+		paste(rep(" ",max(digits-3,1)),collapse=""),"\tlog(L)\n",sep=""))
+	cat(paste("\t",round(x$mu,digits),"\t",round(x$sig2,digits),"\t",
+		round(x$logL,digits),"\n"),sep="")
+	if(x$convergence==0) cat("\nR thinks it has converged.\n\n")
+	else cat("\nR thinks function may not have converged.\n\n")
+}
+
+## logLik method for "anc.trend"
+logLik.anc.trend<-function(object,...){
+	lik<-object$logL
+	attr(lik,"df")<-length(object$ace)+2
+	lik
 }
