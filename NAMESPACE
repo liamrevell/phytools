@@ -129,7 +129,7 @@ importFrom(plotrix, arctext, draw.arc, draw.circle, draw.ellipse, textbox)
 importFrom(scatterplot3d, scatterplot3d)
 importFrom(stats, cophenetic, reorder, runif, setNames, optim, dexp, dnorm, rnorm, var, nlminb, biplot, pchisq, rexp, optimize, logLik, as.dist, pnorm, median, cor, aggregate, rgamma, dgamma, lm, rbinom, rgeom, pt, anova, p.adjust, screeplot, rchisq, optimHess, rmultinom, sd, dunif, dist, plogis, density, coef, cmdscale)
 importFrom(methods, hasArg)
-importFrom(graphics, strwidth, par, segments, locator, lines, text, strheight, symbols, plot, layout, plot.new, title, axis, points, plot.window, polygon, rect, curve, image, mtext, arrows, barplot, boxplot, contour, hist, abline, legend)
+importFrom(graphics, strwidth, par, segments, locator, lines, text, strheight, symbols, plot, layout, plot.new, title, axis, points, plot.window, polygon, rect, curve, image, mtext, arrows, barplot, boxplot, contour, hist, abline, legend, grid)
 importFrom(utils, flush.console, installed.packages, str, capture.output)
 importFrom(grDevices, palette, colors, dev.hold, dev.flush, rainbow, heat.colors, gray, colorRampPalette, dev.new, rgb,
 pdf, dev.off, col2rgb)
