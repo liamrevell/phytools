@@ -2,7 +2,7 @@
 \alias{ancThresh}
 \title{Ancestral character estimation under the threshold model using Bayesian MCMC}
 \usage{
-ancThresh(tree, x, ngen=1000, sequence=NULL, method="mcmc", 
+ancThresh(tree, x, ngen=10000, sequence=NULL, method="mcmc", 
    model=c("BM","OU","lambda"), control=list(), ...)
 }
 \arguments{

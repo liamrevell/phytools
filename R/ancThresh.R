@@ -64,7 +64,7 @@ ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","
 		pr.anc=PrA,
 		pr.th=0.01,
 		burnin=round(0.2*ngen),
-		plot=TRUE,
+		plot=FALSE,
 		print=TRUE,
 		piecol=setNames(palette()[1:length(seq)],seq),
 		tipcol="input",
