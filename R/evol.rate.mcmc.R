@@ -298,6 +298,7 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 	# return results
 	obj<-list(mcmc=results,tips=tips,ngen=ngen,sample=con$sample)
 	class(obj)<-"evol.rate.mcmc"
+	obj
 }
 
 ## S3 print method
