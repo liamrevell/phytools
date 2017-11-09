@@ -4,7 +4,9 @@
 
 ## function for Bayesian MCMC
 ## written by Liam J. Revell 2010, 2011, 2017
-evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){	
+evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){	
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
 	# some minor error checking
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
 	if(is.matrix(x)) x<-x[,1]
@@ -29,25 +31,36 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){
 	}
 	# first, try and obtain reasonable estimates for control parameters
 	# and starting values for the MCMC
-	C<-vcv.phylo(tree); C<-C[names(x),names(x)]; n<-nrow(C); one<-matrix(1,n,1)
+	C<-vcv.phylo(tree)
+	C<-C[names(x),names(x)]
+	n<-nrow(C)
+	one<-matrix(1,n,1)
 	a<-colSums(solve(C))%*%x/sum(solve(C)) # MLE ancestral value, used to start MCMC
 	sig1<-as.numeric(t(x-one%*%a)%*%solve(C)%*%(x-one%*%a)/n) # MLE sigma-squared, used to start MCMC
 	sig2<-sig1 # used to start MCMC
 	flipped=FALSE # used to start MCMC
 	# populate control list
-	con=list(sig1=sig1,sig2=sig2,a=as.numeric(a),sd1=0.2*sig1,sd2=0.2*sig2,sda=0.2*abs(as.numeric(a)),kloc=0.2*mean(diag(C)),sdlnr=1,rand.shift=0.05,print=100,sample=100)
+	con=list(sig1=sig1,sig2=sig2,a=as.numeric(a),sd1=0.2*sig1,sd2=0.2*sig2,
+		sda=0.2*abs(as.numeric(a)),kloc=0.2*mean(diag(C)),sdlnr=1,
+		rand.shift=0.05,print=100,sample=100)
 	# also might use: sig1mu=1000,sig2mu=1000
 	con[(namc <- names(control))] <- control
 	con<-con[!sapply(con,is.null)]
 	# print control parameters to screen
-	message("Control parameters (set by user or default):"); str(con)
+	if(!quiet){
+		message("Control parameters (set by user or default):")
+		str(con)
+	}
 	# now detach the starting parameter values (to be compatible with downstream code)
-	sig1<-con$sig1; sig2<-con$sig1; a<-con$a
+	sig1<-con$sig1
+	sig2<-con$sig1
+	a<-con$a
 	# all internal functions start here
 	# function to return the index of a random edge
 	random.node<-function(phy){
 		# sum edges cumulatively
-		cum.edge<-vector(mode="numeric"); index<-vector(mode="numeric")
+		cum.edge<-vector(mode="numeric")
+		index<-vector(mode="numeric")
 		for(i in 1:length(phy$edge.length)){
 			if(i==1) cum.edge[i]<-phy$edge.length[1]
 			else cum.edge[i]<-cum.edge[i-1]+phy$edge.length[i]
@@ -77,10 +90,12 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){
 		D<-dist.nodes(phy)
 		ntips<-length(phy$tip.label)
 		Cii<-D[ntips+1,]
-		C<-D; C[,]<-0
+		C<-D
+		C[,]<-0
 		counts<-vector()
 		for(i in 1:nrow(D)) for(j in 1:ncol(D)) C[i,j]<-(Cii[i]+Cii[j]-D[i,j])/2
-		tol<-1e-10; descendants<-matrix(0,nrow(D),ntips,dimnames=list(rownames(D)))
+		tol<-1e-10
+		descendants<-matrix(0,nrow(D),ntips,dimnames=list(rownames(D)))
 		for(i in 1:nrow(C)){
 			k<-0
 			for(j in 1:ntips){
@@ -218,10 +233,12 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){
 	curr.gen<-matrix(NA,1,7,dimnames=list("curr",c("state","sig1","sig2","a","node","bp","likelihood")))
 	results[1,]<-c(0,sig1,sig2,a,location$node,location$bp,logL) # populate the first row
 	curr.gen[1,]<-results[1,]
-	group.tips<-list(); tips<-list()
-	group.tips[[1]]<-likelihood(x,tree,C,descendants,sig1,sig2,a,location)$tips; tips[[1]]<-group.tips[[1]]
-	message("Starting MCMC run:")	
-	print(results[1,])
+	group.tips<-list()
+	tips<-list()
+	group.tips[[1]]<-likelihood(x,tree,C,descendants,sig1,sig2,a,location)$tips
+	tips[[1]]<-group.tips[[1]]
+	message("Starting MCMC run....")	
+	if(!quiet) print(results[1,])
 	j<-2
 	# now run Markov-chain
 	for(i in 1:ngen){
@@ -244,23 +261,33 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list()){
 			temp<-likelihood(x,tree,C,descendants,sig1.prime,sig2.prime,a.prime,location.prime)
 			logpr.prime<-log.prior(sig1.prime,sig2.prime,a.prime,location.prime)
 			if(exp(temp$logL+logpr.prime-curr.gen[1,"likelihood"]-logpr)>runif(1)){
-				sig1<-sig1.prime; sig2<-sig2.prime; a<-a.prime; location<-location.prime
- 				logL<-temp$logL; logpr<-logpr.prime; flipped<-flipped.prime
+				sig1<-sig1.prime
+				sig2<-sig2.prime
+				a<-a.prime
+				location<-location.prime
+ 				logL<-temp$logL
+				logpr<-logpr.prime
+				flipped<-flipped.prime
 				group.tips[[i+1]]<-temp$tips
 			} else group.tips[[i+1]]<-group.tips[[i]]
 		} else { 
 			temp<-likelihood(x,tree,C,descendants,sig2.prime,sig1.prime,a.prime,location.prime)
 			logpr.prime<-log.prior(sig2.prime,sig1.prime,a.prime,location.prime)
 			if(exp(temp$logL+logpr.prime-curr.gen[1,"likelihood"]-logpr)>runif(1)){
-				sig1<-sig1.prime; sig2<-sig2.prime; a<-a.prime; location<-location.prime
- 				logL<-temp$logL; logpr<-logpr.prime; flipped<-flipped.prime
+				sig1<-sig1.prime
+				sig2<-sig2.prime
+				a<-a.prime
+				location<-location.prime
+ 				logL<-temp$logL
+				logpr<-logpr.prime
+				flipped<-flipped.prime
 				group.tips[[i+1]]<-setdiff(tree$tip.label,temp$tips)
 			} else group.tips[[i+1]]<-group.tips[[i]]
 		}	
 		rm(temp)
 		curr.gen[1,]<-c(i,sig1,sig2,a,location$node,location$bp,logL)
 		if(i%%con$print==0)
-			print(curr.gen[1,])
+			if(!quiet) print(curr.gen[1,])
 		if(i%%con$sample==0){
 			results[j,]<-curr.gen
 			tips[[j]]<-group.tips[[i+1]]
@@ -300,9 +327,11 @@ minSplit<-function(tree,split.list,method="sum",printD=FALSE){
 	D<-dist.nodes(tree)
 	ntips<-length(tree$tip.label)
 	Cii<-D[ntips+1,]
-	C<-D; C[,]<-0
+	C<-D
+	C[,]<-0
 	for(i in 1:nrow(D)) for(j in 1:ncol(D)) C[i,j]<-(Cii[i]+Cii[j]-D[i,j])/2
-	tol<-1e-10; descendants<-matrix(0,nrow(D),ncol(D),dimnames=list(rownames(D)))
+	tol<-1e-10
+	descendants<-matrix(0,nrow(D),ncol(D),dimnames=list(rownames(D)))
 	for(i in 1:nrow(C)){
 		k<-1
 		for(j in 1:ncol(C)){
