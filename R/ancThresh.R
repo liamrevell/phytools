@@ -337,7 +337,11 @@ threshDIC<-function(tree,x,mcmc,burnin=NULL,sequence=NULL,method="pD"){
 ## returns a state based on position relative to thresholds
 ## threshStateC is a function from phangorn>=2.3.1
 threshState<-if(packageVersion("phangorn")>='2.3.1'){
-	function(x,thresholds) names(thresholds)[threshStateC(x,thresholds)]
+	function(x,thresholds){
+    res <- names(thresholds)[threshStateC(x, thresholds)]
+    names(res) <- names(x)
+    res
+  }
 } else function(x,thresholds){
 	t<-c(-Inf,thresholds,Inf)
 	names(t)[length(t)]<-names(t)[length(t)-1] 
@@ -355,8 +359,9 @@ likLiab<-function(l,a,V,invV,detV){
 
 # function for the log-prior
 logPrior<-function(a,t,control){
-	pp<-sum(log(diag(control$pr.anc[names(a),a])))+
-		if(length(t)>2) sum(dexp(t[2:(length(t)-1)],rate=control$pr.th,log=TRUE)) else 0				
+#	pp<-sum(log(diag(control$pr.anc[names(a),a])))+
+  pp<-sum(log(control$pr.anc[cbind(names(a),a)])) +
+    if(length(t)>2) sum(dexp(t[2:(length(t)-1)],rate=control$pr.th,log=TRUE)) else 0				
 	return(pp)		
 }
 
