@@ -116,6 +116,8 @@ S3method(logLik, anc.trend)
 S3method(print, ancThresh)
 S3method(plot, ancThresh)
 S3method(print, evol.rate.mcmc)
+S3method(print, threshBayes)
+S3method(plot, threshBayes)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
