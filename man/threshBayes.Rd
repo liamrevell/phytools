@@ -2,7 +2,7 @@
 \alias{threshBayes}
 \title{Threshold model using Bayesian MCMC}
 \usage{
-threshBayes(tree, X, types=NULL, ngen=1000, control=list())
+threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
@@ -10,6 +10,7 @@ threshBayes(tree, X, types=NULL, ngen=1000, control=list())
 	\item{types}{a vector of length \code{ncol(X)} containing the data types for each column of \code{X}, for instance \code{c("discrete","continuous")}.}
 	\item{ngen}{a integer indicating the number of generations for the MCMC.}
 	\item{control}{a list of control parameters for the MCMC. Control parameters include: \code{sample}, the sampling interval for the MCMC; \code{propvar}, a vector containing (in this order) proposal variances for the two rates (if the type is \code{"discrete"} this will be ignored), the two ancestral states, and the correlation; \code{propliab}, a single proposal variance for the liabilities; \code{pr.mean}, a vector for the mean of the prior probability distributions for each parameter, in the same order as \code{propvar}; \code{pr.liab}, currently ignored; \code{pr.var}, a vector with variances for the prior densities for each parameter, in the same order as \code{pr.mean} - note that for the rates we use an exponential distribution so the first two means are currently ignored; and \code{pr.vliab} currently ignored.}
+	\item{...}{other optional arguments.}
 }
 \description{
 	This function uses Bayesian MCMC to fit the quantitative genetics threshold model (Felsenstein 2012) to data for two discrete characters or one discrete and one continuous character.
