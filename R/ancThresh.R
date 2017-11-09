@@ -98,7 +98,8 @@ ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","
 	   else if(model=="lambda") matrix(NA,ngen/con$sample+1,m+3,dimnames=list(NULL,c("gen",names(th),"lambda","logLik")))
 
 	C<-matrix(NA,ngen/con$sample+1,tree$Nnode+n,dimnames=list(NULL,c(tree$tip.label,1:tree$Nnode+n)))
-	A[1,]<-sapply(a,threshState,thresholds=th)
+#	A[1,]<-sapply(a,threshState,thresholds=th)
+	A[1,]<-threshState(a,thresholds=th)
 	B[1,]<-if(model=="BM") c(0,th,lik1) else if(model=="OU") c(0,th,alpha,lik1) else if(model=="lambda") c(0,th,lambda,lik1)
 	C[1,]<-c(l[tree$tip.label],a[as.character(1:tree$Nnode+n)])
 
@@ -141,8 +142,8 @@ ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","
 			}
 		}
 		lik2<-likLiab(lp,ap,Vp,invVp,detVp)+log(probMatch(X,lp,thp,seq))
-		p.odds<-min(c(1,exp(lik2+logPrior(sapply(ap,threshState,thresholds=thp),thp,con)-lik1-logPrior(sapply(a,threshState,thresholds=th),th,con))))
-
+#		p.odds<-min(c(1,exp(lik2+logPrior(sapply(ap,threshState,thresholds=thp),thp,con)-lik1-logPrior(sapply(a,threshState,thresholds=th),th,con))))
+		p.odds<-min(c(1,exp(lik2+logPrior(threshState(ap,thresholds=thp),thp,con)-lik1-logPrior(threshState(a,thresholds=th),th,con))))
 		if(p.odds>runif(n=1)){
 			a<-ap; l<-lp; th<-thp
 			V<-Vp; detV<-detVp; invV<-invVp
@@ -151,7 +152,8 @@ ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","
 			logL<-lik2
 		} else logL<-lik1
 		if(i%%con$sample==0){ 
-			A[i/con$sample+1,]<-sapply(a,threshState,thresholds=th)
+#			A[i/con$sample+1,]<-sapply(a,threshState,thresholds=th)
+			A[i/con$sample+1,]<-threshState(a,thresholds=th)			
 			B[i/con$sample+1,]<-if(model=="BM") c(i,th[colnames(B)[1+1:m]],logL) else if(model=="OU") c(i,th[colnames(B)[1+1:m]],alpha,logL) else if(model=="lambda") c(i,th[colnames(B)[1+1:m]],lambda,logL)
 			C[i/con$sample+1,]<-c(l[tree$tip.label],a[as.character(1:tree$Nnode+n)])
 		}
@@ -274,7 +276,8 @@ plotThresh<-function(tree,x,mcmc,burnin=NULL,piecol,tipcol="input",legend=TRUE,.
 	if(tipcol=="input") tiplabels(pie=X,piecol=piecol[colnames(X)],cex=0.6)
 	else if(tipcol=="estimated") {
 		XX<-matrix(NA,nrow(liab),length(tree$tip),dimnames=list(rownames(liab),colnames(liab)[1:length(tree$tip)]))
-		for(i in 1:nrow(liab)) XX[i,]<-sapply(liab[i,1:length(tree$tip)],threshState,thresholds=param[i,1:ncol(X)+1])
+#		for(i in 1:nrow(liab)) XX[i,]<-sapply(liab[i,1:length(tree$tip)],threshState,thresholds=param[i,1:ncol(X)+1])
+		for(i in 1:nrow(liab)) XX[i,]<-threshState(liab[i,1:length(tree$tip)],thresholds=param[i,1:ncol(X)+1])
 		X<-t(apply(XX,2,function(x) summary(factor(x,levels=colnames(X)))))
 		tiplabels(pie=X/rowSums(X),piecol=piecol[colnames(X)],cex=0.6)
 	}
@@ -354,24 +357,30 @@ likLiab<-function(l,a,V,invV,detV){
 }
 
 # function for the log-prior
+# avoid diag construction
 logPrior<-function(a,t,control){
-	pp<-sum(log(diag(control$pr.anc[names(a),a])))+
-		if(length(t)>2) sum(dexp(t[2:(length(t)-1)],rate=control$pr.th,log=TRUE)) else 0				
-	return(pp)		
+#	pp<-sum(log(diag(control$pr.anc[names(a),a])))+
+  pp<-sum(log(control$pr.anc[cbind(names(a),a)])) +
+    if(length(t)>2) sum(dexp(t[2:(length(t)-1)],rate=control$pr.th,log=TRUE)) else 0	
+  return(pp)		
 }
+
 
 # check if the liability predictions match observed data
 allMatch<-function(x,l,thresholds){
-	result<-all(sapply(l,threshState,thresholds=thresholds)==x)
-	if(!is.na(result)) return(result)
-	else return(FALSE)
+  #	result<-all(sapply(l,threshState,thresholds=thresholds)==x)
+  result<-all(threshState(l,thresholds=thresholds)==x)
+  if(!is.na(result)) return(result)
+  else return(FALSE)
 }
+
 
 # check if the liability predictions match observed data & return a probability
 # (this allows states to be uncertain)
 probMatch<-function(X,l,thresholds,sequence){
-	Y<-to.matrix(sapply(l,threshState,thresholds=thresholds),sequence)
-	return(prod(rowSums(X*Y)))
+  #	Y<-to.matrix(sapply(l,threshState,thresholds=thresholds),sequence)
+  Y<-to.matrix(threshState(l,thresholds=thresholds),sequence)
+  return(prod(rowSums(X*Y)))
 }
 
 # bounds parameter by bouncing
