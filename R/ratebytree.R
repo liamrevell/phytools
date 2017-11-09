@@ -130,12 +130,12 @@ rbt.div<-function(trees,...){
 		rates.multi<-cbind(sapply(fit.multi,function(x) x$b),
 			sapply(fit.multi,function(x) x$d))
 	} else {
-		lik.onerate<-function(theta,t,rho,trace=FALSE){
+		lik.yule<-function(theta,t,rho,trace=FALSE){
 			logL<-sum(-mapply(lik.bd,t=t,rho=rho,MoreArgs=list(theta=c(theta,0))))
 			if(trace) cat(paste(theta,logL,"\n",sep="\t"))
 			-logL
 		}
-		obj<-optimize(lik.onerate,interval,t=t,rho=rho,trace=trace)
+		obj<-optimize(lik.yule,interval,t=t,rho=rho,trace=trace)
 		TOL<-diff(interval)*1e-3
 		convergence<-if((obj$minimum-TOL)<interval[1]||(obj$minimum+TOL)>interval[2]) 52 else 0
 		fit.onerate<-list(par=c(obj$minimum,0),objective=obj$objective,convergence=convergence,
