@@ -280,20 +280,17 @@ threshDIC<-function(tree,x,mcmc,burnin=NULL,sequence=NULL,method="pD"){
 
 # internal functions for ancThresh, plotThresh, and threshDIC
 
-# returns a state based on position relative to thresholds
-#threshState<-function(x,thresholds){
-#	t<-c(-Inf,thresholds,Inf)
-#	names(t)[length(t)]<-names(t)[length(t)-1] 
-#	i<-1; while(x>t[i]) i<-i+1
-#	return(names(t)[i])
-#}
-# use C version from phangorn
-threshState <- function(x, thresholds){
-  res <- names(thresholds)[threshStateC(x, thresholds)]
-  names(res) <- names(x)
-  res
+## returns a state based on position relative to thresholds
+## threshStateC is a function from phangorn>=2.3.1
+threshState<-if(packageVersion("phangorn")>='2.3.1'){
+	function(x,thresholds) names(thresholds)[threshStateC(x,thresholds)]
+} else function(x,thresholds){
+	t<-c(-Inf,thresholds,Inf)
+	names(t)[length(t)]<-names(t)[length(t)-1] 
+	i<-1
+	while(x>t[i]) i<-i+1
+	names(t)[i]
 }
-
 
 # likelihood function for the liabilities
 likLiab<-function(l,a,V,invV,detV){
