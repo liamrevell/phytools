@@ -1,5 +1,5 @@
 ## function to compute the marginal posterior probabilities for nodes using the rerooting method
-## written by Liam J. Revell 2013, 2015
+## written by Liam J. Revell 2013, 2015, 2017
 
 rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	if(!inherits(tree,"phylo")) 
@@ -33,5 +33,47 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	rownames(XX)<-1:(tree$Nnode+n)
 	if(tips) rownames(XX)[1:n]<-tree$tip.label
 	XX<-if(tips) XX else XX[1:tree$Nnode+n,]
-	return(list(loglik=YY$logLik,Q=Q,marginal.anc=XX))
+	obj<-list(loglik=YY$logLik,Q=Q,marginal.anc=XX,tree=tree,x=yy)
+	class(obj)<-"rerootingMethod"
+	obj
 }
+
+print.rerootingMethod<-function(x,digits=6,printlen=NULL,...){
+	cat("Ancestral character estimates using re-rooting method\nof Yang et al. (1995):\n")
+	if(is.null(printlen)) print(round(x$marginal.anc,digits)) else { 
+		print(round(x$marginal.anc[1:printlen,],digits))
+		cat("...\n")
+	}
+	cat("\nEstimated transition matrix,\nQ =\n")
+	print(round(x$Q,digits))
+	cat("\n**Note that if Q is not symmetric the marginal\nreconstructions may be invalid.\n")
+	cat(paste("\nLog-likelihood =",round(x$loglik,digits),"\n\n"))
+}
+
+plot.rerootingMethod<-function(x, ...){
+	args<-list(...)
+	if(is.null(args$lwd)) args$lwd<-1
+	if(is.null(args$ylim)) args$ylim<-c(-0.1*Ntip(x$tree),Ntip(x$tree))
+	if(is.null(args$offset)) args$offset<-0.5
+	if(is.null(args$ftype)) args$ftype="i"
+	args$tree<-x$tree	
+	do.call(plotTree,args)
+	if(hasArg(piecol)) piecol<-list(...)$piecol
+	else piecol<-setNames(colorRampPalette(c("blue",
+		"yellow"))(ncol(x$marginal.anc)),
+		colnames(x$marginal.anc))
+	if(hasArg(node.cex)) node.cex<-list(...)$node.cex
+	else node.cex<-0.6
+	nodelabels(pie=x$marginal.anc[
+		as.character(1:x$tree$Nnode+Ntip(x$tree)),],
+		piecol=piecol,cex=node.cex)
+	if(hasArg(tip.cex)) tip.cex<-list(...)$tip.cex
+	else tip.cex<-0.4
+	tiplabels(pie=x$x[x$tree$tip.label,],piecol=piecol,
+		cex=tip.cex)
+	legend(x=par()$usr[1],y=par()$usr[1],
+		legend=colnames(x$marginal.anc),
+		pch=21,pt.bg=piecol,pt.cex=2.2,bty="n")
+}
+
+logLik.rerootingMethod<-function(object,...) object$loglik

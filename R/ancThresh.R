@@ -224,6 +224,7 @@ plot.ancThresh<-function(x,...){
 		cex=tip.cex)
 	legend(x=par()$usr[1],y=par()$usr[1],legend=x$seq,pch=21,pt.bg=piecol,
 		pt.cex=2.2,bty="n")
+	invisible(PP)
 }
 
 # plots ancestral states from the threshold model
