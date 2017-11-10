@@ -1,5 +1,5 @@
-# simulation based test for a correlation between the state of x & the rate of y
-# written by Liam J. Revell 2013
+## simulation based test for a correlation between the state of x & the rate of y
+## written by Liam J. Revell 2013, 2017
 
 ratebystate<-function(tree,x,y,nsim=100,corr=c("pearson","spearman"),...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -40,8 +40,9 @@ ratebystate<-function(tree,x,y,nsim=100,corr=c("pearson","spearman"),...){
 	}
 	r.null<-c(r,replicate(nsim-1,foo(tree,V)))
 	P<-mean(abs(r.null)>=abs(r))
-	if(message) return(list(beta=beta,r=r,P=P,corr=corr,method=method))
-	else  return(list(beta=beta,r=r,P=P))
+	obj<-list(beta=beta,r=r,P=P,corr=corr,method=method)
+	class(obj)<-"ratebystate"
+	obj
 }
 
 # function simulates rate by state evolution for x & y
@@ -67,4 +68,4 @@ sim.ratebystate<-function(tree,sig2x=1,sig2y=1,beta=c(0,1),...){
 	return(cbind(x,y))
 }
 	 
-	
+
