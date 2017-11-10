@@ -68,4 +68,16 @@ sim.ratebystate<-function(tree,sig2x=1,sig2y=1,beta=c(0,1),...){
 	return(cbind(x,y))
 }
 	 
-
+## S3 print method
+print.ratebystate<-function(x,digits=6,...){
+	cat("\nObject of class \"ratebystate\".\n")
+	cat("\nSummary of object:\n")
+	cat(paste("  beta[1] = ",round(x$beta,digits),"\n",sep=""))
+	cat(paste("  ",if(x$corr=="pearson") "Pearson " else
+		"Spearman ","correlation (r) = ",round(x$r,digits),
+		"\n",sep=""))
+	cat(paste("  P-value (from simulation) = ",round(x$P,digits),
+		"\n\n",sep=""))
+	cat(paste("Analysis was conducted using \"",x$method,
+		"\" method.\n\n",sep=""))
+}

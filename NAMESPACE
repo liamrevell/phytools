@@ -123,6 +123,7 @@ S3method(plot, rerootingMethod)
 S3method(logLik, rerootingMethod)
 S3method(print, fitBayes)
 S3method(plot, fitBayes)
+S3method(print, ratebystate)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
