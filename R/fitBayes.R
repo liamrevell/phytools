@@ -86,7 +86,7 @@ plot.fitBayes<-function(x,...){
 		if(x$model!="lambda") stop("Model of \"fitBayes\" object is not \"lambda\".")
 		else {
 			ii<-which(((x$mcmc$gen-burnin)^2)==min((x$mcmc$gen-burnin)^2))+1
-			if(is.null(args$bw)) bw<-0.05*diff(range(x$mcmc$sig2[ii:nrow(x$mcmc)]))
+			if(is.null(args$bw)) bw<-0.05*diff(range(x$mcmc$lambda[ii:nrow(x$mcmc)]))
 			else {
 				bw<-args$bw
 				args$bw<-NULL
