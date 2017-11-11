@@ -14,7 +14,7 @@ anc.Bayes(tree, x, ngen=10000, control=list())
 	This function uses Bayesian MCMC to sample from the posterior distribution for the states at internal nodes in the tree.
 }
 \value{
-	An object of class \code{"anc.Bayes"} that includes at least two components: 
+	An object of class \code{"anc.Bayes"} including at least two components: 
 	\item{mcmc}{a data frame with rows \code{ngen/sample+1} containing the posterior sample and likelihoods.  Matrix columns are labeled either \code{sig2} or by the node number of the internal node.}
 	\item{tree}{our input phylogeny.}
 }
