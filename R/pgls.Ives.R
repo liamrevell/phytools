@@ -1,10 +1,12 @@
 ## implements method of Ives et al. 2007 for PGLS regression with sampling error
-## written by Liam J. Revell 2012, 2013, 2015 (warning added 2017)
+## written by Liam J. Revell 2012, 2013, 2015 2017
 
-pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
+pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8),
+	fixed.b1=NULL){
 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	
+	cat("\n")
 	cat("---------------------------------------------------------------\n")
 	cat("| **Warning:                                                  |\n")
 	cat("|   User reports suggest that this method may frequently      |\n")
@@ -13,8 +15,10 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 
 	
 	# likelihood function
-	lik<-function(theta,C,x,y,Mx,My,Mxy){
-		sig2x<-theta[1]; sig2y<-theta[2]; b1<-theta[3]
+	lik<-function(theta,C,x,y,Mx,My,Mxy,fixed.b1=NULL){
+		sig2x<-theta[1]
+		sig2y<-theta[2]
+		b1<-if(is.null(fixed.b1)) theta[3] else fixed.b1
 		a<-theta[4:5]
 		n<-nrow(C)
 		Psi<-matrix(0,2*n,2*n)
@@ -23,7 +27,6 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 		Psi[n+1:n,n+1:n]<-b1^2*sig2x*C+sig2y*C+diag(My)
 		z<-c(X,y)
 		D<-kronecker(diag(rep(1,2)),matrix(rep(1,n)))
-		## L<--2*n/2*log(2*pi)-(1/2)*determinant(Psi,logarithm=TRUE)$modulus[1]-(1/2)*t(z-D%*%a)%*%solve(Psi)%*%(z-D%*%a)
 		L<-dmnorm(z,(D%*%a)[,1],Psi,log=TRUE)
 		return(-L)
 	}
@@ -38,7 +41,8 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 		nx<-summary(as.factor(names(X)))[names(Vx)]
 		Vx<-Vx/nx
 		if(any(is.na(Vx))){
-			warning("Some species contain only one sample. Substituting mean variance.",call.=FALSE)
+			warning("Some species contain only one sample. Substituting mean variance.",
+				call.=FALSE)
 			Vx[which(is.na(Vx))]<-mean(Vx*nx,na.rm=TRUE)
 		}
 		rm(a,nx)
@@ -51,7 +55,8 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 		ny<-summary(as.factor(names(y)))[names(Vy)]
 		Vy<-Vy/ny
 		if(any(is.na(Vy))){
-			warning("Some species contain only one sample. Substituting mean variance.",call.=FALSE)
+			warning("Some species contain only one sample. Substituting mean variance.",
+				call.=FALSE)
 			Vy[which(is.na(Vy))]<-mean(Vy*ny,na.rm=TRUE)
 		}
 		rm(a,ny)
@@ -64,7 +69,8 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 		nxy<-summary(as.factor(names(y)))[names(d)]
 		Cxy<-d/(nxy-1)/nxy
 		if(any(is.na(Cxy))){
-			warning("Some species contain only one sample. Substituting mean variance.",call.=FALSE)
+			warning("Some species contain only one sample. Substituting mean variance.",
+				call.=FALSE)
 			Cxy[which(is.na(Cxy))]<-mean(Cxy*nxy,na.rm=TRUE)
 		}
 		rm(a,b,c,nxy)
@@ -81,16 +87,54 @@ pgls.Ives<-function(tree,X,y,Vx=NULL,Vy=NULL,Cxy=NULL,lower=c(1e-8,1e-8)){
 	Cxy<-Cxy[tree$tip.label]
 	
 	# get some reasonable starting values for optimization
-	b<-runif(n=1,min=0,max=2)*lm(pic(y,tree)~pic(X,tree))$coefficients[2]; names(b)<-NULL
+	b<-if(is.null(fixed.b1)) runif(n=1,min=0,max=2)*lm(pic(y,
+		tree)~pic(X,tree))$coefficients[2] else fixed.b1
+	names(b)<-NULL
 	sig2x<-runif(n=1,min=0,max=2)*mean(pic(X,tree)^2)
 	sig2y<-runif(n=1,min=0,max=2)*mean(pic(y,tree)^2)
 	a<-runif(n=2,min=-1,max=1)*c(mean(X),mean(y))
 
 	# optimize regression model
-	r<-optim(c(sig2x,sig2y,b,a),lik,C=C,x=X,y=y,Mx=Vx,My=Vy,Mxy=Cxy,method="L-BFGS-B",lower=c(lower,-Inf,-Inf,-Inf),control=list(factr=1e10))
+	r<-optim(c(sig2x,sig2y,b,a),lik,C=C,x=X,y=y,Mx=Vx,My=Vy,Mxy=Cxy,
+		fixed.b1=fixed.b1,method="L-BFGS-B",
+		lower=c(lower,-Inf,-Inf,-Inf),control=list(factr=1e10))
 
+	k<-if(is.null(fixed.b1)) 5 else 4
+	if(all(Vx==0)) k<-k-1
+	if(all(Vy==0)) k<-k-1
+		
 	# return r
-	return(list(beta=c(r$par[5]-r$par[3]*r$par[4],r$par[3]),sig2x=r$par[1],sig2y=r$par[2],a=r$par[4:5],logL=-r$value,convergence=r$convergence,message=r$message))
+	obj<-list(beta=c(r$par[5]-r$par[3]*r$par[4],
+		if(is.null(fixed.b1)) r$par[3] else fixed.b1),sig2x=r$par[1],
+		sig2y=r$par[2],a=r$par[4:5],logL=-r$value,convergence=r$convergence,
+		message=r$message,df=c(k,Ntip(tree)-k))
+	class(obj)<-"pgls.Ives"
+	obj
+}
+
+logLik.pgls.Ives<-function(object,...){
+	lik<-object$logL
+	attr(lik,"df")<-object$df[1]
+	lik
+}
+
+print.pgls.Ives<-function(x,digits=6,...){
+	cat("\nResult PGLS with sampling error in x & y") 
+	cat("\n   (based on Ives et al. 2007):\n\n")
+	cat("Response: y\n")
+	object<-data.frame(x$beta[1],x$beta[2])
+	colnames(object)<-c("Intercept","beta[1]")
+	rownames(object)<-"y"
+	print(object)
+	cat("\nSummary of ML estimated parameters:\n")
+	object<-data.frame(round(c(x$sig2y,x$sig2x),digits),
+		round(c(x$a[2:1]),digits),c(round(x$logL,digits),""))
+	colnames(object)<-c("sigma^2","a","log(L)")
+	rownames(object)<-c("y","x")
+	print(object)
+	cat("---------\n")
+	if(x$convergence==0) cat("\nR thinks it has converged.\n\n")
+	else ("\nR may not have converged.\n\n")
 }
 
 ## simpler function to take sampling error into account for y only
