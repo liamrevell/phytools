@@ -16,7 +16,7 @@ ratebystate(tree, x, y, nsim=100, corr=c("pearson","spearman"), ...)
 	This function attempts to ask if the rate of a continuous character, \code{y}, depends on the state of a separate continuous trait, \code{x}. This is accomplished by regressing the squared contrasts in \code{y} on the branch or node ancestral estimates of \code{x}.
 }
 \value{
-	This function returns a list with up to the following four elements:
+	This function returns an object of class \code{"ratebystate"} with up to the following four elements:
 	\item{beta}{value of the regression coefficient for square of the contrasts in \code{y} regressed on the ancestral or branch-wise estimated states for \code{x}.}
 	\item{r}{correlation coefficient for \code{corr=corr}.}
 	\item{corr}{string giving the value of \code{corr}.}

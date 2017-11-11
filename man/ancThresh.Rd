@@ -18,12 +18,11 @@ ancThresh(tree, x, ngen=10000, sequence=NULL, method="mcmc",
 \description{
 	This function uses Bayesian MCMC to estimate ancestral states and thresholds for a discrete character under the threshold model from quantitative genetics (Felsenstein 2012).
 }
+\details{
+	\code{print} and \code{plot} S3 methods are now available for the object class \code{"ancThresh"}.
+}
 \value{
-	This function returns as list with four elements:
-	\item{ace}{posterior probabilities for each character state at each internal node, with the burn-in excluded.}
-	\item{mcmc}{full posterior sample for the states.}
-	\item{par}{full posterior sample for the thresholds, the \code{alpha} parameter of the \code{"OU"} model (if applicable), and the likelihood.}
-	\item{liab}{full posterior sample of the liabilities at internal and tip nodes.}
+	This function returns an object of class \code{"ancThresh"} containing the posterior sample from our analysis, although with other components.
 }
 \references{
 	Felsenstein, J. (2012) A comparative method for both discrete and continuous characters using the threshold model. \emph{American Naturalist}, \bold{179}, 145-156.

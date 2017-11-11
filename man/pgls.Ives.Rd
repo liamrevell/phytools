@@ -36,7 +36,7 @@ pgls.SEy(model, data, corClass=corBrownian, tree=tree,
 	In the case of \code{pgls.SEy} the user can (theoretically) specify any class of linear model permitted by \code{\link{gls}}.
 }
 \value{
-	In the case of \code{pgls.Ives}, list with the following components:
+	In the case of \code{pgls.Ives}, an object of class \code{"pgls.Ives"} with the following components:
 	\item{beta}{a vector or matrix of regression coefficients.}
 	\item{sig2x}{fitted BM rate for \code{X}.}
 	\item{sig2y}{fitted BM rate for \code{y}.}

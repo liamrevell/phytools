@@ -16,8 +16,11 @@ threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 	This function uses Bayesian MCMC to fit the quantitative genetics threshold model (Felsenstein 2012) to data for two discrete characters or one discrete and one continuous character.
 }
 \value{
-	This function returns a list with two elements: \code{par} a matrix containing the posterior sample for the model parameters (evolutionary rates, ancestral states, and correlation); \code{liab} a matrix containing the posterior sample of the liabilities. For continuous characters, the liabilities are treated as known and so the posterior samples are just the observed values.
+	This function returns an object of class \code{"threshBayes"} consisting of a list with at least the following two elements: \code{par} a matrix containing the posterior sample for the model parameters (evolutionary rates, ancestral states, and correlation); \code{liab} a matrix containing the posterior sample of the liabilities. For continuous characters, the liabilities are treated as known and so the posterior samples are just the observed values.
 }
+\details{
+	The \code{plot} method for the object class \code{"threshBayes"} can be used to plot a posterior density of the correlation coefficient, \emph{r}.
+}	
 \references{
 	Felsenstein, J. (2012) A comparative method for both discrete and continuous characters using the threshold model. \emph{American Naturalist}, \bold{179}, 145-156.
 

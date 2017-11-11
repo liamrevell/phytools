@@ -4,7 +4,7 @@
 anc.trend<-function(tree,x,maxit=2000){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 
-	## check if tree is ultretric
+	## check if tree is ultrametric
 	if(is.ultrametric(tree)) 
 		cat("Warning: the trend model is generally non-identifiable for ultrametric trees.\n")
 

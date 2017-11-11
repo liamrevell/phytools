@@ -18,7 +18,7 @@ phyl.cca(tree, X, Y, lambda=1.0, fixed=TRUE)
 	(Optional) joint optimization of \eqn{\lambda} is performed using \code{\link{optimize}} on the interval (0,1).
 }
 \value{
-	A list with the following components:
+	An object of class \code{"phyl.cca"} containing the following components:
 	\item{cor}{canonical correlations.}
 	\item{xcoef}{coefficients for the canonical variables for \code{X}.}
 	\item{ycoef}{coefficients for the canonical variables for \code{Y}.}

@@ -18,7 +18,7 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 	Default values of \code{control} are given in Revell et al. (2012).
 }
 \value{
-	A list with the following components:
+	An object of class \code{"evol.rate.mcmc"} consisting of at least the following elements:
 	\item{mcmc}{results from the MCMC run.}
 	\item{tips}{list of stips in rate \eqn{\sigma(1)^2} for each sampled generation of MCMC (to polarize the rate shift).}
 }

@@ -16,7 +16,7 @@ fitBayes(tree, x, ngen=10000, model="BM", method="reduced", control=list())
 	This function uses Bayesian MCMC to sample terminal states (species means) as well as evolutionary parameters.
 }
 \value{
-	A matrix with number of rows \code{ngen/control$sample+1} containing the posterior sample and likelihoods.  Matrix columns are labeled by species (for species means and variances), or by the corresponding evolutionary parameter.
+	An object of class \code{"fitBayes"} that includes a matrix (\code{mcmc}) with a number of rows \code{ngen/control$sample+1} containing the posterior sample and likelihoods.  Matrix columns are labeled by species (for species means and variances), or by the corresponding evolutionary parameter.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

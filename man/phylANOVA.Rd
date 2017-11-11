@@ -19,7 +19,7 @@ phylANOVA(tree, x, y, nsim=1000, posthoc=TRUE, p.adj="holm")
 	Uses a little bit of code from \code{phy.anova} in the "geiger" package as well as \code{\link{pairwise.t.test}}.
 }
 \value{
-	A list containing the following elements:
+	An object of class \code{"phylANOVA"} containing the following elements:
 	\item{F}{F from observed data.}
 	\item{Pf}{P-value for F from simulation.}
 	\item{T}{matrix of t-values.}

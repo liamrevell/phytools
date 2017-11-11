@@ -15,9 +15,11 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 }
 \details{
 	This function calls \code{\link{fitMk}} internally. \code{fitMk} uses some code adapted from \code{ace} in the ape package.
+	
+	\code{print} and \code{plot} methods are now available for the object class.
 }
 \value{
-	A list containing the following elements:
+	An object of class \code{"rerootingMethod"} containing at least the following elements:
 	\item{loglik}{the log-likelihood.}
 	\item{Q}{the fitted transition matrix between states.}
 	\item{marginal.anc}{the marginal ancestral state reconstructions for each node (and, optionally, each tip).}

@@ -127,6 +127,7 @@ S3method(print, ratebystate)
 S3method(print, phylANOVA)
 S3method(print, pgls.Ives)
 S3method(logLik, pgls.Ives)
+S3method(print, phyl.cca)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)

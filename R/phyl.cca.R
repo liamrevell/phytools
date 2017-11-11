@@ -91,7 +91,9 @@ phyl.cca<-function(tree,X,Y,lambda=1.0,fixed=TRUE){
 	colnames(V)<-temp
 	# return as list
 	lambda<-c(lambda,logL); names(lambda)<-c("lambda","logL")
-	return(list(cor=ccs,xcoef=xcoef,ycoef=ycoef,xscores=U,yscores=V,lambda=lambda,chisq=chiSq,p=pvalues))
+	obj<-list(cor=ccs,xcoef=xcoef,ycoef=ycoef,xscores=U,yscores=V,lambda=lambda,chisq=chiSq,p=pvalues)
+	class(obj)<-"phyl.cca"
+	obj
 }
 
 ## internal function replace Diag
@@ -100,5 +102,21 @@ Diag<-function(X){
 	if(length(X)==1) X
 	else diag(X)
 }
-	
-	
+
+## S3 print method
+print.phyl.cca<-function(x,digits=6,...){
+	cat("\nObject of class \"phyl.cca\" from a phylogenetic canonical")
+	cat("\n   correlation analysis.\n\n")
+	object<-data.frame(round(x$cor,digits),round(x$chisq,digits),round(x$p,digits))
+	colnames(object)<-c("correlation","X^2","P-value")
+	rownames(object)<-paste("CC",1:length(x$cor),sep=":")
+	cat("Summary of results:\n")
+	print(object)
+	cat("\nAssumed or estimated value of lambda:\n")
+	print(round(x$lambda,digits))
+	cat("\nCanonical x coefficients:\n")
+	print(as.data.frame(round(x$xcoef,digits)))
+	cat("\nCanonical y coefficients:\n")
+	print(as.data.frame(round(x$ycoef,digits)))
+	cat("\n")
+}
