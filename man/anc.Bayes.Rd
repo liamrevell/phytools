@@ -14,7 +14,14 @@ anc.Bayes(tree, x, ngen=10000, control=list())
 	This function uses Bayesian MCMC to sample from the posterior distribution for the states at internal nodes in the tree.
 }
 \value{
-	A matrix with number of rows \code{ngen/sample+1} containing the posterior sample and likelihoods.  Matrix columns are labeled either \code{sig2} or by the node number of the internal node.
+	An object of class \code{"anc.Bayes"} that includes at least two components: 
+	\item{mcmc}{a data frame with rows \code{ngen/sample+1} containing the posterior sample and likelihoods.  Matrix columns are labeled either \code{sig2} or by the node number of the internal node.}
+	\item{tree}{our input phylogeny.}
+}
+\details{
+	The \code{print} method also returns (invisibly) a vector of estimated ancestral states based on a user-supplied burn-in (or 20% of the number of generations of MCMC, if no burn-in is provided).
+	
+	The object class \code{plot} method by default plots a likelihood profile from the MCMC.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
@@ -26,8 +33,8 @@ anc.Bayes(tree, x, ngen=10000, control=list())
 \examples{
 tree<-pbtree(n=50)
 x<-fastBM(tree,sig2=2) # simulate using fastBM
-X<-anc.Bayes(tree,x,ngen=10000) # sample ancestral states
-estimates<-colMeans(X[21:nrow(X),]) # get estimates, excluding burnin
+obj<-anc.Bayes(tree,x,ngen=10000) # sample ancestral states
+print(obj,printlen=20) ## estimates
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

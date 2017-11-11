@@ -1,5 +1,5 @@
-# function does Bayes ancestral character estimation
-# written by Liam J. Revell 2011, 2013, 2015
+## function does Bayes ancestral character estimation
+## written by Liam J. Revell 2011, 2013, 2015, 2017
 
 anc.Bayes<-function(tree,x,ngen=10000,control=list()){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -21,7 +21,7 @@ anc.Bayes<-function(tree,x,ngen=10000,control=list()){
 
 	# function returns the log-likelihood
 	likelihood<-function(C,invC,detC,x,sig2,a,y){
-		z<-c(x,y)-a
+		z<-c(x,y)-rep(a,nrow(C))
 		logLik<--z%*%invC%*%z/(2*sig2)-nrow(C)*log(2*pi)/2-nrow(C)*log(sig2)/2-detC/2
 		return(logLik)
 	}
@@ -98,6 +98,46 @@ anc.Bayes<-function(tree,x,ngen=10000,control=list()){
 
 	# done MCMC
 	message("Done MCMC.")
-	return(X)
+	obj<-list(mcmc=as.data.frame(X),tree=tree)
+	class(obj)<-"anc.Bayes"
+	obj
 }
-			
+
+## S3 methods
+print.anc.Bayes<-function(x,digits=6,printlen=NULL,...){
+	cat("\nObject of class \"anc.Bayes\" consisting of a posterior")
+	cat("\n   sample from a Bayesian ancestral state analysis:\n")
+	if(hasArg(burnin)) burnin<-list(...)$burnin
+	else burnin<-0.2*max(x$mcmc$gen)
+	ii<-which(((x$mcmc$gen-burnin)^2)==min((x$mcmc$gen-burnin)^2))
+	Nnode<-x$tree$Nnode
+	cat("\nMean ancestral states from posterior distribution:\n")
+	ace<-colMeans(x$mcmc[ii:nrow(x$mcmc),as.character(1:Nnode+Ntip(x$tree))])
+	if(is.null(printlen)||printlen>=Nnode) print(round(ace,digits))
+	else printDotDot(ace,digits,printlen)
+	cat(paste("\nBased on a burn-in of ",burnin," generations.\n\n",sep=""))
+	invisible(ace)
+}			
+
+plot.anc.Bayes<-function(x,...){
+	args<-list(...)
+	if(is.null(args$what)) what<-"logLik"
+	else {
+		what<-args$what
+		args$what<-NULL
+	}
+	if(is.null(args$burnin)) burnin<-0.2*max(x$mcmc$gen)
+	else {
+		burnin<-args$burnin
+		args$burnin<-NULL
+	}
+	if(what=="logLik"){
+		args$x<-x$mcmc$gen
+		args$y<-x$mcmc$logLik
+		if(is.null(args$xlab)) args$xlab<-"generation"
+		if(is.null(args$ylab)) args$ylab<-"log(L)"
+		if(is.null(args$type)) args$type<-"l"
+		if(is.null(args$col)) args$col<-make.transparent("blue",0.5)
+		do.call(plot,args)
+	} 
+}

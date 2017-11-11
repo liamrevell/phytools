@@ -128,6 +128,8 @@ S3method(print, phylANOVA)
 S3method(print, pgls.Ives)
 S3method(logLik, pgls.Ives)
 S3method(print, phyl.cca)
+S3method(print, anc.Bayes)
+S3method(plot, anc.Bayes)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
