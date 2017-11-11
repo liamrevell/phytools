@@ -3,7 +3,8 @@
 \alias{pgls.SEy}
 \title{Phylogenetic regression with intraspecific sampling error}
 \usage{
-pgls.Ives(tree, X, y, Vx=NULL, Vy=NULL, Cxy=NULL, lower=c(1e-8,1e-8))
+pgls.Ives(tree, X, y, Vx=NULL, Vy=NULL, Cxy=NULL, lower=c(1e-8,1e-8),
+	fixed.b1=NULL)
 pgls.SEy(model, data, corClass=corBrownian, tree=tree,
    se=NULL, method=c("REML","ML"), interval=c(0,1000), ...)
 }
@@ -15,6 +16,7 @@ pgls.SEy(model, data, corClass=corBrownian, tree=tree,
 	\item{Vy}{sampling variances for \code{y}. If \code{NULL}, then the within-species variance is computed from the data assuming that individual samples, not species means, have been provided in \code{y}.}
 	\item{Cxy}{sampling covariances between \code{X} and \code{y}. This will also be computed from the data if \code{Cxy==NULL}. Note than in this case - but not for the calculation of \code{Vx} and \code{Vy}, the same number of observations and the same ordering must be provided for \code{X} and \code{y}. If this is not the case, then it is assumed that different individuals have been sampled for \code{X} and \code{y} and thus \code{Cxy} is assumed to be zero for all species.}
 	\item{lower}{vector specifying the lower bounds for estimation for \code{sig2x} and \code{sig2y}, respectively. (Must be >0.)}
+	\item{fixed.b1}{fixed regression slope. Usually set to zero for null hypothesis testing.}
 	\item{model}{model to fit. (For \code{pgls.SEy}.)}
 	\item{data}{data frame. (For \code{pgls.SEy}.)}
 	\item{corClass}{correlation structure. (For \code{pgls.SEy}.)}
