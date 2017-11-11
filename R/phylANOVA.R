@@ -88,7 +88,7 @@ print.phylANOVA<-function(x,digits=6,...){
 	cat("\nP-value based on simulation.\n")
 	cat("---------\n")
 	cat("\n")
-	if(!is.null(obj$T)){
+	if(!is.null(x$T)){
 		cat(paste("Pairwise posthoc test using method = \"",
 			x$method,"\"\n\n",sep=""))
 		cat("Pairwise t-values:\n")
