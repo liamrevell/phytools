@@ -7,7 +7,7 @@ add.species.to.genus(tree, species, genus=NULL, where=c("root","random"))
 genus.to.species.tree(tree, species)
 }
 \arguments{
-	\item{tree}{an object of class \code{"phylo"}. In the case of \code{genus.to.species} this should be a genus-level backbone tree.}
+	\item{tree}{an object of class \code{"phylo"}. In the case of \code{genus.to.species.tree} this should be a genus-level backbone tree.}
 	\item{species}{string contain species name in the format \code{"Genus_species"} or \code{"Genus species"}.}
 	\item{genus}{for \code{add.species.to.genus}, optional argument containing the genus to which \code{species} is to be attached. If \code{NULL} then \code{genus} will be extracted from \code{species}.}
 	\item{where}{for \code{add.species.to.genus}, the location to attach \code{species} to the tree. \code{where=} \code{"root"} will cause the species to be attached to the MRCA of all members of \code{genus}. \code{where="random"} will cause \code{species} to be attached at random to the subtree descended from the MRCA of all members of \code{genus}.}
