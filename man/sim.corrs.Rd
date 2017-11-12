@@ -14,7 +14,7 @@ sim.corrs(tree, vcv, anc=NULL, internal=FALSE)
 	This function conducts BM simulation on a tree with multiple rates and/or multiple evolutionary correlations between characters. If \code{vcv} is a single matrix, instead of a list of matrices, \code{sim.corrs} will simulate multivariate BM with a single rate matrix.
 }
 \value{
-	A matrix containing the multivariate tip states for the \code{n} species in the tree (and nodes if \code{internal=TRUE}).
+	A matrix containing the multivariate tip states for the \code{n} species in the tree (and nodes if \code{internal=} \code{TRUE}).
 }
 \references{
 	Revell, L. J., and D. C. Collar (2009) Phylogenetic analysis of the evolutionary correlation using likelihood. \emph{Evolution}, \bold{63}, 1090-1100.

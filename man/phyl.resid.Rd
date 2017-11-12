@@ -14,7 +14,7 @@ phyl.resid(tree, x, Y, method="BM")
 	This function fits one or multiple phylogenetic regressions (depending on the number of columns in \code{Y}) and computes the residuals.  Designed for phylogenetic size correction using GLS regression (e.g., Revell 2009; \emph{Evolution}).
 }
 \details{
-	Optionally fits \eqn{\lambda} for each regression model.  Likelihood optimization of \eqn{\lambda} is performed for \code{method="lambda"} using \code{\link{optimize}} on the interval (0,1). This function is theoretically redundant with \code{residuals} applied to a \code{"gls"} object class in which the correlation structure is based on \code{corBrownian} or \code{corPagel}; however some users may find this method simpler, and it provides a good way to cross-check your results & make sure that you are using \code{gls} correctly.
+	Optionally fits \eqn{\lambda} for each regression model.  Likelihood optimization of \eqn{\lambda} is performed for \code{method=} \code{"lambda"} using \code{\link{optimize}} on the interval (0,1). This function is theoretically redundant with \code{residuals} applied to a \code{"gls"} object class in which the correlation structure is based on \code{corBrownian} or \code{corPagel}; however some users may find this method simpler, and it provides a good way to cross-check your results & make sure that you are using \code{gls} correctly.
 }
 \value{
 	A list with the following components:

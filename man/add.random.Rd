@@ -8,7 +8,7 @@ add.random(tree, n=NULL, tips=NULL, edge.length=NULL, order=c("random","input"))
 	\item{tree}{an object of class \code{"phylo"}.}
 	\item{n}{a number of tips to add to the tree. If \code{NULL}, will use \code{length(tips)}.}
 	\item{tips}{a set of tip names for the added tips. If \code{NULL}, names will be supplied}
-	\item{edge.length}{terminal edge length for the added tips. If \code{NULL}, and \code{is.ultrametric(tree)==TRUE}, then edge lengths will be assigned to keep the tree ultrametric. Note that if edge lengths are assigned and \code{n>1}, then the asssigned terminal edge lengths are not guaranteed as subsequent random tip addition could occur along the new terminal edge.}
+	\item{edge.length}{terminal edge length for the added tips. If \code{NULL}, and \code{is.ultrametric(tree)} \code{==TRUE}, then edge lengths will be assigned to keep the tree ultrametric. Note that if edge lengths are assigned and \code{n>1}, then the asssigned terminal edge lengths are not guaranteed as subsequent random tip addition could occur along the new terminal edge.}
 	\item{order}{addition order for the new tips.}
 }
 \description{
