@@ -253,8 +253,8 @@ plot.gfit<-function(x,...){
 
 ## wraps around expm
 ## written by Liam Revell 2011, 2017
-EXPM<-function(Y,...){
-	eY<-if(isSymmetric) matexpo(Y) else expm(Y,...)
-	dimnames(eY)<-dimnames(Y)
-	eY
+EXPM<-function(x,...){
+	e_x<-if(isSymmetric(x)) matexpo(x) else expm(x,...)
+	dimnames(e_x)<-dimnames(x)
+	e_x
 }
