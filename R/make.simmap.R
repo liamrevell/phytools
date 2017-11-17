@@ -238,7 +238,7 @@ smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 	NN[which(tree$edge[,1]==root),1]<-rstate(L[as.character(root),]*pi/sum(L[as.character(root),]*pi)) # assign root
 	for(j in 1:nrow(tree$edge)){
 		# conditioned on the start value, assign end value of node (if internal)
-		p<-expm(Q*tree$edge.length[j])[NN[j,1],]*L[as.character(tree$edge[j,2]),]
+		p<-EXPM(Q*tree$edge.length[j])[NN[j,1],]*L[as.character(tree$edge[j,2]),]
 		NN[j,2]<-rstate(p/sum(p))
 		NN[which(tree$edge[,1]==tree$edge[j,2]),1]<-NN[j,2]
 		# now simulate on the branches

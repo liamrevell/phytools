@@ -84,7 +84,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			el<-pw$edge.length[ii]
 			v<-vector(length=length(desc),mode="list")
 			for(j in 1:length(v))
-				v[[j]]<-expm(Q*el[j])%*%liks[desc[j],]
+				v[[j]]<-EXPM(Q*el[j])%*%liks[desc[j],]
 			vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
 			comp[anc]<-sum(vv)
 			liks[anc,]<-vv/comp[anc]
@@ -249,4 +249,12 @@ plot.gfit<-function(x,...){
 		class(obj)<-"fitMk"
 		plot(obj,...)
 	}
+}
+
+## wraps around expm
+## written by Liam Revell 2011, 2017
+EXPM<-function(Y,...){
+	eY<-if(isSymmetric) matexpo(Y) else expm(Y,...)
+	dimnames(eY)<-dimnames(Y)
+	eY
 }

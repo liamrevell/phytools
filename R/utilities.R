@@ -1941,13 +1941,6 @@ matchType<-function(type,types){
 			type=types[i]
 	return(type)
 }
-
-# wraps around MatrixExp
-# written by Liam Revell 2011
-expm<-function(Y){
-	Z<-MatrixExp(Y); dimnames(Z)<-dimnames(Y)
-	return(Z)
-}
 	
 # function 'untangles' (or attempts to untangle) a tree with crossing branches
 # written by Liam J. Revell 2013, 2015
