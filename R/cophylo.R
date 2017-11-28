@@ -232,6 +232,8 @@ plot.cophylo<-function(x,...){
 	else edge.col<-list(
 		left=rep("black",nrow(x$trees[[1]]$edge)),
 		right=rep("black",nrow(x$trees[[2]]$edge)))
+	if(hasArg(part)) part<-list(...)$part
+	else part<-0.4
 	obj<-list(...)
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
@@ -245,9 +247,9 @@ plot.cophylo<-function(x,...){
 			sb.fsize<- if(length(obj$fsize)>2) obj$fsize[3] else 1
 		} else sb.fsize<-1
 	} else sb.fsize<-1
-	x1<-do.call("phylogram",c(list(tree=x$trees[[1]],part=0.4),leftArgs))
+	x1<-do.call("phylogram",c(list(tree=x$trees[[1]],part=part),leftArgs))
 	left<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],part=0.4,
+	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],part=part,
 		direction="leftwards"),rightArgs))
 	right<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(!is.null(x$assoc)) makelinks(x,c(x1,x2),link.type,link.lwd,link.col,
