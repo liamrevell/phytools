@@ -13,7 +13,7 @@ multi.mantel(Y, X, nperm=1000)
 	This function conducting a multiple matrix regression (partial Mantel test) and uses Mantel (1967) permutations to test the significance of the model and individual coefficients. It also returns the residual and predicted matrices.
 }
 \value{
-	A list with the following components:
+	An object of class \code{"multi.mantel"} consisting of the following elements:
 	\item{r.squared}{multiple R-squared.}
 	\item{coefficients}{model coefficients, including intercept.}
 	\item{tstatistic}{t-statistics for model coefficients.}
@@ -22,7 +22,13 @@ multi.mantel(Y, X, nperm=1000)
 	\item{probF}{probability of F, based on Mantel permutations.}
 	\item{residuals}{matrix of residuals.}
 	\item{predicted}{matrix of predicted values.}
+	\item{nperm}{tne number of permutations used.}
 }
+\details{
+	Printing the object to screen will result in a summary of the analysis similar to \code{summary.lm}, but with p-values derived from Mantel permutations.
+	
+	Methods \code{residuals} and \code{fitted} can be used to return residual and fitted matrices, respectively.
+}	
 \references{
 	Mantel, N. (1967) The detection of disease clustering and a generalized regression approach. \emph{Cancer Research}, \bold{27}, 209--220.
 

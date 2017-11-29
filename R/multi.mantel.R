@@ -1,5 +1,5 @@
-# function for multiple matrix regression with P-values computed by Mantel permutation of the dependent matrix
-# written by Liam J. Revell 2012
+## function for multiple matrix regression with P-values computed by Mantel permutation of the dependent matrix
+## written by Liam J. Revell 2012, 2017
 
 multi.mantel<-function(Y,X,nperm=1000){
 	y<-unfoldLower(Y)
@@ -29,14 +29,17 @@ multi.mantel<-function(Y,X,nperm=1000){
 	names(fstatistic)<-NULL
 	residuals<-foldtoLower(fit$residuals); attr(residuals,"Labels")<-rownames(Y)
 	fitted.values<-foldtoLower(fit$fitted.values); attr(fitted.values,"Labels")<-rownames(Y)
-	return(list(r.squared=r.squared,
+	object<-list(r.squared=r.squared,
 		coefficients=coefficients,
 		tstatistic=tstatistic,
 		fstatistic=fstatistic,
 		probt=pT,
 		probF=pF,
 		residuals=residuals,
-		fitted.values=fitted.values))
+		fitted.values=fitted.values,
+		nperm=nperm)
+	class(object)<-"multi.mantel"
+	object
 }
 
 # function unfolds the sub-diagonal of a "dist" object or symmetric matrix into a vector
@@ -62,3 +65,37 @@ foldtoLower<-function(x){
 	}
 	return(as.dist(X))
 }
+
+## S3 methods (added 2017)
+
+print.multi.mantel<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-6
+	star<-function(p){
+		obj<-if(p>0.1) "" else if(p<=0.1&&p>0.05) "." else
+			if(p<=0.05&&p>0.01) "*" else if(p<=0.01&&p>0.001) "**" else
+			if(p<=0.001) "***"
+		obj
+	}
+	cat("\nResults from a (multiple) Mantel regression using \"multi.mantel\":\n\n")
+	cat("Coefficients:\n")
+	object<-data.frame(x$coefficients,
+		x$tstatistic,x$probt,
+		sapply(x$probt,star))
+	rownames(object)<-names(x$coefficients)
+	colnames(object)<-c("Estimate","t value","Pr(>|t|)","")
+	print(object)
+	cat("---\n")
+	cat(paste("Signif. codes:  0 \u2018***\u2019 0.001 \u2018**\u2019 0.01", 
+		"\u2018*\u2019 0.05 \u2018.\u2019 0.1 \u2018 \u2019 1\n"))
+	cat(paste("Pr(>|t|) based on",x$nperm,
+		"(Mantel) permutations of rows & columns together in Y.\n\n"))
+	cat(paste("Multiple R-squared:",round(x$r.squared,digits),"\n"))
+	cat(paste("F-statistic: ",round(x$fstatistic,digits),
+		", p-value (based on ",x$nperm," permutations): ",
+		x$probF,"\n\n",sep=""))
+}
+
+residuals.multi.mantel<-function(object,...) object$residuals
+
+fitted.multi.mantel<-function(object,...) object$fitted.values
