@@ -93,7 +93,7 @@ print.multi.mantel<-function(x,...){
 	cat(paste("Multiple R-squared:",round(x$r.squared,digits),"\n"))
 	cat(paste("F-statistic: ",round(x$fstatistic,digits),
 		", p-value (based on ",x$nperm," permutations): ",
-		x$probF,"\n\n",sep=""))
+		round(x$probF,ceiling(log10(x$nperm))),"\n\n",sep=""))
 }
 
 residuals.multi.mantel<-function(object,...) object$residuals
