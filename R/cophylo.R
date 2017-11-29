@@ -116,6 +116,10 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	else pts<-TRUE
 	if(hasArg(edge.col)) edge.col<-list(...)$edge.col
 	else edge.col<-rep("black",nrow(tree$edge))
+	if(hasArg(tip.lwd)) tip.lwd<-list(...)$tip.lwd
+	else tip.lwd<-1
+	if(hasArg(tip.lty)) tip.lty<-list(...)$tip.lty
+	else tip.lty<-"dotted"
 	d<-if(direction=="rightwards") 1 else -1
 	## sub "_" for " "
 	tree$tip.label<-gsub("_"," ",tree$tip.label)
@@ -162,7 +166,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	h<-max(X)+0.1*(max(X)-min(X))+max(fsize*strwidth(tree$tip.label))-
 		fsize*strwidth(tree$tip.label)
 	for(i in 1:n){ 
-		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]),rep(y[i],2),lwd=1,lty="dotted")
+		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]),rep(y[i],2),lwd=tip.lwd,lty=tip.lty)
 		if(pts) points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=pts*0.7*sqrt(lwd))
 	}
 	## plot tip labels
@@ -232,9 +236,8 @@ plot.cophylo<-function(x,...){
 	else edge.col<-list(
 		left=rep("black",nrow(x$trees[[1]]$edge)),
 		right=rep("black",nrow(x$trees[[2]]$edge)))
-	if(hasArg(part)) part<-list(...)$part
-	else part<-0.4
 	obj<-list(...)
+	if(is.null(obj$part)) obj$part<-0.4
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)
 	leftArgs<-rightArgs<-obj
@@ -247,10 +250,10 @@ plot.cophylo<-function(x,...){
 			sb.fsize<- if(length(obj$fsize)>2) obj$fsize[3] else 1
 		} else sb.fsize<-1
 	} else sb.fsize<-1
-	x1<-do.call("phylogram",c(list(tree=x$trees[[1]],part=part),leftArgs))
+	x1<-do.call("phylogram",c(list(tree=x$trees[[1]]),leftArgs))
 	left<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],part=part,
-		direction="leftwards"),rightArgs))
+	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],direction="leftwards"),
+		rightArgs))
 	right<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(!is.null(x$assoc)) makelinks(x,c(x1,x2),link.type,link.lwd,link.col,
 		link.lty)
