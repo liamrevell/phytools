@@ -1,10 +1,12 @@
 \name{ctt}
 \alias{ctt}
 \alias{sim.ctt}
+\alias{sim.multiCtt}
 \title{Generates (or simulates) a 'changes through time' plot from a set of stochastic map character histories}
 \usage{
 ctt(trees, segments=20, ...)
 sim.ctt(tree, Q, anc=NULL, nmaps=100, ...)
+sim.multiCtt(tree, Q, anc=NULL, nmaps=100, nsim=100, ...)
 }
 \arguments{
 	\item{trees}{an object of class \code{"multiSimmap"}.}
@@ -13,6 +15,7 @@ sim.ctt(tree, Q, anc=NULL, nmaps=100, ...)
 	\item{Q}{for \code{sim.ctt}, a transition matrix to use for simulation.}
 	\item{anc}{ancestral state at the root node for simulation.}
 	\item{nmaps}{number of stochastic maps per simulation.}
+	\item{nsim}{for \code{sim.multiCtt} only, the number of simulations to run.}
 	\item{...}{optional arguments.}
 }
 \description{
