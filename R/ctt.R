@@ -130,14 +130,12 @@ plot.multiCtt<-function(x,...){
 	nchanges<-sapply(x,function(x) x$nchanges)
 	if(hasArg(type)) type<-list(...)$type
 	else type<-"rate"
-	if(type=="rate"){
-		edge.length<-sapply(x,function(x) x$edge.length)
-	}
+	edge.length<-sapply(x,function(x) x$edge.length)
 	obj<-list(segments=segments,nchanges=rowMeans(nchanges),
 		edge.length=rowMeans(edge.length),tree=x[[1]]$tree)
 	class(obj)<-"ctt"
-	lower<-floor(alpha/2*length(x))
-	upper<-ceiling((1-alpha/2)*length(x))
+	lower<-max(floor(alpha/2*length(x)),1)
+	upper<-min(ceiling((1-alpha/2)*length(x)),nrow(nchanges))
 	xx<-max(nodeHeights(x[[1]]$tree))-as.vector(t(segments))
 	xx<-c(xx,xx[length(xx):1])
 	y.lower<-if(type=="number") apply(nchanges,1,sort)[lower,] else
