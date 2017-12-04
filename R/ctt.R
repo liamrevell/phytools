@@ -72,7 +72,7 @@ plot.ctt<-function(x,...){
 	else do.call(lines,args)
 	if(show.tree) plotTree(x$tree,add=TRUE,ftype="off",lwd=1,
 		color=make.transparent("blue",0.1),mar=par()$mar,
-		direction="leftwards",xlim=xlim)
+		direction="leftwards",xlim=args$xlim)
 }
 
 sim.ctt<-function(tree,Q,anc=NULL,nmaps=100,...){
