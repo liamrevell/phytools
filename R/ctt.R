@@ -77,6 +77,8 @@ plot.ctt<-function(x,...){
 
 sim.ctt<-function(tree,Q,anc=NULL,nmaps=100,...){
 	x<-as.factor(sim.history(tree,Q,anc=anc)$states)
+	while(length(levels(x))!=ncol(Q)) 
+		x<-as.factor(sim.history(tree,Q,anc=anc)$states)
 	flush.console()
 	cat("Starting stochastic mapping with simulated data vector.... ")
 	flush.console()
