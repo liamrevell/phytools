@@ -151,7 +151,11 @@ summary.fitmultiMk<-function(object,...){
 }
 
 ## logLik method for objects of class "fitmultiMk"
-logLik.fitmultiMk<-function(object,...) object$logLik
+logLik.fitmultiMk<-function(object,...){ 
+	lik<-object$logLik
+	attr(lik,"df")<-length(object$rates)
+	lik
+}
 
 ## AIC method
 AIC.fitmultiMk<-function(object,...,k=2){
