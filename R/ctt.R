@@ -137,7 +137,7 @@ plot.multiCtt<-function(x,...){
 		edge.length=rowMeans(edge.length),tree=x[[1]]$tree)
 	class(obj)<-"ctt"
 	lower<-max(floor(alpha/2*length(x)),1)
-	upper<-min(ceiling((1-alpha/2)*length(x)),nrow(nchanges))
+	upper<-min(ceiling((1-alpha/2)*length(x)),ncol(nchanges))
 	xx<-max(nodeHeights(x[[1]]$tree))-as.vector(t(segments))
 	xx<-c(xx,xx[length(xx):1])
 	y.lower<-if(type=="number") apply(nchanges,1,sort)[lower,] else
