@@ -200,3 +200,49 @@ plot.multiLtt<-function(x,...){
 	}
 }
 
+## compute the gamma statistic through time by slicing the tree n times
+## written by Liam J. Revell 2017
+
+gtt<-function(tree,n=100,...){
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-FALSE
+	obj<-ltt(tree,plot=FALSE)
+	t<-obj$times[which(obj$ltt==3)[1]]
+	h<-max(nodeHeights(tree))
+	x<-seq(t,h,by=(h-t)/(n-1))
+	trees<-lapply(x,treeSlice,tree=tree,orientation="rootwards")
+	gamma<-sapply(trees,function(x,plot){ 
+		obj<-unlist(gammatest(ltt<-ltt(x,plot=FALSE)));
+		if(plot) plot(ltt,xlim=c(0,h),ylim=c(1,Ntip(tree)),
+			log.lineages=FALSE,log="y");
+		Sys.sleep(0.01);
+		obj},plot=plot)
+	object<-list(t=x,gamma=gamma[1,],p=gamma[2,],tree=tree)
+	class(object)<-"gtt"
+	object
+
+}
+
+## plot method for "gtt" object class
+plot.gtt<-function(x,...){
+	args<-list(...)
+	args$x<-x$t
+	args$y<-x$gamma
+	if(!is.null(args$show.tree)){ 
+		show.tree<-args$show.tree
+		args$show.tree<-NULL
+	} else show.tree<-TRUE
+	if(is.null(args$xlim)) args$xlim<-c(0,max(x$t))
+	if(is.null(args$xlab)) args$xlab<-"time"
+	if(is.null(args$ylab)) args$ylab<-expression(gamma)
+	if(is.null(args$lwd)) args$lwd<-3
+	if(is.null(args$type)) args$type<-"s"
+	do.call(plot,args)
+	if(show.tree) plotTree(x$tree,add=TRUE,ftype="off",mar=par()$mar,
+		xlim=args$xlim,color=make.transparent("blue",0.1))
+}
+
+## print method for "gtt" object class
+print.gtt<-function(x,...)
+	cat("Object of class \"gtt\".\n\n")
+	

@@ -142,6 +142,8 @@ S3method(print, fitmultiMk)
 S3method(summary, fitmultiMk)
 S3method(logLik, fitmultiMk)
 S3method(AIC, fitmultiMk)
+S3method(plot, gtt)
+S3method(print, gtt)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)

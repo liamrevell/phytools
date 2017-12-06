@@ -1,8 +1,10 @@
 \name{ltt}
 \alias{ltt}
+\alias{gtt}
 \title{Creates lineage-through-time plot (including extinct lineages)}
 \usage{
 ltt(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
+gtt(tree, n=100, ...)
 }
 \arguments{
 	\item{tree}{is a phylogenetic tree in \code{"phylo"} format, or an object of class \code{"multiPhylo"} containing a list of phylogenetic trees.}
@@ -10,21 +12,26 @@ ltt(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
 	\item{drop.extinct}{logical value indicating whether or not to drop extinct tips from the tree.}
 	\item{log.lineages}{logical value indicating whether LTT plot should be on log-linear (default) or linear-linear scale.}
 	\item{gamma}{logical value indicating whether or not to compute eqn{gamma} from Pybus & Harvey (2000; \emph{Proc. Roy. Soc. B}).}
+	\item{n}{for \code{gtt} the number of time intervals to use to track \eqn{\gamma} through time.}
 	\item{...}{other arguments to be passed to plotting methods. See \code{\link{plot.default}}.}
 }
 \description{
-	This function computes LTT plot with extant and extinct lineages, and optionally conducts \eqn{\gamma}-test of Pybus & Harvey (2000). The object returned by \code{ltt} can be plotted or re-plotted using \code{\link{plot}}.
+	The function \code{ltt} computes LTT plot with extant and extinct lineages, and optionally conducts \eqn{\gamma}-test of Pybus & Harvey (2000). The object returned by \code{ltt} can be plotted or re-plotted using \code{\link{plot}}.
+	
+	The function \code{gtt} computes the value of Pybus & Harvey's \eqn{\gamma} statistic through time by slice the tree at various points - by default in even intervals from the time above the root at which \emph{N} = 3 to the present day.
 }
 \details{
 	Although it is calculated here, it's unclear how to interpret the \eqn{\gamma}-statistic if not all the tips in the tree are contemporaneous.
 }
 \value{
-	An object of class \code{"ltt"} which includes the following components:
+	\code{ltt} returns an object of class \code{"ltt"} which includes the following components:
 	\item{times}{a vector of branching times.}
 	\item{ltt}{a vector of linages.}
 	\item{gamma}{optionally, a value for the gamma-statistic.}
 	\item{p}{two-tailed P-value for the gamma-test.}
 	If \code{tree} is an object of class \code{"multiPhylo"}, then an object of class \code{"multiLtt"} is returned consisting of a list of object of class \code{"ltt"}.
+	
+	\code{gtt} returns an object of class \code{"gtt"}.
 }
 \references{
 	Pybus, O. G., and P. H. Harvey (2000) Testing macro-evolutionary models using incomplete molecular phylogenies. \emph{Proc. R. Soc. Lond. B}, \bold{267}, 2267-2272.
