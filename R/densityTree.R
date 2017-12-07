@@ -46,6 +46,7 @@ densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",
 	if(!use.gradient){
 		plotTree(trees[[which(h==max(h))[1]]],direction="leftwards",mar=args$mar,
 			plot=FALSE)
+		par(new=TRUE)
 		args$xlim<-get("last_plot.phylo",envir=.PlotPhyloEnv)$x.lim[2:1]
 		if(method=="plotTree"){
 			args$color<-make.transparent(colors[1],alpha)
@@ -84,6 +85,7 @@ densityTree<-function(trees,colors="blue",alpha=NULL,method="plotTree",
 		args$ylim<-c(0,Ntip(trees[[1]])+1)
 		plotTree(trees[[which(h==max(h))[1]]],direction="leftwards",mar=args$mar,
 			ylim=args$ylim,plot=FALSE)
+		par(new=TRUE)
 		args$xlim<-get("last_plot.phylo",envir=.PlotPhyloEnv)$x.lim[2:1]
 		colors<-sapply(rainbow(n=length(trees)),make.transparent,alpha=alpha)
 		ftype<-args$ftype
