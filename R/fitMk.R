@@ -262,3 +262,51 @@ EXPM<-function(x,...){
 	dimnames(e_x)<-dimnames(x)
 	e_x
 }
+
+## function to simulate multiple-rate Mk multiMk
+## written by Liam J. Revell 2018
+sim.multiMk<-function(tree,Q,anc=NULL,...){
+	ss<-rownames(Q[[1]])
+	tt<-map.to.singleton(reorder(tree))
+	P<-vector(mode="list",length=nrow(tt$edge))
+	for(i in 1:nrow(tt$edge))
+		P[[i]]<-expm(Q[[names(tt$edge.length)[i]]]*tt$edge.length[i])
+	if(is.null(anc)) anc<-sample(ss,1)
+	STATES<-matrix(NA,nrow(tt$edge),2)
+	root<-Ntip(tt)+1
+	STATES[which(tt$edge[,1]==root),1]<-anc
+	for(i in 1:nrow(tt$edge)){
+		new<-ss[which(rmultinom(1,1,P[[i]][STATES[i,1],])[,1]==1)]
+		STATES[i,2]<-new
+		ii<-which(tt$edge[,1]==tt$edge[i,2])
+		if(length(ii)>0) STATES[ii,1]<-new
+	}
+	x<-as.factor(
+		setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
+		S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
+	x
+}
+
+## constant-rate Mk model simulator
+## written by Liam J. Revell 2018
+sim.Mk<-function(tree,Q,anc=NULL,...){
+	ss<-rownames(Q)
+	tt<-reorder(tree)
+	P<-vector(mode="list",length=nrow(tt$edge))
+	for(i in 1:nrow(tt$edge))
+		P[[i]]<-expm(Q*tt$edge.length[i])
+	if(is.null(anc)) anc<-sample(ss,1)
+	STATES<-matrix(NA,nrow(tt$edge),2)
+	root<-Ntip(tt)+1
+	STATES[which(tt$edge[,1]==root),1]<-anc
+	for(i in 1:nrow(tt$edge)){
+		new<-ss[which(rmultinom(1,1,P[[i]][STATES[i,1],])[,1]==1)]
+		STATES[i,2]<-new
+		ii<-which(tt$edge[,1]==tt$edge[i,2])
+		if(length(ii)>0) STATES[ii,1]<-new
+	}
+	x<-as.factor(
+		setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
+		S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
+	x
+}
