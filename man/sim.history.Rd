@@ -5,7 +5,7 @@
 \title{Simulate character history or a discrete character at the tips of the tree under some model}
 \usage{
 sim.history(tree, Q, anc=NULL, nsim=1, ...)
-sim.Mk<-function(tree, Q, anc=NULL, ...)
+sim.Mk(tree, Q, anc=NULL, ...)
 sim.multiMk(tree, Q, anc=NULL, ...)
 }
 \arguments{
