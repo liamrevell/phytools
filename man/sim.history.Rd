@@ -5,8 +5,8 @@
 \title{Simulate character history or a discrete character at the tips of the tree under some model}
 \usage{
 sim.history(tree, Q, anc=NULL, nsim=1, ...)
-sim.Mk(tree, Q, anc=NULL, ...)
-sim.multiMk(tree, Q, anc=NULL, ...)
+sim.Mk(tree, Q, anc=NULL, nsim=1, ...)
+sim.multiMk(tree, Q, anc=NULL, nsim=1, ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"}. For the case of \code{sim.multiMk} \code{tree} should be an object of class \code{"simmap"} in which the regimes for simulation have been mapped onto the tree.}
