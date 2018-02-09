@@ -68,7 +68,7 @@ phylomorphospace3d<-function(tree,X,A=NULL,label=TRUE,control=list(),method=c("d
 		if(hasArg(zlim)) zlim<-list(...)$zlim
 		else zlim=NULL
 		xx<-scatterplot3d(X,xlab=colnames(X)[1],zlab=colnames(X)[3],pch=19,angle=angle,
-			ylab=colnames(X)[2],asp=1,cex.symbols=1.3,xlim=xlim,ylim=ylim,zlim=zlim)
+			ylab=colnames(X)[2],cex.symbols=1.3,xlim=xlim,ylim=ylim,zlim=zlim)
 		aa<-xx$xyz.convert(A)
 		points(aa$x,aa$y,pch=19,cex=0.8)
 		for(i in 1:nrow(tree$edge)){
