@@ -1,5 +1,5 @@
 ## function to compute the marginal posterior probabilities for nodes using the rerooting method
-## written by Liam J. Revell 2013, 2015, 2017
+## written by Liam J. Revell 2013, 2015, 2017, 2018
 
 rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	if(!inherits(tree,"phylo")) 
@@ -18,7 +18,7 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	}
 	yy<-yy[tree$tip.label,]
 	yy<-yy/rowSums(yy)
-	YY<-fitMk(tree,yy,model=model,output.liks=TRUE)
+	YY<-fitMk(tree,yy,model=model,output.liks=TRUE,...)
 	Q<-matrix(c(0,YY$rates)[YY$index.matrix+1],length(YY$states),
 		length(YY$states),dimnames=list(YY$states,YY$states))
 	diag(Q)<--colSums(Q,na.rm=TRUE)
