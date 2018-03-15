@@ -1,5 +1,5 @@
-# this funciton creates a phylomorphospace plot (Sidlauskas 2006)
-# written by Liam J. Revell 2010-13, 2015
+## this funciton creates a phylomorphospace plot (Sidlauskas 2006)
+## written by Liam J. Revell 2010-13, 2015, 2018
 
 phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),control=list(),...){
 	# some minor error checking
@@ -19,6 +19,7 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	con=list(col.edge=setNames(rep("black",nrow(tree$edge)),as.character(tree$edge[,2])),
 		col.node=setNames(rep("black",max(tree$edge)),as.character(1:max(tree$edge))))
 	con[(namc<-names(control))]<-control
+	print(con)
 	# get optional arguments
 	if(hasArg(node.by.map)) node.by.map<-list(...)$node.by.map
 	else node.by.map<-FALSE
@@ -45,7 +46,8 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	else fsize<-0.75	
 	# check if colors for stochastic mapping
 	if(hasArg(colors)) colors<-list(...)$colors
-	else if(!is.null(tree$maps)) colors<-setNames(palette()[1:ncol(tree$mapped.edge)],sort(colnames(tree$mapped.edge)))
+	else if(!is.null(tree$maps)) colors<-setNames(palette()[1:ncol(tree$mapped.edge)],
+		sort(colnames(tree$mapped.edge)))
 	# set lwd
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-if(is.null(tree$maps)) 1 else 2
@@ -54,9 +56,12 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	else axes<-TRUE
 	if(hasArg(add)) add<-list(...)$add
 	else add<-FALSE
+	if(hasArg(pch)) pch<-list(...)$pch
+	else pch<-21
 	# deprecate to logical label argument
 	label<-label[1]
-	if(label==TRUE||label==FALSE) message("options for label have changed.\nNow choose \"radial\", \"horizontal\", or \"off\".")
+	if(label==TRUE||label==FALSE) 
+		message("options for label have changed.\nNow choose \"radial\", \"horizontal\", or \"off\".")
 	if(label==TRUE) label<-"radial"
 	if(label==FALSE) label<-"off"
 	# do some bookkeeping
@@ -65,9 +70,11 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	XX<-matrix(aa[as.character(tree$edge)],nrow(tree$edge),2)
 	YY<-matrix(bb[as.character(tree$edge)],nrow(tree$edge),2)
 	# plot projection
-	if(!add) plot(x=A[1,1],y=A[1,2],xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,pch=16,cex=0.1,col="white",axes=axes,frame.plot=TRUE)
+	if(!add) plot(x=A[1,1],y=A[1,2],xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,pch=16,cex=0.1,
+		col="white",axes=axes,frame.plot=TRUE)
 	if(is.null(tree$maps)){
-		for(i in 1:nrow(XX)) lines(XX[i,],YY[i,],col=con$col.edge[as.character(tree$edge[i,2])],lwd=lwd)
+		for(i in 1:nrow(XX)) lines(XX[i,],YY[i,],col=con$col.edge[as.character(tree$edge[i,2])],
+			lwd=lwd)
 	} else {
 		for(i in 1:nrow(XX)){
 			xx<-tree$maps[[i]]/sum(tree$maps[[i]])*(XX[i,2]-XX[i,1])
@@ -81,14 +88,20 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 		}
 		if(node.by.map){
 			zz<-c(getStates(tree,type="tips"),getStates(tree))
-			names(zz)[1:length(tree$tip.label)]<-sapply(names(zz)[1:length(tree$tip.label)],function(x,y) which(y==x),y=tree$tip.label)
+			names(zz)[1:length(tree$tip.label)]<-sapply(names(zz)[1:length(tree$tip.label)],
+				function(x,y) which(y==x),y=tree$tip.label)
 			con$col.node<-setNames(colors[zz],names(zz))
 		}
 	}
 	zz<-c(tree$edge[1,1],tree$edge[tree$edge[,2]>length(tree$tip.label),2])
-	points(c(XX[1,1],XX[tree$edge[,2]>length(tree$tip.label),2]),c(YY[1,1],YY[tree$edge[,2]>length(tree$tip.label),2]),pch=16,cex=node.size[1],col=con$col.node[as.character(zz)])
+	points(c(XX[1,1],XX[tree$edge[,2]>length(tree$tip.label),2]),c(YY[1,1],
+		YY[tree$edge[,2]>length(tree$tip.label),2]),pch=pch,cex=node.size[1],
+		col=if(pch%in%c(1:20)) con$col.node[as.character(zz)] else "black",
+		bg=if(pch%in%c(21:25)) con$col.node[as.character(zz)] else NULL)
 	zz<-tree$edge[tree$edge[,2]<=length(tree$tip.label),2]
-	points(XX[tree$edge[,2]<=length(tree$tip.label),2],YY[tree$edge[,2]<=length(tree$tip.label),2],pch=16,cex=node.size[2],col=con$col.node[as.character(zz)])
+	points(XX[tree$edge[,2]<=length(tree$tip.label),2],YY[tree$edge[,2]<=length(tree$tip.label),2],
+		pch=pch,cex=node.size[2],col=if(pch%in%c(1:20)) con$col.node[as.character(zz)] else "black",
+		bg=if(pch%in%c(21:25)) con$col.node[as.character(zz)] else NULL)
 	zz<-sapply(1:length(tree$tip.label),function(x,y) which(x==y),y=tree$edge[,2])
 	if(label!="off"){
 		asp<-(par()$usr[2]-par()$usr[1])/(par()$usr[4]-par()$usr[3])
@@ -96,7 +109,8 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 			ii<-which(tree$edge[,2]==i)
 			aa<-atan(asp*(YY[ii,2]-YY[ii,1])/(XX[ii,2]-XX[ii,1]))/(2*pi)*360
 			adj<-if(XX[ii,2]<XX[ii,1]) c(1,0.25) else c(0,0.25)
-			tt<-if(XX[ii,2]<XX[ii,1]) paste(tree$tip.label[i],"  ",sep="") else paste("  ",tree$tip.label[i],sep="")
+			tt<-if(XX[ii,2]<XX[ii,1]) paste(tree$tip.label[i],"  ",sep="") else 
+				paste("  ",tree$tip.label[i],sep="")
 			if(label=="radial") text(XX[ii,2],YY[ii,2],tt,cex=fsize,srt=aa,adj=adj,font=ftype)
 			else if(label=="horizontal") text(XX[ii,2],YY[ii,2],tt,cex=fsize,adj=adj,font=ftype)
 		}
