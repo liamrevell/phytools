@@ -19,7 +19,6 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	con=list(col.edge=setNames(rep("black",nrow(tree$edge)),as.character(tree$edge[,2])),
 		col.node=setNames(rep("black",max(tree$edge)),as.character(1:max(tree$edge))))
 	con[(namc<-names(control))]<-control
-	print(con)
 	# get optional arguments
 	if(hasArg(node.by.map)) node.by.map<-list(...)$node.by.map
 	else node.by.map<-FALSE
