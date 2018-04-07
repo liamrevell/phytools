@@ -1,5 +1,6 @@
 ## plotTree.boxplot
 ## written by Liam J. Revell 2016
+
 plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	args.boxplot=list()){
 	cw<-reorder(tree)
@@ -101,7 +102,7 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 }
 
 ## function to plot bars at the tips of a plotted tree
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2018
 
 plotTree.wBars<-function(tree,x,scale=1,width=NULL,type="phylogram",method="plotTree",tip.labels=FALSE,
 	col="grey",border=NULL,...){
@@ -125,7 +126,8 @@ plotTree.wBars<-function(tree,x,scale=1,width=NULL,type="phylogram",method="plot
 			alp<-optimize(function(a,H,sw,pp,d) (a*2*1.04*(max(H)+d)+2*sw-pp)^2,H=H,sw=sw,pp=pp,d=d,interval=c(0,1e6))$minimum
 			lims<-c(-max(H)-d-sw/alp,max(H)+d+sw/alp)
 		}	
-	}	
+	}
+	if(hasArg(lims)) lims<-list(...)$lims
 	if(type=="phylogram"){
 		if(method=="plotTree") capture.output(plotTree(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),...))
 		else if(method=="plotSimmap") capture.output(plotSimmap(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),...))
