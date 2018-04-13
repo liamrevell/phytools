@@ -104,9 +104,16 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 ## function to plot bars at the tips of a plotted tree
 ## written by Liam J. Revell 2014, 2015, 2018
 
-plotTree.wBars<-function(tree,x,scale=1,width=NULL,type="phylogram",method="plotTree",tip.labels=FALSE,
+plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",method="plotTree",tip.labels=FALSE,
 	col="grey",border=NULL,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(is.null(scale)){ 
+		scale<-0.3*max(nodeHeights(tree))/diff(range(x))
+	}
+	if(is.matrix(x)){
+		x.neg<-apply(X,1,function(x) sum(x[x<0]))
+		x.pos<-apply(X,1,function(x) sum(x[x>0]))
+	}
 	d<-scale*(max(x)-min(0,min(x)))
 	H<-nodeHeights(tree)
 	if(tip.labels==FALSE){
@@ -128,12 +135,41 @@ plotTree.wBars<-function(tree,x,scale=1,width=NULL,type="phylogram",method="plot
 		}	
 	}
 	if(hasArg(lims)) lims<-list(...)$lims
+	um<-tree
+	if(!is.ultrametric(um)){
+		tip.h<-sapply(1:Ntip(tree),nodeheight,tree=tree)
+		for(i in 1:Ntip(tree)){
+			ii<-which(um$edge[,2]==i)
+			um$edge.length[ii]<-um$edge.length[ii]+(max(tip.h)-tip.h[i])
+		}
+	}
 	if(type=="phylogram"){
-		if(method=="plotTree") capture.output(plotTree(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),...))
-		else if(method=="plotSimmap") capture.output(plotSimmap(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),...))
+		fg<-par()$fg
+		if(!is.ultrametric(tree)){
+			plotTree(um,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),lwd=1,color="transparent",...)
+			for(i in 1:Ntip(tree)) lines(c(max(tip.h),tip.h[i]),rep(i,2),lty="dotted")
+			add<-TRUE
+			par(fg="transparent")
+		} else add=FALSE
+		if(method=="plotTree") capture.output(plotTree(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),add=add,...))
+		else if(method=="plotSimmap") capture.output(plotSimmap(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),add=add,...))
+		par(fg=fg)
 	} else if(type=="fan"){
-		if(method=="plotTree") capture.output(plotTree(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,...))
-		else if(method=="plotSimmap") capture.output(plotSimmap(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,...))
+		fg<-par()$fg
+		if(!is.ultrametric(tree)){
+			plotTree(um,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,lwd=1,color="transparent",...)
+			um<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+			par(fg="transparent")
+			plotTree(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,lwd=1,color="transparent",add=TRUE,...)
+			tt<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+			par(fg="black",lty="solid")
+			for(i in 1:Ntip(tree)) lines(c(um$xx[i],tt$xx[i]),c(um$yy[i],tt$yy[i]),lty="dotted")
+			par(fg="transparent")
+			add<-TRUE
+		} 
+		if(method=="plotTree") capture.output(plotTree(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,add=add,...))
+		else if(method=="plotSimmap") capture.output(plotSimmap(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,add=add,...))
+		par(fg=fg)
 	}
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	x<-x[tree$tip.label]*scale
@@ -149,7 +185,7 @@ plotTree.wBars<-function(tree,x,scale=1,width=NULL,type="phylogram",method="plot
 		else direction<-"rightwards"
 		sw<-if(tip.labels) fsize*(max(strwidth(tree$tip.label)))+fsize*strwidth("1") else strwidth("l")
 		for(i in 1:length(x)){
-			dx<-if(min(x)>=0) obj$xx[i] else max(obj$xx)
+			dx<-max(obj$xx)
 			dy<-obj$yy[i]
 			x1<-x2<-dx+sw
 			x3<-x4<-x1+x[i]
@@ -159,18 +195,13 @@ plotTree.wBars<-function(tree,x,scale=1,width=NULL,type="phylogram",method="plot
 				c(y1,y2,y3,y4),col=col[i],border=border)
 		}
 	} else if(type=="fan"){
-		if(min(x)<0) h<-max(nodeHeights(tree))
+		h<-max(nodeHeights(tree))
 		sw<-if(tip.labels) fsize*(max(strwidth(tree$tip.label)))+fsize*strwidth("1") else strwidth("l")
 		for(i in 1:length(x)){
 			theta<-atan(obj$yy[i]/obj$xx[i])
 			s<-if(obj$xx[i]>0) 1 else -1
-			if(min(x)>=0){
-				dx<-obj$xx[i]+s*cos(theta)*sw
-				dy<-obj$yy[i]+s*sin(theta)*sw
-			} else {
-				dx<-s*h*cos(theta)+s*cos(theta)*sw
-				dy<-s*h*sin(theta)+s*sin(theta)*sw
-			}
+			dx<-s*h*cos(theta)+s*cos(theta)*sw
+			dy<-s*h*sin(theta)+s*sin(theta)*sw
 			x1<-dx+(w/2)*cos(pi/2-theta)-s*min(0,min(x))*cos(theta)
 			y1<-dy-(w/2)*sin(pi/2-theta)-s*min(0,min(x))*sin(theta)
 			x2<-dx-(w/2)*cos(pi/2-theta)-s*min(0,min(x))*cos(theta)
