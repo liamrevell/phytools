@@ -120,6 +120,8 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	else tip.lwd<-1
 	if(hasArg(tip.lty)) tip.lty<-list(...)$tip.lty
 	else tip.lty<-"dotted"
+	if(hasArg(tip.len)) tip.len<-list(...)$tip.len
+	else tip.len<-0.1
 	d<-if(direction=="rightwards") 1 else -1
 	## sub "_" for " "
 	tree$tip.label<-gsub("_"," ",tree$tip.label)
@@ -163,7 +165,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 			x1=d*xx[2:length(xx)],y1=yy[2:length(yy)],lwd=lwd,lend=2,col=edge.col[ee])
 	}
 	## plot links to tips
-	h<-max(X)+0.1*(max(X)-min(X))+max(fsize*strwidth(tree$tip.label))-
+	h<-max(X)+tip.len*(max(X)-min(X))+max(fsize*strwidth(tree$tip.label))-
 		fsize*strwidth(tree$tip.label)
 	for(i in 1:n){ 
 		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]),rep(y[i],2),lwd=tip.lwd,lty=tip.lty)
