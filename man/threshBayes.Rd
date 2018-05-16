@@ -6,7 +6,7 @@ threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
-	\item{X}{a numeric matrix containing values for a numerically coded discrete character and a continuous character; or two discrete characters. The row names of \code{X} should be species names.}
+	\item{X}{a numeric matrix containing values for a numerically coded discrete character and a continuous character; or two discrete characters. The row names of \code{X} should be species names. Discrete characters need to be provided as numeric values of \code{0} or \code{1} and only binary traits are permitted.}
 	\item{types}{a vector of length \code{ncol(X)} containing the data types for each column of \code{X}, for instance \code{c("discrete","continuous")}.}
 	\item{ngen}{a integer indicating the number of generations for the MCMC.}
 	\item{control}{a list of control parameters for the MCMC. Control parameters include: \code{sample}, the sampling interval for the MCMC; \code{propvar}, a vector containing (in this order) proposal variances for the two rates (if the type is \code{"discrete"} this will be ignored), the two ancestral states, and the correlation; \code{propliab}, a single proposal variance for the liabilities; \code{pr.mean}, a vector for the mean of the prior probability distributions for each parameter, in the same order as \code{propvar}; \code{pr.liab}, currently ignored; \code{pr.var}, a vector with variances for the prior densities for each parameter, in the same order as \code{pr.mean} - note that for the rates we use an exponential distribution so the first two means are currently ignored; and \code{pr.vliab} currently ignored.}
@@ -20,6 +20,8 @@ threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 }
 \details{
 	The \code{plot} method for the object class \code{"threshBayes"} can be used to plot a posterior density of the correlation coefficient, \emph{r}.
+	
+	Discrete characters must be binary, coded as \code{0} and \code{1}.
 }	
 \references{
 	Felsenstein, J. (2012) A comparative method for both discrete and continuous characters using the threshold model. \emph{American Naturalist}, \bold{179}, 145-156.
