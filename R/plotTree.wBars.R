@@ -98,10 +98,9 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	if(!is.null(args.plotTree$plot)&&args.plotTree$plot==FALSE) par(new=TRUE)
 	par(mar=args.barplot$mar)
 	obj<-do.call(barplot,args.barplot)
-	if(!is.null(args.barplot$xlab)) args.
-	else title(xlab="x")
-	do.call(axis,args.axis)
-	
+	if(!is.null(args.barplot$xlab)) args.axis$xlab<-args.barplot$xlab
+	else args.axis$xlab<-"x"
+	do.call(axis,args.axis)	
 	invisible(obj)
 }
 
