@@ -50,7 +50,7 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 }
 
 ## plotTree.barplot
-## written by Liam J. Revell 2016, 2017
+## written by Liam J. Revell 2016, 2017, 2018
 
 plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	args.barplot=list(), ...){
