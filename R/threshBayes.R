@@ -4,7 +4,7 @@
 ## Row names of X should match the species names of the tree.
 ## types=c("discrete","discrete"), c("discrete","continuous"), c("cont","disc") etc. should 
 ## be used to indicate the data type of each column in X
-## written by Liam J. Revell 2012, 2014, 2017
+## written by Liam J. Revell 2012, 2014, 2017, 2018
 
 threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 
@@ -77,7 +77,7 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 	
 	# set starting values
 	if(is.null(types)){
-		Y<-matrix(-1,length(tree$tip),2,dimnames=list(rownames(X),NULL))
+		Y<-matrix(-1,Ntip(tree),2,dimnames=list(rownames(X),NULL))
 		Y[X==1]<-1 # for liability
 		disc<-1:m
 	} else {
@@ -119,7 +119,7 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 	Z<-matrix(NA,ngen/con$sample+1,7,dimnames=list(NULL,c("gen","sig1","sig2",
 		"a1","a2","r","logL")))
 	Z[1,]<-c(0,sig2,a,r,lik(a,V,invV,detV,D,Y))
-	L<-matrix(NA,ngen/con$sample+1,m*length(tree$tip)+1,dimnames=list(NULL,c("gen",
+	L<-matrix(NA,ngen/con$sample+1,m*Ntip(tree)+1,dimnames=list(NULL,c("gen",
 		as.vector(apply(matrix(colnames(Y)),1,paste,".",tree$tip.label,sep="")))))
 	L[1,]<-c(0,as.vector(Y))
 
