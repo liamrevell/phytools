@@ -210,7 +210,8 @@ linklabels<-function(text,tips,link.type=c("bent","curved","straight"),
 	if(link.type=="curved"){
 		for(i in 1:length(tips))
 			drawCurve(c(xpos[i],xmax[i]),c(ypos[i],ylab[i]),
-				scale=0.05,lty=lty,col=col,lwd=lwd)
+				scale=0.01*diff(range(lastPP$xx)),lty=lty,
+				col=col,lwd=lwd)
 	} else if(link.type=="bent"){
 		tipmax<-max(lastPP$xx)
 		for(i in 1:length(tips)){
