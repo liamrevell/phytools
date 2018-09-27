@@ -49,7 +49,9 @@ ratebytree(trees, x, ...)
 	
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 	
-	Revell, L. J., Gonzalez-Valenzuela, L. E., Alfonso, A., Castellanos-Garcia, L. A., Guarnizo, C. E., and Crawford, A. J. (In review) Comparing evolutionary rates between trees, clades, & traits. 
+	Revell, L. J. (2018) Comparing the rates of speciation and extinction between phylogenetic trees. emph{Ecology and Evolution}, \bold{8}, 5303-5312.
+	
+	Revell, L. J., Gonzalez-Valenzuela, L. E., Alfonso, A., Castellanos-Garcia, L. A., Guarnizo, C. E., and Crawford, A. J. (2018) Comparing evolutionary rates between trees, clades, & traits. \emph{Methods Ecol. Evol.}, \bold{9}, 994-1005.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
