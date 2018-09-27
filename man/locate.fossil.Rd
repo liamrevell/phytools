@@ -21,8 +21,8 @@ locate.fossil(tree, X, ...)
 	Felsenstein, J. (2002) Quantitative characters, phylogenies, and morphometrics. In: MacLeod, N. and P. Forey (Eds.) \emph{Morphology, Shape and Phylogeny} (pp. 27-44). Taylor and Francis, London.
 
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
-
-	Revell, L. J., D. L. Mahler, R. G. Reynolds, and G. J. Slater. (In press) Placing cryptic, recently extinct, or hypothesized taxa into an ultrametric phylogeny using continuous character data: A case study with the lizard \emph{Anolis roosevelti}. \emph{Evolution}.
+	
+	Revell, L. J., D. L. Mahler, R. G. Reynolds, and G. J. Slater. (2015) Placing cryptic, recently extinct, or hypothesized taxa into an ultrametric phylogeny using continuous, character data: A case study with the lizard \emph{Anolis roosevelti}. \emph{Evolution}, \bold{69}, 1027-1035. 
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
