@@ -12,7 +12,7 @@ anc.ML<-function(tree,x,maxit=2000,model=c("BM","OU","EB"),...){
 }
 
 ## internal to estimate ancestral states under a BM model
-## written by Liam J. Revell 2011, 2013, 2014, 2016
+## written by Liam J. Revell 2011, 2013, 2014, 2016, 2018
 anc.BM<-function(tree,x,maxit,...){
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-FALSE
@@ -20,16 +20,30 @@ anc.BM<-function(tree,x,maxit,...){
 	else vars<-FALSE
 	if(hasArg(CI)) CI<-list(...)$CI
 	else CI<-FALSE
+	if(hasArg(se)) se<-list(...)$se
+	else se<-setNames(rep(0,length(x)),names(x))
+	SE<-setNames(rep(0,Ntip(tree)),tree$tip.label)
+	SE[names(se)]<-se
+	E<-diag(SE)
+	colnames(E)<-rownames(E)<-names(SE)
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-10*.Machine$double.eps
 	## check to see if any tips are missing data
 	xx<-setdiff(tree$tip.label,names(x))
 	## function returns the log-likelihood
-	likelihood<-function(par,C,invC,detC,xvals,msp,trace){
+	likelihood<-function(par,C,invC,detC,xvals,msp,trace,E=0){
 		sig2<-par[1]
 		a<-par[2]
 		y<-par[1:(tree$Nnode-1)+2]
 		xvals<-c(xvals,setNames(par[1:length(msp)+tree$Nnode+1],msp))
 		xvals<-xvals[rownames(C)[1:length(tree$tip.label)]]
 		z<-c(xvals,y)-a
+		if(sum(E)>0){
+			C<-sig2*C
+			C[rownames(E),colnames(E)]<-C[rownames(E),colnames(E)]+E
+			invC<-solve(C)
+			detC<-determinant(C,logarithm=TRUE)$modulus[1]
+		}
 		logLik<-(-z%*%invC%*%z/(2*sig2)-nrow(C)*log(2*pi)/2-nrow(C)*log(sig2)/2-
 			detC/2)[1,1]
 		if(trace) print(c(sig2,logLik))
@@ -46,12 +60,12 @@ anc.BM<-function(tree,x,maxit,...){
 	bb<-c(c(x,setNames(rep(mean(x),length(xx)),xx))[tree$tip.label],y)
 	sig2<-((bb-a)%*%invC%*%(bb-a)/nrow(C))[1,1]
 	fit<-optim(c(sig2,a,y,rep(mean(x),length(xx))),fn=likelihood,C=C,invC=invC,
-		detC=detC,xvals=x,msp=xx,trace=trace,method="L-BFGS-B",
-		lower=c(10*.Machine$double.eps,rep(-Inf,tree$Nnode+length(xx))),
+		detC=detC,xvals=x,msp=xx,trace=trace,E=E,method="L-BFGS-B",
+		lower=c(tol,rep(-Inf,tree$Nnode+length(xx))),
 		control=list(maxit=maxit))
 	if(vars||CI){ 
 		H<-hessian(likelihood,fit$par,C=C,invC=invC,detC=detC,
-			xvals=x,msp=xx,trace=trace)
+			xvals=x,msp=xx,trace=trace,E=E)
 		vcv<-solve(H)
 	}
 	states<-fit$par[1:tree$Nnode+1]

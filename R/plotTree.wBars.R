@@ -107,15 +107,15 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 ## function to plot bars at the tips of a plotted tree
 ## written by Liam J. Revell 2014, 2015, 2018
 
-plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",method="plotTree",tip.labels=FALSE,
-	col="grey",border=NULL,...){
+plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
+	method="plotTree",tip.labels=FALSE,col="grey",border=NULL,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(is.null(scale)){ 
 		scale<-0.3*max(nodeHeights(tree))/diff(range(x))
 	}
 	if(is.matrix(x)){
-		x.neg<-apply(X,1,function(x) sum(x[x<0]))
-		x.pos<-apply(X,1,function(x) sum(x[x>0]))
+		x.neg<-apply(x,1,function(x) sum(x[x<0]))
+		x.pos<-apply(x,1,function(x) sum(x[x>0]))
 	} else {
 		d<-scale*(max(x)-min(0,min(x)))
 		H<-nodeHeights(tree)
