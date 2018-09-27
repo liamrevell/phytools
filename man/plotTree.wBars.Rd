@@ -4,7 +4,7 @@
 \alias{plotTree.boxplot}
 \title{Plot a tree with bars at the tips}
 \usage{
-plotTree.wBars(tree, x, scale=1, width=NULL, type="phylogram", 
+plotTree.wBars(tree, x, scale=NULL, width=NULL, type="phylogram", 
    method="plotTree", tip.labels=FALSE, col="grey", border=NULL, 
    ...)
 plotTree.barplot(tree, x, args.plotTree=list(), args.barplot=list(), ...)
@@ -13,7 +13,7 @@ plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list())
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{a named vector or matrix of trait values. For \code{plotTree.boxplot}, the names should repeat for multiple observations per species. For \code{plotTree.boxplot} \code{x} can also be supplied as a formula, though in that case the factor levels need to be provided in a valid cladewise order of the tips in \code{tree}. This order doesn't need to correspond with the current order of the tip labels. For \code{plotTree.barplot} \code{x} can be a matrix (or a data frame) in which columns are the values of multiple traits to be simultaneously plotted on the tree.}
- 	\item{scale}{scaling factor for the tip bars (relative to the total tree height).}
+ 	\item{scale}{scaling factor for the tip bars (relative to the total tree height). If left as \code{NULL} a reasonable scaling factor is computed automatically.}
 	\item{width}{width of the tip bars.}
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"fan"}.}
 	\item{method}{plotting method to use. Can be \code{"plotTree"} (for \code{\link{plotTree}}) or \code{"plotSimmap"} (for \code{\link{plotSimmap}}).}
