@@ -1,5 +1,5 @@
-# function creates a stochastic character mapped tree as a modified "phylo" object
-# written by Liam Revell 2013, 2014, 2015, 2016, 2017
+## function creates a stochastic character mapped tree as a modified "phylo" object
+## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -44,7 +44,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		tree<-bt<-reorder.phylo(tree,"cladewise")
 		if(!is.binary.tree(bt)) bt<-multi2di(bt)
 		# some preliminaries
-		N<-length(tree$tip)
+		N<-Ntip(tree)
 		m<-ncol(xx)
 		root<-N+1
 		# get conditional likelihoods & model

@@ -1,5 +1,5 @@
 ## some utility functions
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
 
 ## function to rescale a tree according to an EB model
 ## written by Liam J. Revell 2017
@@ -752,7 +752,7 @@ labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation){
 	if(is.null(wl)) wl<-1
 	tree<-reorder(tree)
 	tips<-getDescendants(tree,nn)
-	tips<-tips[tips<=length(tree$tip.label)]
+	tips<-tips[tips<=Ntip(tree)]
 	ec<-0.7 ## expansion constant
 	sw<-pp$cex*max(strwidth(tree$tip.label[tips]))
 	sh<-pp$cex*max(strheight(tree$tip.label))
@@ -780,7 +780,7 @@ getExtant<-function(tree,tol=1e-8){
 	tl<-max(H)
 	x<-which(H[,2]>=(tl-tol))
 	y<-tree$edge[x,2]
-	y<-y[y<=length(tree$tip)]
+	y<-y[y<=Ntip(tree)]
 	z<-tree$tip.label[y]
 	return(z)
 }
@@ -792,7 +792,7 @@ getExtinct<-function(tree,tol=1e-8) setdiff(tree$tip.label,getExtant(tree,tol))
 
 splitTree<-function(tree,split){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(split$node>length(tree$tip.label)){
+	if(split$node>Ntip(tree)){
 		# first extract the clade given by shift$node
 		tr2<-extract.clade(tree,node=split$node)
 		tr2$root.edge<-tree$edge.length[which(tree$edge[,2]==split$node)]-split$bp
@@ -872,7 +872,7 @@ add.arrow<-function(tree=NULL,tip,...){
 	}
 	if(is.numeric(tip)){
 		ii<-tip
-		if(!is.null(tree)&&ii<=length(tree$tip.label)) tip<-tree$tip.label[ii]
+		if(!is.null(tree)&&ii<=Ntip(tree)) tip<-tree$tip.label[ii]
 		else tip<-""
 	} else if(is.character(tip)&&!is.null(tree)) ii<-which(tree$tip.label==tip)
 	if(hasArg(offset)) offset<-list(...)$offset
@@ -1145,9 +1145,9 @@ nodeheight<-function(tree,node,...){
 	if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
 	else ROOT<-0 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	if(node==(length(tree$tip.label)+1)) h<-0
+	if(node==(Ntip(tree)+1)) h<-0
 	else {
-		a<-setdiff(c(getAncestors(tree,node),node),length(tree$tip.label)+1)
+		a<-setdiff(c(getAncestors(tree,node),node),Ntip(tree)+1)
 		h<-sum(tree$edge.length[sapply(a,function(x,e) which(e==x),e=tree$edge[,2])])
 	}
 	h+ROOT
@@ -1189,7 +1189,7 @@ getAncestors<-function(tree,node,type=c("all","parent")){
 	type<-type[1]
 	if(type=="all"){
 		aa<-vector()
-		rt<-length(tree$tip.label)+1
+		rt<-Ntip(tree)+1
 		currnode<-node
 		while(currnode!=rt){
 			currnode<-getAncestors(tree,currnode,"parent")
@@ -1256,7 +1256,7 @@ vcvPhylo<-function(tree,anc.nodes=TRUE,...){
 		} else model<-"BM"
 	}
 	# done settings
-	n<-length(tree$tip.label)
+	n<-Ntip(tree)
 	h<-nodeHeights(tree)[order(tree$edge[,2]),2]
 	h<-c(h[1:n],0,h[(n+1):length(h)])
 	M<-mrca(tree,full=internal)[c(1:n,internal*(n+2:tree$Nnode)),c(1:n,internal*(n+2:tree$Nnode))]
@@ -1277,7 +1277,7 @@ vcvPhylo<-function(tree,anc.nodes=TRUE,...){
 ## simplified lambdaTree to be used internally by vcvPhylo
 ## written by Liam J. Revell 2014
 lambdaTree<-function(tree,lambda){
-	ii<-which(tree$edge[,2]>length(tree$tip.label))
+	ii<-which(tree$edge[,2]>Ntip(tree))
 	H1<-nodeHeights(tree)
 	tree$edge.length[ii]<-lambda*tree$edge.length[ii]
 	H2<-nodeHeights(tree)
@@ -1354,7 +1354,7 @@ drop.leaves<-function(tree,...){
 	if(hasArg(keep.tip.labels)) keep.tip.labels<-list(...)$keep.tip.labels
 	else keep.tip.labels<-FALSE
 	## end optional arguments
-	n<-length(tree$tip.label)
+	n<-Ntip(tree)
 	edge<-tree$edge
 	edge[edge>n]<--edge[edge>n]+n
 	ii<-which(edge[,2]>0)
@@ -1465,7 +1465,7 @@ mergeMappedStates<-function(tree,old.states,new.state){
 # written by Liam J. Revell 2013, 2015
 rotateNodes<-function(tree,nodes,polytom=c(1,2),...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	n<-length(tree$tip.label)
+	n<-Ntip(tree)
 	if(nodes[1]=="all") nodes<-1:tree$Nnode+n
 	for(i in 1:length(nodes)) tree<-rotate(tree,nodes[i],polytom)
 	if(hasArg(reversible)) reversible<-list(...)$reversible
@@ -1508,8 +1508,8 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 		obj<-get.treepos(message=FALSE)
 		where<-obj$where
 		position<-obj$pos
-	} else if(is.null(where)) where<-length(tree$tip.label)+1
-	if(where<=length(tree$tip.label)&&position==0){
+	} else if(is.null(where)) where<-Ntip(tree)+1
+	if(where<=Ntip(tree)&&position==0){
 		pp<-1e-12
 		if(tree$edge.length[which(tree$edge[,2]==where)]<=1e-12){
 			tree$edge.length[which(tree$edge[,2]==where)]<-2e-12
@@ -1518,7 +1518,7 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 	} else pp<-position
 	if(is.null(edge.length)&&is.ultrametric(tree)){
 		H<-nodeHeights(tree)
-		if(where==(length(tree$tip.label)+1)) edge.length<-max(H)
+		if(where==(Ntip(tree)+1)) edge.length<-max(H)
 		else edge.length<-max(H)-H[tree$edge[,2]==where,2]+position
 	}
 	tip<-list(edge=matrix(c(2,1),1,2),
@@ -1527,7 +1527,7 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 		Nnode=1)
 		class(tip)<-"phylo"
 	obj<-bind.tree(tree,tip,where=where,position=pp)
-	if(where<=length(tree$tip.label)&&position==0){
+	if(where<=Ntip(tree)&&position==0){
 		nn<-obj$edge[which(obj$edge[,2]==which(obj$tip.label==tip$tip.label)),1]
 		obj$edge.length[which(obj$edge[,2]==nn)]<-obj$edge.length[which(obj$edge[,2]==nn)]+1e-12
 		obj$edge.length[which(obj$edge[,2]==which(obj$tip.label==tip$tip.label))]<-0
@@ -1579,7 +1579,7 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 extract.clade.simmap<-function(tree,node){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	x<-getDescendants(tree,node)
-	x<-x[x<=length(tree$tip.label)]
+	x<-x[x<=Ntip(tree)]
 	drop.tip.simmap(tree,tree$tip.label[-x])
 }
 
@@ -1587,11 +1587,11 @@ extract.clade.simmap<-function(tree,node){
 # written by Liam J. Revell 2013, 2015
 getCladesofSize<-function(tree,clade.size=2){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	n<-length(tree$tip.label)
+	n<-Ntip(tree)
 	nn<-1:(tree$Nnode+n)
 	ndesc<-function(tree,node){
 		x<-getDescendants(tree,node)
-		sum(x<=length(tree$tip.label))
+		sum(x<=Ntip(tree))
 	}
 	dd<-setNames(sapply(nn,ndesc,tree=tree),nn)
 	aa<-n+1 # root
@@ -1620,10 +1620,10 @@ getStates<-function(tree,type=c("nodes","tips")){
 	} else if(inherits(tree,"phylo")){ 
 		if(type=="nodes"){
 			y<-setNames(sapply(tree$maps,function(x) names(x)[1]),tree$edge[,1])
-			y<-y[as.character(length(tree$tip.label)+1:tree$Nnode)]
+			y<-y[as.character(Ntip(tree)+1:tree$Nnode)]
 		} else if(type=="tips"){
 			y<-setNames(sapply(tree$maps,function(x) names(x)[length(x)]),tree$edge[,2])
-			y<-setNames(y[as.character(1:length(tree$tip.label))],tree$tip.label)
+			y<-setNames(y[as.character(1:Ntip(tree))],tree$tip.label)
 		}
 	} else stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
 	return(y)
@@ -1795,7 +1795,7 @@ matchDatatoTree<-function(tree,x,name){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(is.matrix(x)) x<-x[,1]
 	if(is.null(names(x))){
-		if(length(x)==length(tree$tip.label)){
+		if(length(x)==Ntip(tree)){
 			print(paste(name,"has no names; assuming x is in the same order as tree$tip.label"))
 			names(x)<-tree$tip.label
 		} else
@@ -1880,7 +1880,7 @@ getSisters<-function(tree,node,mode=c("number","label")){
 	if(mode=="number") return(sisters)
 	else if(mode=="label"){
 		result<-list()
-		n<-length(tree$tip.label)
+		n<-Ntip(tree)
 		if(is.null(tree$node.label)&&any(sisters>n)) result$nodes<-sisters[which(sisters>n)] 
 		else if(any(sisters>n)) result$nodes<-tree$node.label[sisters[which(sisters>n)]-n]
 		if(any(sisters<=n)) result$tips<-tree$tip.label[sisters[which(sisters<=n)]]
@@ -1895,8 +1895,8 @@ getDescendants<-function(tree,node,curr=NULL){
 	if(is.null(curr)) curr<-vector()
 	daughters<-tree$edge[which(tree$edge[,1]==node),2]
 	curr<-c(curr,daughters)
-	if(length(curr)==0&&node<=length(tree$tip.label)) curr<-node
-	w<-which(daughters>length(tree$tip.label))
+	if(length(curr)==0&&node<=Ntip(tree)) curr<-node
+	w<-which(daughters>Ntip(tree))
 	if(length(w)>0) for(i in 1:length(w)) 
 		curr<-getDescendants(tree,daughters[w[i]],curr)
 	return(curr)

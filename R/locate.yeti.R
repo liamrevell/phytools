@@ -1,5 +1,5 @@
 ## code to place a missing extant taxon into a tree using ML or REML on continuous data
-## written by Liam J. Revell 2014
+## written by Liam J. Revell 2014, 2018
 
 locate.yeti<-function(tree,X,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -13,7 +13,7 @@ locate.yeti<-function(tree,X,...){
 	else quiet<-FALSE
 	if(hasArg(rotate)) rotate<-list(...)$rotate
 	else rotate<-if(method=="ML") TRUE else FALSE
-	root.node<-length(tree$tip.label)+1
+	root.node<-Ntip(tree)+1
 	if(hasArg(constraint)){
 		if(search=="exhaustive") constraint<-list(...)$constraint
 		else {
@@ -75,7 +75,7 @@ yetiML<-function(tree,X,quiet,tip,root.node,constraint,plot,search,rotate){
 	if(search=="heuristic"){
 		ee<-edge
 		if(edge!=root.node) ee<-c(ee,getAncestors(tree,node=edge,type="parent"))
-		if(edge>length(tree$tip.label)) ee<-c(ee,tree$edge[which(tree$edge[,1]==edge),2])
+		if(edge>Ntip(tree)) ee<-c(ee,tree$edge[which(tree$edge[,1]==edge),2])
 	} else if(search=="exhaustive") ee<-c(root.node,tree$edge[,2])
 	ee<-intersect(ee,constraint)
 	fit<-vector(mode="list",length=length(ee))
@@ -154,7 +154,7 @@ yetiREML<-function(tree,X,quiet,tip,root.node,constraint,plot,search){
 	if(search=="heuristic"){
 		ee<-edge
 		if(edge!=root.node) ee<-c(ee,getAncestors(tree,node=edge,type="parent"))
-		if(edge>length(tree$tip.label)) ee<-c(ee,tree$edge[which(tree$edge[,1]==edge),2])
+		if(edge>Ntip(tree)) ee<-c(ee,tree$edge[which(tree$edge[,1]==edge),2])
 	} else if(search=="exhaustive") ee<-c(root.node,tree$edge[,2])
 	ee<-intersect(ee,constraint)
 	fit<-vector(mode="list",length=length(ee))

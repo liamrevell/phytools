@@ -1,5 +1,5 @@
-# function drops tip or tips from a SIMMAP style tree created by read.simmap, make.simmap, or sim.history
-# written by Liam Revell 2012, 2015
+## function drops tip or tips from an object of class "simmap"
+## written by Liam J. Revell 2012, 2015, 2018
 
 drop.tip.simmap<-function(tree,tip){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -10,7 +10,7 @@ drop.tip.simmap<-function(tree,tip){
 	tree$edge.length<-tree$edge.length[z]
 	tree$maps<-tree$maps[z]
 	z<-setdiff(tree$edge[,2],tree$edge[,1])
-	z<-z[z>length(tree$tip)]
+	z<-z[z>Ntip(tree)]
 	while(length(z)>0){
 		edges<-match(z,tree$edge[,2])
 		y<-setdiff(1:nrow(tree$edge),edges)
@@ -18,11 +18,11 @@ drop.tip.simmap<-function(tree,tip){
 		tree$edge.length<-tree$edge.length[y]
 		tree$maps<-tree$maps[y]
 		z<-setdiff(tree$edge[,2],tree$edge[,1])
-		z<-z[z>length(tree$tip)]
+		z<-z[z>Ntip(tree)]
 	}
 	z<-setdiff(tree$edge[,2],tree$edge[,1])
 	tree$tip.label<-tree$tip.label[z]
-	tree$edge[which(tree$edge[,2]%in%z),2]<-1:length(tree$tip)
+	tree$edge[which(tree$edge[,2]%in%z),2]<-1:Ntip(tree)
 	while(sum(tree$edge[1,1]==tree$edge[,1])==1){
 		tree$edge<-tree$edge[2:nrow(tree$edge),]
 		tree$edge.length<-tree$edge.length[2:length(tree$edge.length)]
@@ -50,10 +50,10 @@ drop.tip.simmap<-function(tree,tip){
 		i<-i+1
 	}
 	z<-unique(as.vector(tree$edge))
-	z<-z[z>length(tree$tip)]
-	y<-order(z)+length(tree$tip)
+	z<-z[z>Ntip(tree)]
+	y<-order(z)+Ntip(tree)
 	for(i in 1:nrow(tree$edge)) for(j in 1:2) if(tree$edge[i,j]%in%z) tree$edge[i,j]<-y[which(tree$edge[i,j]==z)]
-	tree$Nnode<-max(tree$edge)-length(tree$tip)
+	tree$Nnode<-max(tree$edge)-Ntip(tree)
 	tree$node.states<-matrix(NA,nrow(tree$edge),2)
 	for(i in 1:nrow(tree$edge)) tree$node.states[i,]<-c(names(tree$maps[[i]])[1],names(tree$maps[[i]])[length(tree$maps[[i]])])
 	if(!is.null(tree$states)) tree$states<-tree$states[tree$tip.label]

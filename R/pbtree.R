@@ -1,7 +1,8 @@
-# function to simulate a pure-birth phylogenetic tree or trees
-# written by Liam J. Revell 2011-2015
+## function to simulate a pure-birth phylogenetic tree or trees
+## written by Liam J. Revell 2011-2015, 2018
 
-pbtree<-function(b=1,d=0,n=NULL,t=NULL,scale=NULL,nsim=1,type=c("continuous","discrete"),...){
+pbtree<-function(b=1,d=0,n=NULL,t=NULL,scale=NULL,nsim=1,
+	type=c("continuous","discrete"),...){
 	# get arguments
 	if(hasArg(ape)) ape<-list(...)$ape
 	else ape<-TRUE
