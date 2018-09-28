@@ -10,7 +10,7 @@ export(expand.clade, export.as.xml, extract.clade.simmap, extract.strahlerNumber
 export(fancyTree, fastAnc, fastBM, fastDist, fastHeight, fastMRCA, findMRCA, fit.bd, fit.yule, fitBayes, fitMk, fitmultiMk, fitDiversityModel)
 export(fitPagel, force.ultrametric)
 export(gammatest, genus.to.species.tree, genSeq, geo.legend, get.treepos, getCladesofSize, getDescendants, getExtant, getExtinct, getnode)
-export(getParent, getSisters, getStates)
+export(getParent, getSisters, getStates, gtt)
 export(labelnodes, ladderize.simmap, lambda.transform, lik.bd, likMlambda, likSurface.rateshift, linklabels, locate.fossil, locate.yeti)
 export(ls.consensus, ls.tree, ltt, ltt95)
 export(make.era.map, make.simmap, make.transparent, map.overlap, Map.Overlap, map.to.singleton, mapped.states, markChanges)
