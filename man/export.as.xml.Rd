@@ -13,7 +13,7 @@ export.as.xml(file, trees, X)
 	This function exports trees & character data in XML format.
 }
 \details{
-	Can be used to create input file for the program SIMMAP v1.5 (Bollback 2006), also see: \url{http://www.simmap.com}.
+	Can be used to create input file for the program SIMMAP v1.5 (Bollback 2006).
 }
 \value{
 	A file.
