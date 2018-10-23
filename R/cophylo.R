@@ -122,6 +122,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	else tip.lty<-"dotted"
 	if(hasArg(tip.len)) tip.len<-list(...)$tip.len
 	else tip.len<-0.1
+	if(pts==TRUE&&tip.len==0) tip.len<-0.1
 	d<-if(direction=="rightwards") 1 else -1
 	## sub "_" for " "
 	tree$tip.label<-gsub("_"," ",tree$tip.label)
@@ -130,9 +131,12 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	## rescale tree so it fits in one half of the plot
 	## with enough space for labels
 	if(ftype=="off") fsize<-0
-	sh<-fsize*strwidth(tree$tip.label)
-	tree$edge.length<-tree$edge.length/max(nodeHeights(tree))*(part-max(sh))
 	n<-Ntip(tree)
+	sh<-fsize*strwidth(tree$tip.label)
+	H<-nodeHeights(tree)
+	th<-sapply(1:n,function(i,x,e) x[which(e==i)],x=H[,2],
+		e=tree$edge[,2])+tip.len*max(H)
+	tree$edge.length<-tree$edge.length/max(th/(part-sh))
 	## reorder cladewise to assign tip positions
 	cw<-reorder(tree,"cladewise")
 	y<-vector(length=n+cw$Nnode)
@@ -164,20 +168,21 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		segments(x0=d*xx[1:(length(xx)-1)],y0=yy[1:(length(yy)-1)],
 			x1=d*xx[2:length(xx)],y1=yy[2:length(yy)],lwd=lwd,lend=2,col=edge.col[ee])
 	}
+	h<-part-0.5-tip.len*(max(X)-min(X))-fsize*strwidth(tree$tip.label)
 	## plot links to tips
-	h<-max(X)+tip.len*(max(X)-min(X))+max(fsize*strwidth(tree$tip.label))-
-		fsize*strwidth(tree$tip.label)
 	for(i in 1:n){ 
-		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]),rep(y[i],2),lwd=tip.lwd,lty=tip.lty)
+		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]+tip.len*(max(X)-min(X))),rep(y[i],2),
+			lwd=tip.lwd,lty=tip.lty)
 		if(pts) points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=pts*0.7*sqrt(lwd))
-	}
+	}	
 	## plot tip labels
 	font<-which(c("off","reg","b","i","bi")==ftype)-1
 	if(font>0){
-		for(i in 1:n) text(d*max(h+fsize*strwidth(tree$tip.label)),y[i],
+		for(i in 1:n) TEXTBOX(d*(h[i]+fsize*strwidth(tree$tip.label[i])+
+			tip.len*(max(X)-min(X))),y[i],
 			tree$tip.label[i], pos=if(d<0) 4 else 2,offset=0,
 			cex=fsize,font=font)
-	}
+	}	
 	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 		show.tip.label=if(ftype!="off") TRUE else FALSE,show.node.label=FALSE,
 		font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0,
@@ -187,8 +192,18 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	## return rightmost or leftmost edge of tip labels
-	invisible(d*max(h+fsize*strwidth(tree$tip.label)))
+	invisible(d*max(h+fsize*strwidth(tree$tip.label)+tip.len*(max(X)-min(X))))
 }
+
+## internally used function
+TEXTBOX<-function(x,y,label,pos,offset,cex,font){
+	rect(x,y-0.5*strheight(label,cex=cex,font=font),x+if(pos==4) strwidth(label,
+		cex=cex,font=font) else -strwidth(label,cex=cex,font=font),
+		y+0.5*strheight(label,cex=cex,font=font),border=FALSE,
+		col=if(par()$bg%in%c("white","transparent")) "white" else par()$bg)
+	text(x=x,y=y,label=label,pos=pos,offset=offset,cex=cex,font=font)
+}
+	
 
 ## plot links between tip taxa according to assoc
 ## written by Liam J. Revell 2015, 2016
