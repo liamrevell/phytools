@@ -142,6 +142,7 @@ print.pgls.Ives<-function(x,digits=6,...){
 
 pgls.SEy<-function(model,data,corClass=corBrownian,tree=tree,
 	se=NULL,method=c("REML","ML"),interval=c(0,1000),...){
+	Call<-match.call()
 	corfunc<-corClass
 	## preliminaries
 	data<-data[tree$tip.label,]
@@ -170,6 +171,8 @@ pgls.SEy<-function(model,data,corClass=corBrownian,tree=tree,
 	vf<-diag(vcv(tree))
 	w<-varFixed(~vf)
 	## fit & return model
-	gls(model,data=cbind(data,vf),correlation=corfunc(1,tree),weights=w,
+	obj<-gls(model,data=cbind(data,vf),correlation=corfunc(1,tree),weights=w,
 		method=method)
+	obj$call<-Call
+	obj
 }
