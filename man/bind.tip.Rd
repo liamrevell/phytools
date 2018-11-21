@@ -9,7 +9,7 @@ bind.tip(tree, tip.label, edge.length=NULL, where=NULL, position=0,
 	\item{tree}{receptor tree.}
 	\item{tip.label}{a string containing the species name for the new tip.}
 	\item{edge.length}{edge length for the new tip (a scalar).}
-	\item{where}{node number to attach new tip. If \code{position>0} then then tip will be attached \emph{below} the specified node. Node numbers can also be tips, in which case the new tip will be added along the terminal edge. To find out the tip number for given species with name \emph{"species"} type: \code{which(tree$tip.label=="species"}.}
+	\item{where}{node number to attach new tip. If \code{position>0} then then tip will be attached \emph{below} the specified node. Node numbers can also be tips, in which case the new tip will be added along the terminal edge. To find out the tip number for given species with name \emph{"species"} type: \code{which(tree$tip.label=="species")}.}
 	\item{position}{distance \emph{below} node to add tip.}
 	\item{interactive}{logical value indicating whether or not the species should be added interactively. (Defaults to \code{FALSE}.)}
 	\item{...}{arguments to be passed to \code{plotTree} (for \code{interactive=TRUE}.)}

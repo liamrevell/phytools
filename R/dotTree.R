@@ -1,5 +1,5 @@
 ## function to plot a tree with dots/circles for a plotted phenotype
-## written by Liam J. Revell 2016, 2017
+## written by Liam J. Revell 2016, 2017, 2018
 
 dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
 	if(is.data.frame(x)) x<-as.matrix(x)
@@ -30,7 +30,8 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		else x<-x[,1]
 	}
 	if(hasArg(fsize)) fsize<-list(...)$fsize
-	else fsize<-1
+	else fsize<-c(1,0.8)
+	if(length(fsize)==1) fsize<-rep(fsize,2)
 	if(hasArg(x.space)) x.space<-list(...)$x.space
 	else x.space<-0.1
 	if(hasArg(k)) k<-list(...)$k
@@ -50,6 +51,7 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 	max.x<-max(x)
 	if(any(x<0)) x<-x-min(x)
 	if(method=="plotTree"){
+		fsize<-fsize[1]
 		x<-x[tree$tip.label]
 		## plot tree
 		plotTree(tree,offset=1.7,ylim=c(-Ntip(tree)/25,
@@ -75,11 +77,18 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
 		x[]<-x[tree$tip.label,]
+		if(hasArg(mar)) mar<-list(...)$mar
+		else mar<-rep(0.1,4)
+		if(hasArg(xlim)) xlim<-list(...)$xlim
+		else xlim<-c(-0.5,0.55+x.space*ncol(x)+x.space/2)
+		if(hasArg(labels)) labels<-list(...)$labels
+		else labels<-FALSE
+		if(hasArg(ylim)) ylim<-list(...)$ylim
+		else ylim<-c(if(legend) -0.1 else 0,if(labels) 1.1 else 1)
 		## plot tree
 		plot.new()
-		par(mar=rep(0.1,4))
-		plot.window(xlim=c(-0.5,0.55+x.space*ncol(x)+x.space/2),
-			ylim=c(if(legend) -0.1 else 0,1))
+		par(mar=mar)
+		plot.window(xlim=xlim,ylim=ylim)
 		h<-phylogram(tree,...)
 		## get last phylo plot parameters
 		obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
@@ -88,19 +97,22 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		## plot points
 		rr<-(k*x/max(x)+x.space)/2*diff(par()$usr[1:2])/diff(par()$usr[3:4])/
 			(Ntip(tree)-1)
-		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
-			rr<-rr/max(rr)*strwidth("W")*fsize/2
+		if(k<=0.8&&any(rr>(strwidth("W")*fsize[1]/2))) 
+			rr<-rr/max(rr)*strwidth("W")*fsize[1]/2
 		for(i in 1:ncol(x)){
 			nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W")+x.space*(i-1),
 				y=y.tip,radius=rr[,i],MoreArgs=list(nv=200,col=color))
-			## draw.circle(x.tip+1.2*strwidth("W")+x.space*(i-1),y.tip,
-			##	nv=200,radius=rr[,i],col=color)
 		}
 		## add legend
 		if(legend){ 
 			h<-dot.legend(x=-0.45,y=-0.04,min.x,max.x,Ntip=Ntip(tree),
 				method="phylogram",...)
 			if(standardize) text(h,-0.04,"(SD units)",pos=4)
+		}
+		if(labels){
+			text(x=seq(max(x.tip)+1.2*strwidth("W"),
+				max(x.tip)+1.2*strwidth("W")+x.space*(ncol(x)-1),by=x.space),
+				y=rep(1.02,ncol(x)),colnames(x),srt=70,adj=c(0,0.5),cex=fsize[2])
 		}
 	}
 }
@@ -112,7 +124,8 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 		else x<-x[,1]
 	}
 	if(hasArg(fsize)) fsize<-list(...)$fsize
-	else fsize<-1
+	else fsize<-c(1,0.8)
+	if(length(fsize)==1) fsize<-rep(fsize,2)
 	if(hasArg(x.space)) x.space<-list(...)$x.space
 	else x.space<-0.1
 	## reorder tree
@@ -140,11 +153,18 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
 		x[]<-x[tree$tip.label,]
+		if(hasArg(mar)) mar<-list(...)$mar
+		else mar<-rep(0.1,4)
+		if(hasArg(xlim)) xlim<-list(...)$xlim
+		else xlim<-c(-0.5,0.55+x.space*ncol(x)+x.space/2)
+		if(hasArg(labels)) labels<-list(...)$labels
+		else labels<-FALSE
+		if(hasArg(ylim)) ylim<-list(...)$ylim
+		else ylim<-c(if(legend) -0.1 else 0,if(labels) 1.1 else 1)
 		## plot tree
 		plot.new()
-		par(mar=rep(0.1,4))
-		plot.window(xlim=c(-0.5,0.55+x.space*ncol(x)+x.space/2),
-			ylim=c(if(legend) -0.06 else 0,1))
+		par(mar=mar)
+		plot.window(xlim=xlim,ylim=ylim)
 		h<-phylogram(tree,...)
 		## get last phylo plot parameters
 		obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
@@ -157,13 +177,16 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 			nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W")+x.space*(i-1),
 				y=y.tip,col=color[as.character(x[,i])],MoreArgs=list(nv=20,
 				radius=r))
-			## draw.circle(x.tip+1.2*strwidth("W")+x.space*(i-1),y.tip,
-			##	nv=200,radius=r,col=color[as.character(x[,i])])
 		}
 		## add legend
 		if(legend){ 
 			add.simmap.legend(colors=color,prompt=FALSE,
 				vertical=FALSE,shape="circle",x=-0.45,y=-0.06)
+		}
+		if(labels){
+			text(x=seq(max(x.tip)+1.2*strwidth("W"),
+				max(x.tip)+1.2*strwidth("W")+x.space*(ncol(x)-1),by=x.space),
+				y=rep(1.02,ncol(x)),colnames(x),srt=70,adj=c(0,0.5),cex=fsize[2])
 		}
 	}
 }
