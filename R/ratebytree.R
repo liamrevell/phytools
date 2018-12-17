@@ -173,9 +173,6 @@ rbt.div<-function(trees,...){
 	obj
 }
 
-## used (for now) to get a starting value for optimization in type="diversification"
-qb<-function(tree) (log(Ntip(tree))-log(2))/max(nodeHeights(tree))
-
 ## discrete character ratebytree
 rbt.disc<-function(trees,x,...){
 	if(hasArg(trace)) trace<-list(...)$trace
