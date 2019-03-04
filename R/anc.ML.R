@@ -38,6 +38,7 @@ anc.BM<-function(tree,x,maxit,...){
 		xvals<-c(xvals,setNames(par[1:length(msp)+tree$Nnode+1],msp))
 		xvals<-xvals[rownames(C)[1:length(tree$tip.label)]]
 		z<-c(xvals,y)-a
+		if(trace) cat(paste(round(sig2,6)," --- ",sep=""))
 		if(sum(E)>0){
 			C<-sig2*C
 			C[rownames(E),colnames(E)]<-C[rownames(E),colnames(E)]+E
@@ -46,7 +47,7 @@ anc.BM<-function(tree,x,maxit,...){
 		}
 		logLik<-(-z%*%invC%*%z/(2*sig2)-nrow(C)*log(2*pi)/2-nrow(C)*log(sig2)/2-
 			detC/2)[1,1]
-		if(trace) print(c(sig2,logLik))
+		if(trace) cat(paste(round(logLik,6),"\n"))
 		-logLik
 	}
 	## compute C
