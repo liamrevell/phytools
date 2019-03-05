@@ -29,14 +29,9 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 		index<-0
 		for(i in 1:nrow(tmodel)){
 			for(j in i:ncol(tmodel)){
-				print(poly[[i]])
-				print(poly[[j]])
 				INT<-intersect(poly[[i]],poly[[j]])
 				SDij<-setdiff(poly[[i]],poly[[j]])
 				SDji<-setdiff(poly[[j]],poly[[i]])
-				print(INT)
-				print(SDij)
-				print(SDji)
 				if(length(INT)>0
 					&&(0%in%c(length(SDij),length(SDji)))
 					&&(1%in%c(length(SDij),length(SDji)))){					
