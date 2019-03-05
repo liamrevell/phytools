@@ -151,6 +151,7 @@ S3method(plot, mccr)
 S3method(print, fitpolyMk)
 S3method(logLik, fitpolyMk)
 S3method(AIC, fitpolyMk)
+S3method(plot, fitpolyMk)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
