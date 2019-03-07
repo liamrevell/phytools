@@ -1,4 +1,5 @@
-## fitpolyMk written by Liam J. Revell 2019
+## fitpolyMk 
+## written by Liam J. Revell 2019
 
 fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	if(hasArg(quiet)) quiet<-list(...)$quiet
