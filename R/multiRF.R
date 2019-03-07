@@ -1,6 +1,6 @@
 ## functions computes Robinson-Foulds distance between all trees in a list of class "multiPhylo"
 ## works only for unrooted trees (if trees are rooted, them will be unrooted)
-## written by Liam J. Revell 2013, 2015, 2017
+## written by Liam J. Revell 2013, 2015, 2017, 2019
 
 multiRF<-function(trees,quiet=FALSE,multi2di=FALSE){
 	if(!inherits(trees,"multiPhylo")) stop("trees should be an object of class \"multiPhylo\".")
@@ -10,7 +10,7 @@ multiRF<-function(trees,quiet=FALSE,multi2di=FALSE){
 		if(!quiet) cat("Some trees are rooted. Unrooting all trees.\n")
 		trees<-lapply(unclass(trees),unroot)
 	}
-	if(any(sapply(unclass(trees),function(x) !is.binary.tree(x)))){
+	if(any(sapply(unclass(trees),function(x) !is.binary(x)))){
 		if(multi2di){
 			if(!quiet) cat("some trees are not binary. Using multi2di to render bifurcating.\n")
 			trees<-lapply(trees,multi2di)

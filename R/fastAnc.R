@@ -1,5 +1,5 @@
 ## function does fast estimation of ML ancestral states using ace
-## written by Liam J. Revell 2012, 2013, 2015
+## written by Liam J. Revell 2012, 2013, 2015, 2019
 
 fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -16,7 +16,7 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 		}
 		x<-c(x,anc.states)
 	} else tt<-tree
-	if(!is.binary.tree(tt)) btree<-multi2di(tt)
+	if(!is.binary(tt)) btree<-multi2di(tt)
 	else btree<-tt
 	M<-btree$Nnode
 	N<-length(btree$tip.label)
@@ -33,7 +33,7 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 			names(v)[i-N]<-names(anc)[i-N]
 		}
  	}
-	if(!is.binary.tree(tree)||!is.null(anc.states)){
+	if(!is.binary(tree)||!is.null(anc.states)){
 		ancNames<-matchNodes(tree,btree,method="distances",quiet=TRUE)
 		anc<-anc[as.character(ancNames[,2])]
 		names(anc)<-ancNames[,1]

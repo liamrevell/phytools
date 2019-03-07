@@ -1,5 +1,5 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
-## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018
+## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -42,7 +42,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		xx<-xx/rowSums(xx)
 		# reorder to cladewise
 		tree<-bt<-reorder.phylo(tree,"cladewise")
-		if(!is.binary.tree(bt)) bt<-multi2di(bt)
+		if(!is.binary(bt)) bt<-multi2di(bt)
 		# some preliminaries
 		N<-Ntip(tree)
 		m<-ncol(xx)
@@ -201,7 +201,7 @@ getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
 	if(liks){
 		L<-obj$lik.anc
 		rownames(L)<-N+1:nrow(L)
-		if(!is.binary.tree(tree)){
+		if(!is.binary(tree)){
 			ancNames<-matchNodes(tree,bt)
 			L<-L[as.character(ancNames[,2]),]
 			rownames(L)<-ancNames[,1]

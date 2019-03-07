@@ -1,5 +1,5 @@
 ## some utility functions
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
 
 ## function to rescale a tree according to an EB model
 ## written by Liam J. Revell 2017
@@ -431,7 +431,7 @@ modified.Grafen<-function(tree,power=2){
 ## function to compute all rotations
 ## written by Liam J. Revell 2016
 allRotations<-function(tree){
-	if(!is.binary.tree(tree)){
+	if(!is.binary(tree)){
 		was.binary<-FALSE
 		if(is.null(tree$edge.length)){ 
 			tree<-compute.brlen(tree)

@@ -1,5 +1,5 @@
 ## creates an object of class "cophylo"
-## written by Liam J. Revell 2015, 2016, 2017
+## written by Liam J. Revell 2015, 2016, 2017, 2019
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
 		stop("tr1 & tr2 should be objects of class \"phylo\".")
@@ -323,7 +323,7 @@ tipRotate<-function(tree,x,...){
 	else max.exhaustive<-20
 	if(hasArg(rotate.multi)) rotate.multi<-list(...)$rotate.multi
 	else rotate.multi<-FALSE
-	if(rotate.multi) rotate.multi<-!is.binary.tree(tree)
+	if(rotate.multi) rotate.multi<-!is.binary(tree)
 	if(hasArg(anim.cophylo)) anim.cophylo<-list(...)$anim.cophylo
 	else anim.cophylo<-FALSE
 	if(anim.cophylo){

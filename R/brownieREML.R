@@ -1,5 +1,5 @@
 # This function is a simplified REML version of brownie.lite()
-# written by Liam J. Revell 2011, 2013
+# written by Liam J. Revell 2011, 2013, 2019
 
 brownieREML<-function(tree,x,maxit=2000,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -7,7 +7,7 @@ brownieREML<-function(tree,x,maxit=2000,...){
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8
 	# bookkeeping
-	if(!is.binary.tree(tree)) tree<-multi2di(tree)
+	if(!is.binary(tree)) tree<-multi2di(tree)
 	x<-x[tree$tip.label] # order in tip.label order
 	n<-length(x) # number of species
 	p<-ncol(tree$mapped.edge) # number of states

@@ -1,5 +1,5 @@
 ## simulation based test for a correlation between the state of x & the rate of y
-## written by Liam J. Revell 2013, 2017
+## written by Liam J. Revell 2013, 2017, 2019
 
 ratebystate<-function(tree,x,y,nsim=100,corr=c("pearson","spearman"),...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -12,7 +12,7 @@ ratebystate<-function(tree,x,y,nsim=100,corr=c("pearson","spearman"),...){
 	else message<-TRUE
 	if(hasArg(logarithm)) logarithm<-list(...)$logarithm
 	else logarithm<-FALSE
-	if(!is.binary.tree(tree)) tree<-multi2di(tree)
+	if(!is.binary(tree)) tree<-multi2di(tree)
 	V<-phyl.vcv(cbind(x,y),vcv(tree),lambda=1)$R
 	if(method=="by.branch"){
 		aa<-c(x[tree$tip.label],fastAnc(tree,x))

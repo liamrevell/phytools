@@ -1,5 +1,5 @@
 # function performs least-squares phylogeny inference by nni
-# written by Liam J. Revell 2011, 2013, 2015
+# written by Liam J. Revell 2011, 2013, 2015, 2019
 optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10,collapse=TRUE){
 	# change D to a matrix (if actually an object of class "dist")
 	if(class(D)=="dist") D<-as.matrix(D)
@@ -11,7 +11,7 @@ optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10
 		cat("starting tree must be an object of class \"phylo.\" using random starting tree.\n")
 		stree<-rtree(n=n,tip.label=rownames(D),br=NULL,rooted=F) # random starting tree
 	}
-	if(!is.binary.tree(stree)) stree<-multi2di(stree)
+	if(!is.binary(stree)) stree<-multi2di(stree)
 	if(is.rooted(stree)) stree<-unroot(stree)
 	# get ls branch lengths for stree
 	best.tree<-ls.tree(stree,D)
