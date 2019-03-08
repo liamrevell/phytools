@@ -73,7 +73,6 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 		colors<-matrix(rep(colors,nrow(coords)),nrow(coords),2,byrow=TRUE)
 		rownames(colors)<-rownames(coords)
 	} else if(is.vector(colors)&&(length(colors)==Ntip(tree))) {
-		cat("MAKE IT HERE?\n")
 		COLS<-matrix("red",nrow(coords),2,dimnames=list(rownames(coords)))
 		for(i in 1:length(colors)) COLS[which(rownames(COLS)==names(colors)[i]),1:2]<-colors[i]
 		colors<-COLS
