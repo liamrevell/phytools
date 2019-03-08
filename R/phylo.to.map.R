@@ -1,5 +1,5 @@
 ## function depends on phytools (& dependencies) and maps (& dependencies)
-## written by Liam J. Revell 2013, 2017
+## written by Liam J. Revell 2013, 2017, 2019
 
 phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -20,15 +20,19 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	if(hasArg(type)) type<-list(...)$type else type<-"phylogram"
 	if(hasArg(direction)) direction<-list(...)$direction else direction<-"downwards"
 	if(is.data.frame(coords)) coords<-as.matrix(coords)
-	if(rotate&&type=="phylogram") tree<-minRotate(tree,coords[,if(direction=="rightwards") 1 else 2])
+	if(rotate&&type=="phylogram"){
+		cc<-aggregate(coords,by=list(rownames(coords)),mean)
+		cc<-matrix(as.matrix(cc[,2:3]),nrow(cc),2,dimnames=list(cc[,1],colnames(cc)[2:3]))
+		tree<-minRotate(tree,cc[,if(direction=="rightwards") 1 else 2])
+	}
 	x<-list(tree=tree,map=map,coords=coords)
 	class(x)<-"phylo.to.map"
 	if(plot) plot.phylo.to.map(x,...)
 	invisible(x)
 }
 
-# function to plot object of class "phylo.to.map"
-# written by Liam J. Revell 2013, 2014, 2016
+## S3 method to plot object of class "phylo.to.map"
+## written by Liam J. Revell 2013, 2014, 2016, 2019
 
 plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	type<-type[1]
@@ -68,6 +72,11 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	if(length(colors)==2&&type=="phylogram"){
 		colors<-matrix(rep(colors,nrow(coords)),nrow(coords),2,byrow=TRUE)
 		rownames(colors)<-rownames(coords)
+	} else if(is.vector(colors)&&(length(colors)==Ntip(tree))) {
+		cat("MAKE IT HERE?\n")
+		COLS<-matrix("red",nrow(coords),2,dimnames=list(rownames(coords)))
+		for(i in 1:length(colors)) COLS[which(rownames(COLS)==names(colors)[i]),1:2]<-colors[i]
+		colors<-COLS
 	}
 	if(hasArg(direction)) direction<-list(...)$direction
 	else direction<-"downwards"
@@ -126,12 +135,14 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			# compute start & end points of each edge
 			Y<-ylim[2]-nodeHeights(cw)
 			# plot coordinates & linking lines
-			coords<-coords[cw$tip.label,2:1]
-			for(i in 1:n) lines(c(x[i],coords[i,1]),
-				c(Y[which(cw$edge[,2]==i),2]-
-					if(from.tip) 0 else sh[i],coords[i,2]),
-				col=colors[cw$tip.label,][i,1],lty=lty,lwd=lwd[2])
-			points(coords,pch=pch,cex=cex.points[2],bg=colors[cw$tip.label,2])
+			coords<-coords[,2:1]
+			for(i in 1:nrow(coords)){ 
+				tip.i<-which(cw$tip.label==rownames(coords)[i])
+				lines(c(x[tip.i],coords[i,1]),c(Y[which(cw$edge[,2]==tip.i),2]-
+					if(from.tip) 0 else sh[tip.i],coords[i,2]),
+					col=colors[i,1],lty=lty,lwd=lwd[2])
+			}
+			points(coords,pch=pch,cex=cex.points[2],bg=colors[,2])
 			# plot vertical edges
 			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],
 				lwd=lwd[1],lend=2)
@@ -176,11 +187,13 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			}
 			H<-nodeHeights(cw)
 			X<-xlim[1]+H
-			coords<-coords[cw$tip.label,2:1]
-			for(i in 1:n) lines(c(X[which(cw$edge[,2]==i),2]+
-				if(from.tip) 0 else sh[i],coords[i,1]),
-				c(y[i],coords[i,2]),col=colors[cw$tip.label,][i,1],lty=lty,lwd=lwd[2])
-			points(coords,pch=pch,cex=cex.points[2],bg=colors[cw$tip.label,2])
+			coords<-coords[,2:1]
+			for(i in 1:nrow(coords)){
+				tip.i<-which(cw$tip.label==rownames(coords)[i])
+				lines(c(X[which(cw$edge[,2]==tip.i),2]+if(from.tip) 0 else sh[tip.i],coords[i,1]),
+					c(y[tip.i],coords[i,2]),col=colors[i,1],lty=lty,lwd=lwd[2])
+			}
+			points(coords,pch=pch,cex=cex.points[2],bg=colors[,2])
 			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2)
 			for(i in 1:cw$Nnode+n) lines(X[which(cw$edge[,1]==i),1],
 				range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd[1],lend=2)
@@ -235,5 +248,5 @@ print.phylo.to.map<-function(x,...){
 	cat("(2) A geographic map with range:\n")
 	cat(paste("     ",paste(round(x$map$range[3:4],2),collapse="N, "),"N\n",sep=""))
 	cat(paste("     ",paste(round(x$map$range[1:2],2),collapse="W, "),"W.\n\n",sep=""))
-	cat(paste("(3) A table containing",nrow(x$coords),"geographic coordinates.\n\n"))
+	cat(paste("(3) A table containing",nrow(x$coords),"geographic coordinates (may include more than one set per species).\n\n"))
 }

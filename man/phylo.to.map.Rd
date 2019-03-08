@@ -8,7 +8,7 @@ phylo.to.map(tree, coords, rotate=TRUE, ...)
 }
 \arguments{
 	\item{tree}{an object of class "phylo".}
-	\item{coords}{a matrix containing the latitude (in column 1) and the longitude of all tip species in the tree. The row names should be the same as \code{tree$tip.label}.}
+	\item{coords}{a matrix containing the latitude (in column 1) and the longitude of all tip species in the tree. The row names should be the same as \code{tree$tip.label}; however, more than one set of coordinates per species can be supplied by duplicating some row names.}
 	\item{rotate}{a logical value indicating whether or not to rotate nodes of the tree to better match longitudinal positions.}
 	\item{x}{for \code{plot.phylo.to.map}, an object of class \code{"phylo.to.map"}.}
 	\item{type}{a string indicating whether to map the tips of the tree onto a geographic map from a square phylogram (\code{type="phylogram"}) or to project the tree directly onto the map (\code{type="direct"}).}
