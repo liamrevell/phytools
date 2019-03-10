@@ -24,8 +24,8 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 		cc<-aggregate(coords,by=list(rownames(coords)),mean)
 		cc<-matrix(as.matrix(cc[,2:3]),nrow(cc),2,dimnames=list(cc[,1],colnames(cc)[2:3]))
 		tree<-minRotate(tree,cc[,if(direction=="rightwards") 1 else 2])
-	}
-	x<-list(tree=tree,map=map,coords=coords)
+	} else direction<-"unoptimized"
+	x<-list(tree=tree,map=map,coords=coords,direction=direction)
 	class(x)<-"phylo.to.map"
 	if(plot) plot.phylo.to.map(x,...)
 	invisible(x)
@@ -89,6 +89,21 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	else lty<-"dashed"
 	if(hasArg(pts)) pts<-list(...)$pts
 	else pts<-TRUE
+	if(type=="phylogram"){
+		if(x$direction=="downwards"&&direction=="rightwards"){
+			cat("\"phylo.to.map\" direction is \"downwards\" but plot direction has been given as \"rightwards\".\n")
+			cat("Re-optimizing object....\n")
+			cc<-aggregate(coords,by=list(rownames(coords)),mean)
+			cc<-matrix(as.matrix(cc[,2:3]),nrow(cc),2,dimnames=list(cc[,1],colnames(cc)[2:3]))
+			tree<-minRotate(tree,cc[,1])
+		} else if(x$direction=="rightwards"&&direction=="downwards"){
+			cat("\"phylo.to.map\" direction is \"rightwards\" but plot direction has been given as \"downwards\".\n")
+			cat("Re-optimizing object....\n")
+			cc<-aggregate(coords,by=list(rownames(coords)),mean)
+			cc<-matrix(as.matrix(cc[,2:3]),nrow(cc),2,dimnames=list(cc[,1],colnames(cc)[2:3]))
+			tree<-minRotate(tree,cc[,2])
+		}
+	}
 	# recompute ylim or xlim to leave space for the tree
 	if(type=="phylogram"){
 		if(direction=="downwards"){
@@ -247,5 +262,11 @@ print.phylo.to.map<-function(x,...){
 	cat("(2) A geographic map with range:\n")
 	cat(paste("     ",paste(round(x$map$range[3:4],2),collapse="N, "),"N\n",sep=""))
 	cat(paste("     ",paste(round(x$map$range[1:2],2),collapse="W, "),"W.\n\n",sep=""))
-	cat(paste("(3) A table containing",nrow(x$coords),"geographic coordinates (may include more than one set per species).\n\n"))
+	cat(paste("(3) A table containing ",nrow(x$coords)," geographic coordinates (may include\n",
+			"    more than one set per species).\n\n",sep=""))
+	if(x$direction%in%c("downwards","rightwards")) 
+		cat(paste("If optimized, tree nodes have been rotated to maximize alignment\n",
+			"with the map when the tree is plotted in a ",x$direction," direction.\n\n",sep=""))
+	else
+		cat("The nodes of the tree may not have yet been rotated to maximize\nalignment between the phylogeny & the map.\n\n")
 }
