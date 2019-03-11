@@ -116,8 +116,14 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 		}
 	}
 	# open & size a new plot
-	par(mar=mar)
+	#par(mar=mar)
+	#plot.new()
+	#plot.window(xlim=c(-1,1),ylim=c(-1,1),asp=1)
+	#abline(h=0,col=make.transparent("blue",0.5))
+	#stop("to here?")
+	if(all(mar==0)) mar<-mar+0.01
 	plot.new()
+	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	map(map,add=TRUE,fill=TRUE,col="gray95",mar=rep(0,4))
 	if(type=="phylogram"){
