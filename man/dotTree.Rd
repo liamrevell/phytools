@@ -9,7 +9,7 @@ dot.legend(x, y, min, max, Ntip, length=5, prompt=FALSE, method="plotTree",
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
-	\item{x}{vector of trait values; or a matrix. In the case of \code{dot.legend}, the \emph{x} coordinate of the legend.}
+	\item{x}{vector of trait values; or a matrix. If \code{x} is a vector it must have names that correspond to the tip labels of \code{tree}. If \code{x} is a matrix (and it probably should be a \emph{matrix}, not a data frame) then the row names of the matrix should correspond to the tip labels of the phylogeny. In the case of \code{dot.legend}, the \emph{x} coordinate of the legend.}
 	\item{legend}{logical value indicating whether or not a legend should be plotted.}
 	\item{method}{tree plotting method to be used internally. Will switch to \code{method="phylogram"} if the number of traits is greater than one. For \code{dot.legend}, it should be the method that was used for the plot.}
 	\item{standardize}{a logical value indicating whether or not to standardize \code{x}, or each column of \code{x}, to have a mean of zero & variance of one prior to analysis.}
