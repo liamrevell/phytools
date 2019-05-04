@@ -158,7 +158,7 @@ importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNA
 importFrom(ape, consensus, compute.brlen, cophenetic.phylo, corBrownian, di2multi, dist.dna, dist.nodes, drop.tip, edgelabels, extract.clade)
 importFrom(ape, getMRCA, is.binary)
 importFrom(ape, is.monophyletic, is.rooted, is.ultrametric, ladderize, matexpo, mrca, multi2di)
-importFrom(ape, nodelabels, Ntip, pic, plot.phylo, prop.part, read.tree, reorder.phylo, root, rotate, rtree, stree, tiplabels)
+importFrom(ape, nodelabels, Ntip, pic, plot.phylo, prop.part, read.tree, reorder.phylo, root.phylo, rotate, rtree, stree, tiplabels)
 importFrom(ape, unroot, vcv, vcv.phylo, write.tree)
 importFrom(clusterGeneration, genPositiveDefMat)
 importFrom(maps, map)

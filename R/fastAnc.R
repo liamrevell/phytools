@@ -22,7 +22,7 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	N<-length(btree$tip.label)
 	anc<-v<-vector()
 	for(i in 1:M+N){
-		a<-multi2di(ape::root(btree,node=i))
+		a<-multi2di(ape::root.phylo(btree,node=i))
    		anc[i-N]<-ace(x,a,method="pic")$ace[1]
    		names(anc)[i-N]<-i
 		if(vars||CI){
