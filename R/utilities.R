@@ -831,7 +831,7 @@ drop.clade<-function(tree,tip){
 
 
 ## function to re-root a phylogeny along an edge
-## written by Liam J. Revell 2011-2016
+## written by Liam J. Revell 2011-2016, 2019
 
 reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -848,7 +848,7 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	p<-tt[[1]]
 	d<-tt[[2]]
 	tip<-if(length(which(p$tip.label=="NA"))>0) "NA" else p$tip.label[which(p$tip.label%in%tree$node.label)]
-	p<-root(p,outgroup=tip,resolve.root=T)
+	p<-ape::root(p,outgroup=tip,resolve.root=TRUE)
 	bb<-which(p$tip.label==tip)
 	p$tip.label[bb]<-"NA"
 	ee<-p$edge.length[which(p$edge[,2]==bb)]

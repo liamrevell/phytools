@@ -27,7 +27,7 @@ phylo.impute<-function(tree,X,...){
 		x.init<-vector()
 		for (i in 1:nrow(ii)){
 			tip<-rownames(X)[ii[i]]
-			tt<-drop.tip(root(tree,outgroup=tip),
+			tt<-drop.tip(ape::root(tree,outgroup=tip),
 				names(ii[which(ii[,2]==ii[i,2]),1]))
 			x.init[i]<-fastAnc(tt,X[!is.na(X[,ii[i,2]]),
 				ii[i,2]])[1]
