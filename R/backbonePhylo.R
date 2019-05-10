@@ -173,6 +173,8 @@ plot.backbonePhylo<-function(x,...){
 		stop("x not an object of class \"backbonePhylo\"")
 	if(hasArg(vscale)) vscale<-list(...)$vscale
 	else vscale<-1
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-1
 	if(hasArg(col)) col<-list(...)$col
 	else col<-"grey"
 	if(length(col)!=Ntip(x)){ 
@@ -275,10 +277,10 @@ plot.backbonePhylo<-function(x,...){
 	}
 	for(i in 1:length(cw$tip.clade)) 
 		text(X[which(cw$edge[,2]==i),2],y[i],cw$tip.clade[[i]]$label,pos=4,
-			offset=0.1)
+			offset=0.1,cex=cex)
 	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 		show.tip.label=TRUE,show.node.label=FALSE,
-		font=1,cex=1,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
+		font=1,cex=cex,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
 		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 		direction="rightwards",tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
 		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
