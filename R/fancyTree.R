@@ -14,7 +14,7 @@ fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip","densitymap
 	type<-matchType(type,c("extinction","traitgram3d","droptip","densitymap","contmap","phenogram95","scattergram"))
 	if(!inherits(tree,"phylo")&&type%in%c("extinction","traitgram3d","droptip")) stop("tree should be an object of class \"phylo\".")
 	else if(!inherits(tree,"multiPhylo")&&type=="densitymap") stop("for type='densitymap' tree should be an object of class \"multiPhylo\".")
-	if(type=="extinction") extinctionTree(tree)
+	if(type=="extinction") extinctionTree(tree,...)
 	else if(type=="traitgram3d") invisible(traitgram3d(tree,...,control=control))
 	else if(type=="droptip") return(droptipTree(tree,...))
 	else if(type=="densitymap") plotDensityMap(tree,...)
@@ -179,23 +179,39 @@ phenogram95<-function(tree,...){
 	null<-dev.flush()
 }
 
-# extinctionTree internal function
-# written by Liam J. Revell 2012
+## extinctionTree internal function
+## written by Liam J. Revell 2012, 2019
 
-extinctionTree<-function(tree){
+extinctionTree<-function(tree,...){
+	if(hasArg(fsize)) fsize<-list(...)$fsize
+	else fsize<-1
+	if(hasArg(ftype)) ftype<-list(...)$ftype
+	else ftype<-"i"
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-2
+	if(hasArg(colors)) colors<-list(...)$colors
+	else colors<-palette()[1:2]
+	ftype<-which(c("off","reg","b","i","bi")==ftype)-1
+	if(!ftype) fsize=0.1 
 	edges<-rep(0,nrow(tree$edge))
 	names(edges)<-tree$edge[,2]
 	extant<-getExtant(tree)
 	ca<-findMRCA(tree,extant)
 	root.node<-length(tree$tip)+1
 	if(ca!=root.node){
-		z<-setdiff(getDescendants(tree,root.node),getDescendants(tree,ca))
+		z<-setdiff(getDescendants(tree,root.node),
+			getDescendants(tree,ca))
 		edges[as.character(z)]<-1
 	}
 	z<-getDescendants(tree,ca)
 	y<-lapply(z,getDescendants,tree=tree)
-	for(i in 1:length(z)) if(!any(tree$tip.label[y[[i]]]%in%extant)) edges[as.character(z[i])]<-1
-	plot.phylo(tree,edge.color=edges+1,edge.lty=edges+1,edge.width=2,no.margin=TRUE)
+	for(i in 1:length(z)) 
+		if(!any(tree$tip.label[y[[i]]]%in%extant)) 
+			edges[as.character(z[i])]<-1
+	ape::plot.phylo(tree,edge.color=colors[edges+1],edge.lty=edges+1,
+		edge.width=lwd,no.margin=TRUE,cex=fsize,
+		show.tip.label=if(ftype==0) FALSE else TRUE, 
+		font=ftype)
 }
 
 # traitgram3d internal function
