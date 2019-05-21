@@ -236,7 +236,7 @@ plot.density.mcmcMk<-function(x,...){
 		legend(x="topright",legend=nam.legend,bty="n",pt.cex=2,pch=22,
 			pt.bg=c(make.transparent("blue",0.25),make.transparent("red",0.25)))
 	} else {
-		k<-length(attr(d,"states"))
+		k<-length(attr(x,"states"))
 		par(mfrow=c(k,k))
 		NAMES<-sapply(strsplit(names(x),"Density "),function(x) x[2])
 		NAMES<-sapply(strsplit(NAMES,""),function(x) paste(x[2:(length(x)-1)],
