@@ -203,13 +203,13 @@ print.density.mcmcMk<-function(x, digits=NULL, ...){
 plot.density.mcmcMk<-function(x,...){
 	if(hasArg(show.matrix)) show.matrix<-list(...)$show.matrix
 	else show.matrix<-FALSE
-	if(length(x)>1){
-		xlim<-range(sapply(x,function(x) x$x))
-		ylim<-c(0,1.1*max(sapply(x,function(x) x$y)))
-	}
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-range(sapply(x,function(x) x$x))
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(0,1.1*max(sapply(x,function(x) x$y)))
 	if(length(x)==1){
 		plot(x[[1]],main="estimated posterior density for q",
-			bty="l",font.main=1,ylim=c(0,1.05*max(x[[1]]$y)),
+			bty="l",font.main=1,xlim=xlim,ylim=ylim,
 			ylab="q")
 		polygon(x[[1]],col=make.transparent("blue",0.5))
 		lines(x=attr(x,"summary")$HPD95[1,],y=rep(1.01*max(x[[1]]$y),2))
