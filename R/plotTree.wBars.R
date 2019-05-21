@@ -105,7 +105,7 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 }
 
 ## function to plot bars at the tips of a plotted tree
-## written by Liam J. Revell 2014, 2015, 2018
+## written by Liam J. Revell 2014, 2015, 2018, 2019
 
 plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
 	method="plotTree",tip.labels=FALSE,col="grey",border=NULL,...){
@@ -127,13 +127,21 @@ plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
 			else fsize<-1
 			if(type=="phylogram"){
 				pp<-par("pin")[1]
-				sw<-fsize*(max(strwidth(tree$tip.label,units="inches")))+1.37*fsize*strwidth("W",units="inches")
-				alp<-optimize(function(a,H,sw,pp,d) (a*1.04*(max(H)+d)+sw-pp)^2,H=H,sw=sw,pp=pp,d=d,interval=c(0,1e6))$minimum
+				sw<-fsize*(max(strwidth(tree$tip.label,
+					units="inches")))+1.37*fsize*strwidth("W",
+					units="inches")
+				alp<-optimize(function(a,H,sw,pp,d) 
+					(a*1.04*(max(H)+d)+sw-pp)^2,H=H,sw=sw,
+					pp=pp,d=d,interval=c(0,1e6))$minimum
 				lims<-c(min(H),max(H)+d+sw/alp)
 			} else if(type=="fan"){
 				pp<-par("pin")[1]
-				sw<-fsize*(max(strwidth(tree$tip.label,units="inches")))+1.37*fsize*strwidth("W",units="inches")
-				alp<-optimize(function(a,H,sw,pp,d) (a*2*1.04*(max(H)+d)+2*sw-pp)^2,H=H,sw=sw,pp=pp,d=d,interval=c(0,1e6))$minimum
+				sw<-fsize*(max(strwidth(tree$tip.label,
+					units="inches")))+1.37*fsize*strwidth("W",
+					units="inches")
+				alp<-optimize(function(a,H,sw,pp,d) 
+					(a*2*1.04*(max(H)+d)+2*sw-pp)^2,H=H,sw=sw,pp=pp,
+						d=d,interval=c(0,1e6))$minimum
 				lims<-c(-max(H)-d-sw/alp,max(H)+d+sw/alp)
 			}	
 		}
@@ -149,29 +157,39 @@ plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
 		if(type=="phylogram"){
 			fg<-par()$fg
 			if(!is.ultrametric(tree)){
-				plotTree(um,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),lwd=1,color="transparent",...)
-				for(i in 1:Ntip(tree)) lines(c(max(tip.h),tip.h[i]),rep(i,2),lty="dotted")
+				plotTree(um,ftype=if(tip.labels) "i" else "off",
+					xlim=c(0,lims[2]),lwd=1,color="transparent",...)
+				for(i in 1:Ntip(tree)) lines(c(max(tip.h),
+					tip.h[i]),rep(i,2),lty="dotted")
 				add<-TRUE
 				par(fg="transparent")
 			} else add=FALSE
-			if(method=="plotTree") capture.output(plotTree(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),add=add,...))
-			else if(method=="plotSimmap") capture.output(plotSimmap(tree,ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),add=add,...))
+			if(method=="plotTree") capture.output(plotTree(tree,
+				ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),
+				add=add,...))
+			else if(method=="plotSimmap") capture.output(plotSimmap(tree,
+				ftype=if(tip.labels) "i" else "off",xlim=c(0,lims[2]),add=add,...))
 			par(fg=fg)
 		} else if(type=="fan"){
 			fg<-par()$fg
 			if(!is.ultrametric(tree)){
-				plotTree(um,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,lwd=1,color="transparent",...)
+				plotTree(um,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,
+					lwd=1,color="transparent",...)
 				um<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 				par(fg="transparent")
-				plotTree(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,lwd=1,color="transparent",add=TRUE,...)
+				plotTree(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,
+					ylim=lims,lwd=1,color="transparent",add=TRUE,...)
 				tt<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 				par(fg="black",lty="solid")
 				for(i in 1:Ntip(tree)) lines(c(um$xx[i],tt$xx[i]),c(um$yy[i],tt$yy[i]),lty="dotted")
 				par(fg="transparent")
 				add<-TRUE
-			} 
-			if(method=="plotTree") capture.output(plotTree(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,add=add,...))
-			else if(method=="plotSimmap") capture.output(plotSimmap(tree,type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,add=add,...))
+			} else add<-FALSE
+			if(method=="plotTree") capture.output(plotTree(tree,type="fan",
+				ftype=if(tip.labels) "i" else "off",xlim=lims,ylim=lims,add=add,...))
+			else if(method=="plotSimmap") capture.output(plotSimmap(tree,
+				type="fan",ftype=if(tip.labels) "i" else "off",xlim=lims,
+				ylim=lims,add=add,...))
 			par(fg=fg)
 		}
 		obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
