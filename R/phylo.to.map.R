@@ -124,7 +124,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	if(type=="phylogram"){
 		## preliminaries
 		cw<-reorder(tree,"cladewise")
-		if(!is.binary.tree(cw)) cw<-multi2di(cw)
+		if(!is.binary(cw)) cw<-multi2di(cw)
 		n<-Ntip(cw)
 		if(direction=="downwards"){
 			# plot a white rectangle

@@ -178,7 +178,7 @@ importFrom(utils, flush.console, head, installed.packages, str, capture.output)
 importFrom(grDevices, palette, colors, dev.hold, dev.flush, rainbow, heat.colors, gray, colorRampPalette, dev.new, rgb,
 pdf, dev.off, col2rgb)
 importFrom(combinat, permn)
-importFrom(coda, HPDinterval)
+importFrom(coda, as.mcmc, HPDinterval)
 importFrom(nlme, gls, varFixed)
 importFrom(MASS, ginv)
 importFrom(expm, expm)
