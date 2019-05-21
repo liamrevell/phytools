@@ -155,6 +155,7 @@ S3method(plot, fitpolyMk)
 S3method(plot, mcmcMk)
 S3method(summary, mcmcMk)
 S3method(density, mcmcMk)
+S3method(print, density.mcmcMk)
 S3method(plot, density.mcmcMk)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)

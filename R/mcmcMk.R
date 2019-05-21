@@ -111,7 +111,7 @@ print.mcmcMk<-function(x,...){
 	cat("3. density(\'object_name\') will calculate a posterior density from the sample.\n")
 	cat("4. Finally, plot(density(\'object_name\')) will plot the posterior density and\n")
 	cat("   and high probability density intervals.\n\n")
-	cat("To work best, we recommend users install the package \'code\'.\n\n")
+	cat("To work best, we recommend users install the package \'coda\'.\n\n")
 }
 
 plot.mcmcMk<-function(x,...){
