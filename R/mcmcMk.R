@@ -14,8 +14,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	else q<-if(is.matrix(x)) nrow(x)/sum(tree$edge.length) else
 		length(unique(x))/sum(tree$edge.length)
 	if(hasArg(prop.var)) prop.var<-list(...)$prop.var
-	else prop.var<-if(is.matrix(x)) sqrt(0.01*ncol(x)/sum(tree$edge.length)) else
-		sqrt(0.01*length(unique(x))/sum(tree$edge.length))
+	else prop.var<-0.01/max(nodeHeights(tree))
 	if(hasArg(prior.rate)) prior.rate<-list(...)$prior.rate
 	else prior.rate<-if(is.matrix(x)) ncol(x)/sum(tree$edge.length) else
 		length(unique(x))/sum(tree$edge.length)
