@@ -1,6 +1,8 @@
 ## written by Liam J. Revell
 
 mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-FALSE
 	log.prior<-function(x,prior) sum(dexp(x,prior,log=TRUE))
 	proposal<-function(q,pv) abs(q+rnorm(n=length(q),sd=sqrt(pv)))
 	makeQ<-function(m,q,index.matrix){
@@ -93,6 +95,8 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 			cat("\n")
 			flush.console()
 		}
+		if(plot) plot(1:i,PS[1:i,"logLik"],col="darkgrey",xlab="generation",
+				ylab="log(L)",xlim=c(0,ngen),type="l")
 	}
 	cat("Done.\n")
 	class(PS)<-"mcmcMk"
