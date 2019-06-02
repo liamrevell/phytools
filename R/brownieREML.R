@@ -1,8 +1,9 @@
-# This function is a simplified REML version of brownie.lite()
-# written by Liam J. Revell 2011, 2013, 2019
+## This function is a simplified REML version of brownie.lite()
+## written by Liam J. Revell 2011, 2013, 2019
 
 brownieREML<-function(tree,x,maxit=2000,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(!inherits(tree,"simmap")) tree<-paintSubTree(tree,Ntip(tree)+1,"1")
 	## optional arguments
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8

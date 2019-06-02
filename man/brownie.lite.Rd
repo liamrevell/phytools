@@ -5,7 +5,7 @@
 brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 }
 \arguments{
-	\item{tree}{a phylogenetic tree in modified \code{"phylo"} format (see \code{\link{read.simmap}}, \code{\link{make.simmap}}, or \code{\link{paintSubTree}}).}
+	\item{tree}{a phylogenetic tree either as an object of class \code{"phylo"} or \code{"simmap"}. (See \code{\link{read.simmap}}, \code{\link{make.simmap}}, or \code{\link{paintSubTree}} for more details about the latter object class.)}
 	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization - may need to be increased for large trees.}
 	\item{test}{an optional string indicating the method for hypothesis testing - options are \code{"chisq"} or \code{"simulation"}.}
@@ -14,7 +14,7 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then fits the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This is also the basic model implemented in Brian O'Meara's \emph{Brownie} software.
+	This function takes an object of class \code{"phylo"} or class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then fits the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This is also the basic model implemented in Brian O'Meara's \emph{Brownie} software.
 }
 \details{
 	Sampling error in the estimation of species means can also be accounted for by assigning the vector \code{se} with the species specific sampling errors for \code{x}.
