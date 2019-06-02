@@ -1,5 +1,5 @@
 ## function performs ancestral character estimation under the threshold model
-## written by Liam J. Revell 2012, 2013, 2014, 2017
+## written by Liam J. Revell 2012, 2013, 2014, 2017, 2019
 
 ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","OU","lambda"),control=list(),...){
 
@@ -12,6 +12,7 @@ ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","
 	model<-model[1]
 
 	# check x
+	if(is.factor(x)) x<-setNames(as.character(x),names(x))
 	if(is.data.frame(x)) x<-as.matrix(x)
 	if(is.matrix(x)){
 		X<-x[tree$tip.label,]
