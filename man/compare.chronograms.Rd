@@ -1,6 +1,6 @@
 \name{compare.chronograms}
 \alias{compare.chronograms}
-\title{Compares to chronograms with precisely matching nodes in a visual manner}
+\title{Compares two chronograms with precisely matching nodes in a visual manner}
 \usage{
 compare.chronograms(t1, t2, ...)
 }
