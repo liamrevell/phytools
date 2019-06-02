@@ -9,6 +9,8 @@ bd(x)
 }
 \description{
 	This function converts an object of class \code{"birthdeath"} to a vector with the ML birth & death rates.
+	
+	Note that this is somewhat unecessary as \emph{phytools} now contains functions to fit birth-death and pure-birth diversification models from trees (\code{\link{fit.bd}} and \code{\link{fit.yule}}) that also take into account incomplete sampling fraction.
 }
 \value{
 	A vector.
@@ -18,7 +20,7 @@ bd(x)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{birthdeath}}
+	\code{\link{birthdeath}}, \code{\link{fit.bd}}, \code{\link{fit.yule}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
