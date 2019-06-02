@@ -1541,17 +1541,27 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 	obj
 }
 
-# function collapses the subtree descended from node to a star tree
-# written by Liam J. Revell 2013, 2015
+## function collapses the subtree descended from node to a star tree
+## written by Liam J. Revell 2013, 2015, 2019
 collapse.to.star<-function(tree,node){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	nel<-if(is.null(tree$edge.length)) TRUE else FALSE
-	if(nel) tree$edge.length<-rep(1,nrow(tree$edge))
-	tt<-splitTree(tree,split=list(node=node,bp=tree$edge.length[which(tree$edge[,2]==node)]))
-	ss<-starTree(species=tt[[2]]$tip.label,branch.lengths=diag(vcv(tt[[2]])))
-	ss$root.edge<-0
-	tree<-paste.tree(tt[[1]],ss)
-	if(nel) tree$edge.length<-NULL 
+	if(node==(Ntip(tree)+1)){
+		object<-list(edge=cbind(rep(Ntip(tree)+1,Ntip(tree)),1:Ntip(tree)),
+			tip.label=tree$tip.label,Nnode=1)
+		if(!is.null(tree$edge.length)) object$edge.length<-sapply(1:Ntip(tree),nodeheight,tree=tree)
+		class(object)<-"phylo"
+		tree<-object
+	} else {
+		nel<-if(is.null(tree$edge.length)) TRUE else FALSE
+		if(nel) tree$edge.length<-rep(1,nrow(tree$edge))
+		tt<-splitTree(tree,split=list(node=node,
+			bp=tree$edge.length[which(tree$edge[,2]==node)]))
+		ss<-starTree(species=tt[[2]]$tip.label,
+			branch.lengths=diag(vcv(tt[[2]])))
+		ss$root.edge<-0
+		tree<-paste.tree(tt[[1]],ss)
+		if(nel) tree$edge.length<-NULL
+	}
 	tree
 }
 

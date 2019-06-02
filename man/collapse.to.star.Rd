@@ -10,6 +10,8 @@ collapse.to.star(tree, node)
 }
 \description{
 	This function collapses a subtree to a star. If the tree has edge lengths, the function will keep the tips at the same height above the root as in the original tree.
+	
+	If \code{node} is the global root of the tree a star phylogeny will be created.
 }
 \value{
 	An object of class \code{"phylo"}.
