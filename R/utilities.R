@@ -1,6 +1,28 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
 
+## di2multi & multi2di for "contMap" & "densityMap" object classes
+
+di2multi.contMap<-function(phy,...){
+	phy$tree<-di2multi(phy$tree,...)
+	phy
+}
+
+di2multi.densityMap<-function(phy,...){
+	phy$tree<-di2multi(phy$tree,...)
+	phy
+}
+
+multi2di.contMap<-function(phy,...){
+	phy$tree<-multi2di(phy$tree,...)
+	phy
+}
+
+multi2di.densityMap<-function(phy,...){
+	phy$tree<-multi2di(phy$tree,...)
+	phy
+}
+
 ## multi2di for "simmap" object class
 
 multi2di.simmap<-function(phy,...){
