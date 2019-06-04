@@ -38,7 +38,7 @@ multi2di.multiSimmap<-function(phy,...){
 	class(obj)<-c("multiSimmap","multiPhylo")
 	obj
 }
-.simmap
+
 ## function to rescale a tree according to an EB model
 ## written by Liam J. Revell 2017
 
