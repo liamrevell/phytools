@@ -19,7 +19,7 @@
 \method{multi2di}{densityMap}(phy, ...)
 }
 \arguments{
-	\item{phy}{object of class \code{"simmap"}, \code{"multiSimmap"}, \code("contMap"}, or \code{"densityMap"} containing a character mapped onto the edges of a tree or set of trees.}
+	\item{phy}{object of class \code{"simmap"}, \code{"multiSimmap"}, \code{"contMap"}, or \code{"densityMap"} containing a character mapped onto the edges of a tree or set of trees.}
 	\item{...}{optional arguments: \code{tol}, length below which edges should be treated as having zero length; and \code{random}, specifying whether to resolve polytomies randomly (if \code{TRUE}) or in the order in which they are encountered.}
 }
 \description{
