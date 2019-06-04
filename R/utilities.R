@@ -1,6 +1,44 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
 
+## multi2di for "simmap" object class
+
+multi2di.simmap<-function(phy,...){
+	obj<-multi2di(as.phylo(phy),...)
+	M<-rbind(matchNodes(obj,phy),
+		matchLabels(obj,phy))
+	obj$maps<-vector(mode="list",length=nrow(obj$edge))
+	for(i in 2:nrow(M)){
+		if(!is.na(M[i,2])){
+			obj$maps[[which(obj$edge[,2]==M[i,1])]]<-
+				phy$maps[[which(phy$edge[,2]==M[i,2])]]
+		} else {
+			ii<-which(obj$edge[,2]==getParent(obj,M[i,1]))
+			state<-names(obj$maps[[ii]])[length(obj$maps[[ii]])]
+			obj$maps[[which(obj$edge[,2]==M[i,1])]]<-
+				setNames(0,state)
+		}
+	}
+	obj$node.states<-getStates(obj,"nodes")
+	obj$states<-getStates(obj,"tips")
+	obj$mapped.edge<-makeMappedEdge(obj$edge,obj$maps)
+	class(obj)<-c("simmap",class(obj))
+	obj
+}
+
+## di2multi & multi2di for "multiSimmap" object class
+
+di2multi.multiSimmap<-function(phy,...){
+	obj<-lapply(phy,di2multi,...)
+	class(obj)<-c("multiSimmap","multiPhylo")
+	obj
+}
+multi2di.multiSimmap<-function(phy,...){
+	obj<-lapply(phy,multi2di,...)
+	class(obj)<-c("multiSimmap","multiPhylo")
+	obj
+}
+.simmap
 ## function to rescale a tree according to an EB model
 ## written by Liam J. Revell 2017
 
