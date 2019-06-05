@@ -500,8 +500,6 @@ print.summary.evol.rate.mcmc<-function(x,...){
 	cat("\n\n")
 	cat("To plot the mean shift point run plot(...,type=\"min.split\") on the object\n")
 	cat("produced by this function.\n\n")
-	cat("To plot this shift point run plot(...,method=\"min.split\") on the object\n")
-	cat("produced by this function.\n\n")
 	cat("To plot the probability of a shift by edge run plot(...,method=\"edge.prob\")\n")
 	cat("on the object produced by this function.\n\n")
 }
