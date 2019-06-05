@@ -15,7 +15,7 @@ findMRCA(tree, tips=NULL, type=c("node","height"))
 \details{
 	If \code{tips==NULL} will return the result of a normal function call to \code{\link{mrca}}. If \code{tips=NULL} will return a matrix equal to \code{\link{vcv.phylo}}.
 	
-	From \code{phytools 0.5-66} \code{findMRCA} uses \code{\link{getMRCA}} in the ape package internally, which results in a big speed-up.
+	From \code{phytools 0.5-66} \code{findMRCA} uses \code{\link{getMRCA}} in the ape package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package to ensure backward compatibility.
 }
 \value{
   The node number of the MRCA, or a matrix of node numbers (if \code{tips==NULL}) - for \code{type="node"}; or the height of the MRCA, or a matrix of heights (if \code{tips==NULL}) - for \code{type="height"}.
