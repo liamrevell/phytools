@@ -1,13 +1,13 @@
 \name{evol.vcv}
 \alias{evol.vcv}
-\title{Likelihood test for variation in the evolutionary VCV matrix}
+\title{Likelihood test for variation in the evolutionary variance-covariance matrix}
 \usage{
 evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 }
 \arguments{
-	\item{tree}{an object of class \code{"simmap"}.}
+	\item{tree}{an object of class \code{"simmap"}. If \code{tree} is an object of class \code{"phylo"} then a simple multivariate Brownian motion model will be fit to the data in \code{X}.}
 	\item{X}{an \code{n} x \code{m} matrix of tip values for \code{m} continuously valued traits in \code{n} species - row names should be species names.}
-	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization - may need to be increased for large trees.}
+	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization. This quantity may need to be increased for difficult optimizations.}
 	\item{vars}{an optional logical value indicating whether or not to estimate the variances of the parameter estimates from the Hessian matrix.}
 	\item{...}{optional arguments.}
 }
@@ -15,7 +15,7 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for an arbitrary number of continuously valued character. It then fits the multiple evolutionary variance-covariance matrix (rate matrix) model of Revell & Collar (2009; \emph{Evolution}).
 }
 \details{
-	This function performs optimization by first optimizing the likelihood with respect to the Cholesky matrices using \code{\link{optim}}.	Optimization is by \code{method="Nelder-Mead"}. Using box constraints does not make sense here as they would be applied to the Cholesky matrix rather than the target parameters. May have to increase \code{maxit} for large trees and more than 2 traits.
+	This function performs optimization by maximizing the likelihood with respect to the Cholesky matrices using \code{\link{optim}}.	Optimization is by \code{method="Nelder-Mead"}. Using box constraints does not make sense here as they would be applied to the Cholesky matrix rather than the target parameters. Users may have to increase \code{maxit} for large trees and/or more than two traits.
 }
 \value{
 	An object of class \code{"evol.vcv"} with the following components:

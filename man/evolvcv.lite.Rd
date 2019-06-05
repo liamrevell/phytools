@@ -5,7 +5,7 @@
 evolvcv.lite(tree, X, maxit=2000, tol=1e-10)
 }
 \arguments{
-	\item{tree}{an object of class \code{"simmap"}.}
+	\item{tree}{an object of class \code{"simmap"}. If \code{tree} is an object of class \code{"phylo"} then a simple multivariate Brownian motion model will be fit to the data in \code{X}.}
 	\item{X}{an \code{n} x \code{m} matrix of tip values for \code{m} continuously valued traits in \code{n} species - row names should be species names.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization - may need to be increased for large trees.}
 	\item{tol}{tolerance value for \code{"L-BFGS-B"} optimization.}
