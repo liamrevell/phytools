@@ -1,9 +1,10 @@
-## these functions uses a Bayesian MCMC approach to estimate heterogeneity in the evolutionary rate for a
+## these functions uses a Bayesian MCMC approach to estimate heterogeneity 
+## in the evolutionary rate for a
 ## continuous character (Revell, Mahler, Peres-Neto, & Redelings. 2012.)
-## code written by Liam J. Revell 2010, 2011, 2013, 2015, 2017
+## code written by Liam J. Revell 2010, 2011, 2013, 2015, 2017, 2019
 
 ## function for Bayesian MCMC
-## written by Liam J. Revell 2010, 2011, 2017
+## written by Liam J. Revell 2010, 2011, 2017, 2019
 evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){	
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
@@ -50,6 +51,7 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 	if(!quiet){
 		message("Control parameters (set by user or default):")
 		str(con)
+		flush.console()
 	}
 	# now detach the starting parameter values (to be compatible with downstream code)
 	sig1<-con$sig1
@@ -130,7 +132,8 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 				# pick a random daughter
 				new.node<-daughters[ceiling(runif(1)*length(daughters))]
 				if(is.na(new.node)){
-					location<-tree.step(phy,node,phy$edge.length[match(node,phy$edge[,2])],step,up=FALSE,flip) # we're at a tip
+					location<-tree.step(phy,node,phy$edge.length[match(node,phy$edge[,2])],
+						step,up=FALSE,flip) # we're at a tip
 				} else {
 					location<-tree.step(phy,new.node,0,step,up=TRUE,flip)
 				}
@@ -158,7 +161,8 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 				new.node<-possible.nodes[ceiling(runif(1)*length(possible.nodes))]
 				# if parent
 				if(is.null(parent)==FALSE&&new.node==parent){
-					location<-tree.step(phy,new.node,phy$edge.length[match(new.node,phy$edge[,2])],step,up=FALSE,flip)
+					location<-tree.step(phy,new.node,phy$edge.length[match(new.node,
+						phy$edge[,2])],step,up=FALSE,flip)
 				} else {
 					location<-tree.step(phy,new.node,0,step,up=TRUE,flip=TRUE)
 				}
@@ -176,7 +180,8 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 			tr1$root.edge<-phy$edge.length[match(loc$node,phy$edge[,2])]-loc$bp
 			temp<-vcv.phylo(tr1)+tr1$root.edge
 		} else {
-			temp<-matrix(phy$edge.length[match(loc$node,phy$edge[,2])]-loc$bp,1,1,dimnames=list(c(phy$tip.label[loc$node]),c(phy$tip.label[loc$node])))
+			temp<-matrix(phy$edge.length[match(loc$node,phy$edge[,2])]-loc$bp,
+				1,1,dimnames=list(c(phy$tip.label[loc$node]),c(phy$tip.label[loc$node])))
 		}
 		C2[rownames(temp),colnames(temp)]<-temp
 		C1<-C-C2
@@ -211,8 +216,10 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 		loc.prime<-list()
 		loc.prime$flip=FALSE
 		if(runif(1)>r){
-			loc.prime<-tree.step(phy,loc$node,loc$bp,step=rexp(n=1,rate=1/k)) # update node & bp by random walk: rexp()
-			# loc.prime<-tree.step(phy,loc$node,loc$bp,step=abs(rnorm(n=1,sd=sqrt(2)/k))) # update node & bp by random walk: rnorm()
+			loc.prime<-tree.step(phy,loc$node,loc$bp,
+				step=rexp(n=1,rate=1/k)) # update node & bp by random walk: rexp()
+			# loc.prime<-tree.step(phy,loc$node,loc$bp,
+			#	step=abs(rnorm(n=1,sd=sqrt(2)/k))) # update node & bp by random walk: rnorm()
 		} else {
 			loc.prime$node<-random.node(phy) # pick random branch
 			loc.prime$bp<-runif(1)*phy$edge.length[match(loc.prime$node,phy$edge[,2])]
@@ -229,7 +236,9 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 	logL<-likelihood(x,tree,C,descendants,sig1,sig2,a,location)$logL
 	logpr<-log.prior(sig1,sig2,a,location)
 	# create matrix for results
-	results<-matrix(NA,floor(ngen/con$sample)+1,7,dimnames=list(c(0,1:(ngen/con$sample)),c("state","sig1","sig2","a","node","bp","likelihood")))
+	results<-matrix(NA,floor(ngen/con$sample)+1,7,
+		dimnames=list(c(0,1:(ngen/con$sample)),c("state","sig1","sig2","a",
+		"node","bp","likelihood")))
 	curr.gen<-matrix(NA,1,7,dimnames=list("curr",c("state","sig1","sig2","a","node","bp","likelihood")))
 	results[1,]<-c(0,sig1,sig2,a,location$node,location$bp,logL) # populate the first row
 	curr.gen[1,]<-results[1,]
@@ -238,7 +247,12 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 	group.tips[[1]]<-likelihood(x,tree,C,descendants,sig1,sig2,a,location)$tips
 	tips[[1]]<-group.tips[[1]]
 	message("Starting MCMC run....")	
-	if(!quiet) print(results[1,])
+	if(!quiet){
+		cat("gen\tsig2(1)\tsig2(2)\ta   \tnode\tpos\'n\tlogLik\n")
+		cat(paste(round(results[1,],4),collapse="\t"))
+		cat("\n")
+		flush.console()
+	}
 	j<-2
 	# now run Markov-chain
 	for(i in 1:ngen){
@@ -287,7 +301,11 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 		rm(temp)
 		curr.gen[1,]<-c(i,sig1,sig2,a,location$node,location$bp,logL)
 		if(i%%con$print==0)
-			if(!quiet) print(curr.gen[1,])
+			if(!quiet){ 
+				cat(paste(round(curr.gen[1,],4),collapse="\t"))
+				cat("\n")
+				flush.console()
+			}
 		if(i%%con$sample==0){
 			results[j,]<-curr.gen
 			tips[[j]]<-group.tips[[i+1]]
@@ -296,7 +314,8 @@ evol.rate.mcmc<-function(tree,x,ngen=10000,control=list(),...){
 	} 
 	message("Done MCMC run.")
 	# return results
-	obj<-list(mcmc=results,tips=tips,ngen=ngen,sample=con$sample)
+	obj<-list(mcmc=results,tips=tips,ngen=ngen,sample=con$sample,
+		tree=tree)
 	class(obj)<-"evol.rate.mcmc"
 	obj
 }
@@ -420,6 +439,118 @@ ave.rates<-function(tree,shift,tips,sig1,sig2,ave.shift,showTree=TRUE){
 	return(list(sig1=sig1,sig2=sig2))
 }
 
+## a bunch of new S3 methods
+## written by Liam J. Revell 2019
 
+summary.evol.rate.mcmc<-function(object,...){
+	if(hasArg(burnin)) burnin<-list(...)$burnin
+	else { 
+		burnin<-round(0.2*max(object$mcmc[,"state"]))
+		cat("\nNo burn-in specified. Excluding the first 20% by default.\n\n")
+	}
+	if(hasArg(method)) method<-list(...)$method
+	else method<-"sumsq"
+	ii<-min(which(object$mcmc[,"state"]>=burnin))
+	mcmc<-object$mcmc[ii:nrow(object$mcmc),]
+	tips<-object$tips[ii:length(object$tips)]
+	tree<-object$tree
+	ms<-minSplit(tree,mcmc,method=method)
+	ps<-posterior.evolrate(tree,ms,mcmc,tips)
+	prob<-(table(factor(ps[,"node"],
+		levels=1:(Ntip(tree)+tree$Nnode)))/
+		nrow(ps))[tree$edge[,2]]
+	result<-list(min.split=ms,posterior.rates=ps,
+		hpd=setNames(list(HPD(ps[,"sig1"]),
+		HPD(ps[,"sig2"])),c("sig1","sig2")),
+		edge.prob=prob,
+		tree=tree,method=method)
+	class(result)<-"summary.evol.rate.mcmc"
+	result
+}
+
+HPD<-function(x){
+	if(.check.pkg("coda")) object<-HPDinterval(as.mcmc(x))
+	else {
+		cat("  HPDinterval requires package coda.\n")
+		cat("  Computing 95% interval from samples only.\n\n")
+		object<-setNames(c(sort(x)[round(0.025*length(x))], 
+			sort(x)[round(0.975*length(x))]),c("lower", 
+			"upper"))
+		attr(object, "Probability")<-0.95
+	}
+	object
+}	
+
+print.summary.evol.rate.mcmc<-function(x,...){
+	if(x$method=="sum")
+		cat("\nThe shift location with the minimum distance to all shifts in the\n")
+	else
+		cat("\nThe shift with the minimum (squared) distance to all shifts in the\n")
+	cat(paste("posterior set is found ",round(x$min.split$bp,4),
+		" along the branch leading to node ",
+		x$min.split$node,".\n",sep=""))
+	cat("\nMean \'root-wise\' rate from the posterior sample (sig1): ")
+	cat(round(mean(x$posterior[,"sig1"]),4))
+	cat(paste("\n     95% HPD for sig1: [",round(x$hpd[["sig1"]][1],4),", ",
+		round(x$hpd[["sig1"]][2],4),"]",sep=""))
+	cat("\nMean \'tip-wise\' rate from the posterior sample (sig2): ")
+	cat(round(mean(x$posterior[,"sig2"]),4))
+	cat(paste("\n     95% HPD for sig1: [",round(x$hpd[["sig2"]][1],4),", ",
+		round(x$hpd[["sig2"]][2],4),"]",sep=""))
+	cat("\n\n")
+	cat("To plot the mean shift point run plot(...,type=\"min.split\") on the object\n")
+	cat("produced by this function.\n\n")
+	cat("To plot this shift point run plot(...,method=\"min.split\") on the object\n")
+	cat("produced by this function.\n\n")
+	cat("To plot the probability of a shift by edge run plot(...,method=\"edge.prob\")\n")
+	cat("on the object produced by this function.\n\n")
+}
+
+HPD<-function(x){
+	if(.check.pkg("coda")) hpd<-HPDinterval(as.mcmc(x))
+	else {
+		cat("  HPDinterval requires package coda.\n")
+		cat("  Computing 95% interval from samples only.\n\n")
+		hpd<-setNames(c(sort(x)[round(0.025*length(x))], 
+			sort(x)[round(0.975*length(x))]),c("lower", 
+			"upper"))
+		attr(hpd, "Probability")<-0.95
+	}
+	hpd
+}
+
+plot.summary.evol.rate.mcmc<-function(x,...){
+	if(hasArg(method)) method<-list(...)$method
+	else method<-"min.split"
+	if(method=="min.split"){
+		if(hasArg(cex)) cex<-list(...)$cex
+		else cex<-0.5
+		if(hasArg(lwd.split)) lwd.split<-list(...)$lwd.split
+		else lwd.split<-4
+		if(hasArg(col.split)) col.split<-list(...)$col.split
+		else col.split<-"red"
+		if(hasArg(col)) col<-list(...)$col
+		else col<-setNames(c("blue","red"),1:2)
+		if(is.null(names(col))) names(col)<-1:2
+		ii<-which(x$tree$edge[,2]==x$min.split$node)
+		plot(paintSubTree(x$tree,node=x$min.split$node,"2",
+			stem=(x$tree$edge.length[ii]-x$min.split$bp)/
+			x$tree$edge.length[ii]),col,...)
+		pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		h<-nodeheight(x$tree,getParent(x$tree,
+			x$min.split$node))+x$min.split$bp
+		lines(rep(h,2),rep(pp$yy[x$min.split$node],2)+
+			cex*c(-1,1),lwd=lwd.split,
+			col=col.split,lend=2)
+	} else if(method=="edge.prob"){
+		if(hasArg(cex)) cex<-list(...)$cex
+		else cex<-0.5
+		if(hasArg(piecol)) piecol<-list(...)$piecol
+		else piecol<-c("darkgrey","white")
+		plotTree(x$tree,...)
+		edgelabels(pie=cbind(x$edge.prob,1-x$edge.prob),
+			cex=cex,piecol=piecol)
+	}
+}
 
 
