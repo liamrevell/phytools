@@ -34,6 +34,10 @@ fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip",
 phyloScattergram<-function(tree,X=NULL,...){
 	if(is.null(X)) stop("phenotypic data should be provided in the matrix X")
 	if(is.data.frame(X)) X<-as.matrix(X)
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
+	if(hasArg(fixed.lims)) fixed.lims<-list(...)$fixed.lims
+	else fixed.lims<-FALSE
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
 	if(!quiet){ 
@@ -43,12 +47,14 @@ phyloScattergram<-function(tree,X=NULL,...){
 	m<-ncol(X)
 	A<-apply(X,2,fastAnc,tree=tree)
 	cmaps<-list()
+	lims<-if(fixed.lims) range(X) else NULL
 	for(i in 1:m) cmaps[[i]]<-contMap(tree,X[,i],
-		legend=FALSE,lwd=2,outline=FALSE,plot=FALSE)
+		legend=FALSE,lwd=2,outline=FALSE,plot=FALSE,
+		lims=lims)
 	if(is.null(colnames(X))) colnames(X)<-paste("V",1:m,sep="")
 	obj<-list(tree=tree,contMaps=cmaps,X=X,A=A)
 	class(obj)<-"phyloScattergram"
-	plot(obj,...)
+	if(plot) plot(obj,...)
 	obj
 }
 

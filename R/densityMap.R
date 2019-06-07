@@ -216,10 +216,29 @@ print.densityMap<-function(x,...){
 	cat(paste("(2) The mapped posterior density of a discrete binary character with states (",x$states[1],", ",x$states[2],").\n\n",sep="")) 
 }
 
-## set new color map for object of class 'densityMap' or 'contMap'
-## written by Liam J. Revell 2014
+## set new color map for object of class 'densityMap', 'contMap', or
+## 'phyloScattergram'
+## written by Liam J. Revell 2014, 2019
 
-setMap<-function(x,...){
+setMap<-function(x,...) UseMethod("setMap")
+
+setMap.default<-function(x,...){
+	warning(paste(
+		"setMap does not know how to handle objects of class ",
+		class(x),
+		"\nand can only be used on classes contMap, densityMap, & phyloScattergram."))
+}
+
+setMap.contMap<-function(x,...) SetMap(x,...)
+
+setMap.densityMap<-function(x,...) SetMap(x,...)
+
+setMap.phyloScattergram<-function(x,...){
+	x$contMaps<-lapply(x$contMaps,setMap,...)
+	x
+}
+
+SetMap<-function(x,...){
 	if(hasArg(invert)) invert<-list(...)$invert
 	else invert<-FALSE
 	n<-length(x$cols)

@@ -1,8 +1,14 @@
 \name{setMap}
 \alias{setMap}
-\title{Set color map for objects of class \code{"contMap"} or \code{"densityMap"}}
+\alias{setMap.contMap}
+\alias{setMap.densityMap}
+\alias{setMap.phyloScattergram}
+\title{Set color map for various phylogenetic objects of classes}
 \usage{
 setMap(x, ...)
+\method{setMap}{contMap}(x, ...)
+\method{setMap}{densityMap}(x, ...)
+\method{setMap}{phyloScattergram}(x, ...)
 }
 \arguments{
 	\item{x}{an object of class \code{"contMap"} or \code{"densityMap"}.}
