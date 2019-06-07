@@ -715,18 +715,19 @@ fastDist<-function(tree,sp1,sp2){
 		2*fastHeight(tree,sp1,sp2)
 }
 
-# function reorders simmap tree
-# written Liam Revell 2011, 2013, 2015
+## function reorders simmap tree
+## written Liam Revell 2011, 2013, 2015, 2019
 reorderSimmap<-function(tree,order="cladewise",index.only=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	ii<-reorder.phylo(tree,order,index.only=TRUE,...)
 	if(!index.only){
-		if(inherits(ii,"phylo")) ii<-whichorder(ii$edge[,2],tree$edge[,2]) ## bug workaround
+		if(inherits(ii,"phylo")) ii<-whichorder(ii$edge[,2],
+			tree$edge[,2]) ## bug workaround
 		tree$edge<-tree$edge[ii,]
 		tree$edge.length<-tree$edge.length[ii]
 		if(!is.null(tree$maps)){
 			tree$maps<-tree$maps[ii]
-			tree$mapped.edge<-tree$mapped.edge[ii,]
+			tree$mapped.edge<-tree$mapped.edge[ii,,drop=FALSE]
 		}
 		attr(tree,"order")<-order
 		return(tree)
