@@ -22,13 +22,16 @@ lik.bd(theta, t, rho=1, N=NULL)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function fits a birth-death model to a phylogenetic tree with edge lengths.
-}
-\details{
-	This function duplicates \code{\link{birthdeath}} in ape and \code{make.bd} in the diversitree package.
+	The function \code{fit.bd} fits a birth-death model to a phylogenetic tree with edge lengths and a (potentially) incomplete sampling fraction.
+	
+	The function \code{fit.yule} fits a pure-birth model with a (potentially) incomplete sampling fraction.
+	
+	The function \code{lik.bd} computes the likelihood of a set of birth & death rates given the set of branching times computed for a tree and a sampling fraction.
 }
 \value{
-	\code{fit.bd} generates an object of class \code{"fit.bd"} which can be printed.
+	\code{fit.bd} returns an object of class \code{"fit.bd"} which can be printed.
+	
+	\code{fit.yule} returns an object of class \code{"fit.yule"}.
 }
 \references{
 	Nee, S., May, R. M. and Harvey, P. H. (1994) The reconstructed evolutionary process. \emph{Philosophical Transactions of the Royal Society of London B}, \bold{344}, 305-311.
@@ -40,6 +43,15 @@ lik.bd(theta, t, rho=1, N=NULL)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
 	\code{\link{birthdeath}}
+}
+\examples{
+\dontrun{
+## fit BD & Yule models
+bd<-fit.bd(tree,rho=0.8)
+yule<-fit.yule(tree,rho=0.8)
+## compare fitted models
+AIC(yule,bd)
+}
 }
 \keyword{comparative methods}
 \keyword{diversification}
