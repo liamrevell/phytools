@@ -60,7 +60,8 @@ ltt<-function(tree,plot=TRUE,drop.extinct=FALSE,log.lineages=TRUE,gamma=TRUE,...
 			tree.length<-max(node.height) # tree length
 			n.extinct<-sum(node.height[tree$edge[,2]<=length(tree$tip),2]<(tree.length-tol))
 			# fudge things a little bit
-			node.height[tree$edge[,2]<=length(tree$tip),2]<-node.height[tree$edge[,2]<=length(tree$tip),2]+1.1*tol
+			node.height[tree$edge[,2]<=length(tree$tip),2]<-
+				node.height[tree$edge[,2]<=length(tree$tip),2]+1.1*tol
 			time<-c(0,node.height[,2]); names(time)<-as.character(c(root,tree$edge[,2]))
 			temp<-vector()
 			time<-time[order(time)]
@@ -69,7 +70,8 @@ ltt<-function(tree,plot=TRUE,drop.extinct=FALSE,log.lineages=TRUE,gamma=TRUE,...
 			for(i in 1:(length(time)-1)){
 				ltt[i]<-0
 				for(j in 1:nrow(node.height))
-					ltt[i]<-ltt[i]+(time[i]>=(node.height[j,1]-tol)&&time[i]<=(node.height[j,2]-tol))
+					ltt[i]<-ltt[i]+(time[i]>=(node.height[j,1]-
+						tol)&&time[i]<=(node.height[j,2]-tol))
 			}
 			ltt[i+1]<-0
 			for(j in 1:nrow(node.height))
@@ -99,8 +101,8 @@ ltt<-function(tree,plot=TRUE,drop.extinct=FALSE,log.lineages=TRUE,gamma=TRUE,...
 	obj
 }
 
-# function computes the gamma-statistic & a two-tailed P-value
-# written by Liam Revell 2011
+## function computes the gamma-statistic & a two-tailed P-value
+## written by Liam J. Revell 2011, 2019
 
 gammatest<-function(x){
 	n<-max(x$ltt)
@@ -111,7 +113,22 @@ gammatest<-function(x){
 	for(i in 1:(n-1)) for(k in 1:i) doublesum<-doublesum+k*g[k]
 	gamma<-(1/(n-2)*doublesum-T/2)/(T*sqrt(1/(12*(n-2))))
 	p<-2*pnorm(abs(gamma),lower.tail=F)
-	return(list(gamma=gamma,p=p))
+	object<-list(gamma=gamma,p=p)
+	class(object)<-"gammatest"
+	object
+}
+
+## print method for object class "gammatest"
+## written by Liam J. Revell 2019
+
+print.gammatest<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-4
+	cat("\nAn object of class \"gammatest\" with:\n")
+	cat(paste("(1) Pybus & Harvey's gamma = ",
+		round(x$gamma,digits),sep=""))
+	cat(paste("\n(2) p-value = ",round(x$p,digits),
+		"\n\n",sep=""))
 }
 
 ## S3 print method for object of class "ltt"

@@ -10,12 +10,9 @@ gammatest(x)
 \description{
 	Conducts \eqn{\gamma}-test of Pybus & Harvey (2000).
 }
-\details{
-	Do not use for object returned by \code{ltt(...,gamma=T)}.
-}
 \value{
-	A list containing:
-	\item{gamma}{optionally, a value for the \eqn{\gamma}-statistic.}
+	A an object of class \code{"gammatest"} consisting of a list that contains:
+	\item{gamma}{a value for the \eqn{\gamma}-statistic.}
 	\item{p}{two-tailed P-value for the \eqn{\gamma}-test.}
 }
 \references{
@@ -25,12 +22,11 @@ gammatest(x)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ltt}}
+	\code{\link{ltt}}, \code{\link{mccr}}
 }
 \examples{
 tree<-pbtree(n=200)
-z<-ltt(tree,gamma=FALSE)
-g<-gammatest(z)
+gammatest(z)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

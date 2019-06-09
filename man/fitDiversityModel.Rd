@@ -15,6 +15,7 @@ fitDiversityModel(tree, x, d=NULL, showTree=TRUE, tol=1e-6)
 	\item{showTree}{optional logical value indicating whether to plot the tree transformation implied by the model.}
 	\item{tol}{some small value by which \code{d} is incremented during rescaling of \code{psi} for optimization. If R thinks your matrices are singular during optimization, try increasing \code{tol} slightly.}
 	\item{object}{for \code{logLik} method, an object of class \code{"fitDiversityModel"}.}
+	\item{...}{optional arguments for \code{logLik} and \code{print} methods. Note that for the \code{logLik} method the number of fitted parameters (\code{"df"}) is assumed to be 3 for the diversity dependent model (that is, if \code{psi} is estimated) and 2 for the diversity independent model, unless otherwise specified (using the argument \code{df}).}
 }
 \description{
 	This function fits a diversity-dependent phenotypic evolution model (based on Mahler et al. 2010).

@@ -9,7 +9,9 @@ force.ultrametric(tree, method=c("nnls","extend"))
 	\item{method}{the method to use to force the tree to be ultrametric. Options are \code{"nnls"} (which uses the phangorn function \code{\link{nnls.tree}} internally), or \code{"extend"}.}
 }
 \description{
-	This function forces an object of class \code{"phylo"} to be ultrametric. This is achieved either by using \code{\link{nnls.tree}} from the phangorn package to compute the set of edge lengths that result in a minimized sum-of-squares distance between the patristic distance of the output and input trees (\code{method="nnls"}); or by simply extending all the external edges of the tree to match the external edge with the greatest total height (\code{method="extend"}). Note that neither of these should be treated as formal statistical methods for inferring an ultrametric tree. Rather, this method can be deployed when a genuinely ultrametric tree read from file fails \code{\link{is.ultrametric}} for reasons of numerical precision. 
+	This function forces an object of class \code{"phylo"} to be ultrametric. This is achieved either by using \code{\link{nnls.tree}} from the phangorn package to compute the set of edge lengths that result in a minimized sum-of-squares distance between the patristic distance of the output and input trees (\code{method="nnls"}); or by simply extending all the external edges of the tree to match the external edge with the greatest total height (\code{method="extend"}). 
+	
+	Note that neither of these should be treated as formal statistical methods for inferring an ultrametric tree. Rather, this method can be deployed when a genuinely ultrametric tree read from file fails \code{\link{is.ultrametric}} for reasons of numerical precision. 
 }
 \value{
 	An ultrametric tree in an object of class \code{"phylo"}.

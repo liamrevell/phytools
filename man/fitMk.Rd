@@ -3,9 +3,8 @@
 \alias{plot.fitMk}
 \alias{plot.gfit}
 \alias{fitmultiMk}
-\alias{plot.fitmultiMk}
 \alias{fitpolyMk}
-\alias{fit.fitpolyMk}
+\alias{plot.fitpolyMk}
 \alias{mcmcMk}
 \alias{plot.mcmcMk}
 \alias{density.mcmcMk}
@@ -16,7 +15,6 @@ fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 \method{plot}{fitMk}(x, ...)
 \method{plot}{gfit}(x, ...)
 fitmultiMk(tree, x, model="ER", ...)
-\method{plot}{fitmultiMk}(x, ...)
 fitpolyMk(tree, x, model="SYM", ordered=FALSE, ...)
 \method{plot}{fitpolyMk}(x, ...)
 mcmcMk(tree, x, model="ER", ngen=10000, ...)
@@ -38,7 +36,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 	
 	\code{plot.fitMk} plots an object of class \code{"fitMk"} returned by \code{fitMk}. \code{plot.gfit} plots an object of class \code{"gfit"} from geiger's \code{fitDiscrete} function. Both plots portray the fitted model using a graph of arrows connecting states.
 	
-	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree. It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree. The method \code{plot.fitmultiMk} plots a fitted multi-rate M\emph{k} model.
+	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree. It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree.
 	
 	The function \code{fitpolyMk} fits an M\emph{k} model to data for a discrete character with intraspecific polymorphism. Polymorphic species should be coded with the name of the two or more states recorded for the species separated by a space (e.g., \code{A+B} would indicate that both states \code{A} and \code{B} are found in the corresponding taxon). Invariably it's assumed that transitions between states must occur through a polymorphic condition, whereas transitions \emph{cannot} occur directly between two incompatible polymorphic conditions. For instance, a transition between \code{A+B} and \code{B+C} would have to occur through the monomorphic state \code{B}. At time of writing, this function permits the models \code{"ER"} (equal rates for all permitted transitions), \code{"SYM"} (symmetric backward & forward rates for all permitted transitions), \code{"ARD"} (all-rates-different for permitted transitions), and a new model called \code{"transient"} in which the acquisition of polymorphism (e.g., \code{A -> A+B}) is assumed to occur at a different rate than its loss (e.g., \code{A+B -> B}). The method \code{plot.fitpolyMk} plots the fitted M\emph{k} model with intraspecific polymorphism.
 	
