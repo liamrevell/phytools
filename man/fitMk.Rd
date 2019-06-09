@@ -5,7 +5,11 @@
 \alias{fitmultiMk}
 \alias{plot.fitmultiMk}
 \alias{fitpolyMk}
+\alias{fit.fitpolyMk}
 \alias{mcmcMk}
+\alias{plot.mcmcMk}
+\alias{density.mcmcMk}
+\alias{plot.density.mcmcMk}
 \title{Fits Mk model}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
