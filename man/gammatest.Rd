@@ -26,7 +26,7 @@ gammatest(x)
 }
 \examples{
 tree<-pbtree(n=200)
-gammatest(z)
+gammatest(ltt(tree,plot=FALSE))
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
