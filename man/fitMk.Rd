@@ -3,6 +3,7 @@
 \alias{plot.fitMk}
 \alias{plot.gfit}
 \alias{fitmultiMk}
+\alias{plot.fitmultiMk}
 \alias{fitpolyMk}
 \alias{mcmcMk}
 \title{Fits Mk model}
@@ -11,12 +12,17 @@ fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 \method{plot}{fitMk}(x, ...)
 \method{plot}{gfit}(x, ...)
 fitmultiMk(tree, x, model="ER", ...)
+\method{plot}{fitmultiMk}(x, ...)
 fitpolyMk(tree, x, model="SYM", ordered=FALSE, ...)
+\method{plot}{fitpolyMk}(x, ...)
 mcmcMk(tree, x, model="ER", ngen=10000, ...)
+\method{plot}{mcmcMk}(x, ...)
+\method{density}{mcmcMk}(x, ...)
+\method{plot}{density.mcmcMk}(x, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
-	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names. In the case of \code{plot.fitMk}, an object of class \code{"fitMk"}.}
+	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names. In the case of \code{plot} and \code{density} methods, an object of the appropriate class.}
 	\item{model}{model. See \code{make.simmap} or \code{ace} for details.}
 	\item{fixedQ}{fixed value of transition matrix \code{Q}, if one is desired.}
 	\item{ordered}{for \code{fitpolyMk}, a logical value indicating whether or not the character should be treated as ordered. For now the function assumes alphanumerical order (i.e., numbers sorted by their initial and then successive digits followed by characters or character strings in alphabetical order).}
@@ -24,7 +30,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}).}
 }
 \description{
-	The function \code{fitMk} fits a so-called M\emph{k} model for discrete character evolution. It is primarily designed to be used inside of \code{make.simmap}.
+	The function \code{fitMk} fits a so-called M\emph{k} model for discrete character evolution.
 	
 	Two \code{plot} methods are available. \code{plot.fitMk} plots an object of class \code{"fitMk"} returned by \code{fitMk}. \code{plot.gfit} plots an object of class \code{"gfit"} from geiger's \code{fitDiscrete} function. Both plots portray the fitted model using a graph of arrows connecting states.
 	
