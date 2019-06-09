@@ -1,21 +1,26 @@
 \name{fitDiversityModel}
 \alias{fitDiversityModel}
+\alias{logLik.fitDiversityModel}
+\alias{print.fitDiversityModel}
 \title{Fit diversity-dependent phenotypic evolution model}
 \usage{
 fitDiversityModel(tree, x, d=NULL, showTree=TRUE, tol=1e-6)
+\method{logLik}{fitDiversityModel}(object, ...)
+\method{print}{fitDiversityModel}(x, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
-	\item{x}{a vector with tip values for a continuously distributed trait.}
+	\item{x}{a vector with tip values for a continuously distributed trait. For \code{print} method, an object of class \code{"fitDiversityModel"}.}
 	\item{d}{a vector containing the inferred historical diversity at each node in the tree - if \code{d=NULL} (the default) function will treat the diversification as if it occurred in a single geographic area.}
 	\item{showTree}{optional logical value indicating whether to plot the tree transformation implied by the model.}
 	\item{tol}{some small value by which \code{d} is incremented during rescaling of \code{psi} for optimization. If R thinks your matrices are singular during optimization, try increasing \code{tol} slightly.}
+	\item{object}{for \code{logLik} method, an object of class \code{"fitDiversityModel"}.}
 }
 \description{
 	This function fits a diversity-dependent phenotypic evolution model (based on Mahler et al. 2010).
 }
 \value{
-	A list with the following components:
+	An object of class \code{"fitDiversityModel"} consisting of the following components:
 	\item{logL}{log-likelihood of the fitted model.}
 	\item{sig0}{estimated starting value for the rate at the root of the tree.}
 	\item{psi}{the estimated rate of change in the rate associated with the addition of a lineage.}

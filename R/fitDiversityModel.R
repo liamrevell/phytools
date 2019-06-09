@@ -1,5 +1,6 @@
-# this function fits a "diversity-dependent-evolutionary-diversification" model (similar to Mahler et al. 2010)
-# written by Liam Revell, 2010/2011/2012
+## this function fits a "diversity-dependent-evolutionary-diversification" 
+## model (similar to Mahler et al. 2010)
+## written by Liam Revell, 2010/2011/2012, 2019
 
 fitDiversityModel<-function(tree,x,d=NULL,showTree=TRUE,tol=1e-6){
 	# some minor error checking
@@ -50,7 +51,8 @@ fitDiversityModel<-function(tree,x,d=NULL,showTree=TRUE,tol=1e-6){
 		scaled.psi<-theta
 		for(i in 1:nrow(phy$edge)){
 			vi<-phy$edge.length[i]
-			phy$edge.length[i]<-vi+vi*scaled.psi*diversity[as.character(phy$edge[i,1])]
+			phy$edge.length[i]<-vi+vi*scaled.psi*
+				diversity[as.character(phy$edge[i,1])]
 		}
 		D<-vcv(phy)
 		D<-D[names(y),names(y)]
@@ -58,17 +60,20 @@ fitDiversityModel<-function(tree,x,d=NULL,showTree=TRUE,tol=1e-6){
 		a<-as.numeric(colSums(Dinv)%*%y/sum(Dinv))
 		sig0<-as.numeric(t(y-a)%*%Dinv%*%(y-a)/nrow(D))
 		Dinv<-Dinv/sig0; D<-D*sig0
-		logL<-as.numeric(-t(y-a)%*%Dinv%*%(y-a)/2-determinant(D)$modulus[1]/2-length(y)*log(2*pi)/2)
+		logL<-as.numeric(-t(y-a)%*%Dinv%*%(y-a)/2-
+			determinant(D)$modulus[1]/2-length(y)*log(2*pi)/2)
 		if(showTree) plot(phy)
 		return(logL)
 	}
 	# optimize
-	res<-optimize(lik,c(-1,1),y=x,phy=tree,diversity=d,maximum=TRUE)
+	res<-optimize(lik,c(-1,1),y=x,phy=tree,diversity=d,
+		maximum=TRUE)
 	# compute condition sig0
 	compute_sig0<-function(scaled.psi,y,phy,diversity){
 		for(i in 1:nrow(phy$edge)){
 			vi<-phy$edge.length[i]
-			phy$edge.length[i]<-vi+vi*scaled.psi*diversity[as.character(phy$edge[i,1])]
+			phy$edge.length[i]<-vi+vi*scaled.psi*
+				diversity[as.character(phy$edge[i,1])]
 		}
 		D<-vcv(phy)
 		D<-D[names(y),names(y)]
@@ -86,13 +91,15 @@ fitDiversityModel<-function(tree,x,d=NULL,showTree=TRUE,tol=1e-6){
 			psi<-theta[2]
 			for(i in 1:nrow(phy$edge)){
 				vi<-phy$edge.length[i]
-				phy$edge.length[i]<-vi*(sig0+psi*d[as.character(phy$edge[i,1])]*(maxd+tol))
+				phy$edge.length[i]<-vi*(sig0+psi*d[as.character(phy$edge[i,
+					1])]*(maxd+tol))
 			}
 			D<-vcv(phy)
 			D<-D[names(y),names(y)]
 			Dinv<-solve(D)
 			a<-as.numeric(colSums(Dinv)%*%y/sum(Dinv))
-			logL<-as.numeric(-t(y-a)%*%Dinv%*%(y-a)/2-determinant(D)$modulus[1]/2-length(y)*log(2*pi)/2)
+			logL<-as.numeric(-t(y-a)%*%Dinv%*%(y-a)/2-determinant(D)$modulus[1]/2-
+				length(y)*log(2*pi)/2)
 			return(logL)
 		}
 		H<-hessian(likHessian,c(sig0,psi),y=y,phy=phy,d=d,maxd=maxd)
@@ -100,10 +107,44 @@ fitDiversityModel<-function(tree,x,d=NULL,showTree=TRUE,tol=1e-6){
 	}
 	H<-compute_Hessian(res$maximum,sig0,x,tree,d,maxd)
 	# return results to user
-	if(var(d)>0)
-		return(list(logL=res$objective,sig0=sig0,psi=sig0*res$maximum/(maxd+tol),vcv=matrix(solve(-H),2,2,dimnames=list(c("sig0","psi"),c("sig0","psi")))))
-	else {
+	if(var(d)>0){
+		object<-list(logL=res$objective,sig0=sig0,psi=sig0*res$maximum/(maxd+tol),
+			vcv=matrix(solve(-H),2,2,dimnames=list(c("sig0","psi"),c("sig0","psi"))))
+		class(object)<-"fitDiversityModel"
+		return(object)
+	} else {
 		message("psi not estimable because diversity is constant through time.")
-		return(list(logL=res$objective,sig0=sig0,vcv=matrix(-1/H[1,1],1,1,dimnames=list(c("sig0"),c("sig0")))))
+		object<-list(logL=res$objective,sig0=sig0,vcv=matrix(-1/H[1,1],1,1,
+			dimnames=list(c("sig0"),c("sig0"))))
+		class(object)<-"fitDiversityModel"
+		return(object)
 	}
+}
+
+print.fitDiversityModel<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-5
+	if(is.null(x$psi)){
+		cat("Fitted diversity-independent evolution model:\n")
+		cat("\tsig2(0)\tSE\tlog(L)\n")
+		cat(paste("value\t",round(x$sig0,digits),"\t",
+			round(sqrt(x$vcv[1,1]),digits),"\t",
+			round(logLik(x),digits),"\n\n",sep=""))
+	} else {
+		cat("Fitted diversity-dependent evolution model:\n")
+		cat("\tsig2(0)\tSE\tpsi\tSE\tlog(L)\n")
+		cat(paste("value\t",round(x$sig0,digits),"\t",
+			round(sqrt(x$vcv[1,1]),digits),"\t",
+			round(x$psi,digits),"\t",
+			round(sqrt(x$vcv[2,2]),digits),"\t",
+			round(logLik(x),digits),"\n\n",sep=""))
+	}
+}
+
+logLik.fitDiversityModel<-function(object,...){
+	if(hasArg(df)) df<-list(...)$df
+	else df<-if(is.null(object$psi)) 2 else 3
+	lik<-object$logL
+	attr(lik,"df")<-df
+	lik
 }
