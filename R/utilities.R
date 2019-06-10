@@ -1045,7 +1045,7 @@ add.arrow<-function(tree=NULL,tip,...){
 }
 
 ## function to ladderize phylogeny with mapped discrete character
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2019
 
 ladderize.simmap<-function(tree,right=TRUE){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -1068,6 +1068,7 @@ ladderize.simmap<-function(tree,right=TRUE){
 		obj$mapped.edge[ii[i],]<-tree$mapped.edge[jj[i],]
 		if(!is.null(tree$node.states)) obj$node.states[ii[i],]<-tree$node.states[jj[i],]
 	}
+	class(obj)<-c("simmap","phylo")
 	obj
 }
 
