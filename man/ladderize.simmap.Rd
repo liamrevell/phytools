@@ -9,10 +9,10 @@ ladderize.simmap(tree, right=TRUE)
 	\item{right}{a logical specifying how the tree should be ladderized.}
 }
 \description{
-	This function 'ladderizes' an object of class \code{"phylo"} with a mapped discrete character. For more information, please see \code{\link{ladderize}}.
+	This function 'ladderizes' an object of class \code{"phylo"} with a mapped discrete character. For more information see \code{\link{ladderize}}.
 }
 \value{
-	An object of class \code{"phylo"} with a mapped discrete character.
+	A ladderized object of class \code{"simmap"}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
