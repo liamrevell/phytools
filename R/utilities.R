@@ -1048,27 +1048,38 @@ add.arrow<-function(tree=NULL,tip,...){
 ## written by Liam J. Revell 2014, 2015, 2019
 
 ladderize.simmap<-function(tree,right=TRUE){
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	obj<-read.tree(text=write.tree(ladderize(tree,right=right)))
-	rN<-Ntip(obj)+1
-	T<-cbind(1:Ntip(obj),sapply(obj$tip.label,function(x,y) which(y==x),y=tree$tip.label))
-	N<-matchNodes(obj,tree)
-	M<-rbind(T,N[N[,1]!=rN,])
-	ii<-sapply(M[,1],function(x,y) which(y==x),y=obj$edge[,2])
-	jj<-sapply(M[,2],function(x,y) which(y==x),y=tree$edge[,2])
-	obj$maps<-vector(length=nrow(tree$edge),mode="list")
-	obj$mapped.edge<-matrix(NA,nrow(tree$edge),ncol(tree$mapped.edge),
-		dimnames=list(apply(tree$edge,1,paste,collapse=","),
-		colnames(tree$mapped.edge)))
-	if(!is.null(tree$states)) 
-		obj$states<-tree$states[sapply(obj$tip.label,function(x,y) which(y==x),y=tree$tip.label)]
-	if(!is.null(tree$node.states)) obj$node.states<-matrix(NA,nrow(tree$edge),2)
-	for(i in 1:length(ii)){
-		obj$maps[[ii[i]]]<-tree$maps[[jj[i]]]
-		obj$mapped.edge[ii[i],]<-tree$mapped.edge[jj[i],]
-		if(!is.null(tree$node.states)) obj$node.states[ii[i],]<-tree$node.states[jj[i],]
+	if(!inherits(tree,"simmap")){
+		if(!inherits(tree,"phylo")) 
+			stop("tree should be an object of class \"phylo\".")
+		else {
+			cat("Do not detect a mapped character. Using ape::ladderize.\n")
+			obj<-ladderize(tree,right=right)
+		}
+	} else {
+		obj<-read.tree(text=write.tree(ladderize(tree,right=right)))
+		rN<-Ntip(obj)+1
+		T<-cbind(1:Ntip(obj),sapply(obj$tip.label,
+			function(x,y) which(y==x),y=tree$tip.label))
+		N<-matchNodes(obj,tree)
+		M<-rbind(T,N[N[,1]!=rN,])
+		ii<-sapply(M[,1],function(x,y) which(y==x),y=obj$edge[,2])
+		jj<-sapply(M[,2],function(x,y) which(y==x),y=tree$edge[,2])
+		obj$maps<-vector(length=nrow(tree$edge),mode="list")
+		obj$mapped.edge<-matrix(NA,nrow(tree$edge),ncol(tree$mapped.edge),
+			dimnames=list(apply(tree$edge,1,paste,collapse=","),
+			colnames(tree$mapped.edge)))
+		if(!is.null(tree$states)) 
+			obj$states<-tree$states[sapply(obj$tip.label,
+				function(x,y) which(y==x),y=tree$tip.label)]
+		if(!is.null(tree$node.states)) obj$node.states<-matrix(NA,nrow(tree$edge),2)
+		for(i in 1:length(ii)){
+			obj$maps[[ii[i]]]<-tree$maps[[jj[i]]]
+			obj$mapped.edge[ii[i],]<-tree$mapped.edge[jj[i],]
+			if(!is.null(tree$node.states)) obj$node.states[ii[i],]<-
+				tree$node.states[jj[i],]
+		}
+		class(obj)<-c("simmap","phylo")
 	}
-	class(obj)<-c("simmap","phylo")
 	obj
 }
 

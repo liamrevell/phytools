@@ -5,11 +5,11 @@
 ladderize.simmap(tree, right=TRUE)
 }
 \arguments{
-	\item{tree}{an object of class \code{"phylo"} with a mapped discrete character.}
+	\item{tree}{an object of class \code{"simmap"}.}
 	\item{right}{a logical specifying how the tree should be ladderized.}
 }
 \description{
-	This function "ladderizes" an object of class \code{"phylo"} with a mapped discrete character. For more information, please see \code{\link{ladderize}}.
+	This function 'ladderizes' an object of class \code{"phylo"} with a mapped discrete character. For more information, please see \code{\link{ladderize}}.
 }
 \value{
 	An object of class \code{"phylo"} with a mapped discrete character.
