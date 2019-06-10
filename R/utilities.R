@@ -114,7 +114,7 @@ plot.expand.clade<-function(x,...){
 }
 
 ## function to add a geological or other temporal legend to a plotted tree
-## written by Liam J. Revell 2017
+## written by Liam J. Revell 2017, 2019
 geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-par()$cex
@@ -172,6 +172,12 @@ geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 	if(plot){	
 		y<-c(rep(0,2),rep(par()$usr[4],2))
 		ylabel<--1/25*obj$Ntip
+		if(obj$direction=="rightwards"){
+			old.usr<-par()$usr
+			h<-max(obj$xx)
+			new.xlim<-c(h-par()$usr[1],h-par()$usr[2])
+			par(usr=c(new.xlim,old.usr[3:4]))
+		} else old.usr<-par()$usr
 		for(i in 1:nrow(leg)){
 			strh<-strheight(rownames(leg)[i])
 			polygon(c(leg[i,1:2],leg[i,2:1]),y,
@@ -200,13 +206,74 @@ geo.legend<-function(leg=NULL,colors=NULL,alpha=0.2,...){
 				leg[i,2]),y=c(0,ylabel,par()$usr[3],
 				par()$usr[3],ylabel,0),
 				col=colors[rownames(leg)[i]],border=NA)
+			strh<-strh*get.asp()
 			text(x=mean(leg[i,])+
 				if(obj$direction=="leftwards") 0.12*strh else -0.12*strh,
 				y=ylabel,labels=rownames(leg)[i],
 				srt=90,adj=c(1,0.5),cex=cex)
 		}
 	}
-	invisible(list(leg=leg,colors=colors))
+	par(usr=old.usr)
+	object<-list(leg=leg,colors=colors[1:nrow(leg)])
+	class(object)<-"geo.legend"
+	invisible(object)
+}
+
+print.geo.legend<-function(x,...){
+	cat("A geological period legend:\n")
+	colnames(x$leg)<-c("start","end")
+	print(data.frame(x$leg,color=x$colors))
+	cat("\n")
+}
+
+geo.palette<-function(){
+	colors<-setNames(c(
+		rgb(255,242,127,255,maxColorValue=255),
+		rgb(255,230,25,255,maxColorValue=255),
+		rgb(253,154,82,255,maxColorValue=255),
+		rgb(127,198,78,255,maxColorValue=255),
+		rgb(52,178,201,255,maxColorValue=255),
+		rgb(129,43,146,255,maxColorValue=255),
+		rgb(240,64,40,255,maxColorValue=255),
+		rgb(103,165,153,255,maxColorValue=255),
+		rgb(203,140,55,255,maxColorValue=255),
+		rgb(179,225,182,255,maxColorValue=255),
+		rgb(0,146,112,255,maxColorValue=255),
+		rgb(127,160,86,255,maxColorValue=255),
+		rgb(247,67,112,255,maxColorValue=255)),
+		c("Quaternary","Neogene","Paleogene",
+		"Cretaceous","Jurassic","Triassic",
+		"Permian","Carboniferous","Devonian",
+		"Silurian","Ordovician","Cambrian",
+		"Precambrian"))
+	leg<-rbind(c(2.588,0),
+		c(23.03,2.588),
+		c(66.0,23.03),
+		c(145.0,66.0),
+		c(201.3,145.0),
+		c(252.17,201.3),
+		c(298.9,252.17),
+		c(358.9,298.9),
+		c(419.2,358.9),
+		c(443.8,419.2),
+		c(485.4,443.8),
+		c(541.0,485.4),
+		c(4600,541.0))
+	rownames(leg)<-c("Quaternary","Neogene","Paleogene",
+		"Cretaceous","Jurassic","Triassic",
+		"Permian","Carboniferous","Devonian",
+		"Silurian","Ordovician","Cambrian",
+		"Precambrian")
+	colnames(leg)<-c("start","end")
+	object<-list(period=leg,cols=colors)
+	class(object)<-"geo.palette"
+	object
+}
+
+print.geo.palette<-function(x,...){
+	cat("A geological period color palette:\n")
+	print(data.frame(x$period,color=x$cols))
+	cat("\n")
 }
 
 ## borrowed from mapplots
