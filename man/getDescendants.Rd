@@ -12,9 +12,9 @@ getParent(tree, node)
 	\item{curr}{the set of previously stored node numbers - used in recursive function calls.}
 }
 \description{
-	This function returns the set of node & tip numbers descended from \code{node}.
+	\code{getDescendants} returns the set of node & tip numbers descended from \code{node}.
 	
-	\code{getParent} instead returns the single parent node of a specified node number (or \code{NULL} if \code{node} is already the root).
+	\code{getParent} returns the \emph{single} parent node of a specified node number (or \code{NULL} if \code{node} is already the root).
 }
 \value{
 	The set of node and tip numbers for the nodes and tips descended from \code{node} in a vector, or for \code{getParent} the single node preceding \code{node} in the tree.
