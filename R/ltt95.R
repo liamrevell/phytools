@@ -19,7 +19,7 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 		if(all(n==max(n))) n<-max(n) 
 		else stop("for method=\"times\" all trees must contain the same number of lineages")
 		LL<-sapply(X,function(x) x$times[1:length(x$times)])
-		ii<-max(floor(alpha/2*N),1)
+		ii<-max(floor(alpha/2*N)+1,1)
 		jj<-min(ceiling((1-alpha/2)*N),N)
 		low<-apply(LL,1,function(x) sort(x)[ii])
 		high<-apply(LL,1,function(x) sort(x)[jj])
@@ -42,7 +42,7 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 				ss[j]<-X[[j]]$ltt[ii-1]
 			}
 			ll[i]<-if(mode=="median") median(ss) else mean(ss)
-			low[i]<-sort(ss)[max(floor(alpha/2*N),1)]
+			low[i]<-sort(ss)[max(floor(alpha/2*N)+1,1)]
 			high[i]<-sort(ss)[min(ceiling((1-alpha/2)*N),N)]
 		}
 		obj<-cbind(tt,low,ll,high)
