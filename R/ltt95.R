@@ -88,8 +88,8 @@ plot.ltt95<-function(x,...){
 			if(xaxis=="flipped") "time before the present day",
 			ylab="lineages",log=if(log) "y" else "")
 		if(!shaded){
-			lines(x[,2],x[,1],lty="dashed",type=if(attr(x,"mode")=="median") "s" else "l")
-			lines(x[,4],x[,1],lty="dashed",type=if(attr(x,"mode")=="median") "s" else "l")
+			lines(x[,2],x[,1],lty="dashed",type="s")
+			lines(x[,4],x[,1],lty="dashed",type="s")
 		} else { 
 			xx<-c(x[1,2],rbind(x[2:nrow(x),2],x[2:nrow(x),2]),
 				rbind(x[nrow(x):2,4],x[nrow(x):2,4]),x[1,4])
