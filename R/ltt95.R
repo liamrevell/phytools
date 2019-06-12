@@ -19,8 +19,8 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 		if(all(n==max(n))) n<-max(n) 
 		else stop("for method=\"times\" all trees must contain the same number of lineages")
 		LL<-sapply(X,function(x) x$times[1:length(x$times)])
-		ii<-floor(alpha/2*N)
-		jj<-ceiling((1-alpha/2)*N)
+		ii<-max(floor(alpha/2*N),1)
+		jj<-min(ceiling((1-alpha/2)*N),N)
 		low<-apply(LL,1,function(x) sort(x)[ii])
 		high<-apply(LL,1,function(x) sort(x)[jj])
 		ll<-if(mode=="median") apply(LL,1,function(x) median(x)[1]) else rowMeans(LL)
@@ -42,8 +42,8 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 				ss[j]<-X[[j]]$ltt[ii-1]
 			}
 			ll[i]<-if(mode=="median") median(ss) else mean(ss)
-			low[i]<-sort(ss)[floor(alpha/2*N)]
-			high[i]<-sort(ss)[ceiling((1-alpha/2)*N)]
+			low[i]<-sort(ss)[max(floor(alpha/2*N),1)]
+			high[i]<-sort(ss)[min(ceiling((1-alpha/2)*N),N)]
 		}
 		obj<-cbind(tt,low,ll,high)
 		colnames(obj)<-c("time","low(lineages)","lineages","high(lineages)")
@@ -71,7 +71,7 @@ plot.ltt95<-function(x,...){
 	else xaxis<-"standard"
 	if(hasArg(shaded)) shaded<-list(...)$shaded
 	else shaded<-FALSE
-	if(shaded) alpha<-if(hasArg(alpha)) list(...)$alpha else 0.5
+	if(shaded) bg<-if(hasArg(bg)) list(...)$bg else rgb(0,0,1,0.25)
 	if(attr(x,"method")=="times"){
 		n<-max(x[,1])
 		if(xaxis=="negative"){ 
@@ -95,7 +95,9 @@ plot.ltt95<-function(x,...){
 				rbind(x[nrow(x):2,4],x[nrow(x):2,4]),x[1,4])
 			yy<-c(rbind(x[1:(nrow(x)-1),1],x[1:(nrow(x)-1),1]),x[nrow(x),1],
 				x[nrow(x),1],rbind(x[(nrow(x)-1):1,1],x[(nrow(x)-1):1,1]))
-			polygon(xx,yy,border=NA,col=make.transparent("grey",alpha))
+			polygon(xx,yy,border=NA,col=bg)
+			lines(x[,3],x[,1],lwd=2,
+				type=if(attr(x,"mode")=="median") "s" else "l")
 		}
 	} else if(attr(x,"method")=="lineages"){
 		if(xaxis=="negative") x[,1]<-x[,1]-max(x[,1])
@@ -117,7 +119,9 @@ plot.ltt95<-function(x,...){
 				rbind(x[nrow(x):2,1],x[nrow(x):2,1]),x[1,1])
 			yy<-c(rbind(x[1:(nrow(x)-1),2],x[1:(nrow(x)-1),2]),x[nrow(x),2],
 				x[nrow(x),4],rbind(x[(nrow(x)-1):1,4],x[(nrow(x)-1):1,4]))
-			polygon(xx,yy,border=NA,col=make.transparent("grey",alpha))
+			polygon(xx,yy,border=NA,col=bg)
+			lines(x[,1],x[,3],lwd=2,
+				type=if(attr(x,"mode")=="median") "s" else "l")
 		}
 	}
 	par(lend=old.lend)
