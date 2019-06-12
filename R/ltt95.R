@@ -1,5 +1,5 @@
 # 95% CI on ltts
-# written by Liam J. Revell 2013, 2014, 2015
+# written by Liam J. Revell 2013, 2014, 2015, 2019
 
 ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("median","mean"),...){
 	if(!inherits(trees,"multiPhylo")) stop("trees should be an object of class \"multiPhylo\".")
@@ -7,6 +7,8 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 	mode<-mode[1]
 	if(hasArg(res)) res<-list(...)$res
 	else res<-100
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
 	X<-ltt(trees,plot=FALSE,gamma=FALSE)
 	if(method=="times"){
 		N<-length(X)
@@ -15,7 +17,7 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 		for(i in 1:N) X[[i]]$times<-X[[i]]$times+zz[i]
 		n<-sapply(X,function(x) max(x$ltt))
 		if(all(n==max(n))) n<-max(n) 
-		else stop("for method=\"times\" all trees must contain the same numer of lineages")
+		else stop("for method=\"times\" all trees must contain the same number of lineages")
 		LL<-sapply(X,function(x) x$times[1:length(x$times)])
 		ii<-floor(alpha/2*N)
 		jj<-ceiling((1-alpha/2)*N)
@@ -52,17 +54,24 @@ ltt95<-function(trees,alpha=0.05,log=FALSE,method=c("lineages","times"),mode=c("
 	attr(obj,"method")<-method
 	attr(obj,"mode")<-mode
 	attr(obj,"log")<-log
-	plot(obj,...)
+	if(plot) plot(obj,...)
 	invisible(obj)
 }
 
 ## S3 plotting method for objects of class 'ltt95'
-## written by Liam J. Revell 2014
+## written by Liam J. Revell 2014, 2019
 plot.ltt95<-function(x,...){
+	if(hasArg(lend)) lend<-list(...)$lend
+	else lend<-3
+	old.lend<-par()$lend
+	par(lend=lend)
 	if(hasArg(log)) log<-list(...)$log
 	else log<-attr(x,"log")
 	if(hasArg(xaxis)) xaxis<-list(...)$xaxis
 	else xaxis<-"standard"
+	if(hasArg(shaded)) shaded<-list(...)$shaded
+	else shaded<-FALSE
+	if(shaded) alpha<-if(hasArg(alpha)) list(...)$alpha else 0.5
 	if(attr(x,"method")=="times"){
 		n<-max(x[,1])
 		if(xaxis=="negative"){ 
@@ -74,9 +83,20 @@ plot.ltt95<-function(x,...){
 		} else x.lim<-range(x[,2:4])
 		plot(x[,3],x[,1],lwd=2,xlim=x.lim,
 			type=if(attr(x,"mode")=="median") "s" else "l",main=NULL,
-			xlab="time",ylab="lineages",log=if(log) "y" else "")
-		lines(x[,2],x[,1],lty="dashed",type=if(attr(x,"mode")=="median") "s" else "l")
-		lines(x[,4],x[,1],lty="dashed",type=if(attr(x,"mode")=="median") "s" else "l")	
+			xlab=if(xaxis=="standard") "time from the oldest root" else 
+			if(xaxis=="negative") "time from the present" else 
+			if(xaxis=="flipped") "time before the present day",
+			ylab="lineages",log=if(log) "y" else "")
+		if(!shaded){
+			lines(x[,2],x[,1],lty="dashed",type=if(attr(x,"mode")=="median") "s" else "l")
+			lines(x[,4],x[,1],lty="dashed",type=if(attr(x,"mode")=="median") "s" else "l")
+		} else { 
+			xx<-c(x[1,2],rbind(x[2:nrow(x),2],x[2:nrow(x),2]),
+				rbind(x[nrow(x):2,4],x[nrow(x):2,4]),x[1,4])
+			yy<-c(rbind(x[1:(nrow(x)-1),1],x[1:(nrow(x)-1),1]),x[nrow(x),1],
+				x[nrow(x),1],rbind(x[(nrow(x)-1):1,1],x[(nrow(x)-1):1,1]))
+			polygon(xx,yy,border=NA,col=make.transparent("grey",alpha))
+		}
 	} else if(attr(x,"method")=="lineages"){
 		if(xaxis=="negative") x[,1]<-x[,1]-max(x[,1])
 		if(xaxis=="flipped"){
@@ -85,10 +105,22 @@ plot.ltt95<-function(x,...){
 		} else x.lim<-range(x[,1])
 		plot(x[,1],x[,3],xlim=x.lim,ylim=c(min(x[,2]),max(x[,4])),lwd=2,
 			type=if(attr(x,"mode")=="median") "s" else "l",main=NULL,
-			xlab="time",ylab="lineages",log=if(log) "y" else "")
-		lines(x[,1],x[,2],lty="dashed",type="s")
-		lines(x[,1],x[,4],lty="dashed",type="s")
+			xlab=if(xaxis=="standard") "time from the oldest root" else 
+			if(xaxis=="negative") "time from the present" else 
+			if(xaxis=="flipped") "time before the present day",
+			ylab="lineages",log=if(log) "y" else "")
+		if(!shaded){
+			lines(x[,1],x[,2],lty="dashed",type="s")
+			lines(x[,1],x[,4],lty="dashed",type="s")
+		} else { 
+			xx<-c(x[1,1],rbind(x[2:nrow(x),1],x[2:nrow(x),1]),
+				rbind(x[nrow(x):2,1],x[nrow(x):2,1]),x[1,1])
+			yy<-c(rbind(x[1:(nrow(x)-1),2],x[1:(nrow(x)-1),2]),x[nrow(x),2],
+				x[nrow(x),4],rbind(x[(nrow(x)-1):1,4],x[(nrow(x)-1):1,4]))
+			polygon(xx,yy,border=NA,col=make.transparent("grey",alpha))
+		}
 	}
+	par(lend=old.lend)
 }
 
 ## S3 print method for object of class 'ltt95'
