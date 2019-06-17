@@ -6,8 +6,8 @@ multi.mantel(Y, X, nperm=1000)
 }
 \arguments{
 	\item{Y}{single "dependent" square matrix. Can be either a symmetric matrix of class \code{"matrix"} or a distance matrix of class \code{"dist"}.}
-	\item{X}{a single independent matrix or multiple independent matrices in a list. As with \code{Y} can be a object of class \code{"matrix"} or class \code{"dist"}.}
-	\item{nperm}{number of Mantel permutations.}
+	\item{X}{a single independent matrix or multiple independent matrices in a list. As with \code{Y} can be a object of class \code{"matrix"} or class \code{"dist"}, or a list of such objects.}
+	\item{nperm}{number of Mantel permutations to be used to compute a P-value of the test.}
 }
 \description{
 	This function conducting a multiple matrix regression (partial Mantel test) and uses Mantel (1967) permutations to test the significance of the model and individual coefficients. It also returns the residual and predicted matrices.
