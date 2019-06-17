@@ -24,7 +24,7 @@ rootedge.to.singleton(tree)
 	Finally, \code{rootedge.to.singleton} converts a tree with a root edge to a tree with a singleton node instead.
 }
 \value{
-	An object of class \code{"phylo"} with singleton nodes. \code{plotTree.singletons} plots a tree. 
+	An object of class \code{"phylo"} with singleton nodes. \code{plotTree.singletons} graphs a tree in which the singleton nodes are shown. 
 	
 	If \code{names(tree$edge.length)!=NULL} \code{plotTree.singletons} will use a different color from \code{\link{palette}} for each mapped state.
 }
