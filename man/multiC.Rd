@@ -5,11 +5,11 @@
 multiC(tree, internal=FALSE)
 }
 \arguments{
-	\item{tree}{a phylogeny with mapped discrete state in a modified object of class \code{"phylo"} (e.g., see \code{\link{read.simmap}}.}
+	\item{tree}{an object of class \code{"simmap"} consisting of a phylogeny with a mapped discrete character.}
 	\item{internal}{logical value indicating whether or not internal nodes should be returned.}
 }
 \description{
-	This function takes a modified \code{"phylo"} object as input and returns a set of so-called phylogenetic covariance matrices as a list: one for each mapped state.
+	This function takes a modified \code{"phylo"} object as input and returns a set of so-called phylogenetic covariance matrices (e.g., see \code{\link{vcv.phylo}}) as a list: one for each mapped state.
 }
 \value{
 	A list of matrices.
