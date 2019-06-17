@@ -1,5 +1,6 @@
 ## creates an object of class "cophylo"
 ## written by Liam J. Revell 2015, 2016, 2017, 2019
+
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
 		stop("tr1 & tr2 should be objects of class \"phylo\".")
@@ -111,6 +112,7 @@ cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 
 ## called internally by plot.cophylo to plot a phylogram
 ## written by Liam J. Revell
+
 phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,...){
 	if(hasArg(pts)) pts<-list(...)$pts
 	else pts<-TRUE
@@ -196,6 +198,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 }
 
 ## internally used function
+
 TEXTBOX<-function(x,y,label,pos,offset,cex,font){
 	rect(x,y-0.5*strheight(label,cex=cex,font=font),x+if(pos==4) strwidth(label,
 		cex=cex,font=font) else -strwidth(label,cex=cex,font=font),
@@ -206,7 +209,8 @@ TEXTBOX<-function(x,y,label,pos,offset,cex,font){
 	
 
 ## plot links between tip taxa according to assoc
-## written by Liam J. Revell 2015, 2016
+## written by Liam J. Revell 2015, 2016, 2019
+
 makelinks<-function(obj,x,link.type="curved",link.lwd=1,link.col="black",
 	link.lty="dashed"){
 	if(length(link.lwd)==1) link.lwd<-rep(link.lwd,nrow(obj$assoc))
@@ -215,15 +219,19 @@ makelinks<-function(obj,x,link.type="curved",link.lwd=1,link.col="black",
 	for(i in 1:nrow(obj$assoc)){
 		ii<-which(obj$trees[[1]]$tip.label==obj$assoc[i,1])
 		jj<-which(obj$trees[[2]]$tip.label==obj$assoc[i,2])
-		y<-c((ii-1)/(Ntip(obj$trees[[1]])-1),(jj-1)/(Ntip(obj$trees[[2]])-1))
-		if(link.type=="straight") lines(x,y,lty=link.lty[i],
-			lwd=link.lwd[i],col=link.col[i])
-		else if(link.type=="curved") drawCurve(x,y,lty=link.lty[i],
-			lwd=link.lwd[i],col=link.col[i])
+		for(j in 1:length(ii)) for(k in 1:length(jj)){
+			y<-c((ii[j]-1)/(Ntip(obj$trees[[1]])-1),
+				(jj[k]-1)/(Ntip(obj$trees[[2]])-1))
+			if(link.type=="straight") lines(x,y,lty=link.lty[i],
+				lwd=link.lwd[i],col=link.col[i])
+			else if(link.type=="curved") drawCurve(x,y,lty=link.lty[i],
+				lwd=link.lwd[i],col=link.col[i])
+		}
 	}
 }
 
 ## plot method for class "multiCophylo"
+
 plot.multiCophylo<-function(x,...){
 	par(ask=TRUE)
 	for(i in 1:length(x)) plot.cophylo(x[[i]],...)
@@ -231,6 +239,7 @@ plot.multiCophylo<-function(x,...){
 
 ## plot an object of class "cophylo"
 ## written by Liam J. Revell 2015, 2016, 2017
+
 plot.cophylo<-function(x,...){
 	plot.new()
 	if(hasArg(mar)) mar<-list(...)$mar
@@ -281,6 +290,7 @@ plot.cophylo<-function(x,...){
 
 ## add scale bar
 ## written by Liam J. Revell 2015
+
 add.scalebar<-function(obj,scale.bar,fsize){
 	if(scale.bar[1]>0){
 		s1<-(0.4-max(fsize*strwidth(obj$trees[[1]]$tip.label)))/max(nodeHeights(obj$trees[[1]]))
@@ -300,6 +310,7 @@ add.scalebar<-function(obj,scale.bar,fsize){
 
 ## print an object of class "cophylo"
 ## written by Liam J. Revell 2015
+
 print.cophylo<-function(x, ...){
     cat("Object of class \"cophylo\" containing:\n\n")
     cat("(1) 2 (possibly rotated) phylogenetic trees in an object of class \"multiPhylo\".\n\n")
@@ -307,10 +318,12 @@ print.cophylo<-function(x, ...){
 }
 
 ## print method for "multiCophylo" object
+
 print.multiCophylo<-function(x, ...)
 	cat("Object of class \"multiCophylo\" containg",length(x),"objects of class \"cophylo\".\n\n")
 
 ## written by Liam J. Revell 2015, 2016
+
 tipRotate<-function(tree,x,...){
 	if(hasArg(fn)) fn<-list(...)$fn
 	else fn<-function(x) x^2
@@ -474,7 +487,7 @@ summary.cophylo<-function(object,...){
 		Ntip(object$trees[[2]]),"species.\n\n"))
 	cat("Association (assoc) table as follows:\n\n")
 	maxl<-max(sapply(strsplit(object$assoc[,1],""),length))
-	cat(paste("\tleft:",paste(rep(" ",maxl-5),collapse=""),
+	cat(paste("\tleft:",paste(rep(" ",max(0,maxl-5)),collapse=""),
 		"\t----\tright:\n",sep=""))
 	nulo<-apply(object$assoc,1,function(x,maxl) cat(paste("\t",x[1],
 		paste(rep(" ",maxl-length(strsplit(x[1],split="")[[1]])),
