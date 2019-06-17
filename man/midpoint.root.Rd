@@ -11,10 +11,12 @@ midpoint.root(tree)
 	This function midpoint roots a rooted or unrooted tree (Farris 1972).
 }
 \details{
-	Midpoint rooting involves locating the midpoint of the longest path between any two tips and putting the root in that location. This function performs the same operation as \code{midpoint} in the phangorn package, but uses no phangorn code internally.
+	Midpoint rooting involves locating the midpoint of the longest path between any two tips and putting the root in that location. 
+	
+	This function performs the same operation as \code{\link{midpoint}} in the phangorn package, but uses no phangorn code internally.
 }
 \value{
-	A phylogenetic tree in \code{"phylo"} format.
+	An object of class \code{"phylo"} containing a rooted phylogenetic tree.
 }
 \references{
 	Farris, J. (1972) Estimating phylogenetic trees from distance matrices. \emph{American Naturalist}, \bold{106}, 645-667.

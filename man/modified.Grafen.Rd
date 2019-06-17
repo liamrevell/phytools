@@ -12,7 +12,7 @@ node.paths(tree, node)
 	\item{node}{node number for \code{node.paths}.}
 }
 \description{
-	This function computes modified Grafen edge lengths in which the length of the edge is determined not by the number of desecendant leaves, but instead by the maximum number of node lengths in the path from the node to any leaf.
+	This function computes modified Grafen edge lengths in which the length of the edge is determined not by the number of descendant leaves, but instead by the maximum number of node lengths in the path from the node to any leaf.
 	
 	\code{node.paths} is used internally by \code{modified.Grafen} and computes the set of paths from a node to all tips descended from that node.
 }
@@ -23,5 +23,8 @@ node.paths(tree, node)
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
+\seealso{
+	\code{\link{compute.brlen}}
+}
 \keyword{phylogenetics}
 \keyword{utilities}

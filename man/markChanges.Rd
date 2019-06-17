@@ -15,7 +15,7 @@ markChanges(tree, colors=NULL, cex=1, lwd=2, plot=TRUE)
 	This function adds the reconstructed changes to a plotted tree with a stochastically mapped discrete character.
 }
 \value{
-	This function returns (invisibly) a matrix containing the x & y coordinates of the marked changes.
+	This function returns (invisibly) a matrix containing the x & y coordinates of the marked changes on the plotted tree.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

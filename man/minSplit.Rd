@@ -5,13 +5,13 @@
 minSplit(tree, split.list, method="sum", printD=FALSE)
 }
 \arguments{
-	\item{tree}{a phylogeny stored as an object of class \code{"phylo"}.}
+	\item{tree}{an object of class \code{"phylo"}.}
 	\item{split.list}{either a matrix with two named columns, \code{"node"} and \code{"bp"}; a \code{$mcmc} matrix from \code{evol.rate.mcmc()}; or the entire raw output from \code{evol.rate.mcmc()}.}
 	\item{method}{an optional string indicating the criterion to minimize: options are \code{"sum"} and \code{"sumsq"}.}
 	\item{printD}{logical specifying whether to print distances to screen (\code{FALSE} by default).}
 }
 \description{
-	This function takes a phylogenetic tree and a list of splits and identifies the split with the smallest summed or summed squared distances to all the other splits.	Used to be called \code{min.split()} but was changed to avoid conflict with the generic \code{\link{min}}.
+	This function takes a phylogenetic tree and a list of splits and identifies the split with the smallest summed or summed squared distances to all the other splits.	
 }
 \value{
 	A list with the following components:
