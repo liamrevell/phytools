@@ -5,8 +5,8 @@
 make.era.map(tree, limits, ...)
 }
 \arguments{
-	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"}.}
-	\item{limits}{a vector containing the temporal limits, in time since the root node of the tree, for the mappings.}
+	\item{tree}{an object of class \code{"phylo"}.}
+	\item{limits}{a vector containing the temporal limits, in time since the root node of the tree, for the mappings. The first number should be \code{0}, and each subsequent number should be the start of each subsequent regime or era to be mapped on the tree.}
 	\item{...}{optional arguments.}
 }
 \description{
@@ -25,7 +25,7 @@ make.era.map(tree, limits, ...)
 \examples{
 tree<-pbtree(n=1000,scale=100)
 tree<-make.era.map(tree,c(0,25,50,75))
-plotSimmap(tree,pts=FALSE,ftype="off")
+plot(tree,ftype="off",lwd=1)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
