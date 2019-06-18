@@ -37,7 +37,7 @@ ratebytree(trees, x, ...)
 	
 	For \code{type="discrete"} the optional arguments are slightly different. The argument \code{model} can be used, but it must assume the values \code{"ER"}, \code{"SYM"}, \code{"ARD"}, or a numeric matrix following \code{\link{ace}}. 
 	
-	Finally, for \code{type= "diversification"} models are so far \code{model="birth-death"}, \code{"equal-extinction"}, and \code{"equal-specation"}, and \code{"Yule"}. It is also important to consider supplying the sampling fractions, \code{rho}, which is a vector of values between 0 and 1 of the same length as \code{trees}. If not provided the method will assume a sampling fraction of 1.0 for all trees - which is seldom true of empirical studies.
+	Finally, for \code{type= "diversification"} models are so far \code{"birth-death"}, \code{"equal-extinction"}, and \code{"equal-specation"}, and \code{"Yule"}. It is also important to consider supplying the sampling fractions, \code{rho}, which is a vector of values between 0 and 1 of the same length as \code{trees}. If not provided the method will assume a sampling fraction of 1.0 for all trees - which is seldom true of empirical studies.
 }
 \value{
 	An object of class \code{"ratebytree"} or an object of class \code{"posthoc.ratebytree"} in the case of the method \code{posthoc}.

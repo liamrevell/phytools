@@ -8,7 +8,7 @@ compute.mr(trees, type=c("phyDat","matrix"))
 }
 \arguments{
 	\item{trees}{an object of class \code{"multiPhylo"}  that consists of a list of phylogenetic trees.}
-	\item{method}{an argument specifying whether to optimize the tree using \code{\link{pratchet}} or \code{\link{optim.parsimony}} from the \emph{phangorn} package.}
+	\item{method}{an argument specifying whether to optimize the tree using the \emph{phangorn} parsimony optimizer \code{\link{pratchet}} or \code{\link{optim.parsimony}}.}
 	\item{type}{for \code{compute.mr}, the type of object to return (e.g., \code{"phyDat"} or \code{"matrix"}).}
 	\item{...}{optional arguments - mostly to be passed to \code{\link{pratchet}} or \code{\link{optim.parsimony}}.}
 }

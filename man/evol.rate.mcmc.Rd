@@ -14,7 +14,7 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"} (a phylogenetic tree).}
-	\item{x}{a vector of tip values for species in which \code{names(x)} contains the species names of \code{tree}, an object of class \code{"evol.rate.mcmc"}, or an object of class \code{"summary.evol.rate.mcmc"}.}
+	\item{x}{a vector of tip values for species in which \code{names(x)} contains the species names of \code{tree}, an object of class \code{"evol.rate.mcmc"}, or (in the case of the S3 \code{summary} method) an object of class \code{"summary.evol.rate.mcmc"}.}
 	\item{ngen}{an integer value indicating the number of generations for the MCMC.}
 	\item{control}{a list of control parameters containing the following elements: \code{sig1}: starting value for \eqn{\sigma(1)^2}; \code{sig2}: starting value for \eqn{\sigma(2)^2}; \code{a}: starting value for a; \code{sd1}: standard deviation for the normal proposal distribution for \eqn{\sigma(1)^2}; \code{sd2}: standard deviation for the normal proposal distribution for \eqn{\sigma(2)^2}; \code{kloc}: scaling parameter for tree move proposals - \eqn{1/\lambda} for the reflected exponential distribution; \code{sdlnr}: standard deviation on the log-normal prior on \eqn{\sigma(1)^2/\sigma(2)^2}; \code{rand.shift}: probability of proposing a random shift in the tree (improves mixing); \code{print}: print frequency for the MCMC; \code{sample}: sample frequency.}
 	\item{object}{for the S3 \code{summary} method, an object of class \code{"evol.rate.mcmc"}.}
