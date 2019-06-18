@@ -15,7 +15,7 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 	This function estimates the evolutionary parameters and ancestral states for Brownian evolution using likelihood. It is also possible (for \code{model="BM"}) to allow for missing data for some tip taxa.
 }
 \details{
-	Because this function relies on a high dimensional numerical optimization of the likelihood function, \code{\link{fastAnc}} should probably be preferred for most purposes. If using \code{\link{anc.ML}}, users should be cautious to ensure convergence. This has been ameliorated in phytools>=0.2-48 by seeding the ML optimization with the result from \code{\link{fastAnc}}. For \code{model="EB"} this should also not be a problem as the numerical optimization is performed for only \code{sig2} and \code{r}, while the ML values of the ancestral states are obtained during every iteration of the optimization algorithmically using the re-rooting method.
+	Because this function relies on a high dimensional numerical optimization of the likelihood function, \code{\link{fastAnc}} should probably be preferred for most purposes. If using \code{\link{anc.ML}}, users should be cautious to ensure convergence. This has been ameliorated in \emph{phytools} >= 0.2-48 by seeding the ML optimization with the result from \code{\link{fastAnc}}. For \code{model="EB"} this should also not be a problem as the numerical optimization is performed for only \code{sig2} and \code{r}, while the ML values of the ancestral states are obtained during every iteration of the optimization algorithmically using the re-rooting method.
 }
 \value{
 	An object of class \code{"anc.ML"} with at least the following four elements (if not more, depending on \code{model}):

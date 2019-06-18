@@ -13,13 +13,13 @@ branching.diffusion(sig2=1, b=0.0023, time.stop=1000, ylim=NULL,
 	\item{smooth}{no longer used.}
 	\item{pause}{pause (in s) between generations.}
 	\item{record}{filename for video file output (no video if \code{NULL}).}
-	\item{path}{full path to file for video rendering (by default is \code{C:/Program Files/ffmpeg/bin/ffmpeg.exe}).}
+	\item{path}{full path to file for video rendering. (By default \code{branching.diffusion} will look for the executable \code{ffmpeg.exe} in the directory \code{C:/Program Files/ffmpeg/bin}, even though this will not make sense on non-Windows machines.)}
 }
 \description{
 	This function creates an animation of branching random diffusion (i.e., BM with speciation).
 }
 \value{
-	An animated plot and (optionally) a recorded video file. For animation to be recorded to file, the function requires the package "animation" as well as a video renderer.
+	An animated plot and (optionally) a recorded video file. For animation to be recorded to file, the function requires the package \emph{animation} as well as a video renderer.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

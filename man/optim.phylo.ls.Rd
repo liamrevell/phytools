@@ -17,10 +17,10 @@ optim.phylo.ls(D, stree=NULL, set.neg.to.zero=TRUE, fixed=FALSE,
 	This function performs phylogeny inference using least-squares.
 }
 \details{
-	Function uses \code{nni} from the "phangorn" package (Schliep 2011) to conduct NNIs for topology estimation. Since topology optimization is performed using NNIs, converge to the true least-squares topology is not guaranteed. It is consequently probably wise to start with a very good tree - such as a NJ tree.
+	Function uses \code{\link{nni}} from the \emph{phangorn} package (Schliep 2011) to conduct NNIs for topology estimation. Since topology optimization is performed using NNIs, convergence to the true least-squares topology is not guaranteed. It is consequently probably wise to start with a very good tree - such as a NJ tree.
 }
 \value{
-	An objec of class \code{"phylo"} that (may be) the least-squares tree with branch lengths; also returns the sum of squares in \code{attr(tree,"Q-score")}.
+	An object of class \code{"phylo"} that (may be) the least-squares tree with branch lengths; also returns the sum of squares in \code{attr(tree,"Q-score")}.
 }
 \references{
 	Cavalli-Sforza, L. L., and A. W. F. Edwards. (1967) Phylogenetic analysis: Modesl and estimation procedures. \emph{American Journal of Human Genetics}, \bold{19}, 233-257.

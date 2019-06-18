@@ -11,11 +11,8 @@ lambda.transform(lambda, C)
 \description{
 	Function multiplies the off-diagonals of a square matrix by \code{lambda}. Used internally in \code{\link{phyl.pca}} and other functions.
 }
-\details{
-	Do not use unless you know what you're doing.
-}
 \value{
-	A matrix.
+	An among-species phylogenetic variance covariance matrix (e.g., \code{\link{vcv.phylo}}) in which the off-diagonal elements have been multiplied by \code{lambda}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
