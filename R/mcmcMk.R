@@ -120,9 +120,10 @@ print.mcmcMk<-function(x,...){
 }
 
 plot.mcmcMk<-function(x,...){
+	if(hasArg(main)) main<-list(...)$main
+	else main<-"Likelihood profile from MCMC"
 	plot(x[,"gen"],x[,"logLik"],type="s",xlab="generation",ylab="log(L)",
-		col="grey",bty="l",main="Likelihood profile from MCMC",
-		font.main=1)
+		col="grey",bty="l",main=main,font.main=1)
 }
 
 summary.mcmcMk<-function(object,...){
@@ -213,7 +214,9 @@ plot.density.mcmcMk<-function(x,...){
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-c(0,1.1*max(sapply(x,function(x) x$y)))
 	if(length(x)==1){
-		plot(x[[1]],main="estimated posterior density for q",
+		if(hasArg(main)) main<-list(...)$main
+		else main<-"estimated posterior density for q"
+		plot(x[[1]],main=main,
 			bty="l",font.main=1,xlim=xlim,ylim=ylim,
 			xlab="q")
 		polygon(x[[1]],col=make.transparent("blue",0.5))
@@ -221,9 +224,11 @@ plot.density.mcmcMk<-function(x,...){
 		text(x=mean(attr(x,"summary")$HPD95[1,]),
 			y=1.01*max(x[[1]]$y),"95% HPD",pos=3)
 	} else if(length(x)==2&&show.matrix==FALSE){
+		if(hasArg(main)) main<-list(...)$main
+		else main<-expression(paste("estimated posterior density for ",
+			Q[ij]))
 		plot(x[[1]],xlim=xlim,ylim=ylim,
-			main=expression(paste("estimated posterior density for ",
-			Q[ij])),xlab="q",bty="l")
+			main=main,xlab="q",bty="l")
 		polygon(x[[1]],col=make.transparent("blue",0.25))
 		lines(x=attr(x,"summary")$HPD95[1,],
 			y=rep(max(x[[1]]$y),2)+0.01*diff(ylim))
