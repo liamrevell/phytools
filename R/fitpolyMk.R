@@ -11,6 +11,8 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 		cat("No polymorphic species found. Use fitMk.\n\n")
 		object<-NULL
 	} else {
+		## fix the order of the input data
+		x<-sapply(X,function(x) paste(sort(x),collapse="+"))
 		## get the states
 		states<-sort(unique(unlist(X)))
 		if(ordered){

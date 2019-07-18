@@ -1,5 +1,5 @@
 ## function for conditional likelihoods at nodes
-## written by Liam J. Revell 2015, 2016
+## written by Liam J. Revell 2015, 2016, 2019
 ## with input from (& structural similarity to) function ace by E. Paradis et al. 2013
 
 fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
@@ -97,6 +97,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		if(length(q.init)!=k) q.init<-rep(q.init[1],k)
 		if(opt.method=="optim")
 			fit<-optim(q.init,function(p) lik(p,pi=pi),method="L-BFGS-B",lower=rep(min.q,k))
+		else if(opt.method=="none")
+			fit<-list(objective=lik(q.init,pi=pi),par=q.init)
 		else	
 			fit<-nlminb(q.init,function(p) lik(p,pi=pi),lower=rep(0,k),upper=rep(1e50,k))
 		obj<-list(logLik=
