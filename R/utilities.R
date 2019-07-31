@@ -1551,13 +1551,13 @@ roundBranches<-function(tree,digits=0){
 }
 
 # function to merge mapped states
-# written by Liam J. Revell 2013, 2015
+# written by Liam J. Revell 2013, 2015, 2019
 mergeMappedStates<-function(tree,old.states,new.state){
-	if(inherits(tree,"multiPhylo")){
+	if(inherits(tree,"multiSimmap")){
 		tree<-unclass(tree)
 		tree<-lapply(tree,mergeMappedStates,old.states=old.states,new.state=new.state)
-		class(tree)<-"multiPhylo"
-	} else if(inherits(tree,"phylo")) {
+		class(tree)<-c("multiSimmap","multiPhylo")
+	} else if(inherits(tree,"simmap")) {
 		maps<-tree$maps
 		rr<-function(map,oo,nn){ 
 			for(i in 1:length(map)) if(names(map)[i]%in%oo) names(map)[i]<-nn
@@ -1597,7 +1597,7 @@ mergeMappedStates<-function(tree,old.states,new.state){
 		}
 		tree$maps<-maps
 		tree$mapped.edge<-mapped.edge
-	} else stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
+	} else stop("tree should be an object of class \"simmap\" or \"multiSimmap\".")
 	return(tree)
 }
 
