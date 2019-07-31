@@ -70,6 +70,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	}
 	object$model<-model
 	object$ordered<-ordered
+	object$data<-X
 	class(object)<-"fitpolyMk"
 	object
 }
