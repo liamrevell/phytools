@@ -1,11 +1,13 @@
 \name{phyl.pca}
 \alias{phyl.pca}
 \alias{biplot.phyl.pca}
+\alias{scores}
 \alias{scores.phyl.pca}
 \title{Phylogenetic principal components analysis}
 \usage{
 phyl.pca(tree, Y, method="BM", mode="cov", ...)
 \method{biplot}{phyl.pca}(x, ...)
+scores(object, ...)
 \method{scores}{phyl.pca}(object, ...)
 }
 \arguments{

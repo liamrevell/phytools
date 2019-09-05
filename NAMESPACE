@@ -176,6 +176,7 @@ S3method(print, gammatest)
 S3method(print, geo.legend)
 S3method(print, geo.palette)
 S3method(scores, phyl.pca)
+S3method(logLik, brownie.lite)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)

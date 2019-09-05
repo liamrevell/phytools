@@ -142,3 +142,12 @@ lik.multiple<-function(theta,y,C,se=NULL){
 	return(-logL)
 }
 
+## S3 logLik method for object class
+
+logLik.brownie.lite<-function(object,...){
+	lik<-setNames(
+		c(object$logL1,object$logL.multiple),
+		c("single-rate","multi-rate"))
+	attr(lik,"df")<-c(object$k1,object$k2)
+	lik
+}
