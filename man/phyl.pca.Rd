@@ -35,8 +35,8 @@ scores(object, ...)
 	\item{Evec}{matrix with eigenvectors in columns.}
 	\item{S}{matrix with scores.}
 	\item{L}{matrix with loadings.}
-	\item{lambda}{fitted value of lambda (\code{method="lambda"} only).}
-	\item{logL}{log-likelihood for lambda model (\code{method="logL"} only).}
+	\item{lambda}{fitted value of \eqn{\lambda} (\code{method="lambda"} only).}
+	\item{logL}{log-likelihood for \eqn{\lambda} model (\code{method="logL"} only).}
 }
 \references{
 	Revell, L. J. (2009) Size-correction and principal components for interspecific comparative studies. \emph{Evolution}, \bold{63}, 3258-3268.

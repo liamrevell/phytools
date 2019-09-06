@@ -1,6 +1,6 @@
 \name{likMlambda}
 \alias{likMlambda}
-\title{Likelihood for joint lambda}
+\title{Likelihood for joint \eqn{\lambda}}
 \usage{
 likMlambda(lambda, X, C)
 }

@@ -12,14 +12,14 @@ phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
 	\item{test}{logical indicating whether or not to conduct a hypothesis test of \code{"K"} or \code{"lambda"}.}
 	\item{nsim}{for \code{method="K"}, number of simulations in randomization test.}
 	\item{se}{named vector containing the standard errors for each species.}
-	\item{start}{vector of starting values for optimization of (respectively) sigma^2 and lambda. Only used in \code{method="lambda"} and \code{se!=NULL}.}
+	\item{start}{vector of starting values for optimization of (respectively) \eqn{\sigma^2} and \eqn{\lambda}. Only used in \code{method="lambda"} and \code{se!=NULL}.}
 	\item{control}{list of control parameters for multidimensional optimization, implemented in \code{\link{optim}}. Only used in \code{method="lambda"} and \code{se!=NULL}.}
 }
 \description{
 	This function computes phylogenetic signal using two different methods.  It can also conduct the hypothesis tests for significant phylogenetic signal, and estimate phylogenetic signal incorporating sampling error following Ives et al. (2007).
 }
 \details{
-	\eqn{\lambda} optimization is performed using \code{\link{optimize}} with the range of lambda set between 0 and the theoretical upper limit of lambda (determined by the relative height of the most recent internal node on the tree).
+	\eqn{\lambda} optimization is performed using \code{\link{optimize}} with the range of \eqn{\lambda} set between 0 and the theoretical upper limit of \eqn{\lambda} (determined by the relative height of the most recent internal node on the tree).
 }
 \value{
 	If \code{(method="K")}, a list with the following components:
@@ -28,7 +28,7 @@ phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
 	\item{logL}{log-likelihood, for estimation with sampling error.}
 	\item{P}{optionally, the P-value from the randomization test.}
 	If \code{(method="lambda")}, a list with the following components:
-	\item{lambda}{fitted value of lambda.}
+	\item{lambda}{fitted value of \eqn{\lambda}.}
 	\item{sig2}{rate of evolution, for estimation with sampling error.}
 	\item{logL}{log-likelihood.}
 	\item{logL0}{log-likelihood for \code{lambda=0.0}.}

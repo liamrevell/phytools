@@ -8,8 +8,8 @@ phyl.cca(tree, X, Y, lambda=1.0, fixed=TRUE)
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}
 	\item{X}{a data matrix with traits in columns.}
 	\item{Y}{data matrix with traits in columns, to be correlated with \code{X}.}
-	\item{lambda}{optionally, a (fixed) value for \code{lambda}.}
-	\item{fixed}{optionally, a logical value indicating whether or not to estimate \code{lambda} using likelihood.}
+	\item{lambda}{optionally, a (fixed) value for \eqn{\lambda}.}
+	\item{fixed}{optionally, a logical value indicating whether or not to estimate \eqn{\lambda} using likelihood.}
 }
 \description{
 	This function performs phylogenetic canonical correlation analysis (e.g., Revell & Harrison 2008; \emph{Bioinformatics}).

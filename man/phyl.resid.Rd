@@ -20,7 +20,7 @@ phyl.resid(tree, x, Y, method="BM")
 	A list with the following components:
 	\item{beta}{a vector or matrix of regression coefficients.}
 	\item{resid}{a vector or matrix of residuals for species.}
-	\item{lambda}{a vector of lambda values (\code{method="lambda"} only).}
+	\item{lambda}{a vector of \eqn{\lambda} values (\code{method="lambda"} only).}
 	\item{logL}{a vector of log-likelihoods (\code{method="lambda"} only).}
 }
 \references{
