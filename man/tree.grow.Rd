@@ -2,12 +2,13 @@
 \alias{tree.grow}
 \title{Creates an animation of a tree growing from left-to-right or upwards}
 \usage{
-tree.grow(..., res=200, direction="rightwards")
+tree.grow(..., res=200, direction="rightwards", ladderize=TRUE)
 }
 \arguments{
 	\item{...}{arguments to pass to \code{\link{pbtree}}.}
 	\item{res}{number of steps (the resolution of the animation). This also corresponds to the number of frames that will be created if the animation is to be converted to a .gif file.}
 	\item{direction}{the direction to plot the tree. Only \code{direction="rightwards"} (the default) and \code{direction="upwards"} are supported.}
+	\item{ladderize}{logical value indicating whether or not to 'ladderize' the plotted tree. (Defaults to \code{TRUE}.)}
 }
 \description{
 	This function simulates a birth-death tree under user-defined conditions and then creates an animation of that tree growing from left-to-right in the plotting device, or upwards.
