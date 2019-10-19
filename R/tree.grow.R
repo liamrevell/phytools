@@ -42,5 +42,5 @@ tree.grow<-function(...,res=200,direction="rightwards"){
 		dev.flush()
 		Sys.sleep(1/res)
 	}
-	tree
+	invisible(tree)
 }
