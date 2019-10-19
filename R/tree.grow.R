@@ -1,8 +1,8 @@
 ## function to 'grow' a birth-death tree from left-to-right or from upwards
 ## written by Liam J. Revell 2019
 
-tree.grow<-function(...,res=200,direction="rightwards"){
-	tree<-pbtree(...)
+tree.grow<-function(...,res=200,direction="rightwards",ladderize=TRUE){
+	tree<-if(ladderize) ladderize(pbtree(...),FALSE) else pbtree(...)
 	h<-max(nodeHeights(tree))
 	for(i in 1:res){
 		dev.hold()
