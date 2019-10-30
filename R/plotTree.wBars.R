@@ -108,7 +108,7 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 ## written by Liam J. Revell 2014, 2015, 2018, 2019
 
 plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
-	method="plotTree",tip.labels=FALSE,col="grey",border=NULL,...){
+	method="plotTree",tip.labels=FALSE,col="grey",border="black",...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(is.null(scale)){ 
 		scale<-0.3*max(nodeHeights(tree))/diff(range(x))
@@ -201,6 +201,9 @@ plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
 		if(length(col)<Ntip(tree)) col<-rep(col,ceiling(Ntip(tree)/length(col)))[1:Ntip(tree)]
 		if(is.null(names(col))) names(col)<-tree$tip.label
 		col<-col[tree$tip.label]
+		if(length(border)<Ntip(tree)) border<-rep(border,ceiling(Ntip(tree)/length(border)))[1:Ntip(tree)]
+		if(is.null(names(border))) names(border)<-tree$tip.label
+		border<-border[tree$tip.label]
 		if(type=="phylogram"){
 			if(hasArg(direction)) direction<-list(...)$direction
 			else direction<-"rightwards"
@@ -213,7 +216,7 @@ plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
 				y1<-y4<-dy-w/2
 				y2<-y3<-dy+w/2
 				polygon(c(x1,x2,x3,x4)-min(0,min(x)),
-					c(y1,y2,y3,y4),col=col[i],border=border)
+					c(y1,y2,y3,y4),col=col[i],border=border[i])
 			}
 		} else if(type=="fan"){
 			h<-max(nodeHeights(tree))
@@ -232,7 +235,7 @@ plotTree.wBars<-function(tree,x,scale=NULL,width=NULL,type="phylogram",
 				x4<-s*x[i]*cos(theta)+x1
 				y4<-s*x[i]*sin(theta)+y1
 				polygon(c(x1,x2,x3,x4),c(y1,y2,y3,y4),col=col[i],
-					border=border)
+					border=border[i])
 			}	
 		}
 	}
