@@ -4,7 +4,7 @@
 \title{Add labels to subtrees of a plotted phylogeny}
 \usage{
 cladelabels(tree=NULL, text, node, offset=NULL, wing.length=NULL, cex=1,
-   orientation="vertical")
+   orientation="vertical",move=c(0,0),exp.c=0.7)
 arc.cladelabels(tree=NULL, text, node=NULL, ln.offset=1.02,
    lab.offset=1.06, cex=1, orientation="curved",...)
 }
@@ -16,6 +16,8 @@ arc.cladelabels(tree=NULL, text, node=NULL, ln.offset=1.02,
 	\item{wing.length}{length of the wings to add to the top & bottom of the label bar (in character widths).}
 	\item{cex}{character expansion factor.}
 	\item{orientation}{orientation of the text. Can be \code{orientation = "vertical"} (the default) or \code{"horizontal"}.}
+	\item{move}{horizontal and vertical adjustments}
+	\item{exp.c}{expansion constant}
 	\item{ln.offset}{line offset (as a function of total tree height) for \code{arc.cladelabels}.}
 	\item{lab.offset}{label offset for \code{arc.cladelabels}.}
 	\item{...}{optional arguments for \code{arc.cladelabels}.}
