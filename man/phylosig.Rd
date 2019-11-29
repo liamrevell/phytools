@@ -1,33 +1,38 @@
 \name{phylosig}
 \alias{phylosig}
+\alias{plot.phylosig}
 \title{Compute phylogenetic signal with two methods}
 \usage{
 phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
    control=list())
+\method{plot}{phylosig}(x, ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}
-	\item{x}{vector containing values for a single continuously distributed trait.}
+	\item{x}{vector containing values for a single continuously distributed trait. In the case of the \code{plot} method, \code{x} is an object of class \code{"phylosig"}.}
 	\item{method}{method to compute signal: can be \code{"K"} or \code{"lambda"}.}
 	\item{test}{logical indicating whether or not to conduct a hypothesis test of \code{"K"} or \code{"lambda"}.}
 	\item{nsim}{for \code{method="K"}, number of simulations in randomization test.}
 	\item{se}{named vector containing the standard errors for each species.}
 	\item{start}{vector of starting values for optimization of (respectively) \eqn{\sigma^2} and \eqn{\lambda}. Only used in \code{method="lambda"} and \code{se!=NULL}.}
 	\item{control}{list of control parameters for multidimensional optimization, implemented in \code{\link{optim}}. Only used in \code{method="lambda"} and \code{se!=NULL}.}
+	\item{...}{optional arguments for \code{plot} method.}
 }
 \description{
 	This function computes phylogenetic signal using two different methods.  It can also conduct the hypothesis tests for significant phylogenetic signal, and estimate phylogenetic signal incorporating sampling error following Ives et al. (2007).
 }
 \details{
 	\eqn{\lambda} optimization is performed using \code{\link{optimize}} with the range of \eqn{\lambda} set between 0 and the theoretical upper limit of \eqn{\lambda} (determined by the relative height of the most recent internal node on the tree).
+	
+	\code{plot.phylosig} creates either a plot of the null distribution of \emph{K} or a likelihood surface, depending on the value of \code{method}.
 }
 \value{
-	If \code{(method="K")}, a list with the following components:
+	The function returns an object of class \code{"phylosig"}. With default arguments (\code{method="K"}, \code{test=FALSE}, and \code{se=NULL}), this will be a single numeric value. Otherwise, if \code{(method="K")}, it will consist of a list with up to the following components:
 	\item{K}{value of the K-statistic.}
 	\item{sig2}{rate of evolution, \eqn{\sigma^2}, for estimation with sampling error.}
 	\item{logL}{log-likelihood, for estimation with sampling error.}
 	\item{P}{optionally, the P-value from the randomization test.}
-	If \code{(method="lambda")}, a list with the following components:
+	If \code{(method="lambda")}, it will be a list with up to the following components:
 	\item{lambda}{fitted value of \eqn{\lambda}.}
 	\item{sig2}{rate of evolution, for estimation with sampling error.}
 	\item{logL}{log-likelihood.}
