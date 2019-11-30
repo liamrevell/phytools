@@ -239,8 +239,15 @@ plot.phylosig<-function(x,...){
 			expression(paste("MLE(",lambda,")")),srt=90,adj=c(0.5,1))
 		if(attr(x,"test")){
 			lines(c(0,x$lambda),rep(x$logL0,2),lty="dotted")
-			text(x=0.5*x$lambda,x$logL0-0.01*diff(par()$usr[3:4]),
-				expression(paste("logL(",lambda,"=0)")),adj=c(0.5,1))
+			text(x=0.5*x$lambda,
+				y=x$logL0+
+				if(x$logL0>(par()$usr[3]+0.5*(diff(par()$usr[3:4]))))
+					-0.01*diff(par()$usr[3:4])
+				else 0.01*diff(par()$usr[3:4]),
+				expression(paste("logL(",lambda,"=0)")),
+				adj=if(x$logL0>(par()$usr[3]+0.5*(diff(par()$usr[3:4]))))
+					c(0.5,1)
+				else c(0.5,0))
 		}
 	} else if(attr(x,"method")=="K"){
 		if(what=="K"){
@@ -252,7 +259,7 @@ plot.phylosig<-function(x,...){
 					main="",xlab="K",ylab="null distribution of K")
 				arrows(x0=x$K,y0=par()$usr[4],y1=0,length=0.12,
 					col=make.transparent("blue",0.5),lwd=2)
-				text(x$K,0.98*par()$usr[4],"observed value of K",
+				text(x$K,0.95*par()$usr[4],"observed value of K",
 					pos=if(x$K>mean(x$sim.K)) 2 else 4)
 			}
 		} else if(what=="sig2"){
