@@ -2,6 +2,7 @@
 ## on a simulated discrete-time tree
 
 simBMphylo<-function(n,t,sig2,plot=TRUE,...){
+	if(length(sig2)!=t) sig2<-rep(sig2[1],t)
 	b<-exp((log(n)-log(2))/t)-1
 	tree<-pbtree(b=b,d=0,t=t,n=n,type="discrete",
 		tip.label=if(n<=26) LETTERS[n:1] else NULL,
@@ -10,7 +11,8 @@ simBMphylo<-function(n,t,sig2,plot=TRUE,...){
 	root<-Ntip(tree)+1
 	xx<-list()
 	for(i in 1:nrow(tree$edge)){
-		x<-rnorm(n=tree$edge.length[i],sd=sqrt(sig2))
+		sd<-sqrt(sig2[H[i,1]+1:tree$edge.length[i]])
+		x<-rnorm(n=tree$edge.length[i],sd=sd)
 		x<-c(0,cumsum(x))
 		if(tree$edge[i,1]!=root){
 			ii<-which(tree$edge[,2]==tree$edge[i,1])
