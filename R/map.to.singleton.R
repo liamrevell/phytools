@@ -113,13 +113,27 @@ reorderPhylo<-function(x,order="pruningwise",index.only=FALSE,...){
 }
 
 ## function converts a tree with a root edge to a tree with a singleton node instead
-## written by Liam J. Revell 2016
+## written by Liam J. Revell 2016, re-written 2019
 rootedge.to.singleton<-function(tree){
-	cw<-reorder(tree,"cladewise")
-	root.edge<-if(!is.null(cw$root.edge)) cw$root.edge else 0
-	cw$edge[which(cw$edge>Ntip(cw))]<-cw$edge[which(cw$edge>Ntip(cw))]+1
-	cw$edge<-rbind(Ntip(cw)+c(1,2),cw$edge)
-	cw$Nnode<-cw$Nnode+1
-	cw$edge.length<-c(root.edge,cw$edge.length)
-	cw
+	if(!inherits(tree,"phylo"))
+		stop("tree should be object of class \"phylo\".")
+	if(!is.null(tree$root.edge)){
+		tree$edge[tree$edge>Ntip(tree)]<-
+			tree$edge[tree$edge>Ntip(tree)]+1
+		if(attr(tree,"order")%in%c("postorder","pruningwise")){
+			tree$edge<-rbind(tree$edge,c(1,2)+Ntip(tree))
+			tree$edge.length<-c(tree$edge.length,tree$root.edge)
+		} else {
+			tree$edge<-rbind(c(1,2)+Ntip(tree),tree$edge)
+			tree$edge.length<-c(tree$root.edge,tree$edge.length)
+		}
+		tree$root.edge<-NULL
+		tree$Nnode<-tree$Nnode+1
+		if(!is.null(tree$node.label)) 
+			tree$node.label<-c("",tree$node.label)
+	}
+	tree
 }
+
+
+

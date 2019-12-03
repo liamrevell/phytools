@@ -24,7 +24,7 @@ export(phylosig, plot.changesMap, plot.contMap, plot.cophylo, plot.densityMap, p
 export(plot.simBMphylo, plotBranchbyTrait, plot.phylosig, plotSimmap, plotThresh, plotTree, plotTree.barplot, plotTree.boxplot, plotTree.datamatrix, plotTree.errorbars)
 export(plotTree.singletons, plotTree.splits, plotTree.wBars, posterior.evolrate, posthoc, posthoc.ratebytree, project.phylomorphospace)
 export(ratebystate, ratebytree, rateshift, read.newick, read.simmap, reorder.backbonePhylo, reorderSimmap, rep.multiPhylo, rep.phylo)
-export(repPhylo, reroot, rerootingMethod, rescaleSimmap, resolveAllNodes, resolveNode, rotate.multi, rotateNodes, rootedge.to.singleton)
+export(repPhylo, reroot, rerootingMethod, rescaleSimmap, resolveAllNodes, resolveNode, rootedge.to.singleton, rotate.multi, rotateNodes)
 export(roundBranches, roundPhylogram, rstate)
 export(sampleFrom, scores, scores.phyl.pca, setMap, sim.corrs, sim.ctt, sim.history, sim.Mk, sim.multiCtt, sim.multiMk, sim.ratebystate, sim.rates, simBMphylo)
 export(skewers, splitEdgeColor, splitplotTree, splitTree, starTree, strahlerNumber)

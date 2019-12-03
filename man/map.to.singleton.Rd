@@ -3,7 +3,7 @@
 \alias{plotTree.singletons}
 \alias{drop.tip.singleton}
 \alias{rootedge.to.singleton}
-\title{Converts a mapped tree to a tree with singleton nodes}
+\title{Converts a tree without singletons to a tree with singleton nodes}
 \usage{
 map.to.singleton(tree)
 plotTree.singletons(tree)
