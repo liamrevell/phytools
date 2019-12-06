@@ -123,10 +123,11 @@ makeMappedEdge<-function(edge,maps){
 
 
 # function translates text-string to tree
-# written by Liam J. Revell 2011-2015
+# written by Liam J. Revell 2011-2015, 2019
 
 text_to_tree<-function(text,version,rev.order,trans){
 	text<-unlist(strsplit(text, NULL))
+	while(text[1]!="(") text<-text[2:length(text)]
 	tip.label<-vector(mode="character") 
 	edge<-matrix(c(1,NA),1,2) 
 	edge.length<-vector()

@@ -2,7 +2,7 @@
 \alias{write.simmap}
 \title{Write a stochastic character mapped tree to file}
 \usage{
-write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE)
+write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE, format="phylip", version=1.0)
 }
 \arguments{
 	\item{tree}{an object of class \code{"simmap"} or \code{"multiSimmap"}.}
@@ -10,12 +10,14 @@ write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE)
 	\item{append}{a logical value indicating whether to append to file.}
 	\item{map.order}{a optional value specifying whether to write the map in left-to-right or right-to-left order.  Acceptable values are "left-to-right" or "right-to-left" or some abbreviation of either.  If not provided, \code{write.simmap} will use \code{attr(tree,"map.order")} if available.}
 	\item{quiet}{logical value indicating whether or not to print a warning message when \code{map.order} is neither specified by a function argument or as an attribute of \code{tree}.}
+	\item{format}{file format for output.}
+	\item{version}{version of SIMMAP. Note that the options are \code{1.0} and \code{1.5}. \code{version=1.5} is generally recommended because in this format the tree can also be parsed by typical tree readers, but absent its mapped trait.}
 }
 \description{
-	This function writes stochastic character mapped trees to file using the Newick style format of SIMMAP v1.0 (Bollback 2006).
+	This function writes stochastic character mapped trees to file in multiple SIMMAP formats (Bollback 2006).
 }
 \value{
-	A file or string (if \code{file=NULL}).
+	A file.
 }
 \references{
 	Bollback, J. P. (2006) Stochastic character mapping of discrete traits on phylogenies. \emph{BMC Bioinformatics}, \bold{7}, 88.
