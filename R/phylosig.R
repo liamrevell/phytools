@@ -163,7 +163,7 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,con
 				object<-list(lambda=res$par[2],sig2=res$par[1],
 					logL=res$value,convergence=res$convergence,
 					message=res$message,lik=function(lambda,
-					sig2=res$par[1]) likelihoodLambda.me(c(lambda,sig2),
+					sig2=res$par[1]) likelihoodLambda.me(c(sig2,lambda),
 					C=C,M=M,y=x))
 			} else {
 				res0<-optim(c(s[1],0),likelihoodLambda.me,C=C,
