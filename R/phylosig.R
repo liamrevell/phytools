@@ -162,8 +162,9 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,con
 			if(!test){
 				object<-list(lambda=res$par[2],sig2=res$par[1],
 					logL=res$value,convergence=res$convergence,
-					message=res$message,lik=function(lambda) 
-					likelihoodLambda(lambda,C=res$par[1]*C+M,y=x))
+					message=res$message,lik=function(lambda,
+					sig2=res$par[1]) likelihoodLambda.me(c(lambda,sig2),
+					C=C,M=M,y=x))
 			} else {
 				res0<-optim(c(s[1],0),likelihoodLambda.me,C=C,
 					y=x,M=M,method="L-BFGS-B",lower=c(0,0),
@@ -173,7 +174,7 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,con
 				object<-list(lambda=res$par[2],sig2=res$par[1],
 					logL=res$value,convergence=res$convergence,
 					message=res$message,logL0=res0$value,P=P,
-					lik=function(lambda) likelihoodLambda.me(c(res$par[1],
+					lik=function(lambda,sig2=res$par[1]) likelihoodLambda.me(c(sig2,
 					lambda),C=C,M=M,y=x))
 			}
 		}
