@@ -30,27 +30,38 @@ plot.simBMphylo<-function(x,...){
 	xx<-x$x
 	tree<-x$tree
 	H<-nodeHeights(tree)
-	par(mfrow=c(2,1))
-	plotTree(tree,mar=c(2.1,4.1,3.1,1.1),
+	layout(mat=matrix(c(1,2),2,1),
+		heights=c(1/3,2/3))
+	if(hasArg(fsize)) fsize<-list(...)$fsize
+	else fsize<-0.9
+	if(hasArg(cex.axis)) cex.axis<-list(...)$cex.axis
+	else cex.axis<-0.9
+	if(hasArg(cex.lab)) cex.lab=list(...)$cex.lab
+	else cex.lab<-1
+	plotTree(tree,mar=c(0.1,4.1,2.1,1.1),
 		xlim=c(0,1.05*max(H)),
 		ylim=c(1-2*(Ntip(tree)-1)*0.04,
-		Ntip(tree)+(Ntip(tree)-1)*0.04),lwd=1)
-	axis(1)
-	mtext("a)",line=1,adj=0)
+		Ntip(tree)+(Ntip(tree)-1)*0.04),lwd=1,
+		fsize=fsize)
+	## axis(1,cex.axis=cex.axis)
+	mtext("a)",line=0,adj=0,cex=cex.lab)
 	plot.new()
-	par(mar=c(5.1,4.1,3.1,1.1))
+	par(mar=c(5.1,4.1,1.1,1.1))
 	plot.window(xlim=c(0,1.05*max(H)),ylim=range(xx))
-	axis(1)
-	axis(2)
+	axis(1,cex.axis=cex.axis)
+	axis(2,cex.axis=cex.axis)
 	for(i in 1:length(xx))
 		lines(H[i,1]:H[i,2],xx[[i]])
 	for(i in 1:Ntip(tree)){
 		ii<-which(tree$edge[,2]==i)
 		text(max(H),xx[[ii]][length(xx[[ii]])],
-			tree$tip.label[i],pos=4,offset=0.4/3)
+			tree$tip.label[i],pos=4,offset=0.4/3,
+			cex=fsize)
 	}
-	mtext("b)",line=1,adj=0)
-	title(xlab="time",ylab="phenotype")
+	mtext("b)",line=0,adj=0,cex=cex.lab)
+
+	title(xlab="time",ylab="phenotype",
+		cex.lab=cex.lab)
 }
 
 print.simBMphylo<-function(x,...){
