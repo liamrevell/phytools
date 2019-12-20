@@ -326,3 +326,16 @@ sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
 	}
 	X
 }
+
+## logLik & AIC methods for fitDiscrete & fitContinuous objects
+
+logLik.gfit<-function(object,...){
+	lik<-object$opt$lnL[1]
+	attr(lik,"df")<-object$opt$k[1]
+	lik
+}
+
+AIC.gfit<-function(object,...,k=2){
+	np<-object$opt$k
+	-2*logLik(object)+np*k
+}
