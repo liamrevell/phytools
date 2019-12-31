@@ -65,7 +65,7 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 		X<-as.matrix(X)
 	} else {
 		d<-which(crop(types)=="disc")
-		for(i in 1:length(d)) levels[[d[i]]]<-as.character(0:1)
+		if(length(d)>0) for(i in 1:length(d)) levels[[d[i]]]<-as.character(0:1)
 	}
 
 	if(m!=2) stop("number of traits must equal 2")
@@ -125,10 +125,14 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 
 	# start MCMC
 	cat("Starting MCMC....\n")
+	flush.console()
 	for(i in 1:ngen){
 		lik1<-lik(a,V,invV,detV,D,Y)+log(all(P[,disc]==X[,disc]))
 		d<-i%%npar
-		if(ngen>=1000) if(i%%1000==0) if(!con$quiet) cat(paste("gen ",i,"\n",sep=""))
+		if(ngen>=1000) if(i%%1000==0) if(!con$quiet){ 
+			cat(paste("gen ",i,"\n",sep=""))
+			flush.console()
+		}
 		Yp<-Y
 		sig2p<-sig2
 		ap<-a
