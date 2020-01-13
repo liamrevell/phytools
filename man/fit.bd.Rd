@@ -29,9 +29,9 @@ lik.bd(theta, t, rho=1, N=NULL)
 	The function \code{lik.bd} computes the likelihood of a set of birth & death rates given the set of branching times computed for a tree and a sampling fraction.
 }
 \value{
-	\code{fit.bd} returns an object of class \code{"fit.bd"} which can be printed.
+	\code{fit.bd} returns an object of class \code{"fit.bd"} which can be printed. This object is a list containing the fitted model parameters, likelihood, optimization conditions, a summary of the optimization, and a likelihood function.
 	
-	\code{fit.yule} returns an object of class \code{"fit.yule"}.
+	\code{fit.yule} returns an object of class \code{"fit.yule"}. This object is a list containing the fitted model parameter, likelihood, optimization conditions, a summary of the optimization, and a likelihood function.
 }
 \references{
 	Nee, S., May, R. M. and Harvey, P. H. (1994) The reconstructed evolutionary process. \emph{Philosophical Transactions of the Royal Society of London B}, \bold{344}, 305-311.
