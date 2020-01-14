@@ -19,7 +19,7 @@ make.transparent(color, alpha)
 	\item{use.gradient}{logical value indicating whether to plot all trees slightly offset using a rainbow color gradient. (Defaults to \code{use.gradient=FALSE}.)}
 	\item{show.axis}{logical value indicating whether or not to include a horizontal axis in the plot.}
 	\item{...}{arguments to be passed to \code{plotTree} or \code{plotSimmap}. Some may be ignored if they are incompatible with the method.}
-	\item{color}{in \code{make.transparent}, the color to render transparent.}
+	\item{color}{in \code{make.transparent}, the color (or colors in a vector) to render transparent.}
 }
 \description{
 	Functions plots a posterior sample of trees, including with mapped discrete characters.
