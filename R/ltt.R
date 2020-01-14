@@ -299,16 +299,18 @@ plot.mccr<-function(x,...){
 	if(hasArg(main)) main<-list(...)$main
 	else main=expression(paste("null distribution of ",
 		gamma))
-	if(hasArg(ylim)) ylim<-list(...)$ylim
-	else ylim<-NULL
-	hist(x$null.gamma,breaks=min(c(max(12,
+	hh<-hist(x$null.gamma,breaks=min(c(max(12,
 		round(length(x$null.gamma)/10)),20)),
-		xlim=range(c(x$gamma,x$null.gamma)),
+		plot=FALSE)
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(0,1.15*max(hh$counts))
+	plot(hh,xlim=range(c(x$gamma,x$null.gamma)),
 		main=main,xlab=expression(gamma),col="lightgrey",
 		ylim=ylim)
 	arrows(x0=x$gamma,y0=par()$usr[4],y1=0,length=0.12,
 		col=make.transparent("blue",0.5),lwd=2)
-	text(x$gamma,0.98*par()$usr[4],
+	text(x$gamma,0.96*par()$usr[4],
 		expression(paste("observed value of ",gamma)),
-		pos=if(x$gamma>mean(x$null.gamma)) 2 else 4)
+		pos=if(x$gamma>mean(x$null.gamma)) 2 else 4,
+		cex=0.9)
 }
