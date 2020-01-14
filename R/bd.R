@@ -68,14 +68,19 @@ fit.yule<-function(tree,b=NULL,d=NULL,rho=1,...){
 
 ## S3 print method for object class 'fit.bd'
 
+SIGNIF<-function(x,dd){
+	tens<-if(x>1) ceiling(log10(x)) else 0
+	signif(x,dd+tens)
+}
+
 print.fit.bd<-function(x,...){
     if(hasArg(digits)) digits<-list(...)$digits
     else digits<-4
 	cat(paste("\nFitted",x$model,"model:\n\n"))
-    cat(paste("ML(b/lambda) =",round(x$b,digits),"\n"))
+    cat(paste("ML(b/lambda) =",SIGNIF(x$b,digits),"\n"))
     if(x$model=="birth-death") 
-		cat(paste("ML(d/mu) =",round(x$d,digits),"\n"))
-    cat(paste("log(L) =",round(x$logL,digits),"\n"))
+		cat(paste("ML(d/mu) =",SIGNIF(x$d,digits),"\n"))
+    cat(paste("log(L) =",SIGNIF(x$logL,digits),"\n"))
     cat(paste("\nAssumed sampling fraction (rho) =",x$rho,"\n"))
     if(x$opt$convergence==0) cat("\nR thinks it has converged.\n\n")
     else cat("\nR thinks optimization may not have converged.\n\n")
