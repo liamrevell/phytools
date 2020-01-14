@@ -137,12 +137,14 @@ print.gammatest<-function(x,...){
 print.ltt<-function(x,digits=4,...){
 	cat("Object of class \"ltt\" containing:\n\n")
 	cat(paste("(1) A phylogenetic tree with ",Ntip(x$tree), 
-		" tips and ",x$tree$Nnode," internal nodes.\n\n",sep= ""))
-	cat(paste("(2) Vectors containing the number of lineages (ltt) ",
-		"and branching times (times) on the tree.\n\n",sep=""))
+		" tips and ",x$tree$Nnode," internal\n",sep= ""))
+	cat("    nodes.\n\n")
+	cat(paste("(2) Vectors containing the number of lineages (ltt) and\n",
+		"    branching times (times) on the tree.\n\n",sep=""))
 	if(!is.null(x$gamma))
 		cat(paste("(3) A value for Pybus & Harvey's \"gamma\"",
-			" statistic of ",round(x$gamma,digits),", p-value = ",
+			" statistic of\n    gamma = ",round(x$gamma,digits),
+			", p-value = ",
 			round(x$p,digits),".\n\n",sep=""))
 }
 
@@ -283,20 +285,27 @@ mccr<-function(obj,rho=1,nsim=100,...){
 print.mccr<-function(x,digits=4,...){
 	cat("Object of class \"mccr\" consisting of:\n\n")
 	cat(paste("(1) A value for Pybus & Harvey's \"gamma\"",
-		" statistic of ",round(x$gamma,digits),".\n\n",sep=""))
+		" statistic of \n    gamma = ",round(x$gamma,digits),
+		".\n\n",sep=""))
 	cat(paste("(2) A two-tailed p-value from the MCCR test of ",
 		round(x$'P(two-tailed)',digits),".\n\n", sep = ""))
 	cat(paste("(3) A simulated null-distribution of gamma from ",
-		length(x$null.gamma)," simulations.\n\n",sep=""))
+		length(x$null.gamma),"\n    simulations.\n\n",sep=""))
 }
 
 ## plot method for "mccr" object class
 
 plot.mccr<-function(x,...){
-	hist(x$null.gamma,breaks=min(c(max(12,round(length(x$null.gamma)/10)),20)),
+	if(hasArg(main)) main<-list(...)$main
+	else main=expression(paste("null distribution of ",
+		gamma))
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-NULL
+	hist(x$null.gamma,breaks=min(c(max(12,
+		round(length(x$null.gamma)/10)),20)),
 		xlim=range(c(x$gamma,x$null.gamma)),
-		main=expression(paste("null distribution of ",
-		gamma)),xlab=expression(gamma),col="lightgrey")
+		main=main,xlab=expression(gamma),col="lightgrey",
+		ylim=ylim)
 	arrows(x0=x$gamma,y0=par()$usr[4],y1=0,length=0.12,
 		col=make.transparent("blue",0.5),lwd=2)
 	text(x$gamma,0.98*par()$usr[4],
