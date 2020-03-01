@@ -1,7 +1,8 @@
 ## function to plot probability or trait value by branch
-## written by Liam J. Revell 2013, 2014, 2016
+## written by Liam J. Revell 2013, 2014, 2016, 2020
 
-plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainbow",legend=TRUE,xlims=NULL,...){
+plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainbow",
+	legend=TRUE,xlims=NULL,...){
 	mode<-mode[1]
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(mode=="tips"){
@@ -32,6 +33,7 @@ plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainb
 	else font<-3
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-par("cex")
+	if(length(cex)==1) cex<-rep(cex,2)
 	if(hasArg(adj)) adj<-list(...)$adj
 	else adj<-NULL
 	if(hasArg(srt)) srt<-list(...)$srt
@@ -78,18 +80,22 @@ plotBranchbyTrait<-function(tree,x,mode=c("edges","tips","nodes"),palette="rainb
 	colors<-sapply(x,whichColor,cols=cols,breaks=breaks)
 	par(lend=2)
 	# now plot
-	xx<-plot.phylo(tree,type=type,show.tip.label=show.tip.label,show.node.label=show.node.label,edge.color=colors,
-	edge.width=edge.width,edge.lty=edge.lty,font=font,cex=cex,adj=adj,srt=srt,no.margin=no.margin,root.edge=root.edge,
-	label.offset=label.offset,underscore=underscore,x.lim=x.lim,y.lim=y.lim,direction=direction,lab4ut=lab4ut,
-	tip.color=tip.color,plot=plot,rotate.tree=rotate.tree,open.angle=open.angle,lend=2,new=FALSE)
+	xx<-plot.phylo(tree,type=type,show.tip.label=show.tip.label,show.node.label=show.node.label,
+		edge.color=colors,edge.width=edge.width,edge.lty=edge.lty,font=font,cex=cex[1],adj=adj,
+		srt=srt,no.margin=no.margin,root.edge=root.edge,label.offset=label.offset,
+		underscore=underscore,x.lim=x.lim,y.lim=y.lim,direction=direction,lab4ut=lab4ut,
+		tip.color=tip.color,plot=plot,rotate.tree=rotate.tree,open.angle=open.angle,lend=2,
+		new=FALSE)
 	if(legend==TRUE&&is.logical(legend)) legend<-round(0.3*max(nodeHeights(tree)),2)
 	if(legend){
 		if(hasArg(title)) title<-list(...)$title
 		else title<-"trait value"
 		if(hasArg(digits)) digits<-list(...)$digits
 		else digits<-1
-		if(prompt) add.color.bar(legend,cols,title,xlims,digits,prompt=TRUE)
-		else add.color.bar(legend,cols,title,xlims,digits,prompt=FALSE,x=par()$usr[1]+0.05*(par()$usr[2]-par()$usr[1]),y=par()$usr[3]+0.05*(par()$usr[4]-par()$usr[3]))
+		if(prompt) add.color.bar(legend,cols,title,xlims,digits,prompt=TRUE,fsize=cex[2])
+		else add.color.bar(legend,cols,title,xlims,digits,prompt=FALSE,
+			x=par()$usr[1]+0.05*(par()$usr[2]-par()$usr[1]),
+			y=par()$usr[3]+0.05*(par()$usr[4]-par()$usr[3]),fsize=cex[2])
 	}
 	invisible(xx)
 }
