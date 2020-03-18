@@ -29,23 +29,31 @@ bind.tip(tree, tip.label, edge.length=NULL, where=NULL, position=0,
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
 set.seed(123)
-# generate tree
+## generate tree
 tree<-pbtree(b=0.1, n=10)
 
-# plot original tree
-plot(tree); axisPhylo()
+## plot original tree
+plot(tree)
+axisPhylo()
 
-# add an extant tip ("t_extant") sister to taxon 't5' with divergence time of 4.5 Ma
-node <- which(tree$tip.label=="t5") # the edge where the new tip will be attached
-tree <- bind.tip(tree, tip.label="t_extant", where=node, position=4.5)
+## add an extant tip ("t_extant") sister to taxon 't5' 
+## with divergence time of 4.5 Ma
+node <- which(tree$tip.label=="t5")
+tree <- bind.tip(tree, tip.label="t_extant", 
+	where=node, position=4.5)
 # plot to see the result
 plot(tree); axisPhylo()
 
-# add an extinct tip ("t_extinct") sister to 't2' with divergence time of 7.8 Ma and duration (edge length) of 3.3 Ma
-node <- which(tree$tip.label=="t2") # the edge where the new tip will be attached
-tree <- bind.tip(tree, tip.label="t_extinct", where=node, position=7.8, edge.length=3.3)
-# plot to see the result
-plot(tree); axisPhylo()
+## add an extinct tip ("t_extinct") sister to 't2' with 
+##divergence time of 7.8 Ma and duration (edge length) of 
+## 3.3 Ma
+node <- which(tree$tip.label=="t2") 
+tree <- bind.tip(tree, tip.label="t_extinct", where=node, 
+	position=7.8, edge.length=3.3)
+
+## plot to see the result
+plot(tree)
+axisPhylo()
 }
 \keyword{phylogenetics}
 \keyword{utilities}

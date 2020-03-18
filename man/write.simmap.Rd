@@ -2,7 +2,8 @@
 \alias{write.simmap}
 \title{Write a stochastic character mapped tree to file}
 \usage{
-write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE, format="phylip", version=1.0)
+write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE, 
+	format="phylip", version=1.0)
 }
 \arguments{
 	\item{tree}{an object of class \code{"simmap"} or \code{"multiSimmap"}.}

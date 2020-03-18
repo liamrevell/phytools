@@ -23,10 +23,12 @@ genSeq(tree, l=1000, Q=NULL, rate=1, format="DNAbin", ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+\dontrun{
 ## simulate gamma rate heterogeneity
 tree<-pbtree(n=26,tip.label=LETTERS,scale=0.1)
 gg<-rgamma(n=100,shape=0.25,rate=0.25)
 dna<-genSeq(tree,l=100,rate=gg)
+}
 }
 \keyword{phylogenetics}
 \keyword{simulation}
