@@ -1,5 +1,5 @@
 ## some utility functions
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020
 
 ## di2multi & multi2di for "contMap" & "densityMap" object classes
 
@@ -738,7 +738,7 @@ edgeProbs<-function(trees){
 }
 
 ## get a position in the tree interactively
-## written by Liam J. Revell 2015, 2016
+## written by Liam J. Revell 2015, 2016, 2020
 get.treepos<-function(message=TRUE,...){
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(obj$type=="phylogram"&&obj$direction=="rightwards"){
@@ -769,7 +769,10 @@ get.treepos<-function(message=TRUE,...){
 			}
 		}
 		ii<-which(d==min(d))
-		list(where=obj$edge[ii,2],pos=pos[ii])
+		## check to make sure the root is not closer:
+		root.d<-dist(rbind(c(x,y),c(obj$xx[obj$Ntip+1],obj$yy[obj$Ntip+1])))
+		if(root.d<min(d)) return(list(where=obj$Ntip+1,pos=0))
+		else list(where=obj$edge[ii,2],pos=pos[ii])
 	} else stop("Does not work for the plotted tree type.")
 }
 
@@ -981,22 +984,32 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 		node.number<-obj$where
 		position<-tree$edge.length[which(tree$edge[,2]==node.number)]-obj$pos
 	}
-	if(is.null(position)) position<-tree$edge.length[which(tree$edge[,2]==node.number)]
+	if(node.number==(Ntip(tree)+1))
+		cat("Note: you chose to re-root the tree at it's current root.\n")
+	if(is.null(position)){
+		if(node.number==(Ntip(tree)+1)) position=0
+		else position<-tree$edge.length[which(tree$edge[,2]==node.number)]
+	} else {
+		if(node.number==(Ntip(tree)+1))
+			cat("      A value of position != 0 has been reset to zero.\n")
+	}
 	if(hasArg(edgelabel)) edgelabel<-list(...)$edgelabel
-	edgelabel<-FALSE
-	tt<-splitTree(tree,list(node=node.number,bp=position))
-	p<-tt[[1]]
-	d<-tt[[2]]
-	tip<-if(length(which(p$tip.label=="NA"))>0) "NA" else p$tip.label[which(p$tip.label%in%tree$node.label)]
-	p<-ape::root.phylo(p,outgroup=tip,resolve.root=TRUE,edgelabel=edgelabel)
-	bb<-which(p$tip.label==tip)
-	p$tip.label[bb]<-"NA"
-	ee<-p$edge.length[which(p$edge[,2]==bb)]
-	p$edge.length[which(p$edge[,2]==bb)]<-0
-	cc<-p$edge[which(p$edge[,2]==bb),1]
-	dd<-setdiff(p$edge[which(p$edge[,1]==cc),2],bb)
-	p$edge.length[which(p$edge[,2]==dd)]<-p$edge.length[which(p$edge[,2]==dd)]+ee
-	obj<-paste.tree(p,d)
+	else edgelabel<-FALSE
+	if(node.number!=(Ntip(tree)+1)){
+		tt<-splitTree(tree,list(node=node.number,bp=position))
+		p<-tt[[1]]
+		d<-tt[[2]]
+		tip<-if(length(which(p$tip.label=="NA"))>0) "NA" else p$tip.label[which(p$tip.label%in%tree$node.label)]
+		p<-ape::root.phylo(p,outgroup=tip,resolve.root=TRUE,edgelabel=edgelabel)
+		bb<-which(p$tip.label==tip)
+		p$tip.label[bb]<-"NA"
+		ee<-p$edge.length[which(p$edge[,2]==bb)]
+		p$edge.length[which(p$edge[,2]==bb)]<-0
+		cc<-p$edge[which(p$edge[,2]==bb),1]
+		dd<-setdiff(p$edge[which(p$edge[,1]==cc),2],bb)
+		p$edge.length[which(p$edge[,2]==dd)]<-p$edge.length[which(p$edge[,2]==dd)]+ee
+		obj<-paste.tree(p,d)
+	} else obj<-tree
 	if(interactive) plotTree(obj,...)
 	obj
 }
