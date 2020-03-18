@@ -1,5 +1,5 @@
 ## functions plot stochastic character mapped trees
-## written by Liam Revell 2011-2019
+## written by Liam Revell 2011-2020
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
@@ -71,11 +71,11 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 				black<-colors
 				black[]<-"black"
 				plotFan(tree,colors=black,fsize,ftype,lwd=lwd+2,mar,add,part,setEnv,
-					xlim,ylim,tips,maxY,lend,plot)
+					xlim,ylim,tips,maxY,lend,plot,offset)
 				par(fg=fg)
 			}
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add=if(outline) TRUE else add,part,
-				setEnv,xlim,ylim,tips,maxY,lend,plot)
+				setEnv,xlim,ylim,tips,maxY,lend,plot,offset)
 		} else if(type=="cladogram"){
 			if(outline){
 				fg<-par()$fg
@@ -359,7 +359,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 
 # function to plot simmap tree in type "fan"
 # written by Liam J. Revell 2013-2017
-plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot){
+plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot,offset=0){
 	if(!plot) cat("plot=FALSE option is not permitted for type=\"fan\". Tree will be plotted.\n")
 	# reorder
 	cw<-reorder(tree)
@@ -387,10 +387,10 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 	# optimize x & y limits
 	par(mar=mar)
 	offsetFudge<-1.37 # empirically determined
-	offset<-0
+	OFFSET<-0
 	pp<-par("pin")[1]
  	sw<-fsize*(max(strwidth(cw$tip.label,units="inches")))+
-		offsetFudge*offset*fsize*strwidth("W",units="inches") 
+		offsetFudge*OFFSET*fsize*strwidth("W",units="inches") 
 	alp<-optimize(function(a,H,sw,pp) (2*a*1.04*max(H)+2*sw-pp)^2,H=R,sw=sw,pp=pp,
 		interval=c(0,1e6))$minimum
 	if(part<=0.25) x.lim<-y.lim<-c(0,max(R)+sw/alp)
@@ -440,7 +440,8 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 		ii<-which(cw$edge[,2]==i)
 		aa<-Y[ii,2]/(2*pi)*360
 		adj<-if(aa>90&&aa<270) c(1,0.25) else c(0,0.25)
-		tt<-if(aa>90&&aa<270) paste(cw$tip.label[i]," ",sep="") else paste(" ",
+		tt<-if(aa>90&&aa<270) paste(cw$tip.label[i],paste(rep(" ",offset),
+			collapse=""),sep="") else paste(paste(rep(" ",offset),collapse=""),
 			cw$tip.label[i],sep="")
 		aa<-if(aa>90&&aa<270) 180+aa else aa
 		if(ftype) text(x[ii,2],y[ii,2],tt,srt=aa,adj=adj,cex=fsize,font=ftype)

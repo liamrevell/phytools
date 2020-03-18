@@ -80,7 +80,7 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 
 ## S3 plot method for objects of class "densityMap"
 ## also used internally by plot.contMap
-## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020
 
 plot.densityMap<-function(x,...){
 	if(class(x)=="densityMap"){
@@ -186,12 +186,12 @@ plot.densityMap<-function(x,...){
 			par(col="white")
 			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd[1]+2,
 				mar=mar,fsize=fsize[1],
-				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE)))
+				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE,offset=offset)))
 			par(col="black")
 		}
 		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd[1],
 			mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
-			type="fan",xlim=xlim,ylim=ylim,hold=FALSE)))
+			type="fan",xlim=xlim,ylim=ylim,hold=FALSE,offset=offset)))
 		if(legend){
 			ff<-function(dd){
 				if(!("."%in%dd)) dig<-0
