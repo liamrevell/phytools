@@ -202,6 +202,8 @@ plot.backbonePhylo<-function(x,...){
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-par("cex")
 	if(fixed.height||print.clade.size){
 		obj<-x
 		for(i in 1:Ntip(obj)){
@@ -241,8 +243,8 @@ plot.backbonePhylo<-function(x,...){
 	plot.new()
 	par(mar=rep(0.1,4))
 	pp<-par("pin")[1]
-	sw<-par("cex")*(max(strwidth(sapply(cw$tip.clade,function(x) x$label),
-		units="inches")))+1.37*par("cex")*strwidth("W",units="inches")
+	sw<-cex*(max(strwidth(sapply(cw$tip.clade,function(x) x$label),
+		units="inches")))+1.37*cex*strwidth("W",units="inches")
 	alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=X,sw=sw,pp=pp,
 		interval=c(0,1e6))$minimum
 	if(is.null(xlim)) xlim<-c(min(X),max(X)+sw/alp)
@@ -275,10 +277,10 @@ plot.backbonePhylo<-function(x,...){
 	}
 	for(i in 1:length(cw$tip.clade)) 
 		text(X[which(cw$edge[,2]==i),2],y[i],cw$tip.clade[[i]]$label,pos=4,
-			offset=0.1)
+			offset=0.1,cex=cex)
 	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 		show.tip.label=TRUE,show.node.label=FALSE,
-		font=1,cex=1,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
+		font=1,cex=cex,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
 		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 		direction="rightwards",tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
 		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
