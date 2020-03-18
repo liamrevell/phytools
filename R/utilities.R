@@ -916,7 +916,9 @@ getExtant<-function(tree,tol=1e-8){
 getExtinct<-function(tree,tol=1e-8) setdiff(tree$tip.label,getExtant(tree,tol))
 
 # function splits tree at split
-# written by Liam Revell 2011, 2014, 2015
+# written by Liam Revell 2011, 2014, 2015, 2020
+## update 2020 to try to retain node labels that label edges correctly located
+## does not yet work.
 
 splitTree<-function(tree,split){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -942,7 +944,6 @@ splitTree<-function(tree,split){
 	class(trees)<-"multiPhylo"
 	trees
 }
-
 
 # function drops entire clade
 # written by Liam Revell 2011, 2015
@@ -972,11 +973,13 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 		position<-tree$edge.length[which(tree$edge[,2]==node.number)]-obj$pos
 	}
 	if(is.null(position)) position<-tree$edge.length[which(tree$edge[,2]==node.number)]
+	if(hasArg(edgelabel)) edgelabel<-list(...)$edgelabel
+	edgelabel<-FALSE
 	tt<-splitTree(tree,list(node=node.number,bp=position))
 	p<-tt[[1]]
 	d<-tt[[2]]
 	tip<-if(length(which(p$tip.label=="NA"))>0) "NA" else p$tip.label[which(p$tip.label%in%tree$node.label)]
-	p<-ape::root.phylo(p,outgroup=tip,resolve.root=TRUE)
+	p<-ape::root.phylo(p,outgroup=tip,resolve.root=TRUE,edgelabel=edgelabel)
 	bb<-which(p$tip.label==tip)
 	p$tip.label[bb]<-"NA"
 	ee<-p$edge.length[which(p$edge[,2]==bb)]
