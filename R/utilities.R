@@ -917,8 +917,6 @@ getExtinct<-function(tree,tol=1e-8) setdiff(tree$tip.label,getExtant(tree,tol))
 
 # function splits tree at split
 # written by Liam Revell 2011, 2014, 2015, 2020
-## update 2020 to try to retain node labels that label edges correctly located
-## does not yet work.
 
 splitTree<-function(tree,split){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -946,21 +944,32 @@ splitTree<-function(tree,split){
 }
 
 # function drops entire clade
-# written by Liam Revell 2011, 2015
+# written by Liam Revell 2011, 2015, 2020
 
 drop.clade<-function(tree,tip){
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	nn<-if(!is.null(tree$node.label)) c(tree$node.label,"NA") else "NA"
-	tree<-drop.tip(tree,tip,trim.internal=FALSE)
-	while(sum(tree$tip.label%in%nn)>1)
-		tree<-drop.tip(tree,tree$tip.label[tree$tip.label%in%nn],
-			trim.internal=FALSE)
+	## step 1, check to make sure tips form a monophyletic clade
+	node<-getMRCA(tree,tip)
+	desc<-getDescendants(tree,node)
+	chk<-tree$tip.label[desc[desc<=Ntip(tree)]]
+	if(!setequal(tip,chk)){
+		cat("Caution: Species in tip do not form a monophyletic clade.\n")
+		cat("         Pruning all tips descended from ancestor.\n\n")
+		tip<-chk
+	}
+	## step 2, find all edges in the clade & set them to zero length
+	ee<-sapply(desc,function(node,edge) which(edge==node), 
+		edge=tree$edge[,2])
+	tree$edge.length[ee]<-0
+	## step 3, bind a tip labeled "NA" to the node
+	tree<-bind.tip(tree,"NA",0,node)
+	## step 4, prune the other tips
+	tree<-drop.tip(tree,tip)
+	## step 5, return tree
 	tree
 }
 
-
 ## function to re-root a phylogeny along an edge
-## written by Liam J. Revell 2011-2016, 2019
+## written by Liam J. Revell 2011-2016, 2019, 2020
 
 reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
