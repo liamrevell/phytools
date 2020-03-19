@@ -7,7 +7,8 @@
 plotTree.wBars(tree, x, scale=NULL, width=NULL, type="phylogram", 
    method="plotTree", tip.labels=FALSE, col="grey", border=NULL, 
    ...)
-plotTree.barplot(tree, x, args.plotTree=list(), args.barplot=list(), ...)
+plotTree.barplot(tree, x, args.plotTree=list(), args.barplot=list(), 
+	...)
 plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list())
 }
 \arguments{
