@@ -359,8 +359,9 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 
 # function to plot simmap tree in type "fan"
 # written by Liam J. Revell 2013-2017
-plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot,offset=0){
+plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot,offset){
 	if(!plot) cat("plot=FALSE option is not permitted for type=\"fan\". Tree will be plotted.\n")
+	if(is.null(offset)) offset<-1
 	# reorder
 	cw<-reorder(tree)
 	pw<-reorder(tree,"pruningwise")
