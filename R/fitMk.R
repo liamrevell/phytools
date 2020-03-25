@@ -1,5 +1,5 @@
 ## function for conditional likelihoods at nodes
-## written by Liam J. Revell 2015, 2016, 2019
+## written by Liam J. Revell 2015, 2016, 2019, 2020
 ## with input from (& structural similarity to) function ace by E. Paradis et al. 2013
 
 fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
@@ -118,6 +118,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			pi=pi)
 		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	}
+	lik.f<-function(q) lik(q,output.liks=FALSE,pi=pi)
+	obj$lik<-lik.f
 	class(obj)<-"fitMk"
 	return(obj)
 }

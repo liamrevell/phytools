@@ -1,9 +1,16 @@
 ## written by Liam J. Revell
 
+minChanges<-function(tree,x){
+	if(is.matrix(x)) 
+		x<-as.factor(apply(x,1,function(x) names(which(x==max(x)))[1]))
+	parsimony(tree,as.phyDat(x))
+}
+
 mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	if(hasArg(plot)) plot<-list(...)$plot
-	else plot<-FALSE
-	log.prior<-function(x,prior) sum(dexp(x,prior,log=TRUE))
+	else plot<-TRUE
+	## log.prior<-function(x,prior) sum(dexp(x,prior,log=TRUE))
+	log.prior<-function(x,prior) sum(dgamma(x,shape=prior$alpha,rate=prior$beta,log=TRUE))
 	proposal<-function(q,pv) abs(q+rnorm(n=length(q),sd=sqrt(pv)))
 	makeQ<-function(m,q,index.matrix){
 		Q<-matrix(0,m,m)
@@ -13,13 +20,17 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 		Q
 	}		
 	if(hasArg(q)) q<-list(...)$q
-	else q<-if(is.matrix(x)) nrow(x)/sum(tree$edge.length) else
-		length(unique(x))/sum(tree$edge.length)
+	else q<-minChanges(tree,x)/sum(tree$edge.length)
 	if(hasArg(prop.var)) prop.var<-list(...)$prop.var
-	else prop.var<-0.01/max(nodeHeights(tree))
-	if(hasArg(prior.rate)) prior.rate<-list(...)$prior.rate
-	else prior.rate<-if(is.matrix(x)) sum(tree$edge.length)/ncol(x) else
-		sum(tree$edge.length)/length(unique(x))
+	else prop.var<-1/max(nodeHeights(tree))
+	if(hasArg(auto.tune)) auto.tune<-list(...)$auto.tune
+	else auto.tune<-TRUE
+	if(is.numeric(auto.tune)){ 
+		target.accept<-auto.tune
+		auto.tune<-TRUE
+	} else target.accept<-0.5
+	if(hasArg(prior)) prior<-list(...)$prior
+	else prior<-NULL
 	if(hasArg(print)) print<-list(...)$print
 	else print<-100
 	if(is.matrix(x)){
@@ -62,8 +73,27 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	index.matrix<-rate
 	if(length(q)!=k) q<-rep(q[1],k)
 	if(length(prop.var)!=k) prop.var<-rep(prop.var[1],k)
-	if(length(prior.rate)!=k) prior.rate<-rep(prior.rate[1],k)
-	likQ<-logLik(fitMk(tree,x,model=model,fixedQ=makeQ(m,q,index.matrix),pi=pi))
+	default.alpha<-0.1
+	if(is.null(prior)){
+		prior<-list(
+			alpha=rep(default.alpha,k),
+			beta=rep(default.alpha*sum(tree$edge.length)/minChanges(tree,x),k)
+		)
+	} else if(is.list(prior)){
+		if(is.null(prior$alpha)) prior$alpha<-rep(default.alpha,k)
+		else if(is.null(prior$beta)) 
+			prior$beta<-rep(prior$alpha*sum(tree$edge.length)/minChanges(tree,x),k)
+	} else if(is.numeric(prior)){
+		if(length(prior)==1)
+			prior<-list(alpha=rep(prior,k),
+				beta=rep(prior*sum(tree$edge.length)/minChanges(tree,x),k))
+		else if(length(prior)==2)
+			prior<-list(alpha=rep(prior[1],k),beta=rep(prior[2],k))
+	}
+print(prior)
+	object<-fitMk(tree,x,model=model,fixedQ=makeQ(m,q,index.matrix),pi=pi)
+	lik.func<-object$lik
+	likQ<-logLik(object)
 	nn<-vector(length=k,mode="character")
 	for(i in 1:k) nn[i]<-paste("[",paste(states[which(rate==i,arr.ind=TRUE)[1,]],
 		collapse=","),"]",sep="")
@@ -82,12 +112,13 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	qp<-q
 	for(i in 2:ngen){
 		qp[i%%k+1]<-proposal(q[i%%k+1],prop.var[i%%k+1])
-		likQp<-logLik(fitMk(tree,x,model=model,fixedQ=makeQ(m,qp,index.matrix),pi=pi))
-		por<-exp(likQp-likQ+log.prior(qp,prior.rate)-log.prior(q,prior.rate))
+		likQp<-lik.func(qp)
+		por<-exp(likQp-likQ+log.prior(qp,prior)-log.prior(q,prior))
 		if(por>runif(n=1)){
 			q<-qp
 			likQ<-likQp
 			if(print) accept<-accept+1/print
+			else accept<-accept+1/100
 		}
 		PS[i,]<-c(i,q,likQ)
 		if(print) if(i%%print==1){
@@ -95,10 +126,39 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 				round(PS[i,ncol(PS)],4),round(accept,3),sep="\t"))
 			cat("\n")
 			flush.console()
+			if(auto.tune) prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
 			accept<-0
+		} else {
+			if(i%%100==1){
+				if(auto.tune) prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
+				accept<-0
+			}
 		}
-		if(plot) plot(1:i,PS[1:i,"logLik"],col="darkgrey",xlab="generation",
-				ylab="log(L)",xlim=c(0,ngen),type="l")
+		if(plot){
+			dev.hold()
+			par(mfrow=c(2,1),mar=c(5.1,4.1,2.1,1.1))
+			plot(1:i,PS[1:i,"logLik"],col="darkgrey",xlab="",
+				ylab="log(L)",xlim=c(0,ngen),type="l",bty="l")
+			mtext("a) log-likelihood profile plot",side=3,line=1,cex=1,
+				at=0,outer=FALSE,adj=0)
+			plot(1:i,PS[1:i,2],col=Palette(1),
+				xlab="generation",xlim=c(0,ngen),
+				ylim=c(0,max(PS[1:i,2:(ncol(PS)-1)])),
+				ylab="q",type="l",bty="l")
+			abline(h=mean(PS[1:i,2]),lty="dotted",col=Palette(1))
+			text(x=ngen,y=mean(PS[1:i,2]),colnames(PS)[2],cex=0.5,
+				col=Palette(1),pos=3)
+			if(length(q)>1){
+				for(j in 2:length(q)){ 
+					lines(1:i,PS[1:i,j+1],col=Palette(j))
+					abline(h=mean(PS[1:i,j+1]),lty="dotted",col=Palette(j))
+					text(x=ngen,y=mean(PS[1:i,j+1]),colnames(PS)[j+1],
+						cex=0.5,col=Palette(j),pos=3)
+				}
+			}
+			mtext("b) rates",side=3,line=1,cex=1,at=0,outer=FALSE,adj=0)
+			dev.flush()
+		}
 	}
 	cat("Done.\n")
 	class(PS)<-"mcmcMk"
@@ -106,7 +166,9 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	attr(PS,"index.matrix")<-index.matrix
 	attr(PS,"states")<-states
 	PS
-}	
+}
+
+Palette<-function(i)  rep(palette(),ceiling(i/8))[i]
 
 print.mcmcMk<-function(x,...){
 	cat("\nPosterior sample from mcmcMk consisting of a posterior sample obtained using\n")
