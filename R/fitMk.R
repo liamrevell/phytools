@@ -118,7 +118,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			pi=pi)
 		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
 	}
-	lik.f<-function(q) lik(q,output.liks=FALSE,pi=pi)
+	lik.f<-function(q) -lik(q,output.liks=FALSE,pi=pi)
 	obj$lik<-lik.f
 	class(obj)<-"fitMk"
 	return(obj)
