@@ -16,14 +16,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
 	log.prior<-function(x,prior) sum(dgamma(x,shape=prior$alpha,rate=prior$beta,log=TRUE))
-	proposal<-function(q,pv) abs(q+rnorm(n=length(q),sd=sqrt(pv)))
-	makeQ<-function(m,q,index.matrix){
-		Q<-matrix(0,m,m)
-		Q[]<-c(0,q)[index.matrix+1]
-		diag(Q)<-0
-		diag(Q)<--rowSums(Q)
-		Q
-	}		
+	proposal<-function(q,pv) abs(q+rnorm(n=length(q),sd=sqrt(pv)))	
 	if(hasArg(q)) q<-list(...)$q
 	else q<-minChanges(tree,x)/sum(tree$edge.length)
 	if(hasArg(prop.var)) prop.var<-list(...)$prop.var
@@ -114,7 +107,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	}
 	if(likelihood=="fitDiscrete"){
 		LIK<-fitDiscrete(tree,y,model=model,niter=1)$lik
-		lik.func<-function(Q) LIK(makeq(Q,index.matrix),root="given",root.p=pi)
+		lik.func<-function(Q) LIK(makeq(Q,t(index.matrix)),root="given",root.p=pi)
 	} else lik.func<-fitMk(tree,x,fixedQ=makeQ(m,q,index.matrix),pi=pi)$lik
 	likQ<-lik.func(makeQ(m,q,index.matrix))
 	nn<-vector(length=k,mode="character")
