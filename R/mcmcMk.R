@@ -146,7 +146,8 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 			accept<-0
 		} else {
 			if(i%%100==1){
-				if(auto.tune) prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
+				if(auto.tune) prop.var<-if(accept>target.accept) 1.1*prop.var else 
+					prop.var/1.1
 				accept<-0
 			}
 		}
@@ -331,7 +332,8 @@ plot.density.mcmcMk<-function(x,...){
 			rownames(attr(x,"summary")$HPD95)[2]),pos=3)
 		nam.legend<-sapply(strsplit(names(x),"Density "),function(x) x[2])
 		legend(x="topright",legend=nam.legend,bty="n",pt.cex=2,pch=22,
-			pt.bg=c(make.transparent("blue",0.25),make.transparent("red",0.25)))
+			pt.bg=c(make.transparent("blue",0.25),make.transparent("red",
+			0.25)))
 	} else {
 		k<-length(attr(x,"states"))
 		par(mfrow=c(k,k))
