@@ -1,9 +1,5 @@
 ## written by Liam J. Revell
 
-
-
-brewer.pal<-function(...) NULL
-
 minChanges<-function(tree,x){
 	if(is.matrix(x)) 
 		x<-as.factor(apply(x,1,function(x) names(which(x==max(x)))[1]))
@@ -195,14 +191,13 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	PS
 }
 
-Palette<-function(i){  
-	if(!.check.pkg("RColorBrewer")){ 
+Palette<-function(i){
+	if(!.check.pkg("RColorBrewer")){
+cat("I'M IN HERE!\n")
+		brewer.pal<-function(...) NULL
 		COLOR<-rep(palette(),ceiling(i/8))[i]
 		COLOR<-if(COLOR=="black") "darkgrey"
-		brewer.pal<-function(...) NULL
-	} else {
-		COLOR<-rep(brewer.pal(8,"Accent"),ceiling(i/8))[i]
-	}
+	} else COLOR<-rep(brewer.pal(8,"Accent"),ceiling(i/8))[i]
 	COLOR
 }
 
