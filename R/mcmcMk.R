@@ -1,5 +1,9 @@
 ## written by Liam J. Revell
 
+
+
+brewer.pal<-function(...) NULL
+
 minChanges<-function(tree,x){
 	if(is.matrix(x)) 
 		x<-as.factor(apply(x,1,function(x) names(which(x==max(x)))[1]))
@@ -47,9 +51,11 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 		if(.check.pkg("geiger")==FALSE){
 			cat("geiger is not installed. Setting likelihood method to \"fitMk\".\n\n")
 			likelihood<-"fitMk"
+			fitDiscrete<-function(...) NULL
 		} else if(is.matrix(x)){
 			cat("likelihood=\"fitDiscrete\" doesn't work for data input as matrix.\n")
 			cat("Setting likelihood method to \"fitMk\".\n\n")
+			fitDiscrete<-function(...) NULL
 		}
 	}
 	if(is.matrix(x)){
@@ -193,6 +199,7 @@ Palette<-function(i){
 	if(!.check.pkg("RColorBrewer")){ 
 		COLOR<-rep(palette(),ceiling(i/8))[i]
 		COLOR<-if(COLOR=="black") "darkgrey"
+		brewer.pal<-function(...) NULL
 	} else {
 		COLOR<-rep(brewer.pal(8,"Accent"),ceiling(i/8))[i]
 	}
