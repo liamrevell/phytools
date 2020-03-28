@@ -7,9 +7,10 @@ minChanges<-function(tree,x){
 }
 
 mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
+y<-x
+	EXPM<-function(x) matexpo(x)
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
-	## log.prior<-function(x,prior) sum(dexp(x,prior,log=TRUE))
 	log.prior<-function(x,prior) sum(dgamma(x,shape=prior$alpha,rate=prior$beta,log=TRUE))
 	proposal<-function(q,pv) abs(q+rnorm(n=length(q),sd=sqrt(pv)))
 	makeQ<-function(m,q,index.matrix){
@@ -91,9 +92,13 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 			prior<-list(alpha=rep(prior[1],k),beta=rep(prior[2],k))
 	}
 print(prior)
-	object<-fitMk(tree,x,model=model,fixedQ=makeQ(m,q,index.matrix),pi=pi)
+	object<-fitMk(tree,y,model=model,fixedQ=makeQ(m,q,index.matrix),pi=pi)
+print(object)
 	lik.func<-object$lik
-	likQ<-logLik(object)
+print(lik.func)
+print(lik.func(1.00),root=pi)
+print(q)
+	likQ<-lik.func(q)
 	nn<-vector(length=k,mode="character")
 	for(i in 1:k) nn[i]<-paste("[",paste(states[which(rate==i,arr.ind=TRUE)[1,]],
 		collapse=","),"]",sep="")
@@ -112,6 +117,8 @@ print(prior)
 	qp<-q
 	for(i in 2:ngen){
 		qp[i%%k+1]<-proposal(q[i%%k+1],prop.var[i%%k+1])
+print(qp)
+print(lik.func)
 		likQp<-lik.func(qp)
 		por<-exp(likQp-likQ+log.prior(qp,prior)-log.prior(q,prior))
 		if(por>runif(n=1)){
