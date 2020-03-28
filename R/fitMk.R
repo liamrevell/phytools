@@ -70,11 +70,9 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	rate[rate==0]<-k+1
 	liks<-rbind(x,matrix(0,M,m,dimnames=list(1:M+N,states)))
 	pw<-reorder(tree,"pruningwise")
-	lik<-function(pp,output.liks=FALSE,pi){
-		if(any(is.nan(pp))||any(is.infinite(pp))) return(1e50)
+	lik<-function(Q,output.liks=FALSE,pi){
+		if(any(is.nan(Q))||any(is.infinite(Q))) return(1e50)
 		comp<-vector(length=N+M,mode="numeric")
-		Q[]<-c(pp,0)[rate]
-		diag(Q)<--rowSums(Q)
 		parents<-unique(pw$edge[,1])
 		root<-min(parents)
 		for(i in 1:length(parents)){
@@ -83,8 +81,9 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			desc<-pw$edge[ii,2]
 			el<-pw$edge.length[ii]
 			v<-vector(length=length(desc),mode="list")
-			for(j in 1:length(v))
+			for(j in 1:length(v)){
 				v[[j]]<-EXPM(Q*el[j])%*%liks[desc[j],]
+			}
 			vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
 			comp[anc]<-sum(vv)
 			liks[anc,]<-vv/comp[anc]
@@ -96,11 +95,14 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	if(is.null(fixedQ)){
 		if(length(q.init)!=k) q.init<-rep(q.init[1],k)
 		if(opt.method=="optim")
-			fit<-optim(q.init,function(p) lik(p,pi=pi),method="L-BFGS-B",lower=rep(min.q,k))
+			fit<-optim(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
+				method="L-BFGS-B",lower=rep(min.q,k))
 		else if(opt.method=="none")
-			fit<-list(objective=lik(q.init,pi=pi),par=q.init)
+			fit<-list(objective=lik(makeQ(m,q.init,index.matrix),pi=pi),
+				par=q.init)
 		else	
-			fit<-nlminb(q.init,function(p) lik(p,pi=pi),lower=rep(0,k),upper=rep(1e50,k))
+			fit<-nlminb(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
+				lower=rep(0,k),upper=rep(1e50,k))
 		obj<-list(logLik=
 			if(opt.method=="optim") -fit$value else -fit$objective,
 			rates=fit$par,
@@ -108,20 +110,30 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			states=states,
 			pi=pi,
 			method=opt.method)
-		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
+		if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
+			pi=pi)
 	} else {
-		fit<-lik(Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],pi=pi)
+		fit<-lik(Q,pi=pi)
 		obj<-list(logLik=-fit,
 			rates=Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],
 			index.matrix=index.matrix,
 			states=states,
 			pi=pi)
-		if(output.liks) obj$lik.anc<-lik(obj$rates,TRUE,pi=pi)
+		if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
+			pi=pi)
 	}
 	lik.f<-function(q) -lik(q,output.liks=FALSE,pi=pi)
 	obj$lik<-lik.f
 	class(obj)<-"fitMk"
 	return(obj)
+}
+
+makeQ<-function(m,q,index.matrix){
+	Q<-matrix(0,m,m)
+	Q[]<-c(0,q)[index.matrix+1]
+	diag(Q)<-0
+	diag(Q)<--rowSums(Q)
+	Q
 }
 
 ## print method for objects of class "fitMk"

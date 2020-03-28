@@ -6,9 +6,13 @@ minChanges<-function(tree,x){
 	parsimony(tree,as.phyDat(x))
 }
 
+makeq<-function(Q,index.matrix){
+	q<-vector(length=max(index.matrix,na.rm=TRUE),mode="numeric")
+	for(i in 1:length(q)) q[i]<-Q[match(i,index.matrix)]
+	q
+}
+	
 mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
-y<-x
-	EXPM<-function(x) matexpo(x)
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
 	log.prior<-function(x,prior) sum(dgamma(x,shape=prior$alpha,rate=prior$beta,log=TRUE))
@@ -34,11 +38,26 @@ y<-x
 	else prior<-NULL
 	if(hasArg(print)) print<-list(...)$print
 	else print<-100
+	if(hasArg(likelihood)) likelihood<-list(...)$likelihood
+	else {
+		if(.check.pkg("geiger")) likelihood<-"fitDiscrete"
+		else likelihood<-"fitMk"
+	}
+	if(likelihood=="fitDiscrete"){
+		if(.check.pkg("geiger")==FALSE){
+			cat("geiger is not installed. Setting likelihood method to \"fitMk\".\n\n")
+			likelihood<-"fitMk"
+		} else if(is.matrix(x)){
+			cat("likelihood=\"fitDiscrete\" doesn't work for data input as matrix.\n")
+			cat("Setting likelihood method to \"fitMk\".\n\n")
+		}
+	}
 	if(is.matrix(x)){
 		x<-x[tree$tip.label,]
 		m<-ncol(x)
 		states<-colnames(x)
 	} else {
+		y<-x
 		x<-to.matrix(x,sort(unique(x)))
 		x<-x[tree$tip.label,]
 		m<-ncol(x)
@@ -91,14 +110,11 @@ y<-x
 		else if(length(prior)==2)
 			prior<-list(alpha=rep(prior[1],k),beta=rep(prior[2],k))
 	}
-print(prior)
-	object<-fitMk(tree,y,model=model,fixedQ=makeQ(m,q,index.matrix),pi=pi)
-print(object)
-	lik.func<-object$lik
-print(lik.func)
-print(lik.func(1.00),root=pi)
-print(q)
-	likQ<-lik.func(q)
+	if(likelihood=="fitDiscrete"){
+		LIK<-fitDiscrete(tree,y,model=model,niter=1)$lik
+		lik.func<-function(Q) LIK(makeq(Q,index.matrix),root="given",root.p=pi)
+	} else lik.func<-fitMk(tree,x,fixedQ=makeQ(m,q,index.matrix),pi=pi)$lik
+	likQ<-lik.func(makeQ(m,q,index.matrix))
 	nn<-vector(length=k,mode="character")
 	for(i in 1:k) nn[i]<-paste("[",paste(states[which(rate==i,arr.ind=TRUE)[1,]],
 		collapse=","),"]",sep="")
@@ -117,9 +133,7 @@ print(q)
 	qp<-q
 	for(i in 2:ngen){
 		qp[i%%k+1]<-proposal(q[i%%k+1],prop.var[i%%k+1])
-print(qp)
-print(lik.func)
-		likQp<-lik.func(qp)
+		likQp<-lik.func(makeQ(m,qp,index.matrix))
 		por<-exp(likQp-likQ+log.prior(qp,prior)-log.prior(q,prior))
 		if(por>runif(n=1)){
 			q<-qp
@@ -175,7 +189,15 @@ print(lik.func)
 	PS
 }
 
-Palette<-function(i)  rep(palette(),ceiling(i/8))[i]
+Palette<-function(i){  
+	if(!.check.pkg("RColorBrewer")){ 
+		COLOR<-rep(palette(),ceiling(i/8))[i]
+		COLOR<-if(COLOR=="black") "darkgrey"
+	} else {
+		COLOR<-rep(brewer.pal(8,"Accent"),ceiling(i/8))[i]
+	}
+	COLOR
+}
 
 print.mcmcMk<-function(x,...){
 	cat("\nPosterior sample from mcmcMk consisting of a posterior sample obtained using\n")
@@ -196,13 +218,6 @@ plot.mcmcMk<-function(x,...){
 }
 
 summary.mcmcMk<-function(object,...){
-	makeQ<-function(m,q,index.matrix){
-		Q<-matrix(0,m,m)
-		Q[]<-c(0,q)[index.matrix+1]
-		diag(Q)<-0
-		diag(Q)<--rowSums(Q)
-		Q
-	}	
 	if(hasArg(burnin)) burnin<-list(...)$burnin
 	else { 
 		burnin<-floor(0.2*nrow(object))
@@ -218,6 +233,14 @@ summary.mcmcMk<-function(object,...){
 	## print Q
 	cat("Mean value of Q from the post burn-in posterior sample:\n")
 	print(Q)
+	## compute the median value of Q
+	median.Q<-makeQ(length(attr(object,"states")),
+		apply(PD[,2:(ncol(object)-1),drop=FALSE],2,median),
+		attr(object,"index.matrix"))
+	colnames(median.Q)<-rownames(median.Q)<-attr(object,"states")
+	## print Q
+	cat("\nMedian value of Q from the post burn-in posterior sample:\n")
+	print(median.Q)		
 	if(.check.pkg("coda")){
 			hpd95<-function(x) HPDinterval(as.mcmc(x))
 	} else {
@@ -236,7 +259,7 @@ summary.mcmcMk<-function(object,...){
 	cat("\n95% HPD interval computed either from the post burn-in\nsamples or using \'coda\':\n")
 	print(HPD)
 	cat("\n")
-	object<-list(mean.Q=Q,HPD95=HPD)
+	object<-list(mean.Q=Q,median.Q=median.Q,HPD95=HPD)
 	class(object)<-"summary.mcmcMk"
 	invisible(object)
 }
