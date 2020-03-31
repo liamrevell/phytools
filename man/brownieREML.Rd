@@ -15,9 +15,9 @@ brownieREML(tree, x, maxit=2000, ...)
 }
 \value{
 	An object of class \code{"brownieREML"} containing the following components:
-	\item{sig2.single}{is the rate for a single rate model - this is usually the "null" model.}
+	\item{sig2.single}{is the rate, \eqn{\sigma^2}, for a single rate model - this is usually the "null" model.}
 	\item{logL1}{log-likelihood of the single-rate model.}
-	\item{sig2.multiple}{is a length \emph{p} (for \emph{p} rates) vector of BM rates from the multi-rate model.}
+	\item{sig2.multiple}{is a length \emph{p} (for \emph{p} rates) vector of BM rates (\eqn{\sigma_1^2}, \eqn{\sigma_2^2}, and so on) from the multi-rate model.}
 	\item{logL2}{log-likelihood of the multi-rate model.}
 	\item{convergence}{numerical value from \code{\link{optim}}.}
 }

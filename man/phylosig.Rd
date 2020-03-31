@@ -34,9 +34,9 @@ phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
 	\item{P}{optionally, the P-value from the randomization test.}
 	If \code{(method="lambda")}, it will be a list with up to the following components:
 	\item{lambda}{fitted value of \eqn{\lambda}.}
-	\item{sig2}{rate of evolution, for estimation with sampling error.}
+	\item{sig2}{rate of evolution, \eqn{\sigma^2}, for estimation with sampling error.}
 	\item{logL}{log-likelihood.}
-	\item{logL0}{log-likelihood for \code{lambda=0.0}.}
+	\item{logL0}{log-likelihood for \eqn{\lambda=0}.}
 	\item{P}{P-value of the likelihood ratio test.}
 	\item{convergence}{value for convergence, for estimation with sampling error only. (See \code{\link{optim}}).}
 	\item{message}{message from \code{\link{optim}}, for estimation with sampling error only.}

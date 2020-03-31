@@ -8,8 +8,8 @@ ave.rates(tree, shift, tips, sig1, sig2, ave.shift, showTree=TRUE)
 	\item{tree}{a tree.}
 	\item{shift}{the shift point for this sample.}
 	\item{tips}{tip names tipward of \code{shift}.}
-	\item{sig1}{rate 1.}
-	\item{sig2}{rate 2.}
+	\item{sig1}{\eqn{\sigma_1^2}.}
+	\item{sig2}{\eqn{\sigma_2^2}.}
 	\item{ave.shift}{average shift from all samples.}
 	\item{showTree}{logical value indicating whether to plot the rate-stretched tree.}
 

@@ -15,12 +15,12 @@ pgls.SEy(model, data, corClass=corBrownian, tree=tree,
 	\item{Vx}{sampling variances for \code{X}. If \code{NULL}, then the within-species variance is computed from the data assuming that individual samples, not species means, have been provided in \code{X}.}
 	\item{Vy}{sampling variances for \code{y}. If \code{NULL}, then the within-species variance is computed from the data assuming that individual samples, not species means, have been provided in \code{y}.}
 	\item{Cxy}{sampling covariances between \code{X} and \code{y}. This will also be computed from the data if \code{Cxy==NULL}. Note than in this case - but not for the calculation of \code{Vx} and \code{Vy}, the same number of observations and the same ordering must be provided for \code{X} and \code{y}. If this is not the case, then it is assumed that different individuals have been sampled for \code{X} and \code{y} and thus \code{Cxy} is assumed to be zero for all species.}
-	\item{lower}{vector specifying the lower bounds for estimation for \code{sig2x} and \code{sig2y}, respectively. (Must be >0.)}
-	\item{fixed.b1}{fixed regression slope. Usually set to zero for null hypothesis testing.}
+	\item{lower}{vector specifying the lower bounds for estimation for \eqn{\sigma_x^2} and \eqn{\sigma_y^2}, respectively. (Must be > 0.)}
+	\item{fixed.b1}{fixed regression slope, \eqn{\beta}. Usually set to zero for null hypothesis testing.}
 	\item{model}{model to fit. (For \code{pgls.SEy}.)}
 	\item{data}{data frame. (For \code{pgls.SEy}.)}
 	\item{corClass}{correlation structure. (For \code{pgls.SEy}.)}
-	\item{se}{vector of standard errors in y. (For \code{pgls.SEy}.)}
+	\item{se}{vector of standard errors in \emph{y}. (For \code{pgls.SEy}.)}
 	\item{method}{optimization method. (For \code{pgls.SEy}.)}
 	\item{interval}{interval over which to perform optimization. (For \code{pgls.SEy}.)}
 	\item{...}{optional arguments. (For \code{pgls.SEy}.)}

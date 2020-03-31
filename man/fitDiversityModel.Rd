@@ -23,7 +23,7 @@ fitDiversityModel(tree, x, d=NULL, showTree=TRUE, tol=1e-6)
 \value{
 	An object of class \code{"fitDiversityModel"} consisting of the following components:
 	\item{logL}{log-likelihood of the fitted model.}
-	\item{sig0}{estimated starting value for the rate at the root of the tree.}
+	\item{sig0}{estimated starting value for the rate at the root of the tree, \eqn{\sigma_0^2}.}
 	\item{psi}{the estimated rate of change in the rate associated with the addition of a lineage.}
 	\item{vcv}{a matrix with the variances and covariance of the estimated parameters (from the Hessian).}
 }

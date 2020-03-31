@@ -16,7 +16,7 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 	\item{tree}{an object of class \code{"phylo"} (a phylogenetic tree).}
 	\item{x}{a vector of tip values for species in which \code{names(x)} contains the species names of \code{tree}, an object of class \code{"evol.rate.mcmc"}, or (in the case of the S3 \code{summary} method) an object of class \code{"summary.evol.rate.mcmc"}.}
 	\item{ngen}{an integer value indicating the number of generations for the MCMC.}
-	\item{control}{a list of control parameters containing the following elements: \code{sig1}: starting value for \eqn{\sigma(1)^2}; \code{sig2}: starting value for \eqn{\sigma(2)^2}; \code{a}: starting value for a; \code{sd1}: standard deviation for the normal proposal distribution for \eqn{\sigma(1)^2}; \code{sd2}: standard deviation for the normal proposal distribution for \eqn{\sigma(2)^2}; \code{kloc}: scaling parameter for tree move proposals - \eqn{1/\lambda} for the reflected exponential distribution; \code{sdlnr}: standard deviation on the log-normal prior on \eqn{\sigma(1)^2/\sigma(2)^2}; \code{rand.shift}: probability of proposing a random shift in the tree (improves mixing); \code{print}: print frequency for the MCMC; \code{sample}: sample frequency.}
+	\item{control}{a list of control parameters containing the following elements: \code{sig1}: starting value for \eqn{\sigma_1^2}; \code{sig2}: starting value for \eqn{\sigma_2^2}; \code{a}: starting value for a; \code{sd1}: standard deviation for the normal proposal distribution for \eqn{\sigma_1^2}; \code{sd2}: standard deviation for the normal proposal distribution for \eqn{\sigma_2^2}; \code{kloc}: scaling parameter for tree move proposals - \eqn{1/\lambda} for the reflected exponential distribution; \code{sdlnr}: standard deviation on the log-normal prior on \eqn{\sigma_1^2/\sigma_2^2}; \code{rand.shift}: probability of proposing a random shift in the tree (improves mixing); \code{print}: print frequency for the MCMC; \code{sample}: sample frequency.}
 	\item{object}{for the S3 \code{summary} method, an object of class \code{"evol.rate.mcmc"}.}
 	\item{...}{other optional arguments.}
 }
@@ -29,7 +29,7 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 \value{
 	An object of class \code{"evol.rate.mcmc"} consisting of at least the following elements:
 	\item{mcmc}{results from the MCMC run.}
-	\item{tips}{list of stips in rate \eqn{\sigma(1)^2} for each sampled generation of MCMC (to polarize the rate shift).}
+	\item{tips}{list of stips in rate \eqn{\sigma_1^2} for each sampled generation of MCMC (to polarize the rate shift).}
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

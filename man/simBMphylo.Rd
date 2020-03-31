@@ -9,7 +9,7 @@ simBMphylo(n, t, sig2, plot=TRUE, ...)
 \arguments{
 	\item{n}{number of taxa to simulate in the output tree.}
 	\item{t}{total time for the simulation.}
-	\item{sig2}{the rate of evolution under Brownian motion, or a vector of rates. If the latter the length of the vector must exactly match \code{t}, otherwise the first element of \code{sig2} will just be duplicated \code{t} times.}
+	\item{sig2}{the rate of evolution under Brownian motion, \eqn{\sigma^2}, or a vector of rates. If the latter the length of the vector must exactly match \code{t}, otherwise the first element of \code{sig2} will just be duplicated \code{t} times.}
 	\item{plot}{optional logical value indicating whether or not the simulated object should be plotted.}
 	\item{...}{optional arguments to be passed to the \code{plot} method.}
 	\item{x}{in \code{plot} method, object of class \code{"simBMphylo"}.}

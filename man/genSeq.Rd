@@ -8,7 +8,7 @@ genSeq(tree, l=1000, Q=NULL, rate=1, format="DNAbin", ...)
 	\item{tree}{object of class \code{"phylo"}.}
 	\item{l}{length of desired sequences.}
 	\item{Q}{transition matrix for the simulation. Row and column names (\code{c("a","c","g","t")}, although not necessarily in that order) should be provided. If \code{NULL}, a single rate is assumed.}
-	\item{rate}{multiplier for \code{Q}, or a vector for Gamma rate heterogeneity.}
+	\item{rate}{multiplier for \code{Q}, or a vector for \eqn{\Gamma} rate heterogeneity.}
 	\item{format}{format of the output object. Can be \code{"DNAbin"}, \code{"phyDat"}, or \code{"matrix"}.}
 	\item{...}{optional arguments.}
 }

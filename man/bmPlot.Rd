@@ -8,7 +8,7 @@ bmPlot(tree, type="BM", anc=0, sig2=1/1000, ngen=1000, ...)
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format.}
 	\item{type}{the type of plot to create. See Description.}
 	\item{anc}{the ancestral value for the root node.}
-	\item{sig2}{the BM rate (variance of the Brownian evolution process).}
+	\item{sig2}{the BM rate (variance of the Brownian evolution process), \eqn{\sigma^2}.}
 	\item{ngen}{number of generations for the simulation: will rescale the tree to this total length.}
 	\item{...}{arguments to be passed to different methods.}
 }

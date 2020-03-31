@@ -13,7 +13,7 @@ mccr(obj, rho=1, nsim=100, ...)
 	\item{plot}{a logical value indicating whether or not to create LTT plot.}
 	\item{drop.extinct}{logical value indicating whether or not to drop extinct tips from the tree.}
 	\item{log.lineages}{logical value indicating whether LTT plot should be on log-linear (default) or linear-linear scale.}
-	\item{gamma}{logical value indicating whether or not to compute eqn{gamma} from Pybus & Harvey (2000; \emph{Proc. Roy. Soc. B}).}
+	\item{gamma}{logical value indicating whether or not to compute \eqn{\gamma} from Pybus & Harvey (2000; \emph{Proc. Roy. Soc. B}).}
 	\item{n}{for \code{gtt} the number of time intervals to use to track \eqn{\gamma} through time.}
 	\item{obj}{for \code{mccr} an object of class \code{"ltt"}.}
 	\item{rho}{for \code{mccr} sampling fraction.}
@@ -34,8 +34,8 @@ mccr(obj, rho=1, nsim=100, ...)
 	\code{ltt} returns an object of class \code{"ltt"} which includes the following components:
 	\item{times}{a vector of branching times.}
 	\item{ltt}{a vector of linages.}
-	\item{gamma}{optionally, a value for the gamma-statistic.}
-	\item{p}{two-tailed P-value for the gamma-test.}
+	\item{gamma}{optionally, a value for the \eqn{\gamma}-statistic.}
+	\item{p}{two-tailed P-value for the \eqn{\gamma}-test.}
 	If \code{tree} is an object of class \code{"multiPhylo"}, then an object of class \code{"multiLtt"} is returned consisting of a list of object of class \code{"ltt"}.
 	
 	\code{gtt} returns an object of class \code{"gtt"}.

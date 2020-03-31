@@ -1,6 +1,6 @@
 \name{lambda.transform}
 \alias{lambda.transform}
-\title{Lambda transformation of matrix}
+\title{\eqn{\lambda} transformation of matrix}
 \usage{
 lambda.transform(lambda, C)
 }
@@ -9,10 +9,10 @@ lambda.transform(lambda, C)
 	\item{C}{matrix probably returned by \code{\link{vcv.phylo}}.}
 }
 \description{
-	Function multiplies the off-diagonals of a square matrix by \code{lambda}. Used internally in \code{\link{phyl.pca}} and other functions.
+	Function multiplies the off-diagonals of a square matrix by \eqn{\lambda}. Used internally in \code{\link{phyl.pca}} and other functions.
 }
 \value{
-	An among-species phylogenetic variance covariance matrix (e.g., \code{\link{vcv.phylo}}) in which the off-diagonal elements have been multiplied by \code{lambda}.
+	An among-species phylogenetic variance covariance matrix (e.g., \code{\link{vcv.phylo}}) in which the off-diagonal elements have been multiplied by \eqn{\lambda}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

@@ -19,7 +19,7 @@ anc.trend(tree, x, maxit=2000)
 	An object of class \code{"anc.trend"} with the following components:
 	\item{ace}{a vector with the ancestral states.}
 	\item{mu}{a trend parameter per unit time.}
-	\item{sig2}{the variance of the BM process.}
+	\item{sig2}{the variance of the BM process, \eqn{\sigma^2}.}
 	\item{logL}{the log-likelihood.}
 	\item{convergence}{the value of \code{$convergence} returned by \code{optim()} (0 is good).}
 }
