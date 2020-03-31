@@ -6,7 +6,7 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree either as an object of class \code{"phylo"} or \code{"simmap"}. (See \code{\link{read.simmap}}, \code{\link{make.simmap}}, or \code{\link{paintSubTree}} for more details about the latter object class.)}
-	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names.}
+	\item{x}{a vector of tip values for species. \code{names(x)} should be the species names.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization - may need to be increased for large trees.}
 	\item{test}{an optional string indicating the method for hypothesis testing - options are \code{"chisq"} or \code{"simulation"}.}
 	\item{nsim}{number of simulations (only used if \code{test="simulation"}).}
@@ -36,7 +36,7 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 	\item{convergence}{logical value indicating if the likelihood optimization converged.}
 }
 \references{
-	O'Meara, B. C., C. Ane, M. J. Sanderson, and P. C. Wainwright. (2006) Testing for different rates of continuous trait evolution using likelihood. \emph{Evolution}, \bold{60}, 922--933.
+	O'Meara, B. C., C. Ane, M. J. Sanderson, and P. C. Wainwright. (2006) Testing for different rates of continuous trait evolution using likelihood. \emph{Evolution}, \bold{60}, 922-933.
 
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }

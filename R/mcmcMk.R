@@ -142,12 +142,13 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 				round(PS[i,ncol(PS)],4),round(accept,3),sep="\t"))
 			cat("\n")
 			flush.console()
-			if(auto.tune) prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
+			if(auto.tune) 
+				prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
 			accept<-0
 		} else {
 			if(i%%100==1){
-				if(auto.tune) prop.var<-if(accept>target.accept) 1.1*prop.var else 
-					prop.var/1.1
+				if(auto.tune)
+					prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
 				accept<-0
 			}
 		}
@@ -187,7 +188,6 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 
 Palette<-function(i){
 	if(!.check.pkg("RColorBrewer")){
-cat("I'M IN HERE!\n")
 		brewer.pal<-function(...) NULL
 		COLOR<-rep(palette(),ceiling(i/8))[i]
 		COLOR<-if(COLOR=="black") "darkgrey"
@@ -207,10 +207,26 @@ print.mcmcMk<-function(x,...){
 }
 
 plot.mcmcMk<-function(x,...){
-	if(hasArg(main)) main<-list(...)$main
-	else main<-"Likelihood profile from MCMC"
-	plot(x[,"gen"],x[,"logLik"],type="s",xlab="generation",ylab="log(L)",
-		col="grey",bty="l",main=main,font.main=1)
+	par(mfrow=c(2,1),mar=c(5.1,4.1,2.1,1.1))
+	plot(x[,"gen"],x[,"logLik"],col="darkgrey",xlab="",
+		ylab="log(L)",type="l",bty="l")
+	mtext("a) log-likelihood profile plot",side=3,line=1,cex=1,
+		at=0,outer=FALSE,adj=0)
+	plot(x[,"gen"],x[,2],col=Palette(1),xlab="generation",
+		ylim=c(0,max(x[,2:(ncol(x)-1)])),ylab="q",type="l",
+		bty="l")
+	abline(h=mean(x[,2]),lty="dotted",col=Palette(1))
+	text(x=max(x[,"gen"]),y=mean(x[,2]),colnames(x)[2],cex=0.5,
+		col=Palette(1),pos=3)
+	if(ncol(x)>3){
+		for(j in 2:(ncol(x)-2)){ 
+			lines(x[,"gen"],x[,j+1],col=Palette(j))
+			abline(h=mean(x[,j+1]),lty="dotted",col=Palette(j))
+			text(x=max(x[,"gen"]),y=mean(x[,j+1]),colnames(x)[j+1],
+				cex=0.5,col=Palette(j),pos=3)
+		}
+	}
+	mtext("b) rates",side=3,line=1,cex=1,at=0,outer=FALSE,adj=0)
 }
 
 summary.mcmcMk<-function(object,...){
