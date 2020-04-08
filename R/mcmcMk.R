@@ -133,8 +133,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 		if(por>runif(n=1)){
 			q<-qp
 			likQ<-likQp
-			if(print) accept<-accept+1/print
-			else accept<-accept+1/100
+			accept<-accept+1/100
 		}
 		PS[i,]<-c(i,q,likQ)
 		if(print) if(i%%print==1){
@@ -142,15 +141,11 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 				round(PS[i,ncol(PS)],4),round(accept,3),sep="\t"))
 			cat("\n")
 			flush.console()
-			if(auto.tune) 
+		} 
+		if(i%%100==1){
+			if(auto.tune)
 				prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
 			accept<-0
-		} else {
-			if(i%%100==1){
-				if(auto.tune)
-					prop.var<-if(accept>target.accept) 1.1*prop.var else prop.var/1.1
-				accept<-0
-			}
 		}
 		if(plot){
 			dev.hold()
