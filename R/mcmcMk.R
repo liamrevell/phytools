@@ -1,5 +1,14 @@
 ## written by Liam J. Revell
 
+mtom<-function(model){
+	im<-matrix(NA,nrow(model),ncol(model))
+	indices<-setNames(1:length(unique(as.vector(model)))-1,
+		unique(as.vector(model)))
+	for(i in 1:length(as.vector(model)))
+		im[i]<-indices[as.character(model[i])]
+	im
+}
+
 minChanges<-function(tree,x){
 	if(is.matrix(x)) 
 		x<-as.factor(apply(x,1,function(x) names(which(x==max(x)))[1]))
@@ -82,6 +91,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 			stop("model is not a square matrix")
 		if(ncol(model)!=ncol(x)) 
 			stop("model does not have the right number of columns")
+		model<-mtom(model)
 		rate<-model
 		k<-max(rate)
 	}
@@ -107,7 +117,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 	}
 	if(likelihood=="fitDiscrete"){
 		LIK<-fitDiscrete(tree,y,model=model,niter=1)$lik
-		lik.func<-function(Q) LIK(makeq(Q,t(index.matrix)),root="given",root.p=pi)
+		lik.func<-function(Q) LIK(makeq(Q,index.matrix),root="given",root.p=pi)
 	} else lik.func<-fitMk(tree,x,fixedQ=makeQ(m,q,index.matrix),pi=pi)$lik
 	likQ<-lik.func(makeQ(m,q,index.matrix))
 	nn<-vector(length=k,mode="character")
