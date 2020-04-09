@@ -1,12 +1,13 @@
 ## written by Liam J. Revell
 
 mtom<-function(model){
+	model<-t(model)
 	im<-matrix(NA,nrow(model),ncol(model))
 	indices<-setNames(1:length(unique(as.vector(model)))-1,
 		unique(as.vector(model)))
 	for(i in 1:length(as.vector(model)))
 		im[i]<-indices[as.character(model[i])]
-	im
+	t(im)
 }
 
 minChanges<-function(tree,x){
@@ -86,6 +87,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 			rate<-t(rate)
 			rate[ii]<-1:k
 		}
+		rate<-t(rate)
 	} else {
 		if(ncol(model)!=nrow(model)) 
 			stop("model is not a square matrix")
