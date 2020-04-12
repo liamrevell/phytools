@@ -183,6 +183,8 @@ S3method(print, phylosig)
 S3method(plot, phylosig)
 S3method(logLik, gfit)
 S3method(AIC, gfit)
+S3method(density, threshBayes)
+S3method(plot, density.threshBayes)
 
 importFrom(animation, ani.options, ani.record, ani.replay, saveVideo)
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin, as.phylo, bind.tree, branching.times, collapse.singles)
