@@ -340,6 +340,8 @@ print.density.threshBayes<-function(x,...){
 }
 
 plot.threshBayes<-function(x,...){
+	if(hasArg(bw)) bw<-list(...)$bw
+	else bw<-floor(length(x$par$gen)/100)
 	par(mfrow=c(3,1))
 	par(mar=c(5.1,4.1,2.1,1.1))
 	plot(x$par$gen,x$par$logL,type="l",bty="l",col=make.transparent("grey",0.5),
@@ -347,11 +349,15 @@ plot.threshBayes<-function(x,...){
 	mtext("a) log-likelihood trace",side=3,line=0,cex=1,at=0,outer=FALSE,
 		adj=0)
 	par(mar=c(5.1,4.1,2.1,1.1))
-	plot(x$par$gen,x$par$accept_rate,type="l",bty="l",col=make.transparent("red",0.5),
+	accept<-vector()
+	for(i in 1:length(x$par$gen))
+		accept[i]<-mean(x$par$accept_rate[max(c(1,i-bw)):i])
+	plot(x$par$gen,accept,type="l",bty="l",col=make.transparent("red",0.5),
 		xlab="generation",ylab="mean acceptance rate")
 	if(is.numeric(attr(x,"auto.tune"))) lines(c(par()$usr[1],max(x$par$gen)),
 		rep(attr(x,"auto.tune"),2),lty="dotted")
-	mtext("b) mean acceptance rate",side=3,line=0,cex=1,at=0,outer=FALSE,adj=0)
+	mtext(paste("b) mean acceptance rate (sliding window: bw=",bw,")",sep=""),
+		side=3,line=0,cex=1,at=0,outer=FALSE,adj=0)
 	plot(x$par$gen,x$par$r,type="l",bty="l",col=make.transparent("blue",0.5),
 		xlab="generation",ylab="r")
 	mtext("c) trace of the correlation coefficient, r",side=3,line=0,cex=1,at=0,
