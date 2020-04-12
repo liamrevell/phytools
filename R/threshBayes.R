@@ -124,7 +124,8 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 			pr.liab=0,
 			pr.var=c(rep(1000,m)^2,rep(1000,m),4/12),
 			pr.vliab=1000,
-			quiet=FALSE)
+			quiet=FALSE,
+			print.interval=1000)
 	con[(namc<-names(control))]<-control
 	con<-con[!sapply(con,is.null)]
 
@@ -162,7 +163,7 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 			accept.rate<-accept<-hit<-rep(0,npar)
 		}
 		d<-i%%npar
-		if(ngen>=1000) if(i%%1000==0) if(!con$quiet){ 
+		if(ngen>=con$print.interval) if(i%%con$print.interval==0) if(!con$quiet){ 
 			cat(paste("genearation: ",i,"; mean acceptance rate: ",round(mean(accept.rate),2),"\n",sep=""))
 			flush.console()
 		}
