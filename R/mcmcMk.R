@@ -329,7 +329,7 @@ plot.density.mcmcMk<-function(x,...){
 		else main<-"estimated posterior density for q"
 		plot(x[[1]],main=main,
 			bty="l",font.main=1,xlim=xlim,ylim=ylim,
-			xlab="q")
+			xlab="q",bty="l")
 		polygon(x[[1]],col=make.transparent("blue",0.5))
 		lines(x=attr(x,"summary")$HPD95[1,],y=rep(1.01*max(x[[1]]$y),2))
 		text(x=mean(attr(x,"summary")$HPD95[1,]),
