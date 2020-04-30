@@ -163,6 +163,7 @@ ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","
 	ace<-matrix(0,tree$Nnode,m,dimnames=list(colnames(A),seq))
 	burnin<-which(param[,"gen"]==con$burnin)
 	for(i in 1:tree$Nnode){
+		mcmc[[i]]<-as.factor(mcmc[[i]])
 		temp<-summary(mcmc[burnin:nrow(mcmc),i])/(nrow(mcmc)-burnin+1)
 		ace[i,names(temp)]<-temp
 	}
