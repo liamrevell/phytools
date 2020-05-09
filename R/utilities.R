@@ -1218,7 +1218,7 @@ print.describe.simmap<-function(x,...){
 }
 
 ## S3 plot method for object of class 'describe.simmap'
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2020
 plot.describe.simmap<-function(x,...){
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-2
@@ -1227,22 +1227,26 @@ plot.describe.simmap<-function(x,...){
 	if(length(cex)==1) cex<-rep(cex,2)
 	if(hasArg(type)) type<-list(...)$type
 	else type<-"phylogram"
+	if(hasArg(offset)) offset<-list(...)$offset
+	else offset<-0
+	if(hasArg(fsize)) fsize<-list(...)$fsize
+	else fsize<-1
 	if(inherits(x$tree,"multiPhylo")){
 		states<-colnames(x$ace)
 		if(hasArg(colors)) colors<-list(...)$colors
 		else colors<-setNames(palette()[1:length(states)],states)
 		plotTree(if(is.null(x$ref.tree)) x$tree[[1]] else x$ref.tree,lwd=lwd,
-			offset=cex[2],...)
+			offset=cex[2]+offset*fsize,...)
 		nodelabels(pie=x$ace,piecol=colors[colnames(x$ace)],cex=cex[1])
-		if(!is.null(x$tips)) tips<-x$tips else tips<-to.matrix(getStates(x$tree[[1]],"tips"),
-			seq=states) 
+		if(!is.null(x$tips)) tips<-x$tips 
+		else tips<-to.matrix(getStates(x$tree[[1]],"tips"),seq=states) 
 		tiplabels(pie=tips[if(is.null(x$ref.tree)) x$tree[[1]]$tip.label else 
 			x$ref.tree$tip.label,],piecol=colors[colnames(tips)],cex=cex[2])
 	} else if(inherits(x$tree,"phylo")){
 		states<-colnames(x$Tr)
 		if(hasArg(colors)) colors<-list(...)$colors
 		else colors<-setNames(palette()[1:length(states)],states)
-		plotSimmap(x$tree,lwd=lwd,colors=colors,type=type)
+		plotSimmap(x$tree,lwd=lwd,colors=colors,type=type,offset=offset)
 	}
 }
 
