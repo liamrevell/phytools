@@ -1,28 +1,53 @@
 ## function simulates stochastic character history under some model
-## written by Liam J. Revell 2011, 2013, 2014, 2016
+## written by Liam J. Revell 2011, 2013, 2014, 2016, 2020
 
-sim.history<-function(tree,Q,anc=NULL,nsim=1,...){
+sim.history<-function(tree,Q,anc=NULL,nsim=1,direction=c("column_to_row","row_to_column"),
+	...){
 	if(!inherits(tree,"phylo")) 
 		stop("tree should be an object of class \"phylo\".")
 	if(hasArg(message)) message<-list(...)$message
 	else message<-TRUE
+	direction<-direction[1]
+	direction<-strsplit(direction,"_")[[1]][1]
 	# reorder to cladewise
 	tree<-reorder.phylo(tree,"cladewise")
 	# check Q
-	if(!isSymmetric(Q)) if(message) 
-		cat("Note - the rate of substitution from i->j should be given by Q[j,i].\n")
-	if(!all(round(colSums(Q),10)==0)){
-		if(all(round(rowSums(Q),10)==0)&&!isSymmetric(Q)){
-			if(message){ 
-				cat("Detecting that rows, not columns, of Q sum to zero :\n")
-				cat("Transposing Q for internal calculations.\n")
+	if(!isSymmetric(Q)) if(message){
+		if(direction=="column") 
+			cat("Note - the rate of substitution from i->j should be given by Q[j,i].\n")
+		else if(direction=="row")
+			cat("Note - the rate of substitution from i->j should be given by Q[i,j].\n")
+	}
+	if(direction=="column"){
+		if(!all(round(colSums(Q),10)==0)){
+			if(all(round(rowSums(Q),10)==0)&&!isSymmetric(Q)){
+				if(message){ 
+					cat("Detecting that rows, not columns, of Q sum to zero :\n")
+					cat("Transposing Q for internal calculations.\n")
+				}
+				Q<-t(Q)
+			} else {
+				if(message) 
+					cat("Some columns (or rows) of Q don't sum to 0.0. Fixing.\n")
+				diag(Q)<-0
+				diag(Q)<--colSums(Q,na.rm=TRUE)
 			}
-			Q<-t(Q)
-		} else {
-			if(message) 
-				cat("Some columns (or rows) of Q don't sum to 0.0. Fixing.\n")
-			diag(Q)<-0
-			diag(Q)<--colSums(Q,na.rm=TRUE)
+		}
+	} else if(direction=="row"){
+		Q<-t(Q)
+		if(!all(round(colSums(Q),10)==0)){
+			if(all(round(rowSums(Q),10)==0)&&!isSymmetric(Q)){
+				if(message){ 
+					cat("Detecting that columns, not rows, of Q sum to zero :\n")
+					cat("Transposing Q for internal calculations.\n")
+				}
+				Q<-t(Q)
+			} else {
+				if(message) 
+					cat("Some columns (or rows) of Q don't sum to 0.0. Fixing.\n")
+				diag(Q)<-0
+				diag(Q)<--colSums(Q,na.rm=TRUE)
+			}
 		}
 	}
 	# does Q have names?
