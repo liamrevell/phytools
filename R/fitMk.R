@@ -181,6 +181,7 @@ AIC.fitMk<-function(object,...,k=2){
 	np<-length(object$rates)
 	-2*logLik(object)+np*k
 }
+
 	
 ## S3 plot method for objects of class "fitMk"
 plot.fitMk<-function(x,...){
@@ -203,7 +204,7 @@ plot.fitMk<-function(x,...){
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-1
 	Q<-matrix(NA,length(x$states),length(x$states))
-    	Q[]<-c(0,x$rates)[x$index.matrix+1]
+    Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
 	spacer<-0.1
 	plot.new()
@@ -341,15 +342,30 @@ sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
 	X
 }
 
-## logLik & AIC methods for fitDiscrete & fitContinuous objects
+## as.Qmatrix method
 
-logLik.gfit<-function(object,...){
-	lik<-object$opt$lnL[1]
-	attr(lik,"df")<-object$opt$k[1]
-	lik
+as.Qmatrix<-function(x,...){
+	if(identical(class(x),"Qmatrix")) return(x)
+	UseMethod("as.Qmatrix")
 }
 
-AIC.gfit<-function(object,...,k=2){
-	np<-object$opt$k
-	-2*logLik(object)+np*k
+as.Qmatrix.default<-function(x, ...){
+	warning(paste(
+		"as.Qmatrix does not know how to handle objects of class ",
+		class(x),"."))
+}
+
+as.Qmatrix.fitMk<-function(x,...){
+	Q<-matrix(NA,length(x$states),length(x$states))
+	Q[]<-c(0,x$rates)[x$index.matrix+1]
+	rownames(Q)<-colnames(Q)<-x$states
+	diag(Q)<-0
+	diag(Q)<--rowSums(Q)
+	class(Q)<-"Qmatrix"
+	Q
+}
+
+print.Qmatrix<-function(x,...){
+	cat("Estimated Q matrix:\n")
+	print(unclass(x))
 }

@@ -9,7 +9,6 @@
 \alias{plot.mcmcMk}
 \alias{density.mcmcMk}
 \alias{plot.density.mcmcMk}
-\alias{logLik.gfit}
 \title{Fits Mk model}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
@@ -22,7 +21,6 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \method{plot}{mcmcMk}(x, ...)
 \method{density}{mcmcMk}(x, ...)
 \method{plot}{density.mcmcMk}(x, ...)
-\method{logLik}{gfit}(object, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
@@ -32,7 +30,6 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 	\item{ordered}{for \code{fitpolyMk}, a logical value indicating whether or not the character should be treated as ordered. For now the function assumes alphanumerical order (i.e., numbers sorted by their initial and then successive digits followed by characters or character strings in alphabetical order).}
 	\item{ngen}{number of generations of MCMC for \code{mcmcMk}.}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}).}
-	\item{object}{for \code{logLik.gfit}, object of class \code{"gfit"}.}
 }
 \description{
 	The function \code{fitMk} fits a so-called M\emph{k} model for discrete character evolution.
