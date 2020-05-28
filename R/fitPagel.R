@@ -55,12 +55,13 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 		xy<-setNames(factor(paste(x,y,sep="|"),
 			levels=sapply(levels.x,paste,levels.y,sep="|")),
 			names(x))
+		levels.xy<-levels(xy)
 	}
 	## fit independent dep.var
 	iQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,1,0,4,3,0),4,4,byrow=TRUE)
 	if(model%in%c("ER","SYM")) iQ<-make.sym(iQ)
 	k.iQ<-length(unique(as.vector(iQ)))-1
-	rownames(iQ)<-colnames(iQ)<-levels(xy)
+	rownames(iQ)<-colnames(iQ)<-levels.xy
 	fit.iQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=iQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ,...)
 		else fitMk(tree,if(!is.matrix(xy)) to.matrix(xy,levels(xy)) else xy,
@@ -74,7 +75,7 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 		dQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,5,0,4,6,0),4,4,byrow=TRUE)
 	if(model%in%c("ER","SYM")) dQ<-make.sym(dQ)
 	k.dQ<-length(unique(as.vector(dQ)))-1
-	rownames(dQ)<-colnames(dQ)<-levels(xy)
+	rownames(dQ)<-colnames(dQ)<-levels.xy
 	fit.dQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=dQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=dQ,...)
 		else fitMk(tree,if(!is.matrix(xy)) to.matrix(xy,levels(xy)) else xy,
