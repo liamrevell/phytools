@@ -1,6 +1,6 @@
 ## function fits Pagel '94 model of correlated evolution of two binary characters
 ## uses fitMk, ape::ace, or geiger::fitDiscrete internally
-## written by Liam J. Revell 2014, 2015, 2016
+## written by Liam J. Revell 2014, 2015, 2016, 2020
 
 fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -27,16 +27,35 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 		cat("  Defaulting to method = \"fitMk\"\n\n")
 		method<-"fitMk"
 	}
-	if(!is.factor(x)) x<-as.factor(x)
-	levels.x<-levels(x)
-	if(!is.factor(y)) y<-as.factor(y)
-	levels.y<-levels(y)
-	y<-y[names(x)]
-	if(length(levels.x)!=2||length(levels.y)!=2)
-		stop("Only binary characters for x & y currently permitted.")
-	xy<-setNames(factor(paste(x,y,sep="|"),
-		levels=sapply(levels.x,paste,levels.y,sep="|")),
-		names(x))
+	if(is.matrix(x)||is.matrix(y)){
+		if(!is.matrix(x)) x<-to.matrix(as.factor(x),levels(as.factor(x)))
+		x<-t(apply(x,1,function(xx) xx/sum(xx)))
+		if(!is.matrix(y)) y<-to.matrix(as.factor(y),levels(as.factor(y)))
+		y<-t(apply(y,1,function(xx) xx/sum(xx)))
+		if(method!="fitMk"){ 
+			cat(paste("  method = \"",method,
+				"\" does not permit input data as matrices\n",sep=""))
+			cat("  Switching to method = \"fitMk\"\n\n")
+			method<-"fitMk"
+		}	
+		levels.x<-colnames(x)
+		levels.y<-colnames(y)
+		levels.xy<-as.vector(sapply(levels.x,paste,levels.y,sep="|"))
+		xy<-matrix(NA,nrow(x),4,dimnames=list(rownames(x),levels.xy))
+		for(i in 1:nrow(xy))
+			xy[i,]<-as.vector(y[i,]%*%x[i,,drop=FALSE])
+	} else {	
+		if(!is.factor(x)) x<-as.factor(x)
+		levels.x<-levels(x)
+		if(!is.factor(y)) y<-as.factor(y)
+		levels.y<-levels(y)
+		y<-y[names(x)]
+		if(length(levels.x)!=2||length(levels.y)!=2)
+			stop("Only binary characters for x & y currently permitted.")
+		xy<-setNames(factor(paste(x,y,sep="|"),
+			levels=sapply(levels.x,paste,levels.y,sep="|")),
+			names(x))
+	}
 	## fit independent dep.var
 	iQ<-matrix(c(0,1,2,0,3,0,0,2,4,0,0,1,0,4,3,0),4,4,byrow=TRUE)
 	if(model%in%c("ER","SYM")) iQ<-make.sym(iQ)
@@ -44,7 +63,8 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 	rownames(iQ)<-colnames(iQ)<-levels(xy)
 	fit.iQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=iQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=iQ,...)
-		else fitMk(tree,to.matrix(xy,levels(xy)),model=iQ,...)
+		else fitMk(tree,if(!is.matrix(xy)) to.matrix(xy,levels(xy)) else xy,
+			model=iQ,...)
 	## fit dependendent model
 	if(dep.var=="xy")
 		dQ<-matrix(c(0,1,2,0,3,0,0,4,5,0,0,6,0,7,8,0),4,4,byrow=TRUE)
@@ -57,7 +77,8 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 	rownames(dQ)<-colnames(dQ)<-levels(xy)
 	fit.dQ<-if(method=="fitDiscrete") fitDiscrete(tree,xy,model=dQ,...) 
 		else if(method=="ace") ace(xy,tree,type="discrete",model=dQ,...)
-		else fitMk(tree,to.matrix(xy,levels(xy)),model=dQ,...)
+		else fitMk(tree,if(!is.matrix(xy)) to.matrix(xy,levels(xy)) else xy,
+			model=dQ,...)
 	## back translate independent model
 	if(method=="fitDiscrete") iQ<-.Qmatrix.from.gfit(fit.iQ)
 	else {
