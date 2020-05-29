@@ -159,10 +159,10 @@ density.anc.Bayes<-function(x,...){
 	if(hasArg(burnin)) burnin<-list(...)$burnin
 	else burnin<-0.2*max(x$mcmc$gen)
 	ii<-which(abs(x$mcmc$gen-burnin)==min(abs(x$mcmc$gen-burnin)))
-	args<-list()
-	if(hasArg(bw)) args$bw<-list(...)$bw
-	else args$bw<-"nrd0"
-	args$x<-x$mcmc[ii:nrow(x$mcmc),as.character(what)]
+	if(hasArg(bw)) bw<-list(...)$bw
+	else bw<-"nrd0"
+	args<-list(x=x$mcmc[ii:nrow(x$mcmc),as.character(what)],
+		bw=bw)
 	d<-do.call(density,args)
 	d$call<-match.call()
 	d$data.name<-if(what=="logLik") what else paste("node",what)
