@@ -119,6 +119,8 @@ print.anc.Bayes<-function(x,digits=6,printlen=NULL,...){
 	invisible(ace)
 }			
 
+summary.anc.Bayes<-function(object,...) print(object,...)
+
 plot.anc.Bayes<-function(x,...){
 	args<-list(...)
 	if(is.null(args$what)) what<-"logLik"
@@ -159,6 +161,7 @@ density.anc.Bayes<-function(x,...){
 	ii<-which(abs(x$mcmc$gen-burnin)==min(abs(x$mcmc$gen-burnin)))
 	args<-list()
 	if(hasArg(bw)) args$bw<-list(...)$bw
+	else args$bw<-"nrd0"
 	args$x<-x$mcmc[ii:nrow(x$mcmc),as.character(what)]
 	d<-do.call(density,args)
 	d$call<-match.call()
