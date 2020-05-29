@@ -1,12 +1,16 @@
 \name{anc.Bayes}
 \alias{anc.Bayes}
+\alias{plot.anc.Bayes}
+\alias{density.anc.Bayes}
 \title{Bayesian ancestral character estimation}
 \usage{
 anc.Bayes(tree, x, ngen=10000, control=list())
+\method{plot}{anc.Bayes}(x, ...)
+\method{density}{anc.Bayes}(x, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
-	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names.}
+	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names. In the case of the \code{plot} and \code{density} methods, an object of class \code{"anc.Bayes"}.}
 	\item{ngen}{a integer indicating the number of generations for the MCMC.}
 	\item{control}{a list of control parameters containing the following elements: \code{sig2}: starting value for \eqn{\sigma^2} (BM rate); \code{a}: starting for the state at the root node; \code{y}: starting values for the states at all internal nodes excluding the root (should be labeled with node numbers); \code{pr.mean}: means for the prior distributions in the following order - \code{sig2}, \code{a}, \code{y}, note that the prior probability distribution is exponential for \code{sig2} and normal for \code{a} and \code{y}; \code{pr.var}: variances on the prior distributions, same order as \code{pr.mean} (but the variance is not used for \code{sig2}); \code{prop}: variances on the normal proposal distributions in the same order as \code{pr.mean}; \code{sample}: sample frequency from the MCMC.}
 }
@@ -19,7 +23,7 @@ anc.Bayes(tree, x, ngen=10000, control=list())
 	\item{tree}{our input phylogeny.}
 }
 \details{
-	The \code{print} method also returns (invisibly) a vector of estimated ancestral states based on a user-supplied burn-in (or 20% of the number of generations of MCMC, if no burn-in is provided).
+	The \code{print} method also returns (invisibly) a vector of estimated ancestral states based on a user-supplied burn-in (or 20\% of the number of generations of MCMC, if no burn-in is provided).
 	
 	The object class \code{plot} method by default plots a likelihood profile from the MCMC.
 }
