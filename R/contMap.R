@@ -15,7 +15,7 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	if(hasArg(leg.txt)) leg.txt<-list(...)$leg.txt
 	else leg.txt<-"trait value"
 	h<-max(nodeHeights(tree))
-	steps<-0:res/res*max(h)
+	steps<-c(0:(res-1)/(res-1)*h,h+h/(res-1)) ## 0:res/res*(h+h/res)
 	H<-nodeHeights(tree)
 	if(method=="fastAnc") a<-fastAnc(tree,x) 
 	else if(method=="anc.ML") { 
