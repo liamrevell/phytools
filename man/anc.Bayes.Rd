@@ -24,7 +24,7 @@ anc.Bayes(tree, x, ngen=10000, control=list(), ...)
 	\item{tree}{our input phylogeny.}
 }
 \details{
-	\code{plot.anc.Bayes} generates a likelihood profile plot of the MCMC by default, but can also create a profile plot for any of the sampled variables by using the optional argument \code{what}. For instance, \code{what=40} (or, equivalently, \code{what="40"}) will create a profile plot of the MCMC for node \code{40}. Additional arguments are passed to \code{\link{base::plot}}.
+	\code{plot.anc.Bayes} generates a likelihood profile plot of the MCMC by default, but can also create a profile plot for any of the sampled variables by using the optional argument \code{what}. For instance, \code{what=40} (or, equivalently, \code{what="40"}) will create a profile plot of the MCMC for node \code{40}. Additional arguments are passed to \code{\link{plot}}.
 	
 	\code{density.anc.Bayes} computes a posterior density from the MCMC sample. Like \code{plot.anc.Bayes} takes the optional argument \code{what}, but unlike \code{plot.anc.Bayes} computes the posterior density for the root node by default. The object computed by this function is of class \code{"density"} and can be visualized using \code{\link{plot.density}}. Burn-in (in generations) can be set using the optional argument \code{burnin}, otherwise it will be assumed to be 20% of the sample.
 
