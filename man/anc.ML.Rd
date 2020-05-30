@@ -22,7 +22,7 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 	\item{sig2}{the variance of the BM process.}
 	\item{ace}{a vector with the ancestral states.}
 	\item{logLik}{the log-likelihood.}
-	\item{convergence}{the value of \code{$convergence} returned by \code{optim()} (0 is good).}
+	\item{convergence}{the value of \code{convergence} returned by \code{\link{optim}} (0 is good).}
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
@@ -34,10 +34,12 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 	\code{\link{ace}}, \code{\link{anc.Bayes}}, \code{\link{fastAnc}}, \code{\link{optim}}
 }
 \examples{
-tree<-pbtree(n=50)
+tree<-pbtree(n=26,tip.label=LETTERS)
 x<-fastBM(tree) # simulate using fastBM
-anc.ML(tree,x) # fit model & estimate ancestral states
+fit<-anc.ML(tree,x) # fit model & estimate ancestral states
+print(fit)
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}

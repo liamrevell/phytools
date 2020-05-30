@@ -1,7 +1,7 @@
 ## function does Bayes ancestral character estimation
 ## written by Liam J. Revell 2011, 2013, 2015, 2017, 2020
 
-anc.Bayes<-function(tree,x,ngen=10000,control=list()){
+anc.Bayes<-function(tree,x,ngen=10000,control=list(),...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	# give the function some defaults (in case none are provided)
 	temp<-phyl.vcv(as.matrix(x),vcv(tree),1)

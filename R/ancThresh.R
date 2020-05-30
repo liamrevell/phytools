@@ -1,7 +1,8 @@
 ## function performs ancestral character estimation under the threshold model
-## written by Liam J. Revell 2012, 2013, 2014, 2017, 2019
+## written by Liam J. Revell 2012, 2013, 2014, 2017, 2019, 2020
 
-ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",model=c("BM","OU","lambda"),control=list(),...){
+ancThresh<-function(tree,x,ngen=10000,sequence=NULL,method="mcmc",
+	model=c("BM","OU","lambda"),control=list(),...){
 
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	

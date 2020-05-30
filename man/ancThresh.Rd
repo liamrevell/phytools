@@ -2,7 +2,7 @@
 \alias{ancThresh}
 \title{Ancestral character estimation under the threshold model using Bayesian MCMC}
 \usage{
-ancThresh(tree, x, ngen=10000, sequence=NULL, method="mcmc", 
+ancThresh(tree, x, ngen=100000, sequence=NULL, method="mcmc", 
    model=c("BM","OU","lambda"), control=list(), ...)
 }
 \arguments{
@@ -32,6 +32,20 @@ ancThresh(tree, x, ngen=10000, sequence=NULL, method="mcmc",
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
 	\code{\link{anc.Bayes}}, \code{\link{threshBayes}}
+}
+\examples{
+\dontrun{
+## generate tree & threshold character
+tree<-pbtree(n=26,tip.label=LETTERS)
+th<-setNames(c(0,Inf),c("a","b"))
+x<-threshState(fastBM(tree),th)
+## run MCMC
+mcmc<-ancThresh(tree,x,ngen=1000000)
+## plot results
+plot(mcmc,mar=c(0.1,0.1,4.1,0.1))
+title(main="Posterior probabilities for node states",
+	font.main=3)
+}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
