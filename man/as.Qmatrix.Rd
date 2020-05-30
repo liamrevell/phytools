@@ -1,11 +1,13 @@
 \name{as.Qmatrix}
 \alias{as.Qmatrix}
 \alias{as.Qmatrix.fitMk}
+\alias{plot.Qmatrix}
 \alias{print.Qmatrix}
 \title{Convert a fitted M\emph{k} model to a Q-matrix}
 \usage{
 as.Qmatrix(x, ...)
 \method{as.Qmatrix}{fitMk}(x, ...)
+\method{plot}{Qmatrix}(x, ...)
 \method{print}{Qmatrix}(x, ...)
 }
 \arguments{

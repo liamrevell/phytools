@@ -44,9 +44,10 @@ mcmc<-ancThresh(tree,x,ngen=1000000)
 ## plot results
 plot(mcmc,mar=c(0.1,0.1,4.1,0.1))
 title(main="Posterior probabilities for node states",
-	font.main=3)
+    font.main=3)
 }
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}

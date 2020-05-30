@@ -182,9 +182,37 @@ AIC.fitMk<-function(object,...,k=2){
 	-2*logLik(object)+np*k
 }
 
-	
 ## S3 plot method for objects of class "fitMk"
 plot.fitMk<-function(x,...){
+	Q<-as.Qmatrix(x)
+	plot(Q,...)
+}
+
+## S3 plot method for "gfit" object from geiger::fitDiscrete
+plot.gfit<-function(x,...){
+	if("mkn"%in%class(x$lik)==FALSE){
+		stop("Sorry. No plot method presently available for objects of this type.")
+	} else {
+		chk<-.check.pkg("geiger")
+		if(chk) plot(as.Qmatrix(x),...)
+		else {
+			obj<-list()
+			QQ<-.Qmatrix.from.gfit(x)
+			obj$states<-colnames(QQ)
+			m<-length(obj$states)
+			obj$index.matrix<-matrix(NA,m,m)
+			k<-m*(m-1)
+			obj$index.matrix[col(obj$index.matrix)!=row(obj$index.matrix)]<-1:k
+			obj$rates<-QQ[sapply(1:k,function(x,y) which(x==y),obj$index.matrix)]
+			class(obj)<-"fitMk"
+			plot(obj,...)
+		}
+	}
+}
+	
+## S3 method for "Qmatrix" object class
+plot.Qmatrix<-function(x,...){
+	Q<-unclass(x)
 	if(hasArg(signif)) signif<-list(...)$signif
 	else signif<-3
 	if(hasArg(main)) main<-list(...)$main
@@ -203,16 +231,13 @@ plot.fitMk<-function(x,...){
 	else mar<-c(1.1,1.1,3.1,1.1)
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-1
-	Q<-matrix(NA,length(x$states),length(x$states))
-    Q[]<-c(0,x$rates)[x$index.matrix+1]
-	diag(Q)<-0
 	spacer<-0.1
 	plot.new()
 	par(mar=mar)
 	xylim<-c(-1.2,1.2)
 	plot.window(xlim=xylim,ylim=xylim,asp=1)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
-	nstates<-length(x$states)
+	nstates<-nrow(Q)
 	step<-360/nstates
 	angles<-seq(0,360-step,by=step)/180*pi
 	if(nstates==2) angles<-angles+pi/2
@@ -250,26 +275,8 @@ plot.fitMk<-function(x,...){
 					code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
 			}
 		}
-	text(v.x,v.y,x$states,cex=cex.traits,
+	text(v.x,v.y,rownames(Q),cex=cex.traits,
 		col=make.transparent("black",0.7))
-}
-
-## S3 plot method for objects resulting from fitDiscrete
-plot.gfit<-function(x,...){
-	if("mkn"%in%class(x$lik)==FALSE){
-		stop("Sorry. No plot method presently available for objects of this type.")
-	} else {
-		obj<-list()
-		QQ<-.Qmatrix.from.gfit(x)
-		obj$states<-colnames(QQ)
-		m<-length(obj$states)
-		obj$index.matrix<-matrix(NA,m,m)
-		k<-m*(m-1)
-		obj$index.matrix[col(obj$index.matrix)!=row(obj$index.matrix)]<-1:k
-		obj$rates<-QQ[sapply(1:k,function(x,y) which(x==y),obj$index.matrix)]
-		class(obj)<-"fitMk"
-		plot(obj,...)
-	}
 }
 
 ## wraps around expm
