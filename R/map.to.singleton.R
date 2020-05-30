@@ -96,8 +96,8 @@ plotTree.singletons<-function(tree){
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }
 
-## function to reorder the edges of the tree for postorder traversal should *only* be used internally to 
-## plotTree.singletons (i.e., is not designed for general use).
+## function to reorder the edges of the tree for postorder traversal should *only* be used 
+## internally to plotTree.singletons (i.e., is not designed for general use).
 ## written by Liam J. Revell 2013
 reorderPhylo<-function(x,order="pruningwise",index.only=FALSE,...){
 	if(index.only) stop("index.only=TRUE not permitted")
