@@ -231,11 +231,13 @@ traitgram3d<-function(tree,...,control){
 }
 
 # droptipTree internal function
-# written by Liam J. Revell 2012
+# written by Liam J. Revell 2012, 2020 (just to fix a couple of dumb bugs)
 
 droptipTree<-function(tree,...){
 	if(hasArg(tip)) tip<-list(...)$tip
 	else stop("need to provide tip or tips to drop")
+	if(hasArg(cex)) cex<-list(...)$cex
+	else cex<-0.7
 	edges<-rep(0,nrow(tree$edge))
 	names(edges)<-tree$edge[,2]
 	keep<-setdiff(tree$tip.label,tip)
@@ -258,10 +260,12 @@ droptipTree<-function(tree,...){
 		edges[as.character(z[i])]<-1
 	par(mfrow=c(2,1))
 	plot.phylo(tree,edge.color=edges+1,edge.lty=edges+1,
-		edge.width=2,no.margin=TRUE)
-	dtree<-drop.tip(tree,tip); dtree$root.edge<-
-		max(nodeHeights(tree))-max(nodeHeights(dtree))
-	plot.phylo(dtree,edge.width=2,no.margin=TRUE,root.edge=TRUE)
+		edge.width=2,no.margin=TRUE,cex=cex)
+	xlim<-get("last_plot.phylo",envir=.PlotPhyloEnv)$x.lim
+	dtree<-drop.tip(tree,tip)
+	dtree$root.edge<-max(nodeHeights(tree))-max(nodeHeights(dtree))
+	plot.phylo(rootedge.to.singleton(dtree),edge.width=2,
+		no.margin=TRUE,cex=cex,x.lim=xlim)
 	return(dtree)
 }
 
