@@ -37,6 +37,9 @@ phylomorphospace3d(tree,X,method="static")
 \seealso{
 	\code{\link{fancyTree}}, \code{\link{phenogram}}, \code{\link{phylomorphospace}}
 }
+\keyword{ancestral states}
+\keyword{animation}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{plotting}
+\keyword{continuous character}

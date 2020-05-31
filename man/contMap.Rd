@@ -48,6 +48,9 @@ errorbar.contMap(obj, ...)
 \seealso{
 	\code{\link{anc.ML}}, \code{\link{densityMap}}, \code{\link{fastAnc}}, \code{\link{plotSimmap}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{continuous character}
+\keyword{maximum likelihood}

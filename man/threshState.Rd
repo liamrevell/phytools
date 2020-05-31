@@ -26,3 +26,5 @@
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{simulation}
+\keyword{discrete character}
+\keyword{utilities}

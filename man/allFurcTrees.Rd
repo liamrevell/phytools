@@ -28,4 +28,4 @@ allFurcTrees(n, tip.label=NULL, to.plot=TRUE)
 	\code{\link{add.everywhere}}, \code{\link{exhaustiveMP}}
 }
 \keyword{phylogenetics}
-\keyword{inference}
+\keyword{phylogeny inference}

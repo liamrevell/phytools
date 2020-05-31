@@ -39,3 +39,5 @@ fitDiversityModel(tree, x, d=NULL, showTree=TRUE, tol=1e-6)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}
+\keyword{diversification}

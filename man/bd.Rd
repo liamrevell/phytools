@@ -25,3 +25,5 @@ bd(x)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{utilities}
+\keyword{diversification}
+\keyword{maximum likelihood}

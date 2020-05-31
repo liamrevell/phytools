@@ -20,5 +20,7 @@ edgeProbs(trees)
 \seealso{
 	\code{\link{plotSimmap}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{plotting}
+\keyword{discrete character}

@@ -25,3 +25,4 @@ plotTree.datamatrix(tree, X, ...)
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{discrete character}

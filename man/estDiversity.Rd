@@ -34,3 +34,5 @@ estDiversity(tree, x, method=c("asr","simulation"), model="ER", ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}
+\keyword{diversification}

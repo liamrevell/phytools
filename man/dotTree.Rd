@@ -33,3 +33,5 @@ dot.legend(x, y, min, max, Ntip, length=5, prompt=FALSE, method="plotTree",
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{plotting}
+\keyword{continuous character}
+\keyword{discrete character}

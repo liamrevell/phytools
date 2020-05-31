@@ -38,4 +38,5 @@ plot(obj)
 }
 \keyword{phylogenetics}
 \keyword{plotting}
-
+\keyword{diversification}
+\keyword{co-phylogenetics}

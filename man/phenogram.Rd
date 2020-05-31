@@ -46,6 +46,8 @@ x<-fastBM(tree)
 phenogram(tree,x,spread.labels=TRUE,spread.cost=c(1,0))
 }
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{continuous character}

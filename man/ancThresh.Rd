@@ -51,3 +51,4 @@ title(main="Posterior probabilities for node states",
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{discrete character}

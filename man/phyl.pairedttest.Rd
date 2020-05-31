@@ -44,3 +44,4 @@ phyl.pairedttest(tree, x1, x2=NULL, se1=NULL, se2=NULL, lambda=1.0, h0=0.0,
 \keyword{comparative method}
 \keyword{maximum likelihood}
 \keyword{statistics}
+\keyword{least squares}

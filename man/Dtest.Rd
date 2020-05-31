@@ -32,3 +32,4 @@ Dtest(t1, t2, nsim=100, ...)
 \keyword{comparative method}
 \keyword{simulation}
 \keyword{bayesian}
+\keyword{discrete character}

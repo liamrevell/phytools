@@ -29,6 +29,8 @@ tree<-pbtree(n=50)
 x<-fastBM(tree) # simulate using fastBM
 fastAnc(tree,x) # estimate states
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}

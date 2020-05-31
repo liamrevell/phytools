@@ -38,3 +38,4 @@ sim.multiMk(tree, Q, anc=NULL, nsim=1, ...)
 }
 \keyword{phylogenetics}
 \keyword{simulation}
+\keyword{discrete character}

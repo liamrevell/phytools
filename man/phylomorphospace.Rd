@@ -40,6 +40,8 @@ tree<-pbtree(n=25)
 X<-fastBM(tree,nsim=2)
 phylomorphospace(tree,X,xlab="trait 1",ylab="trait 2")
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{plotting}
+\keyword{continuous character}

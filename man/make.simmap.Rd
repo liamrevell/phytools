@@ -51,8 +51,9 @@ make.simmap(tree, x, model="SYM", nsim=1, ...)
 \seealso{
 	\code{\link{brownie.lite}}, \code{\link{brownieREML}}, \code{\link{countSimmap}}, \code{\link{describe.simmap}}, \code{\link{evol.vcv}}, \code{\link{plotSimmap}}, \code{\link{read.simmap}}, \code{\link{write.simmap}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{simulation}
 \keyword{bayesian}
-
+\keyword{discrete character}

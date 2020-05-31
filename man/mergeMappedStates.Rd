@@ -24,8 +24,10 @@ mergeMappedStates(tree, old.states, new.state)
 \seealso{
 	\code{\link{make.simmap}}, \code{\link{read.simmap}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{simulation}
 \keyword{bayesian}
 \keyword{utilities}
+\keyword{discrete character}

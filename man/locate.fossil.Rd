@@ -26,5 +26,6 @@ locate.fossil(tree, X, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
-\keyword{inference}
+\keyword{phylogeny inference}
 \keyword{maximum likelihood}
+\keyword{continuous character}

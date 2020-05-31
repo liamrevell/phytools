@@ -60,3 +60,5 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{bayesian}
+\keyword{discrete character}

@@ -40,3 +40,4 @@ print(fit)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}

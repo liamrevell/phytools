@@ -56,3 +56,5 @@ AIC(yule,bd)
 \keyword{comparative methods}
 \keyword{diversification}
 \keyword{phylogenetics}
+\keyword{diversification}
+\keyword{maximum likelihood}

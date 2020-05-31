@@ -26,3 +26,4 @@ likMlambda(lambda, X, C)
 \keyword{math}
 \keyword{comparative method}
 \keyword{utilities}
+\keyword{maximum likelihood}

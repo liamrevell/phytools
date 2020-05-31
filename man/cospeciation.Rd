@@ -35,4 +35,5 @@ cospeciation(t1, t2, distance=c("RF","SPR"),
 }
 \keyword{phylogenetics}
 \keyword{plotting}
-
+\keyword{diversification}
+\keyword{co-phylogenetics}

@@ -33,4 +33,4 @@ simBMphylo(n=6,t=100,sig2=0.01)
 \keyword{comparative method}
 \keyword{phylogenetics}
 \keyword{plotting}
-
+\keyword{continuous character}

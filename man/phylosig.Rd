@@ -60,3 +60,4 @@ phylosig(tree,x,method="lambda",test=TRUE)
 \keyword{comparative method}
 \keyword{maximum likelihood}
 \keyword{simulation}
+\keyword{continuous character}

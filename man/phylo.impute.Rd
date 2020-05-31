@@ -30,3 +30,4 @@ phylo.impute(tree, X, ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{continuous character}
+\keyword{statistics}

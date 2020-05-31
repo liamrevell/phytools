@@ -30,3 +30,5 @@ threshDIC(tree, x, mcmc, burnin=NULL, sequence=NULL, method="pD")
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{information criteria}
+\keyword{statistics}

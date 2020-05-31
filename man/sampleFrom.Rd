@@ -23,3 +23,4 @@ sampleFrom(xbar=0, xvar=1, n=1, randn=NULL, type="norm")
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{statistics}
+\keyword{utilities}

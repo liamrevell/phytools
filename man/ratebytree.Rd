@@ -66,3 +66,5 @@ ratebytree(trees, x, ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}
+\keyword{discrete character}

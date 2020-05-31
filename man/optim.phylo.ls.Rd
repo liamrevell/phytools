@@ -38,6 +38,6 @@ optim.phylo.ls(D, stree=NULL, set.neg.to.zero=TRUE, fixed=FALSE,
 	\code{\link{exhaustiveMP}}, \code{\link{nni}}
 }
 \keyword{phylogenetics}
-\keyword{inference}
+\keyword{phylogeny inference}
 \keyword{distance matrix}
 \keyword{least squares}

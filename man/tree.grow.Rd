@@ -36,3 +36,4 @@ system("ImageMagick convert -delay 5 -loop 0 *.png pbtree-anim.gif")
 \keyword{plotting}
 \keyword{comparative method}
 \keyword{simulation}
+\keyword{diversification}

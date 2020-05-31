@@ -37,3 +37,4 @@ rootedge.to.singleton(tree)
 }
 \keyword{phylogenetics}
 \keyword{utilities}
+\keyword{plotting}

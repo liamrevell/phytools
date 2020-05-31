@@ -26,3 +26,4 @@ minTreeDist(tree, trees, method="quadratic.path.difference", ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
+\keyword{consensus tree}

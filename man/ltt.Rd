@@ -61,4 +61,4 @@ obj
 }
 \keyword{phylogenetics}
 \keyword{plotting}
-\keyword{diversification analysis}
+\keyword{diversification}

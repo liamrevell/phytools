@@ -26,5 +26,7 @@ Map.Overlap(tree1, tree2, tol=1e-06, standardize=TRUE, ...)
 \seealso{
 	\code{\link{make.simmap}}, \code{\link{read.simmap}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
+\keyword{discrete character}

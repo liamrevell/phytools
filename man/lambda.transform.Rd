@@ -21,3 +21,4 @@ lambda.transform(lambda, C)
 \keyword{phylogenetics}
 \keyword{math}
 \keyword{comparative method}
+\keyword{utilities}

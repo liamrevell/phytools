@@ -46,3 +46,4 @@ plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list())
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{continuous character}

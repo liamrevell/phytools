@@ -38,3 +38,4 @@ multi.mantel(Y, X, nperm=1000)
 \keyword{comparative method}
 \keyword{statistics}
 \keyword{least squares}
+\keyword{distance matrix}

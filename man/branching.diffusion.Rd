@@ -32,3 +32,4 @@ branching.diffusion(sig2=1, b=0.0023, time.stop=1000, ylim=NULL,
 \keyword{animation}
 \keyword{plotting}
 \keyword{simulation}
+\keyword{continuous character}

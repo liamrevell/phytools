@@ -26,4 +26,4 @@ collapseTree(tree, ...)
 }
 \keyword{phylogenetics}
 \keyword{plotting}
-
+\keyword{utilities}

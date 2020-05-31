@@ -31,3 +31,4 @@ phylo.heatmap(tree, X, grid=TRUE)
 }
 \keyword{phylogenetics}
 \keyword{plotting}
+\keyword{continuous character}

@@ -80,4 +80,4 @@ fancyTree(tree,type="phenogram95",x=x)
 }
 \keyword{phylogenetics}
 \keyword{plotting}
-\keyword{utilities}
+\keyword{comparative method}

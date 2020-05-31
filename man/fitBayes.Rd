@@ -30,3 +30,4 @@ fitBayes(tree, x, ngen=10000, model="BM", method="reduced", control=list())
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{continuous character}

@@ -17,3 +17,6 @@ consensus.edges(trees, method=c("mean.edge","least.squares"), ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
+\keyword{consensus tree}
+\keyword{phylogeny inference}
+\keyword{utilities}

@@ -31,3 +31,5 @@ ratebystate(tree, x, y, nsim=100, corr=c("pearson","spearman"), ...)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
+\keyword{continuous character}
+\keyword{maximum likelihood}

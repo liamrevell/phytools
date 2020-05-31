@@ -39,3 +39,5 @@ threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{continuous character}
+\keyword{discrete character}

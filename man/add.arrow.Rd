@@ -24,3 +24,4 @@ add.arrow(tree=NULL, tip, ...)
 }
 \keyword{phylogenetics}
 \keyword{utilities}
+\keyword{plotting}

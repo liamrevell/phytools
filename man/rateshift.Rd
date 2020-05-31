@@ -35,3 +35,5 @@ likSurface.rateshift(tree, x, nrates=2, shift.range=NULL,
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
+\keyword{continuous character}
+\keyword{maximum likelihood}

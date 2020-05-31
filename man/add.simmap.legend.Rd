@@ -24,3 +24,5 @@ add.simmap.legend(leg=NULL, colors, prompt=TRUE, vertical=TRUE, ...)
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{discrete character}
+\keyword{utilities}

@@ -32,4 +32,4 @@ dna<-genSeq(tree,l=100,rate=gg)
 }
 \keyword{phylogenetics}
 \keyword{simulation}
-
+\keyword{discrete character}

@@ -37,4 +37,5 @@ fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
-
+\keyword{discrete character}
+\keyword{maximum likelihood}

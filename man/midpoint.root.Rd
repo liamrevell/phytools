@@ -31,3 +31,4 @@ midpoint.root(tree)
 }
 \keyword{phylogenetics}
 \keyword{utilities}
+\keyword{phylogeny inference}

@@ -36,3 +36,4 @@ read.simmap(file="", text, format="nexus", rev.order=TRUE, version=1)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{input/output}
+\keyword{discrete character}

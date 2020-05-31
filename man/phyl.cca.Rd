@@ -39,3 +39,4 @@ phyl.cca(tree, X, Y, lambda=1.0, fixed=TRUE)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{statistics}
+\keyword{least squares}

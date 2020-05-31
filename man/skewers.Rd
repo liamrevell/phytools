@@ -28,4 +28,3 @@ skewers(X, Y, nsim=100, method=NULL)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{comparative method}
 \keyword{statistics}
-

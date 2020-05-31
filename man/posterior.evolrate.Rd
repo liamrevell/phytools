@@ -27,3 +27,4 @@ posterior.evolrate(tree, ave.shift, mcmc, tips, showTree=FALSE)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{continuous character}

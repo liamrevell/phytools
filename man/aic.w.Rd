@@ -19,3 +19,6 @@ aic.w(aic)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{statistics}
 \keyword{utilities}
+\keyword{math}
+\keyword{maximum likelihood}
+\keyword{information criteria}

@@ -28,3 +28,4 @@ getnode(...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{utilities}
+\keyword{plotting}

@@ -35,3 +35,4 @@ y<-fastBM(tree,mu=1) # with a trend
 }
 \keyword{phylogenetics}
 \keyword{simulation}
+\keyword{continuous character}

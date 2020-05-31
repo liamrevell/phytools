@@ -42,3 +42,4 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}

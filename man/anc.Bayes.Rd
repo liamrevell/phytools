@@ -52,3 +52,4 @@ plot(density(mcmc,what="27",burnin=10000),bty="l",
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{continuous character}

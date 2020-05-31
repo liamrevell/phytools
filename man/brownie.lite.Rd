@@ -47,3 +47,4 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}

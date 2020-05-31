@@ -30,4 +30,5 @@ as.Qmatrix(x, ...)
 \keyword{phylogenetics}
 \keyword{maximum likelihood}
 \keyword{comparative method}
-
+\keyword{discrete character}
+\keyword{utilities}

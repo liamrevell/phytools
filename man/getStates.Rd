@@ -23,3 +23,4 @@ getStates(tree, type=c("nodes","tips"))
 }
 \keyword{phylogenetics}
 \keyword{utilities}
+\keyword{discrete character}

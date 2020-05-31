@@ -26,3 +26,4 @@ multiRF(trees,quiet=FALSE,multi2di=FALSE)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{utilities}
+\keyword{phylogeny inference}

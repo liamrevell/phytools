@@ -28,3 +28,4 @@ sim.corrs(tree, vcv, anc=NULL, internal=FALSE)
 \keyword{phylogenetics}
 \keyword{simulation}
 \keyword{comparative method}
+\keyword{continuous character}

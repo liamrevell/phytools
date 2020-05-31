@@ -38,3 +38,4 @@ tree<-pbtree(n=50,t=tt)
 }
 \keyword{phylogenetics}
 \keyword{simulation}
+\keyword{diversification}

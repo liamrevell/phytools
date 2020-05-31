@@ -25,3 +25,4 @@ expand.clade(tree, node, factor=5)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{plotting}
+\keyword{utilities}

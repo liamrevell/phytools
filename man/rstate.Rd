@@ -23,3 +23,5 @@ rstate(y)
 \keyword{math}
 \keyword{utilities}
 \keyword{statistics}
+\keyword{discrete character}
+\keyword{simulation}

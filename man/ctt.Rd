@@ -31,7 +31,8 @@ sim.multiCtt(tree, Q, anc=NULL, nmaps=100, nsim=100, ...)
 \seealso{
 	\code{\link{ltt}}
 }
-\keyword{phylogenetics}
-\keyword{plotting}
+\keyword{ancestral states}
 \keyword{comparative method}
 \keyword{discrete character}
+\keyword{phylogenetics}
+\keyword{plotting}

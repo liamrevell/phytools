@@ -30,6 +30,8 @@ plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE,
 \seealso{
 	\code{\link{ancThresh}}, \code{\link{plot.phylo}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{discrete character}

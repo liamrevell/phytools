@@ -30,3 +30,5 @@ ave.rates(tree, shift, tips, sig1, sig2, ave.shift, showTree=TRUE)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{continuous characters}
+\keyword{math}

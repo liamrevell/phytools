@@ -42,6 +42,8 @@ densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
 \seealso{
 	\code{\link{make.simmap}}, \code{\link{plotSimmap}}, \code{\link{read.simmap}}
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{discrete character}

@@ -30,4 +30,4 @@ phylo.to.map(tree, coords, rotate=TRUE, ...)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{plotting}
-
+\keyword{biogeography}

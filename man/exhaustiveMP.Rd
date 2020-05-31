@@ -30,5 +30,5 @@ exhaustiveMP(data, tree=NULL, method="branch.and.bound")
 	\code{\link{mrp.supertree}}, \code{\link{optim.parsimony}}, \code{\link{pratchet}}
 }
 \keyword{phylogenetics}
-\keyword{inference}
+\keyword{phylogeny inference}
 \keyword{parsimony}

@@ -31,4 +31,4 @@ ltt95(trees, alpha=0.05, log=FALSE, method=c("lineages","times"),
 }
 \keyword{phylogenetics}
 \keyword{plotting}
-\keyword{diversification analysis}
+\keyword{diversification}

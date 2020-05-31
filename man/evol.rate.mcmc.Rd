@@ -43,3 +43,4 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{bayesian}
+\keyword{continuous character}

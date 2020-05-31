@@ -34,3 +34,5 @@ brownieREML(tree, x, maxit=2000, ...)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
+\keyword{continuous character}
+\keyword{maximum likelihood}

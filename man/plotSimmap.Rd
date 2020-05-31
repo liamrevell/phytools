@@ -73,6 +73,8 @@ cols<-setNames(c("blue","red","green"),letters[1:3])
 # plot the mapping
 plot(tree,cols,ftype="i",fsize=0.7)
 }
+\keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{discrete character}

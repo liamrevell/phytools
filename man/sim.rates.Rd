@@ -39,3 +39,4 @@ multiOU(tree, alpha, sig2, theta=NULL, a0=NULL, nsim=1, internal=FALSE, ...)
 \keyword{phylogenetics}
 \keyword{simulation}
 \keyword{comparative method}
+\keyword{continuous character}

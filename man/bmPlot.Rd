@@ -48,3 +48,4 @@ x<-bmPlot(tree,type="threshold",thresholds=c(0,1,2))
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{simulation}
+\keyword{continuous character}

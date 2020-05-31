@@ -45,6 +45,7 @@ compute.mr(trees, type=c("phyDat","matrix"))
 	\code{\link{exhaustiveMP}}, \code{\link{optim.parsimony}}, \code{\link{pratchet}}
 }
 \keyword{phylogenetics}
-\keyword{inference}
+\keyword{phylogeny inference}
 \keyword{parsimony}
 \keyword{supertree}
+\keyword{consensus tree}

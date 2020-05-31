@@ -29,3 +29,4 @@ paintBranches(tree, edge, state, anc.state="1")
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
+\keyword{utilities}

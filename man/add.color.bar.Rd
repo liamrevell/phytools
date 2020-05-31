@@ -29,3 +29,4 @@ add.color.bar(leg, cols, title=NULL, lims=c(0,1), digits=1, prompt=TRUE,
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
+\keyword{utilities}

@@ -24,5 +24,8 @@ markChanges(tree, colors=NULL, cex=1, lwd=2, plot=TRUE)
 \seealso{
 	\code{\link{plotSimmap}}
 }
+\keyword{ancestral states}
+\keyword{bayesian}
 \keyword{phylogenetics}
 \keyword{plotting}
+\keyword{discrete character}

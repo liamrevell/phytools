@@ -27,3 +27,4 @@ sim.ratebystate(tree, sig2x=1, sig2y=1, beta=c(0,1), ...)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{simulation}
+\keyword{continuous character}

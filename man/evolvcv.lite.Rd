@@ -28,3 +28,4 @@ evolvcv.lite(tree, X, maxit=2000, tol=1e-10)
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{continuous character}
