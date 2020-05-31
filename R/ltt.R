@@ -193,7 +193,7 @@ plot.ltt<-function(x,...){
 }
 
 ## S3 plot method for object of class "multiLtt"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2020
 
 plot.multiLtt<-function(x,...){
 	max.lineages<-max(sapply(x,function(x) max(x$ltt)))
@@ -203,7 +203,7 @@ plot.multiLtt<-function(x,...){
 	else logl<-TRUE	
 	if(is.null(args$xlim)) args$xlim<-c(0,max.time)
 	if(is.null(args$ylim)) 
-		args$ylim<-if(logl) c(0,log(max.lineages)) else c(0,max.lineages)
+		args$ylim<-if(logl) c(0,log(max.lineages)) else c(1,max.lineages)
 	args$x<-x[[1]]
 	do.call(plot,args)
 	args$add<-TRUE
