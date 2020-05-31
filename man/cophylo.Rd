@@ -31,10 +31,11 @@ cophylo(tr1, tr2, assoc=NULL, rotate=TRUE, ...)
 	\code{\link{cophyloplot}}, \code{\link{plotSimmap}}
 }
 \examples{
-tr1<-pbtree(n=26,tip.label=LETTERS)
-tr2<-pbtree(n=26,tip.label=sample(LETTERS))
-obj<-cophylo(tr1,tr2)
-plot(obj)
+t1<-pbtree(n=26,tip.label=LETTERS)
+t2<-pbtree(n=26,tip.label=sample(LETTERS))
+obj<-cophylo(t1,t2)
+plot(obj,link.type="curved")
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}

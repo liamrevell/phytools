@@ -29,6 +29,9 @@ simBMphylo(n, t, sig2, plot=TRUE, ...)
 }
 \examples{
 simBMphylo(n=6,t=100,sig2=0.01)
+## reset par to defaults
+par(mfrow=c(1,1))
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{comparative method}
 \keyword{phylogenetics}

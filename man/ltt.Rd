@@ -52,11 +52,19 @@ mccr(obj, rho=1, nsim=100, ...)
 	\code{\link{gammatest}}, \code{\link{ltt95}}
 }
 \examples{
+set.seed(99)
 trees<-pbtree(n=100,scale=100,nsim=10)
 obj<-ltt(trees,plot=FALSE)
-plot(obj,log="y",log.lineages=FALSE,main="lineage through time plots")
+plot(obj,log="y",log.lineages=FALSE,
+    main="lineage through time plots",
+    bty="l")
+title(main="LTT plots for 10 pure-birth trees",
+    font.main=3)
 tree<-pbtree(b=1,d=0.25,t=4)
-obj<-ltt(tree,gamma=FALSE)
+obj<-ltt(tree,gamma=FALSE,show.tree=TRUE,
+    bty="l")
+title(main="LTT plot with superimposed tree",
+    font.main=3)
 obj
 }
 \keyword{phylogenetics}

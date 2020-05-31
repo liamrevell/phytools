@@ -45,13 +45,32 @@ lik.bd(theta, t, rho=1, N=NULL)
 	\code{\link{birthdeath}}
 }
 \examples{
-\dontrun{
-## fit BD & Yule models
-bd<-fit.bd(tree,rho=0.8)
-yule<-fit.yule(tree,rho=0.8)
-## compare fitted models
-AIC(yule,bd)
-}
+data(salamanders)
+## compute sampling fraction based on 55 species of Plethodon
+sampling.f<-Ntip(salamanders)/55
+## fit birth-death model
+bd.fit<-fit.bd(salamanders,rho=sampling.f)
+print(bd.fit)
+## fit Yule model
+yule.fit<-fit.yule(salamanders,rho=sampling.f)
+print(yule.fit)
+## compare b-d and yule models
+AIC(yule.fit,bd.fit)
+## create a likelihood surface for b-d model
+ngrid<-100
+b<-seq(0.01,0.06,length.out=ngrid)
+d<-seq(0.005,0.03,length.out=ngrid)
+logL<-sapply(d,function(d,b) sapply(b,function(b,d) 
+    bd.fit$lik(c(b,d)),d=d),b=b)
+contour(x=b,y=d,logL,nlevels=100,
+    xlab=expression(lambda),
+    ylab=expression(mu),bty="l")
+title(main="Likelihood surface for plethodontid diversification",
+    font.main=3)
+points(bd.fit$b,bd.fit$d,cex=1.5,pch=4,
+    col="blue",lwd=2)
+legend("bottomright","ML solution",pch=4,col="blue",
+    bg="white",pt.cex=1.5,pt.lwd=2)
 }
 \keyword{comparative methods}
 \keyword{diversification}

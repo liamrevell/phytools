@@ -42,11 +42,13 @@ tree<-pbtree(n=26,tip.label=LETTERS)
 x<-fastBM(tree,sig2=2) # simulate using fastBM
 mcmc<-anc.Bayes(tree,x,ngen=100000) # sample ancestral states
 print(mcmc,printlen=20) ## estimates
+par(mfrow=c(2,1))
 plot(mcmc,bty="l",main="Likelihood-profile from MCMC",
-	font.main=3) ## likelihood-profile
+    font.main=3) ## likelihood-profile
 plot(density(mcmc,what="27",burnin=10000),bty="l",
-	main="Posterior density for root state",
-	font.main=3)
+    main="Posterior density for root state",
+    font.main=3)
+par(mfrow=c(1,1)) ## reset par to default
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

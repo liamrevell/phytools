@@ -58,12 +58,16 @@ fancyTree(tree,type="extinction")
 # plot 3D traitgram
 tree<-pbtree(n=50,scale=10)
 Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),2,2))
-fancyTree(tree,type="traitgram3d",X=Y,control=list(spin=FALSE))
+fancyTree(tree,type="traitgram3d",X=Y,
+    control=list(spin=FALSE))
 	
 # plot with internal nodes from simulation
-Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),2,2),internal=TRUE)
-B<-Y[length(tree$tip)+1:tree$Nnode,]; Y<-Y[1:length(tree$tip),]
-fancyTree(tree,type="traitgram3d",X=Y,A=B,control=list(simple.axes=TRUE,spin=FALSE))
+Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),
+    2,2),internal=TRUE)
+B<-Y[length(tree$tip)+1:tree$Nnode,]
+Y<-Y[1:length(tree$tip),]
+fancyTree(tree,type="traitgram3d",X=Y,A=B,
+    control=list(simple.axes=TRUE,spin=FALSE))
 }
 	
 # plot with dropped tips
@@ -77,6 +81,10 @@ tree<-pbtree(n=30)
 x<-fastBM(tree)
 fancyTree(tree,type="phenogram95",x=x)
 }
+
+## reset par to defaults
+par(mar=c(5.1,4.1,4.1,2.1))
+par(mfrow=c(1,1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}

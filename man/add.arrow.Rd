@@ -22,6 +22,30 @@ add.arrow(tree=NULL, tip, ...)
 \seealso{
 	\code{\link{nodelabels}}
 }
+\examples{
+## show arrows with a black outline
+data(anoletree)
+plotTree(anoletree,type="fan",fsize=0.7)
+add.arrow(anoletree,tip=c("Anolis_cuvieri","Anolis_krugi",
+    "Anolis_pulchellus","Anolis_poncensis","Anolis_stratulus",
+    "Anolis_evermanni","Anolis_cooki","Anolis_cristatellus",
+    "Anolis_gundlachi","Anolis_occultus"),lwd=6,arrl=1)
+add.arrow(anoletree,tip="Anolis_cuvieri",col="green",
+    lwd=4,arrl=1)
+add.arrow(anoletree,tip=c("Anolis_krugi","Anolis_pulchellus",
+    "Anolis_poncensis"),col="#E4D96F",lwd=4,arrl=1)
+add.arrow(anoletree,tip=c("Anolis_stratulus","Anolis_evermanni"),
+    col="darkgreen",lwd=4,arrl=1)
+add.arrow(anoletree,tip=c("Anolis_cooki","Anolis_cristatellus",
+    "Anolis_gundlachi"),col="brown",lwd=4,arrl=1)
+add.arrow(anoletree,tip="Anolis_occultus",col="darkgrey",
+    lwd=4,arrl=1)
+legend(x="topleft",c("crown-giant","grass-bush","trunk-crown","trunk-ground",
+    "twig"),pch=22,pt.bg=c("green","#E4D96F","darkgreen",
+    "brown","darkgrey"),cex=0.9,
+    pt.cex=2,title="PR ecomorphs",bty="n")
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+}
 \keyword{phylogenetics}
 \keyword{utilities}
 \keyword{plotting}
