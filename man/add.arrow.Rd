@@ -25,21 +25,21 @@ add.arrow(tree=NULL, tip, ...)
 \examples{
 ## show arrows with a black outline
 data(anoletree)
-plotTree(anoletree,type="fan",fsize=0.7)
-add.arrow(anoletree,tip=c("Anolis_cuvieri","Anolis_krugi",
-    "Anolis_pulchellus","Anolis_poncensis","Anolis_stratulus",
-    "Anolis_evermanni","Anolis_cooki","Anolis_cristatellus",
-    "Anolis_gundlachi","Anolis_occultus"),lwd=6,arrl=1)
-add.arrow(anoletree,tip="Anolis_cuvieri",col="green",
-    lwd=4,arrl=1)
-add.arrow(anoletree,tip=c("Anolis_krugi","Anolis_pulchellus",
-    "Anolis_poncensis"),col="#E4D96F",lwd=4,arrl=1)
-add.arrow(anoletree,tip=c("Anolis_stratulus","Anolis_evermanni"),
-    col="darkgreen",lwd=4,arrl=1)
-add.arrow(anoletree,tip=c("Anolis_cooki","Anolis_cristatellus",
-    "Anolis_gundlachi"),col="brown",lwd=4,arrl=1)
-add.arrow(anoletree,tip="Anolis_occultus",col="darkgrey",
-    lwd=4,arrl=1)
+plotTree(anoletree,type="fan",fsize=0.7,ftype="i")
+add.arrow(anoletree,tip=c("cuvieri","krugi",
+    "pulchellus","poncensis","stratulus",
+    "evermanni","cooki","cristatellus",
+    "gundlachi","occultus"),lwd=5,arrl=1)
+add.arrow(anoletree,tip="cuvieri",col="green",
+    lwd=3,arrl=1)
+add.arrow(anoletree,tip=c("krugi","pulchellus",
+    "poncensis"),col="#E4D96F",lwd=3,arrl=1)
+add.arrow(anoletree,tip=c("stratulus","evermanni"),
+    col="darkgreen",lwd=3,arrl=1)
+add.arrow(anoletree,tip=c("cooki","cristatellus",
+    "gundlachi"),col="brown",lwd=3,arrl=1)
+add.arrow(anoletree,tip="occultus",col="darkgrey",
+    lwd=3,arrl=1)
 legend(x="topleft",c("crown-giant","grass-bush","trunk-crown","trunk-ground",
     "twig"),pch=22,pt.bg=c("green","#E4D96F","darkgreen",
     "brown","darkgrey"),cex=0.9,

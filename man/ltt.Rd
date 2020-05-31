@@ -56,7 +56,6 @@ set.seed(99)
 trees<-pbtree(n=100,scale=100,nsim=10)
 obj<-ltt(trees,plot=FALSE)
 plot(obj,log="y",log.lineages=FALSE,
-    main="lineage through time plots",
     bty="l")
 title(main="LTT plots for 10 pure-birth trees",
     font.main=3)

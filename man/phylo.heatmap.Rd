@@ -28,6 +28,7 @@ tree <- pbtree(n=20,scale=1)
 # simulate continuous character
 X <- fastBM(tree, nsim=5)
 phylo.heatmap(tree, X, grid=TRUE)
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
 }
 \keyword{phylogenetics}
 \keyword{plotting}

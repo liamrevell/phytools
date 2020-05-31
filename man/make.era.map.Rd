@@ -26,6 +26,7 @@ make.era.map(tree, limits, ...)
 tree<-pbtree(n=1000,scale=100)
 tree<-make.era.map(tree,c(0,25,50,75))
 plot(tree,ftype="off",lwd=1)
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
