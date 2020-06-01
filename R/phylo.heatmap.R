@@ -1,7 +1,8 @@
 ## function for phylogenetic heat map
-## written by Liam J. Revell 2016, 2017
+## written by Liam J. Revell 2016, 2017, 2020
 
 phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
+	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	if(length(fsize)!=3) fsize<-rep(fsize,3)
 	if(hasArg(legend)) legend<-list(...)$legend
 	else legend<-TRUE
@@ -26,7 +27,7 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	if(is.null(colors)) colors<-heat.colors(n=20)[20:1]
 	if(hasArg(grid)) add.grid <- list(...)$grid
 	else add.grid <- FALSE
-	cw<-untangle(tree,"read.tree")
+	cw<-untangle(as.phylo(tree),"read.tree")
 	plot.new()
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim)

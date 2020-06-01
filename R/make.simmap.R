@@ -398,6 +398,8 @@ density.multiSimmap<-function(x,...){
 
 ## S3 plot method for "changesMap" object from density.multiSimmap
 plot.changesMap<-function(x,...){
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-"l"
 	p<-x$p
 	hpd<-x$hpd
 	bw<-x$bw
@@ -406,7 +408,8 @@ plot.changesMap<-function(x,...){
 			max(x$maxs)+1),ylim=c(0,1.2*max(c(p[[1]]$density,
 			p[[2]]$density))),
 			type="n",xlab="number of changes",
-			ylab="relative frequency across stochastic maps")
+			ylab="relative frequency across stochastic maps",
+			bty=bty)
 		y2<-rep(p[[1]]$density,each=2)
 		y2<-y2[-length(y2)]
 		x2<-rep(p[[1]]$mids-bw/2,each=2)[-1]
@@ -453,7 +456,8 @@ plot.changesMap<-function(x,...){
 					plot(p[[ii]]$mids,p[[ii]]$density,xlim=c(min(x$mins)-1,
 						max(x$maxs)+1),ylim=c(0,1.2*max.d),
 						type="n",xlab="number of changes",
-						ylab="relative frequency",main=x$trans[ii],font.main=1)
+						ylab="relative frequency",main=x$trans[ii],font.main=1,
+						bty=bty)
 					##title(main=)
 					y2<-rep(p[[ii]]$density,each=2)
 					y2<-y2[-length(y2)]
