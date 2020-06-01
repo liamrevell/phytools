@@ -261,3 +261,11 @@ print.anc.ML<-function(x,digits=6,printlen=NULL,...){
 	else cat("\nOptimization may not have converged.\n\n")	
 }
 
+## S3 logLik method for "anc.ML" object class
+logLik.anc.ML<-function(object,...){
+	lik<-object$logLik
+	if(object$model=="BM") attr(lik,"df")<-length(object$ace)+1
+	else if(object$model=="EB") attr(lik,"df")<-length(object$ace)+2
+	else if(object$model=="OU") attr(lik,"df")<-length(object$ace)+2
+	lik
+}
