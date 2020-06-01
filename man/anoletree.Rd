@@ -1,6 +1,6 @@
 \name{anoletree}
-\alias{anoletree}
 \alias{anole.data}
+\alias{anoletree}
 \alias{mammal.tree}
 \alias{mammal.data}
 \alias{salamanders}
@@ -21,8 +21,15 @@
 	\code{wasp.trees} and \code{wasp.data} are the phylogeny and host-parasite associations from Lopez-Vaamonde et al. (2001).
 }
 \usage{
+data(anole.data)
 data(anoletree)
+data(mammal.data)
+data(mammal.tree)
 data(salamanders)
+data(sunfish.data)
+data(sunfish.tree)
+data(wasp.data)
+data(wasp.trees)
 }
 \format{
 	\code{anoletree} is an object of class \code{"simmap"}. \code{anole.data} is a data frame.
