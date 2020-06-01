@@ -10,7 +10,9 @@
 
 	The complete list of functions can be displayed with \code{library(help = phytools)}.
 
-	More information on \pkg{phytools} can be found at \url{http://www.phytools.org} or \url{http://blog.phytools.org}.
+	More information on \emph{phytools} can be found at \url{http://www.phytools.org} or \url{http://blog.phytools.org}.
+	
+	If you use \emph{phytools} (or other packages that depend on \emph{phytools}) in a publication, please \emph{cite it}. The appropriate citation for \emph{phytools} is listed below.
 }
 \author{
 	Liam J. Revell

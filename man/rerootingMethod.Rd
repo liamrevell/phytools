@@ -39,3 +39,4 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 \keyword{bayesian}
 \keyword{comparative method}
 \keyword{maximum likelihood}
+\keyword{ancestral states}

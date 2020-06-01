@@ -28,6 +28,7 @@ simBMphylo(n, t, sig2, plot=TRUE, ...)
 	\code{\link{bmPlot}}, \code{\link{fastBM}}, \code{\link{pbtree}}
 }
 \examples{
+set.seed(777)
 simBMphylo(n=6,t=100,sig2=0.01)
 ## reset par to defaults
 par(mfrow=c(1,1))

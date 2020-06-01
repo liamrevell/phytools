@@ -52,9 +52,32 @@ phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
-tree<-pbtree(n=100)
-x<-fastBM(tree)
-phylosig(tree,x,method="lambda",test=TRUE)
+## load data from Garland et al. (1992)
+data(mammal.tree)
+data(mammal.data)
+## extract characters of interest
+ln.bodyMass<-log(setNames(mammal.data$bodyMass,
+    rownames(mammal.data)))
+ln.homeRange<-log(setNames(mammal.data$homeRange,
+    rownames(mammal.data)))
+## compute phylogenetic signal K
+K.bodyMass<-phylosig(mammal.tree,ln.bodyMass,
+    test=TRUE)
+print(K.bodyMass)
+plot(K.bodyMass)
+K.homeRange<-phylosig(mammal.tree,ln.homeRange,
+    test=TRUE)
+print(K.homeRange)
+plot(K.homeRange)
+## compute phylogenetic signal lambda
+lambda.bodyMass<-phylosig(mammal.tree,ln.bodyMass,
+    method="lambda",test=TRUE)
+print(lambda.bodyMass)
+plot(lambda.bodyMass)
+lambda.homeRange<-phylosig(mammal.tree,ln.homeRange,
+    method="lambda",test=TRUE)
+print(lambda.homeRange)
+plot(lambda.homeRange)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

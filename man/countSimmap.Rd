@@ -16,11 +16,10 @@ countSimmap(tree, states=NULL, message=TRUE)
 	A list with up to three elements: \code{N} is an integer value giving the total number of character changes on the tree; \code{Tr} gives the number of of transitions between row and column states (or a matrix containing both \code{N} and the transitions between states, in rows, for an object of class \code{"multiPhylo"}); and (optionally) \code{message} contains an explanatory message about the function  output.
 }
 \examples{
-tree<-pbtree(n=100,scale=1)
-Q<-matrix(c(-2,1,1,1,-2,1,1,1,-2),3,3)
-colnames(Q)<-rownames(Q)<-c("A","B","C")
-mtree<-sim.history(tree,Q)
-countSimmap(mtree,states=rownames(Q))
+## load data from Revell & Collar (2009)
+data(anoletree)
+anoletree
+countSimmap(anoletree)
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

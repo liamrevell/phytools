@@ -30,8 +30,15 @@ findMRCA(tree, tips=NULL, type=c("node","height"))
 	\code{\link{findMRCA}}, \code{\link{mrca}}
 }
 \examples{
-tree<-pbtree(n=20)
-anc<-findMRCA(tree,c("t1","t10","t15"))
+data(anoletree)
+anc<-findMRCA(anoletree,c("cristatellus","cooki",
+    "gundlachi"))
+plotTree(anoletree,type="fan",fsize=0.7,lwd=1)
+nodelabels(node=anc,frame="circle",pch=21,cex=1.5,
+    bg="blue")
+legend("topleft","common ancestor of\nPuerto Rican TG anoles",
+	pch=21,pt.cex=1.5,pt.bg="blue",cex=0.7,bty="n")
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default
 }
 \keyword{phylogenetics}
 \keyword{utilities}

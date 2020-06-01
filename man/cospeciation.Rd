@@ -21,7 +21,9 @@ cospeciation(t1, t2, distance=c("RF","SPR"),
 	\item{...}{optional arguments.}
 }
 \description{
-	This function conducts a test for cospeciation based on tree distance, applying a distance metric selected by the user. Note that this method should be prone to be quite liberal as the null hypothesis is no similarity between trees!
+	This function conducts a test for cospeciation based on tree distance, applying a distance metric selected by the user.
+	
+	Note that this method should be prone to be quite liberal as the null hypothesis is no similarity between trees!
 }
 \value{
 	An object of class \code{"cospeciation"}, which includes the test-statistic, the null distribution, and a p-value for the test of the null hypothesis of no topological similarity between the two trees.
@@ -32,6 +34,18 @@ cospeciation(t1, t2, distance=c("RF","SPR"),
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
 	\code{\link{cophylo}}
+}
+\examples{
+## load data from Lopez-Vaamonde et al. (2001)
+data(wasp.trees)
+data(wasp.data)
+## test for cospeciation
+wasp.cosp<-cospeciation(wasp.trees[[1]],wasp.trees[[2]],
+    assoc=wasp.data)
+print(wasp.cosp)
+plot(wasp.cosp)
+title(main=paste("Simulated distribution of RF distances\n",
+    "between unassociated trees"),font.main=3)
 }
 \keyword{phylogenetics}
 \keyword{plotting}

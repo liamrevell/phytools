@@ -44,6 +44,18 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 \seealso{
 	\code{\link{brownieREML}}, \code{\link{evol.vcv}}, \code{\link{ratebytree}}
 }
+\examples{
+## load data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## extract character of interest
+buccal.length<-setNames(sunfish.data$buccal.length,
+    rownames(sunfish.data))
+## fit model
+multiBM.fit<-brownie.lite(sunfish.tree,
+    buccal.length)
+print(multiBM.fit)
+}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}

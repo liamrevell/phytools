@@ -34,6 +34,12 @@ roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL,
 \seealso{
 	\code{\link{plotSimmap}}, \code{\link{plotTree}}
 }
+\examples{
+data(mammal.tree)
+roundPhylogram(compute.brlen(mammal.tree),
+    fsize=0.8,ftype="i")
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default
+}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}

@@ -34,10 +34,26 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 	\code{\link{ace}}, \code{\link{anc.Bayes}}, \code{\link{fastAnc}}, \code{\link{optim}}
 }
 \examples{
-tree<-pbtree(n=26,tip.label=LETTERS)
-x<-fastBM(tree) # simulate using fastBM
-fit<-anc.ML(tree,x) # fit model & estimate ancestral states
-print(fit)
+## load data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+gape.width<-setNames(sunfish.data$gape.width,
+    rownames(sunfish.data))
+## estimate ancestral state under BM model
+fit.BM<-anc.ML(sunfish.tree,gape.width)
+print(fit.BM)
+## estimate ancestral states under EB model
+fit.EB<-anc.ML(sunfish.tree,gape.width,model="EB")
+print(fit.EB)
+## compare estimates from the two fitted models
+AIC(fit.BM,fit.EB)
+plot(fit.BM$ace,fit.EB$ace,pch=19,
+    col=make.transparent("blue",0.5),
+    xlab="BM ancestral state estimates",
+    ylab="EB ancestral state estimates",
+    main=paste("Comparison of ancestral state estimates",
+    "\nunder BM vs. EB models"),font.main=3,
+    cex.main=1.2,bty="l",cex=1.5)
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

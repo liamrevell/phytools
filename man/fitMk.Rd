@@ -57,6 +57,22 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \seealso{
 	\code{\link{ace}}, \code{\link{make.simmap}}
 }
+\examples{
+## load tree and data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## extract discrete character (feeding mode)
+fmode<-setNames(sunfish.data$feeding.mode,
+     rownames(sunfish.data))
+## fit "ER" model
+fit.ER<-fitMk(sunfish.tree,fmode,model="ER")
+print(fit.ER)
+## fit "ARD" model
+fit.ARD<-fitMk(sunfish.tree,fmode,model="ARD")
+print(fit.ARD)
+## compare the models
+AIC(fit.ER,fit.ARD)
+}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}

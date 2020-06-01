@@ -46,7 +46,7 @@ plot(tree)
 axisPhylo()
 
 ## add an extinct tip ("t_extinct") sister to 't2' with 
-##divergence time of 7.8 Ma and duration (edge length) of 
+## divergence time of 7.8 Ma and duration (edge length) of 
 ## 3.3 Ma
 node <- which(tree$tip.label=="t2") 
 tree <- bind.tip(tree, tip.label="t_extinct", where=node, 

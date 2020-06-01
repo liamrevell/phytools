@@ -6,7 +6,7 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"simmap"}. If \code{tree} is an object of class \code{"phylo"} then a simple multivariate Brownian motion model will be fit to the data in \code{X}.}
-	\item{X}{an \code{n} x \code{m} matrix of tip values for \code{m} continuously valued traits in \code{n} species - row names should be species names.}
+	\item{X}{an \code{n} x \code{m} matrix of tip values for \code{m} continuously valued traits in \code{n} species - row names should be species names. If \code{X} is supplied as a data frame it will be coerced into a matrix without warning.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization. This quantity may need to be increased for difficult optimizations.}
 	\item{vars}{an optional logical value indicating whether or not to estimate the variances of the parameter estimates from the Hessian matrix.}
 	\item{...}{optional arguments.}
@@ -38,6 +38,14 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
 	\code{\link{evol.rate.mcmc}}, \code{\link{brownie.lite}}
+}
+\examples{
+## load data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## fit multi-correlation model
+sunfish.fit<-evol.vcv(sunfish.tree,sunfish.data[,2:3])
+print(sunfish.fit)
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

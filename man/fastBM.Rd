@@ -29,9 +29,11 @@ fastBM(tree, a=0, mu=0, sig2=1, bounds=c(-Inf,Inf), internal=FALSE, nsim=1,
 	\code{\link{sim.corrs}}
 }
 \examples{
-tree<-pbtree(n=1000)
-x<-fastBM(tree,sig2=0.1) # Brownian motion
-y<-fastBM(tree,mu=1) # with a trend
+## simulate 10 characters on the Anolis tree 
+## under Brownian motion
+data(anoletree)
+X<-fastBM(anoletree,nsim=10)
+head(X)
 }
 \keyword{phylogenetics}
 \keyword{simulation}

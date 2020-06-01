@@ -31,10 +31,26 @@ anc.trend(tree, x, maxit=2000)
 	\code{\link{ace}}, \code{\link{anc.Bayes}}, \code{\link{anc.ML}}, \code{\link{optim}}
 }
 \examples{
+## simulate tree & data using fastBM with a trend (m!=0)
 tree<-rtree(n=26,tip.label=LETTERS)
-x<-fastBM(tree,mu=2) # simulate using fastBM with a trend (m!=0)
-fit<-anc.trend(tree,x) # fit model & estimate ancestral states
-print(fit)
+x<-fastBM(tree,mu=2) 
+## fit no trend model
+fit.bm<-anc.ML(tree,x,model="BM")
+print(fit.bm)
+ ## fit trend model
+fit.trend<-anc.trend(tree,x)
+print(fit.trend)
+## compare trend vs. no-trend models & estimates
+AIC(fit.bm,fit.trend)
+xlim<-ylim<-range(c(fit.bm$ace,fit.trend$ace))
+plot(fit.bm$ace,fit.trend$ace,pch=19,
+    col=make.transparent("blue",0.5),
+    xlab="no-trend estimates",
+    ylab="trend estimates",
+    main=paste("Comparison of ancestral state estimates",
+    "\nunder no-trend vs. trend models"),font.main=3,
+    cex.main=1.2,bty="l",cex=1.5,
+    xlim=xlim,ylim=ylim)
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

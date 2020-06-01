@@ -23,7 +23,7 @@ mccr(obj, rho=1, nsim=100, ...)
 \description{
 	The function \code{ltt} computes LTT plot with extant and extinct lineages, and optionally conducts \eqn{\gamma}-test of Pybus & Harvey (2000). The object returned by \code{ltt} can be plotted or re-plotted using \code{\link{plot}}.
 	
-	The function \code{gtt} computes the value of Pybus & Harvey's \eqn{\gamma} statistic through time by slice the tree at various points - by default in even intervals from the time above the root at which \emph{N} = 3 to the present day.
+	The function \code{gtt} computes the value of Pybus & Harvey's \eqn{\gamma} statistic through time by slicing the tree at various points - by default in even intervals from the time above the root at which \emph{N} = 3 to the present day.
 	
 	The function \code{mccr} performs the MCCR test of Pybus & Harvey (2000) which takes into account incomplete taxon sampling in computing a P-value of the \eqn{\gamma} statistic.
 }
@@ -52,6 +52,7 @@ mccr(obj, rho=1, nsim=100, ...)
 	\code{\link{gammatest}}, \code{\link{ltt95}}
 }
 \examples{
+## LTT plots
 set.seed(99)
 trees<-pbtree(n=100,scale=100,nsim=10)
 obj<-ltt(trees,plot=FALSE)
@@ -65,6 +66,10 @@ obj<-ltt(tree,gamma=FALSE,show.tree=TRUE,
 title(main="LTT plot with superimposed tree",
     font.main=3)
 obj
+## GTT plot
+data(anoletree)
+anole.gtt<-gtt(anoletree)
+plot(anole.gtt)
 }
 \keyword{phylogenetics}
 \keyword{plotting}

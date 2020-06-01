@@ -31,20 +31,16 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
-\dontrun{
-tree<-pbtree(n=20,scale=2)
-x<-fastBM(tree)
-phenogram(tree,x)
-# or, simulate a discrete character history
-tree<-sim.history(tree,Q=matrix(c(-1,1,1,-1),2,2),anc="1")
-# simulate in which the rate depends on the state
-x<-sim.rates(tree,c(1,10))
-phenogram(tree,x)
-# now use spread.labels
-tree<-pbtree(n=40)
-x<-fastBM(tree)
-phenogram(tree,x,spread.labels=TRUE,spread.cost=c(1,0))
-}
+## load data from Garland et al. (1992)
+data(mammal.tree)
+data(mammal.data)
+## extract character of interest
+ln.bodyMass<-log(setNames(mammal.data$bodyMass,
+    rownames(mammal.data)))
+## plot traitgram
+phenogram(mammal.tree,ln.bodyMass,ftype="i",
+    spread.cost=c(1,0),fsize=0.7,xlab="time (ma)",
+    ylab="log(body mass)")
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

@@ -48,6 +48,24 @@ errorbar.contMap(obj, ...)
 \seealso{
 	\code{\link{anc.ML}}, \code{\link{densityMap}}, \code{\link{fastAnc}}, \code{\link{plotSimmap}}
 }
+\examples{
+## load data from Garland et al. (1992)
+data(mammal.tree)
+data(mammal.data)
+## extract character of interest
+ln.bodyMass<-log(setNames(mammal.data$bodyMass,
+    rownames(mammal.data)))
+## create "contMap" object
+mammal.contMap<-contMap(mammal.tree,
+    ln.bodyMass,plot=FALSE,res=500)
+## change color scheme
+mammal.contMap<-setMap(mammal.contMap,
+    c("white","#FFFFB2","#FECC5C","#FD8D3C",
+    "#E31A1C"))
+plot(mammal.contMap,fsize=0.7,
+    leg.txt="log(body mass)")
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+}
 \keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{plotting}

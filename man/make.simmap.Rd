@@ -51,6 +51,29 @@ make.simmap(tree, x, model="SYM", nsim=1, ...)
 \seealso{
 	\code{\link{brownie.lite}}, \code{\link{brownieREML}}, \code{\link{countSimmap}}, \code{\link{describe.simmap}}, \code{\link{evol.vcv}}, \code{\link{plotSimmap}}, \code{\link{read.simmap}}, \code{\link{write.simmap}}
 }
+\examples{
+## load tree and data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## extract discrete character (feeding mode)
+fmode<-setNames(sunfish.data$feeding.mode,
+    rownames(sunfish.data))
+## do stochastic mapping
+smap.trees<-make.simmap(sunfish.tree,fmode,model="ER",
+     nsim=100)
+## print a summary of the stochastic mapping
+summary(smap.trees)
+## plot a posterior probabilities of ancestral states
+cols<-setNames(c("blue","red"),levels(fmode))
+plot(summary(smap.trees),colors=cols,ftype="i")
+legend("topleft",c("non-piscivorous","piscivorous"),
+   pch=21,pt.bg=cols,pt.cex=2)
+par(mar=c(5.1,4.1,4.1,2.1))
+## plot posterior density on the number of changes
+plot(density(smap.trees),bty="l")
+title(main="Posterior distribution of changes of each type",
+    font.main=3)
+}
 \keyword{ancestral states}
 \keyword{phylogenetics}
 \keyword{comparative method}

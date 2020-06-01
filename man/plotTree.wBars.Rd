@@ -43,6 +43,22 @@ plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list())
 \seealso{
 	\code{\link{barplot}}, \code{\link{dotTree}}, \code{\link{plotSimmap}}, \code{\link{plotTree}}
 }
+\examples{
+## load data from Mahler et al. (2010)
+data(anoletree)
+data(anole.data)
+## extract overall body size (SVL)
+svl<-setNames(anole.data$SVL,rownames(anole.data))
+## plotTree.wBars
+plotTree.wBars(anoletree,svl,type="fan",scal=0.5)
+par(mar=c(5.1,4.1,4.1,2.1))
+## plotTree.barplot
+plotTree.barplot(anoletree,exp(svl),
+    args.plotTree=list(fsize=0.5),
+    args.barplot=list(xlab="SVL (mm)"))
+## reset par to defaults
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
+}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}

@@ -30,6 +30,17 @@ dot.legend(x, y, min, max, Ntip, length=5, prompt=FALSE, method="plotTree",
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
+\examples{
+## load data from Garland et al. (1992)
+data(mammal.tree)
+data(mammal.data)
+## log-transform trait data
+log.mammal<-log(mammal.data)
+## plot dotTree
+dotTree(mammal.tree,log.mammal,fsize=0.7,
+    standardize=TRUE,length=10)
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+}
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{plotting}
