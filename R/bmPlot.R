@@ -1,5 +1,5 @@
-# visualize discrete time Brownian simulation on a tree
-# written by Liam J. Revell 2012, 2013, 2015
+## visualize discrete time Brownian simulation on a tree
+## written by Liam J. Revell 2012, 2013, 2015, 2020
 
 bmPlot<-function(tree,type="BM",anc=0,sig2=1/1000,ngen=1000,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -26,7 +26,7 @@ bmPlot<-function(tree,type="BM",anc=0,sig2=1/1000,ngen=1000,...){
 		T[[i]]<-h[i]+0:tr$edge.length[i]
 	}
 	
-	if(type=="BM") cols<-bm(X,T)
+	if(type=="BM") cols<-bm(X,T,...)
 	else if(type=="threshold") cols<-th(X,T,...)
 
 	if(return.tree){
@@ -60,9 +60,13 @@ bmPlot<-function(tree,type="BM",anc=0,sig2=1/1000,ngen=1000,...){
 
 # plots type="BM"
 bm<-function(X,T,...){
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-"o"
 	minX<-min(sapply(X,min))
 	maxX<-max(sapply(X,max))
-	plot(X[[1]][1],T[[1]][1],ylim=c(0,max(sapply(T,max))),xlim=c(minX,maxX),ylab="time",xlab="phenotype")
+	plot(X[[1]][1],T[[1]][1],ylim=c(0,max(sapply(T,max))),
+		xlim=c(minX,maxX),ylab="time",xlab="phenotype",
+		bty=bty)
 	for(i in 1:length(X)) lines(X[[i]],T[[i]])
 	if(hasArg(colors)) cols<-list(...)$colors
 	else cols<-"black"
@@ -71,6 +75,8 @@ bm<-function(X,T,...){
 
 # plots type="threshold"
 th<-function(X,T,...){
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-"o"
 	minX<-min(sapply(X,min))
 	maxX<-max(sapply(X,max))
 	if(hasArg(thresholds)) thresholds<-list(...)$thresholds
@@ -81,7 +87,8 @@ th<-function(X,T,...){
 		while(length(thresholds)>(length(cols)-1)) cols<-c(cols,c("black","red","blue","green"))
 	}
 	thresholds<-thresholds+1e-16
-	plot(X[[1]][1],T[[1]][1],ylim=c(0,max(sapply(T,max))),xlim=c(minX,maxX),ylab="time",xlab="liability")
+	plot(X[[1]][1],T[[1]][1],ylim=c(0,max(sapply(T,max))),xlim=c(minX,maxX),ylab="time",xlab="liability",
+		bty=bty)
 	for(i in 1:length(X))
 		if(length(X[[i]])>1)
 			for(j in 1:(length(X[[i]])-1))
