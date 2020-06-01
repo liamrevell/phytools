@@ -176,12 +176,6 @@ logLik.fitMk<-function(object,...){
 	lik
 }
 
-## AIC method
-AIC.fitMk<-function(object,...,k=2){
-	np<-length(object$rates)
-	-2*logLik(object)+np*k
-}
-
 ## S3 plot method for objects of class "fitMk"
 plot.fitMk<-function(x,...){
 	Q<-as.Qmatrix(x)

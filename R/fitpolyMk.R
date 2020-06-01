@@ -107,12 +107,6 @@ logLik.fitpolyMk<-function(object,...){
 	lik
 }
 
-## AIC method
-AIC.fitpolyMk<-function(object,...,k=2){
-	np<-length(object$rates)
-	-2*logLik(object)+np*k
-}
-
 ## S3 plot method for objects of class "fitpolyMk"
 plot.fitpolyMk<-function(x,...){
 	if(hasArg(signif)) signif<-list(...)$signif

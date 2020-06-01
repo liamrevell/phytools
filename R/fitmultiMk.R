@@ -156,9 +156,3 @@ logLik.fitmultiMk<-function(object,...){
 	attr(lik,"df")<-length(object$rates)
 	lik
 }
-
-## AIC method
-AIC.fitmultiMk<-function(object,...,k=2){
-	np<-length(object$rates)
-	-2*logLik(object)+np*k
-}
