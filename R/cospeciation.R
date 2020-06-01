@@ -74,6 +74,8 @@ print.cospeciation<-function(x,...){
 }
 
 plot.cospeciation<-function(x,...){
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-"l"
 	if(x$distance=="RF")
 		p<-hist(x$d.null,breaks=seq(min(c(x$d,x$d.null))-3,
 			max(c(x$d,x$d.null))+3,2),plot=FALSE)
@@ -82,7 +84,7 @@ plot.cospeciation<-function(x,...){
 			max(c(x$d,x$d.null))+1.5,1),plot=FALSE)
 	plot(p$mids,p$density,xlim=c(min(c(x$d,x$d.null))-2,
 		max(c(x$d,x$d.null))+1),ylim=c(0,1.2*max(p$density)),
-		type="n",
+		type="n",bty=bty,
 		xlab=paste(x$distance," distance (null by ",
 		x$method,")",sep=""),ylab="relative frequency")
 	y2<-rep(p$density,each=2)

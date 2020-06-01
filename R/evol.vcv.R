@@ -1,8 +1,9 @@
 # this function fits the model of Revell & Collar (2009; Evolution)
-# written by Liam J. Revell 2010, 2011, 2013, 2014, 2015, 2016
+# written by Liam J. Revell 2010, 2011, 2013, 2014, 2015, 2016, 2020
 
 evol.vcv<-function(tree,X,maxit=2000,vars=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+	if(is.data.frame(X)) X<-as.matrix(X)
 	n<-nrow(X) # number of species
 	m<-ncol(X) # number of traits
 	if(hasArg(se)){ 

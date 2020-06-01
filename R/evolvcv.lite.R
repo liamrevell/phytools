@@ -1,5 +1,5 @@
 ## function is simplified version of evol.vcv
-## written by Liam J. Revell 2011, 2012, 2013, 2017, 2019
+## written by Liam J. Revell 2011, 2012, 2013, 2017, 2019, 2020
 
 evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -176,7 +176,7 @@ print.evolvcv.lite<-function(x,...){
 			}
 			if(m$convergence==0) 
 				cat(paste("\n(R thinks it has found the ML solution for model ",i,".)\n\n",sep=""))
-			else cat(paste("\n(Model ",i,"optimization may not have converged.)\n\n",sep=""))
+			else cat(paste("\n(Model ",i," optimization may not have converged.)\n\n",sep=""))
 		}
 	}
 }

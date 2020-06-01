@@ -1,9 +1,10 @@
 ## function to interactively expand and contract subtrees on a phylogeny
 ## inspired by the phylogeny interface of sharksrays.org by Gavin Naylor
-## written by Liam J. Revell 2015, 2016, 2017, 2018
+## written by Liam J. Revell 2015, 2016, 2017, 2018, 2020
 
 collapseTree<-function(tree,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(inherits(tree,"simmap")) tree<-as.phylo(tree)
 	if(hasArg(nodes)) nodes<-list(...)$nodes
 	else nodes<-TRUE
 	if(hasArg(hold)) hold<-list(...)$hold
