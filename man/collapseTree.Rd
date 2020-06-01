@@ -27,8 +27,7 @@ collapseTree(tree, ...)
 \examples{
 \dontrun{
 data(anoletree)
-pruned<-collapseTree(anoletree)
-}
+pruned<-collapseTree(anoletree)}
 }
 \keyword{phylogenetics}
 \keyword{plotting}

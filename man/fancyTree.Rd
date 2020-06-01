@@ -67,8 +67,7 @@ Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),
 B<-Y[length(tree$tip)+1:tree$Nnode,]
 Y<-Y[1:length(tree$tip),]
 fancyTree(tree,type="traitgram3d",X=Y,A=B,
-    control=list(simple.axes=TRUE,spin=FALSE))
-}
+    control=list(simple.axes=TRUE,spin=FALSE))}
 	
 # plot with dropped tips
 tree<-pbtree(n=30)
@@ -79,8 +78,7 @@ pruned<-fancyTree(tree,type="droptip",tip=tips)
 # plot 95-percent CI phenogram
 tree<-pbtree(n=30)
 x<-fastBM(tree)
-fancyTree(tree,type="phenogram95",x=x)
-}
+fancyTree(tree,type="phenogram95",x=x)}
 
 ## reset par to defaults
 par(mar=c(5.1,4.1,4.1,2.1))

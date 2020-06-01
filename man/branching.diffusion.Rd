@@ -29,11 +29,6 @@ branching.diffusion(sig2=1, b=0.0023, time.stop=1000, ylim=NULL,
 \seealso{
 	\code{\link{bmPlot}}, \code{\link{fastBM}}
 }
-\examples{
-\dontrun{
-branching.diffusion()
-}
-}
 \keyword{phylogenetics}
 \keyword{animation}
 \keyword{plotting}

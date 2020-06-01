@@ -27,12 +27,16 @@ phylomorphospace3d(tree, X, A=NULL, label=TRUE, control=list(),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
-tree<-pbtree(n=26,tip.label=LETTERS)
-X<-fastBM(tree,nsim=3)
+data(anoletree)
+data(anole.data)
+anole.pca<-phyl.pca(anoletree,anole.data)
 \dontrun{
-phylomorphospace3d(tree,X,control=list(spin=FALSE))
-}
-phylomorphospace3d(tree,X,method="static")
+phylomorphospace3d(anoletree,scores(anole.pca)[,1:3],
+    control=list(spin=FALSE))}
+par(cex=0.5)
+phylomorphospace3d(anoletree,scores(anole.pca)[,1:3],
+    method="static",angle=-30)
+par(cex=1)
 }
 \seealso{
 	\code{\link{fancyTree}}, \code{\link{phenogram}}, \code{\link{phylomorphospace}}
