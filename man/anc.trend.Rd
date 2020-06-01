@@ -46,7 +46,8 @@ print(fit.trend)
 AIC(fit.bm,fit.trend)
 layout(matrix(c(3,4,1,2,5,6),3,2,byrow=TRUE),
     heights=c(1.5,3,1.5),widths=c(3,3))
-xlim<-ylim<-range(c(fit.bm$ace,fit.trend$ace))
+xlim<-ylim<-range(c(a,fit.bm$ace,
+    fit.trend$ace))
 plot(a,fit.bm$ace,pch=19,
     col=make.transparent("blue",0.5),
     xlab="true ancestral states",
