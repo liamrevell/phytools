@@ -38,15 +38,17 @@ anc.Bayes(tree, x, ngen=10000, control=list(), ...)
 	\code{\link{ace}}, \code{\link{anc.ML}}, \code{\link{anc.trend}}, \code{\link{evol.rate.mcmc}}, \code{\link{fastAnc}}
 }
 \examples{
+## set seed
+set.seed(77)
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
 ## extract character of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
-rownames(mammal.data)))
-## run MCMC
+    rownames(mammal.data)))
+## run MCMC (should be run at least 1e6 generations)
 mcmc<-anc.Bayes(mammal.tree,ln.bodyMass,
-    ngen=100000)
+    ngen=50000)
 print(mcmc,printlen=20) ## estimates
 par(mfrow=c(2,1))
 plot(mcmc,bty="l",main="Likelihood-profile from MCMC",
