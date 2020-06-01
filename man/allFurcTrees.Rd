@@ -27,5 +27,14 @@ allFurcTrees(n, tip.label=NULL, to.plot=TRUE)
 \seealso{
 	\code{\link{add.everywhere}}, \code{\link{exhaustiveMP}}
 }
+\examples{
+## compute & plot all bi- and multifurcating
+## trees for six taxa
+trees<-allFurcTrees(n=6)
+par(mfrow=c(16,15))
+nulo<-sapply(trees,plot,type="unrooted",
+    no.margin=TRUE)
+par(mfrow=c(1,1))
+}
 \keyword{phylogenetics}
 \keyword{phylogeny inference}

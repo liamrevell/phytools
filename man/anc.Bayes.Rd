@@ -38,21 +38,22 @@ anc.Bayes(tree, x, ngen=10000, control=list(), ...)
 	\code{\link{ace}}, \code{\link{anc.ML}}, \code{\link{anc.trend}}, \code{\link{evol.rate.mcmc}}, \code{\link{fastAnc}}
 }
 \examples{
-## load data from Revell & Collar (2009)
-data(sunfish.tree)
-data(sunfish.data)
+## load data from Garland et al. (1992)
+data(mammal.tree)
+data(mammal.data)
 ## extract character of interest
-gape.width<-setNames(sunfish.data$gape.width,
-    rownames(sunfish.data))
+ln.bodyMass<-log(setNames(mammal.data$bodyMass,
+rownames(mammal.data)))
 ## run MCMC
-mcmc<-anc.Bayes(sunfish.tree,gape.width,
-    ngen=200000)
+mcmc<-anc.Bayes(mammal.tree,ln.bodyMass,
+    ngen=100000)
 print(mcmc,printlen=20) ## estimates
 par(mfrow=c(2,1))
 plot(mcmc,bty="l",main="Likelihood-profile from MCMC",
     font.main=3) ## likelihood-profile
-plot(density(mcmc,what="29",burnin=10000),bty="l",
-    main="Posterior density for root state of gape width",
+plot(density(mcmc,what=Ntip(mammal.tree)+1,
+    burnin=20000),bty="l",
+    main="Posterior density for root state of log(body mass)",
     font.main=3)
 par(mfrow=c(1,1)) ## reset par to default
 }

@@ -68,7 +68,7 @@ title(main="LTT plot with superimposed tree",
 obj
 ## GTT plot
 data(anoletree)
-anole.gtt<-gtt(anoletree)
+anole.gtt<-gtt(anoletree,n=40)
 plot(anole.gtt)
 }
 \keyword{phylogenetics}

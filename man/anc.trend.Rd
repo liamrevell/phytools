@@ -33,24 +33,39 @@ anc.trend(tree, x, maxit=2000)
 \examples{
 ## simulate tree & data using fastBM with a trend (m!=0)
 tree<-rtree(n=26,tip.label=LETTERS)
-x<-fastBM(tree,mu=2) 
+x<-fastBM(tree,mu=4,internal=TRUE)
+a<-x[as.character(1:tree$Nnode+Ntip(tree))]
+x<-x[tree$tip.label]
 ## fit no trend model
 fit.bm<-anc.ML(tree,x,model="BM")
 print(fit.bm)
- ## fit trend model
+## fit trend model
 fit.trend<-anc.trend(tree,x)
 print(fit.trend)
 ## compare trend vs. no-trend models & estimates
 AIC(fit.bm,fit.trend)
+layout(matrix(c(3,4,1,2,5,6),3,2,byrow=TRUE),
+    heights=c(1.5,3,1.5),widths=c(3,3))
 xlim<-ylim<-range(c(fit.bm$ace,fit.trend$ace))
-plot(fit.bm$ace,fit.trend$ace,pch=19,
+plot(a,fit.bm$ace,pch=19,
     col=make.transparent("blue",0.5),
-    xlab="no-trend estimates",
-    ylab="trend estimates",
-    main=paste("Comparison of ancestral state estimates",
-    "\nunder no-trend vs. trend models"),font.main=3,
+    xlab="true ancestral states",
+    ylab="ML estimates",
+    main=paste("Comparison of true and estimated",
+    "\nstates under a no-trend model"),font.main=3,
     cex.main=1.2,bty="l",cex=1.5,
     xlim=xlim,ylim=ylim)
+lines(xlim,ylim,lty="dotted")
+plot(a,fit.trend$ace,pch=19,
+    col=make.transparent("blue",0.5),
+    xlab="true ancestral states",
+    ylab="ML estimates",
+    main=paste("Comparison of true and estimated",
+    "\nstates under a trend model"),font.main=3,
+    cex.main=1.2,bty="l",cex=1.5,
+    xlim=xlim,ylim=ylim)
+lines(xlim,ylim,lty="dotted")
+par(mfrow=c(1,1))
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

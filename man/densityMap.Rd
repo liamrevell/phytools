@@ -54,7 +54,7 @@ smap.trees<-make.simmap(sunfish.tree,fmode,model="ER",
      nsim=100)
 ## compute "densityMap" object
 sunfish.dmap<-densityMap(smap.trees,plot=FALSE,
-	res=200)
+	res=100)
 ## plot density map
 plot(sunfish.dmap,lwd=5,outline=TRUE)
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default

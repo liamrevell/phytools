@@ -54,6 +54,7 @@ data(anole.data)
 ## run phylogenetic PCA
 anole.pca<-phyl.pca(anoletree,anole.data)
 print(anole.pca)
+## plot results
 plot(anole.pca)
 biplot(anole.pca)
 }

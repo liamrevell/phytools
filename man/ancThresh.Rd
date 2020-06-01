@@ -35,17 +35,18 @@ ancThresh(tree, x, ngen=100000, sequence=NULL, method="mcmc",
 }
 \examples{
 \dontrun{
-## generate tree & threshold character
-tree<-pbtree(n=26,tip.label=LETTERS)
-th<-setNames(c(0,Inf),c("a","b"))
-x<-threshState(fastBM(tree),th)
+## load data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## extract character of interest
+fmode<-setNames(sunfish.data$feeding.mode,
+    rownames(sunfish.data))
 ## run MCMC
-mcmc<-ancThresh(tree,x,ngen=1000000)
+mcmc<-ancThresh(sunfish.tree,fmode,ngen=1000000)
 ## plot results
 plot(mcmc,mar=c(0.1,0.1,4.1,0.1))
 title(main="Posterior probabilities for node states",
-    font.main=3)
-}
+    font.main=3)}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

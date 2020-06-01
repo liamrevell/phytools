@@ -8,11 +8,11 @@
 \description{
 	\pkg{phytools} provides functions for phylogenetic comparative biology; as well as several other functions for tree inference, manipulation, and analysis that are not implemented in other R packages.
 
-	The complete list of functions can be displayed with \code{library(help = phytools)}.
-
-	More information on \emph{phytools} can be found at \url{http://www.phytools.org} or \url{http://blog.phytools.org}.
+	The complete list of functions can be displayed with \code{library(help=phytools)}.
 	
-	If you use \emph{phytools} (or other packages that depend on \emph{phytools}) in a publication, please \emph{cite it}. The appropriate citation for \emph{phytools} is listed below.
+	The \emph{phytools} development page is \url{http://github.com/liamrevell/phytools/}. More information on \emph{phytools} can also be found at \url{http://blog.phytools.org} or \url{http://www.phytools.org}.
+	
+	If you use \emph{phytools} (or other packages that depend on \emph{phytools}) in a publication, please \emph{cite it}. The appropriate citation for \emph{phytools} is listed below or can be obtained using \code{citation("phytools")} with the package installed.
 }
 \author{
 	Liam J. Revell
