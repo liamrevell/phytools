@@ -186,9 +186,10 @@ plot.fitMk<-function(x,...){
 plot.gfit<-function(x,...){
 	if("mkn"%in%class(x$lik)==FALSE){
 		stop("Sorry. No plot method presently available for objects of this type.")
+		object<-NULL
 	} else {
 		chk<-.check.pkg("geiger")
-		if(chk) plot(as.Qmatrix(x),...)
+		if(chk) object<-plot(as.Qmatrix(x),...)
 		else {
 			obj<-list()
 			QQ<-.Qmatrix.from.gfit(x)
@@ -199,9 +200,10 @@ plot.gfit<-function(x,...){
 			obj$index.matrix[col(obj$index.matrix)!=row(obj$index.matrix)]<-1:k
 			obj$rates<-QQ[sapply(1:k,function(x,y) which(x==y),obj$index.matrix)]
 			class(obj)<-"fitMk"
-			plot(obj,...)
+			object<-plot(obj,...)
 		}
 	}
+	object
 }
 	
 ## S3 method for "Qmatrix" object class
@@ -271,6 +273,8 @@ plot.Qmatrix<-function(x,...){
 		}
 	text(v.x,v.y,rownames(Q),cex=cex.traits,
 		col=make.transparent("black",0.7))
+	object<-data.frame(states=rownames(Q),x=v.x,y=v.y)
+	invisible(object)
 }
 
 ## wraps around expm
