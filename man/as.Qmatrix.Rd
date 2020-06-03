@@ -15,10 +15,12 @@ as.Qmatrix(x, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function extracts a Q-matrix (in the form of an object of class \code{"Qmatrix"} from a fitted M\emph{k} model.
+	This function extracts a \bold{Q}-matrix (in the form of an object of class \code{"Qmatrix"} from a fitted M\emph{k} model.
 }
 \value{
 	An object of class \code{"Qmatrix"}.
+	
+	\code{plot.Qmatrix} invisibly returns the coordinates of vertices of the plotted \bold{Q}-matrix.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

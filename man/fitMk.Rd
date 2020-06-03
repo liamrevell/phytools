@@ -49,6 +49,8 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 }
 \value{
 	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, or \code{"mcmcMk"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
+	
+	\code{plot.fitMk} and \code{plot.gfit} invisibly return the coordinates of vertices of the plotted \bold{Q}-matrix.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
