@@ -25,14 +25,24 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	}
 	if(hasArg(pi)) pi<-list(...)$pi
 	else pi<-"equal"
-	if(pi[1]=="equal") pi<-setNames(rep(1/m,m),states)
-	else if(pi[1]=="estimated"){ 
-		pi<-if(!is.null(fixedQ)) statdist(fixedQ) else statdist(summary(fitMk(tree,x,model),quiet=TRUE)$Q)
-		cat("Using pi estimated from the stationary distribution of Q assuming a flat prior.\npi =\n")
+	if(is.numeric(pi)) root.prior<-"given"
+	if(pi[1]=="equal"){ 
+		pi<-setNames(rep(1/m,m),states)
+		root.prior<-"flat"
+	} else if(pi[1]=="estimated"){ 
+		pi<-if(!is.null(fixedQ)) statdist(fixedQ) else 
+			statdist(summary(fitMk(tree,x,model),quiet=TRUE)$Q)
+		cat(paste("Using pi estimated from the stationary",
+			"distribution of Q assuming a flat prior.\npi =\n"))
 		print(round(pi,6))
 		cat("\n")
-	}	
-	else pi<-pi/sum(pi)
+		root.prior<-"stationary"
+	} else if(pi[1]=="fitzjohn") root.prior<-"nuisance"
+	if(is.numeric(pi)){ 
+		pi<-pi/sum(pi)
+		if(is.null(names(pi))) pi<-setNames(pi,states)
+		pi<-pi[states]
+	} 
 	if(is.null(fixedQ)){
 		if(is.character(model)){
 			rate<-matrix(NA,m,m)
@@ -70,7 +80,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	rate[rate==0]<-k+1
 	liks<-rbind(x,matrix(0,M,m,dimnames=list(1:M+N,states)))
 	pw<-reorder(tree,"pruningwise")
-	lik<-function(Q,output.liks=FALSE,pi){
+	lik<-function(Q,output.liks=FALSE,pi,...){
+		if(hasArg(output.pi)) output.pi<-list(...)$output.pi
+		else output.pi<-FALSE
+		if(is.Qmatrix(Q)) Q<-unclass(Q)
 		if(any(is.nan(Q))||any(is.infinite(Q))) return(1e50)
 		comp<-vector(length=N+M,mode="numeric")
 		parents<-unique(pw$edge[,1])
@@ -84,13 +97,25 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			for(j in 1:length(v)){
 				v[[j]]<-EXPM(Q*el[j])%*%liks[desc[j],]
 			}
-			vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
+			if(anc==root){
+				if(is.numeric(pi)) vv<-Reduce('*',v)[,1]*pi
+				else if(pi[1]=="fitzjohn"){
+					D<-Reduce('*',v)[,1]
+					pi<-D/sum(D)
+					vv<-D*D/sum(D)
+				}
+			} else vv<-Reduce('*',v)[,1]
+			## vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
 			comp[anc]<-sum(vv)
 			liks[anc,]<-vv/comp[anc]
 		}
-		if(output.liks)return(liks[1:M+N,,drop=FALSE]) 
-		logL<--sum(log(comp[1:M+N]))
-		return(if(is.na(logL)) Inf else logL)
+		if(output.liks) return(liks[1:M+N,,drop=FALSE])
+		else if(output.pi) return(pi)
+		else {
+			logL<--sum(log(comp[1:M+N]))
+			if(is.na(logL)) logL<-Inf
+			return(logL)
+		}
 	}
 	if(is.null(fixedQ)){
 		if(length(q.init)!=k) q.init<-rep(q.init[1],k)
@@ -103,26 +128,33 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		else	
 			fit<-nlminb(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
 				lower=rep(0,k),upper=rep(1e50,k))
+		if(pi[1]=="fitzjohn") pi<-setNames(
+			lik(makeQ(m,fit$par,index.matrix),FALSE,pi=pi,output.pi=TRUE),
+			states)
 		obj<-list(logLik=
 			if(opt.method=="optim") -fit$value else -fit$objective,
 			rates=fit$par,
 			index.matrix=index.matrix,
 			states=states,
 			pi=pi,
-			method=opt.method)
+			method=opt.method,
+			root.prior=root.prior)
 		if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 			pi=pi)
 	} else {
 		fit<-lik(Q,pi=pi)
+		if(pi[1]=="fitzjohn") pi<-setNames(lik(Q,FALSE,pi=pi,output.pi=TRUE),states)
 		obj<-list(logLik=-fit,
 			rates=Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],
 			index.matrix=index.matrix,
 			states=states,
-			pi=pi)
+			pi=pi,
+			root.prior=root.prior)
 		if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 			pi=pi)
 	}
-	lik.f<-function(q) -lik(q,output.liks=FALSE,pi=pi)
+	lik.f<-function(q) -lik(q,output.liks=FALSE,
+		pi=if(root.prior=="nuisance") "fitzjohn" else pi)
 	obj$lik<-lik.f
 	class(obj)<-"fitMk"
 	return(obj)
@@ -147,9 +179,12 @@ print.fitMk<-function(x,digits=6,...){
 	colnames(Q)<-rownames(Q)<-x$states
 	print(round(Q,digits))
 	cat("\nFitted (or set) value of pi:\n")
-	print(x$pi)
+	print(round(x$pi,digits))
+	cat(paste("due to treating the root prior as (a) ",x$root.prior,".\n",
+		sep=""))
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
-	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",sep=""))
+	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",
+		sep=""))
 }
 
 ## summary method for objects of class "fitMk"
@@ -203,7 +238,7 @@ plot.gfit<-function(x,...){
 			object<-plot(obj,...)
 		}
 	}
-	object
+	invisible(object)
 }
 	
 ## S3 method for "Qmatrix" object class
@@ -372,5 +407,7 @@ as.Qmatrix.fitMk<-function(x,...){
 
 print.Qmatrix<-function(x,...){
 	cat("Estimated Q matrix:\n")
-	print(unclass(x))
+	print(unclass(x),...)
 }
+
+is.Qmatrix<-function(x) "Qmatrix" %in% class(x)
