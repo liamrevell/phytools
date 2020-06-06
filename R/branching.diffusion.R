@@ -16,6 +16,10 @@ branching.diffusion<-function(sig2=1,b=0.0023,time.stop=1000,ylim=NULL,smooth=TR
 		cat("  record != NULL requires the package \"animation\"\n")
 		cat("  Animation will play but not record\n\n")
 		record<-NULL
+		ani.options<-function(...) NULL
+		ani.record<-function(...) NULL
+		ani.replay<-function(...) NULL
+		saveVideo<-function(...) NULL
 	}
 	if(!is.null(record)){
 		if(is.null(path)) path="C:/Program Files/ffmpeg/bin/ffmpeg.exe"
