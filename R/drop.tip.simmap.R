@@ -65,3 +65,29 @@ drop.tip.simmap<-function(tree,tip){
 	class(tree)<-c("simmap",setdiff(class(tree),"simmap"))
 	return(tree)
 }
+
+## drop.tip.multiPhylo
+## written by Liam J. Revell 2020
+
+drop.tip.multiPhylo<-function(phy,tip,...){
+    if(!inherits(phy,"multiPhylo"))
+        stop("phy is not an object of class \"multiPhylo\".")
+    else {
+		if(!inherits(phy,"multiSimmap")){
+			if(hasArg(interactive)) interactive<-list(...)$interactive
+			else interactive<-FALSE
+			if(interactive) stop("interactive=TRUE does not work for drop.tip.multiPhylo.")
+			else {
+				trees<-lapply(phy,drop.tip,tip=tip,...)
+				class(trees)<-class(phy)
+			}
+		} else {
+			trees<-lapply(phy,drop.tip.simmap,tip=tip)
+			class(trees)<-class(phy)
+		}
+    }
+    trees
+}
+
+drop.tip.multiSimmap<-function(phy,tip) drop.tip.multiPhylo(phy,tip)
+
