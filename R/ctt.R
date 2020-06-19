@@ -1,5 +1,5 @@
 ## computing the mean number of character changes through time from a set of stochastic map trees
-## written by Liam J. Revell 2017
+## written by Liam J. Revell 2017, 2020
 
 ctt<-function(trees,segments=20,...){
 	if(!(inherits(trees,"multiSimmap")))
@@ -85,11 +85,12 @@ sim.ctt<-function(tree,Q,anc=NULL,nmaps=100,...){
 	trees<-make.simmap(tree,x,Q=Q,nsim=nmaps,message=FALSE)
 	cat("Done.\n")
 	flush.console()
-	ctt(trees)
+	ctt(trees,...)
 }
 
 sim.multiCtt<-function(tree,Q,anc=NULL,nmaps=100,nsim=100,...){
-	object<-replicate(nsim,sim.ctt(tree,Q,anc=anc,nmaps=nmaps,...),simplify=FALSE)
+	object<-lapply(1:nsim,sim.ctt,tree=tree,Q=Q,anc=anc,nmaps=nmaps,...)
+##	object<-replicate(nsim,sim.ctt(tree,Q,anc=anc,nmaps=nmaps,...),simplify=FALSE)
 	class(object)<-"multiCtt"
 	object
 }
