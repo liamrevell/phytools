@@ -1,6 +1,6 @@
 \name{drop.tip.multiPhylo}
 \alias{drop.tip.multiPhylo}
-\alias{drop.tip.multiPhylo}
+\alias{drop.tip.multiSimmap}
 \title{Drop tip or tips from an object of class "multiPhylo" or "multiSimmap"}
 \usage{
 drop.tip.multiPhylo(phy, tip, ...)

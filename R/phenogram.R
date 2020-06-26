@@ -1,5 +1,5 @@
 ## function creates a phenogram (i.e., 'traitgram')
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2020
 
 phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FALSE,...){
 	## get optional arguments
@@ -68,8 +68,10 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	if(!is.null(axes$time)) xlim<-axes$time
 	if(!add&&is.null(xlim)){
 		pp<-par("pin")[1]
-		sw<-fsize*(max(strwidth(tree$tip.label,units="inches")))+offsetFudge*offset*fsize*strwidth("W",units="inches")
-		alp<-optimize(function(a,H,link,sw,pp) (a*1.04*(max(H)+link)+sw-pp)^2,H=H,link=link,sw=sw,pp=pp,interval=c(0,1e6))$minimum
+		sw<-fsize*(max(strwidth(tree$tip.label,units="inches")))+
+			offsetFudge*offset*fsize*strwidth("W",units="inches")
+		alp<-optimize(function(a,H,link,sw,pp) (a*1.04*(max(H)+link)+sw-pp)^2,H=H,
+			link=link,sw=sw,pp=pp,interval=c(0,1e6))$minimum
 		xlim<-c(min(H),max(H)+link+sw/alp)
 	}
 	if(!quiet&&Ntip(tree)>=40&&spread.labels){ 
@@ -82,13 +84,18 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	if(is.null(tree$maps)){
 		if(is.null(colors)) colors<-"black"
 		if(!add){ 
-			plot(H[1,],X[1,],type=type,lwd=lwd,lty=lty,col=colors,xlim=xlim,ylim=ylim,log=log,asp=asp,xlab="",ylab="",frame=FALSE, axes=FALSE)
-			if(spread.labels) tt<-spreadlabels(tree,x,fsize=fsize,cost=spread.cost,range=spread.range,label.pos=label.pos) else tt<-x[1:length(tree$tip)]
+			plot(H[1,],X[1,],type=type,lwd=lwd,lty=lty,col=colors,xlim=xlim,ylim=ylim,
+				log=log,asp=asp,xlab="",ylab="",frame=FALSE, axes=FALSE)
+			if(spread.labels) tt<-spreadlabels(tree,x,fsize=fsize,cost=spread.cost,
+				range=spread.range,label.pos=label.pos) else tt<-x[1:length(tree$tip)]
 			if(tree$edge[1,2]<=length(tree$tip)){
 				if(fsize&&!add){
-					text(gsub("_"," ",tree$tip.label[tree$edge[1,2]]),x=H[1,2]+link,y=tt[tree$edge[1,2]],cex=fsize,font=ftype,pos=4,offset=offset)
-					tip.coords[tree$tip.label[tree$edge[1,2]],]<-c(H[1,2]+link,tt[tree$edge[1,2]])
-					if(link>0) lines(x=c(H[1,2],H[1,2]+link),y=c(X[1,2],tt[tree$edge[1,2]]),lty=3)
+					text(gsub("_"," ",tree$tip.label[tree$edge[1,2]]),x=H[1,2]+link,
+						y=tt[tree$edge[1,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[1,2]],]<-c(H[1,2]+link,
+						tt[tree$edge[1,2]])
+					if(link>0) lines(x=c(H[1,2],H[1,2]+link),y=c(X[1,2],
+						tt[tree$edge[1,2]]),lty=3)
 				}
 			}
 			s<-2
@@ -97,9 +104,12 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			lines(H[i,],X[i,],type=type,lwd=lwd,lty=lty,col=colors)
 			if(tree$edge[i,2]<=length(tree$tip)){
 				if(fsize&&!add){ 
-					text(gsub("_"," ",tree$tip.label[tree$edge[i,2]]),x=H[i,2]+link,y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
-					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,tt[tree$edge[i,2]])
-					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),lty=3)
+					text(gsub("_"," ",tree$tip.label[tree$edge[i,2]]),x=H[i,2]+link,
+						y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,
+						tt[tree$edge[i,2]])
+					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),
+						lty=3)
 				}
 			}
 		}
@@ -115,17 +125,24 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 				a<-c(y,y+tree$maps[[i]][j])
 				b<-m*(a-H[i,1])+X[i,1]
 				if(i==1&&j==1&&!add) {
-					plot(a,b,col=colors[names(tree$maps[[i]])[j]],type=type,lwd=lwd,lty=lty,xlim=xlim,ylim=ylim,log=log,asp=asp,axes=FALSE,xlab="",ylab="")
-					if(spread.labels) tt<-spreadlabels(tree,x[1:length(tree$tip)],fsize=fsize,cost=spread.cost,range=spread.range) else tt<-x[1:length(tree$tip)]
-					print(tt)
-				} else lines(a,b,col=colors[names(tree$maps[[i]])[j]],lwd=lwd,lty=lty,type=type)
+					plot(a,b,col=colors[names(tree$maps[[i]])[j]],type=type,lwd=lwd,
+						lty=lty,xlim=xlim,ylim=ylim,log=log,asp=asp,axes=FALSE,xlab="",
+						ylab="")
+					if(spread.labels) tt<-spreadlabels(tree,x[1:length(tree$tip)],
+						fsize=fsize,cost=spread.cost,range=spread.range) else 
+						tt<-x[1:length(tree$tip)]
+				} else lines(a,b,col=colors[names(tree$maps[[i]])[j]],lwd=lwd,lty=lty,
+					type=type)
 				y<-a[2]
 			}
 			if(tree$edge[i,2]<=length(tree$tip)){
 				if(fsize&&!add){ 
-					text(gsub("_"," ",tree$tip.label[tree$edge[i,2]]),x=H[i,2]+link,y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
-					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,tt[tree$edge[i,2]])
-					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],tt[tree$edge[i,2]]),lty=3)
+					text(gsub("_"," ",tree$tip.label[tree$edge[i,2]]),x=H[i,2]+link,
+						y=tt[tree$edge[i,2]],cex=fsize,font=ftype,pos=4,offset=offset)
+					tip.coords[tree$tip.label[tree$edge[i,2]],]<-c(H[i,2]+link,
+						tt[tree$edge[i,2]])
+					if(link>0) lines(x=c(H[i,2],H[i,2]+link),y=c(X[i,2],
+						tt[tree$edge[i,2]]),lty=3)
 				}
 			}
 		}
@@ -156,7 +173,8 @@ spreadlabels<-function(tree,x,fsize=1,cost=c(1,1),range=NULL,label.pos=NULL){
 	else {
 		if(is.null(range)) range<-range(x)
 		yy<-x[1:Ntip(tree)]
-		zz<-setNames((rank(yy,ties.method="random")-1)/(length(yy)-1)*diff(range(yy))+range(yy)[1],names(yy))
+		zz<-setNames((rank(yy,ties.method="random")-1)/(length(yy)-1)*diff(range(yy))+
+			range(yy)[1],names(yy))
 		mm<-max(fsize*strheight(tree$tip.label))
 		ff<-function(zz,yy,cost,mo=1,ms=1){
 			ZZ<-cbind(zz-mm/2,zz+mm/2)
@@ -173,7 +191,8 @@ spreadlabels<-function(tree,x,fsize=1,cost=c(1,1),range=NULL,label.pos=NULL){
 		ms<-ff(yy,zz,cost=c(0,1))
 		if(mo==0&&ms==0) return(yy)
 		else {
-			rr<-optim(zz,ff,yy=yy,mo=mo,ms=ms,cost=cost,method="L-BFGS-B",lower=rep(range[1],length(yy)),upper=rep(range[2],length(yy)))
+			rr<-optim(zz,ff,yy=yy,mo=mo,ms=ms,cost=cost,method="L-BFGS-B",
+				lower=rep(range[1],length(yy)),upper=rep(range[2],length(yy)))
 			return(rr$par)
 		}
 	}
