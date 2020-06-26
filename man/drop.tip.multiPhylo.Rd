@@ -16,7 +16,7 @@ drop.tip.multiSimmap(phy, tip)
 }
 \details{
 	This function merely wraps \code{\link{drop.tip}} and \code{\link{drop.tip.simmap}}. Note that \code{drop.tip.multiSimmap} is merely just an alias of \code{drop.tip.multiPhylo}.
-
+}
 \value{
 	An object of class \code{"multiPhylo"} or \code{"multiSimmap"}, depending on the input object class.
 }
