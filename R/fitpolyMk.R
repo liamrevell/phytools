@@ -1,9 +1,13 @@
 ## fitpolyMk 
-## written by Liam J. Revell 2019
+## written by Liam J. Revell 2019, 2020
 
 fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
+	if(ordered){
+		if(hasArg(max.states)) max.states<-list(...)$max.states
+		else max.states<-2
+	}
 	if(is.factor(x)) x<-setNames(as.character(x),names(x))
 	X<-strsplit(x,"+",fixed=TRUE)
 	ns<-sapply(X,length)
@@ -17,9 +21,12 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 		states<-sort(unique(unlist(X)))
 		if(ordered){
 			ss<-vector()
-			for(i in 1:(length(states)-1)) 
-				ss<-c(ss,states[i],paste(states[i],states[i+1],sep="+"))
-			ss<-c(ss,states[i+1])
+			for(i in 1:(length(states)-1)){
+				ss<-c(ss,states[i])
+				for(j in (i+1):length(states)) 
+					if((j-i)<max.states) ss<-c(ss,paste(states[i:j],collapse="+"))
+			}
+			ss<-c(ss,states[i+1])	
 			tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
 		} else {
 			ss<-vector()
@@ -70,6 +77,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	}
 	object$model<-model
 	object$ordered<-ordered
+	if(ordered) attr(object$ordered,"max.states")<-max.states
 	object$data<-X
 	class(object)<-"fitpolyMk"
 	object
@@ -95,7 +103,7 @@ print.fitpolyMk<-function(x,digits=6,...){
 	colnames(Q)<-rownames(Q)<-x$states
 	print(round(Q,digits))
 	cat("\nFitted (or set) value of pi:\n")
-	print(x$pi)
+	print(round(x$pi,digits))
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",sep=""))
 }
@@ -134,29 +142,78 @@ plot.fitpolyMk<-function(x,...){
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-length(x$states)
 	if(x$ordered){
-		step<-360/nstates
-		angles<-seq(-floor(nstates/2)*step,360-ceiling(nstates/2)*step,by=step)/180*pi
-		if(nstates==2) angles<-angles+pi/2
-		v.x<-sin(angles)
-		v.y<-cos(angles)
-		for(i in 1:nstates) for(j in 1:nstates)
-			if(if(!isSymmetric(Q)) i!=j else i>j){
-				dx<-v.x[j]-v.x[i]
-				dy<-v.y[j]-v.y[i]
-				slope<-abs(dy/dx)
-				shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
-				shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
-				s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
-					if(isSymmetric(Q)) 0 else shift.x,
-					v.y[i]+spacer*sin(atan(slope))*sign(dy)+
-					if(isSymmetric(Q)) 0 else shift.y)
-				e<-c(v.x[j]+spacer*cos(atan(slope))*sign(-dx)+
-					if(isSymmetric(Q)) 0 else shift.x,
-					v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
-					if(isSymmetric(Q)) 0 else shift.y)
-				if(x$index.matrix[i,j]!=0){
-					if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
-						text(mean(c(s[1],e[1]))+1.5*shift.x,
+		if(attr(x$ordered,"max.states")==2){
+			step<-360/nstates
+			angles<-seq(-floor(nstates/2)*step,360-ceiling(nstates/2)*step,by=step)/180*pi
+			if(nstates==2) angles<-angles+pi/2
+			v.x<-sin(angles)
+			v.y<-cos(angles)
+			for(i in 1:nstates) for(j in 1:nstates){
+				if(if(!isSymmetric(Q)) i!=j else i>j){
+					dx<-v.x[j]-v.x[i]
+					dy<-v.y[j]-v.y[i]
+					slope<-abs(dy/dx)
+					shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
+					shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
+					s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
+						if(isSymmetric(Q)) 0 else shift.x,
+						v.y[i]+spacer*sin(atan(slope))*sign(dy)+
+						if(isSymmetric(Q)) 0 else shift.y)
+					e<-c(v.x[j]+spacer*cos(atan(slope))*sign(-dx)+
+						if(isSymmetric(Q)) 0 else shift.x,
+						v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
+						if(isSymmetric(Q)) 0 else shift.y)
+					if(x$index.matrix[i,j]!=0){
+						if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
+							text(mean(c(s[1],e[1]))+1.5*shift.x,
+								mean(c(s[2],e[2]))+1.5*shift.y,
+								round(Q[i,j],signif),cex=cex.rates,
+								srt=atan(dy/dx)*180/pi)
+						else
+							text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
+								1.5*shift.x,
+								mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
+								1.5*shift.y,
+								round(Q[i,j],signif),cex=cex.rates,
+								srt=atan(dy/dx)*180/pi)
+						arrows(s[1],s[2],e[1],e[2],length=0.05,
+							code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
+					}
+				}
+			}
+			text(v.x,v.y,x$states,cex=cex.traits,
+					col=make.transparent("black",0.7))
+		} else {
+			nlevs<-attr(x$ordered,"max.states")
+			Ns<-inv.ncombn2(nstates,nlevs)
+			print(Ns)
+			v.x<-v.y<-vector()
+			xx<-seq(-1,1,length.out=Ns)
+			for(i in 1:Ns){
+				for(j in 1:min(nlevs,Ns-i+1)){
+					print(c(i,j))
+					v.x<-c(v.x,mean(xx[i:(i+j-1)]))
+					v.y<-c(v.y,1-2*(j-1)/(nlevs-1))
+				}
+			}
+			for(i in 1:nstates) for(j in 1:nstates){
+				if(if(!isSymmetric(Q)) i!=j else i>j){
+					dx<-v.x[j]-v.x[i]
+					dy<-v.y[j]-v.y[i]
+					slope<-abs(dy/dx)
+					shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
+					shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
+					s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
+						if(isSymmetric(Q)) 0 else shift.x,
+						v.y[i]+spacer*sin(atan(slope))*sign(dy)+
+						if(isSymmetric(Q)) 0 else shift.y)
+					e<-c(v.x[j]+spacer*cos(atan(slope))*sign(-dx)+
+						if(isSymmetric(Q)) 0 else shift.x,
+						v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
+						if(isSymmetric(Q)) 0 else shift.y)
+					if(x$index.matrix[i,j]!=0){
+						if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
+							text(mean(c(s[1],e[1]))+1.5*shift.x,
 							mean(c(s[2],e[2]))+1.5*shift.y,
 							round(Q[i,j],signif),cex=cex.rates,
 							srt=atan(dy/dx)*180/pi)
@@ -169,10 +226,12 @@ plot.fitpolyMk<-function(x,...){
 							srt=atan(dy/dx)*180/pi)
 					arrows(s[1],s[2],e[1],e[2],length=0.05,
 						code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
+					}
 				}
 			}
-		text(v.x,v.y,x$states,cex=cex.traits,
-			col=make.transparent("black",0.7))
+			text(v.x,v.y,x$states,cex=cex.traits,
+				col=make.transparent("black",0.7))
+		}
 	} else {
 		Ns<-inv.ncombn(nstates)
 		step.y<-2/(Ns-1)
@@ -229,6 +288,15 @@ inv.ncombn<-function(N){
 	while(Nc!=N){
 		Nc<-0
 		for(r in 1:n) Nc<-Nc+factorial(n)/(factorial(n-r)*factorial(r))
+		n<-n+1
+	}
+	return(n-1)
+}
+inv.ncombn2<-function(N,m){
+	n<-2
+	Nc<-0
+	while(Nc!=N){
+		Nc<-sum((n:1)[1:min(m,n)])
 		n<-n+1
 	}
 	return(n-1)
