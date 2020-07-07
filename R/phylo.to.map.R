@@ -32,7 +32,7 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 }
 
 ## S3 method to plot object of class "phylo.to.map"
-## written by Liam J. Revell 2013, 2014, 2016, 2019
+## written by Liam J. Revell 2013, 2014, 2016, 2019, 2020
 
 plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	type<-type[1]
@@ -89,6 +89,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	else lty<-"dashed"
 	if(hasArg(pts)) pts<-list(...)$pts
 	else pts<-TRUE
+	if(hasArg(col.edge)) col.edge<-list(...)$col.edge
+	else col.edge<-rep(par()$fg,nrow(x$tree$edge))
 	if(type=="phylogram"){
 		if(x$direction=="downwards"&&direction=="rightwards"){
 			cat("\"phylo.to.map\" direction is \"downwards\" but plot direction has been given as \"rightwards\".\n")
@@ -163,9 +165,10 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],
 				lwd=lwd[1],lend=2)
 			# plot horizontal relationships
-			for(i in 1:cw$Nnode+n) 
-				lines(range(x[cw$edge[which(cw$edge[,1]==i),2]]),
-				Y[which(cw$edge[,1]==i),1],lwd=lwd[1],lend=2)
+			for(i in 1:cw$Nnode+n){
+				ii<-which(cw$edge[,1]==i)
+				if(length(ii)>1) lines(range(x[cw$edge[ii,2]]),Y[ii,1],lwd=lwd[1],lend=2)
+			}
 			# plot tip labels
 			for(i in 1:n){ 
 				if(ftype) text(x[i],Y[which(cw$edge[,2]==i),2],
@@ -211,8 +214,10 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			}
 			points(coords,pch=pch,cex=cex.points[2],bg=colors[,2])
 			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2)
-			for(i in 1:cw$Nnode+n) lines(X[which(cw$edge[,1]==i),1],
-				range(y[cw$edge[which(cw$edge[,1]==i),2]]),lwd=lwd[1],lend=2)
+			for(i in 1:cw$Nnode+n){ 
+				ii<-which(cw$edge[,1]==i)
+				if(length(ii)>1) lines(X[ii,1],range(y[cw$edge[ii,2]]),lwd=lwd[1],lend=2)
+			}
 			for(i in 1:n){
 				if(ftype) text(X[which(cw$edge[,2]==i),2],y[i],
 					paste(" ",sub("_"," ",cw$tip.label[i]),sep=""),
@@ -240,7 +245,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 
 
 ## rotates all nodes to try and match tip an ordering 
-## written by Liam J. Revell 2013, 2015
+## written by Liam J. Revell 2013, 2015, 2020
 minRotate<-function(tree,x,...){
 	if(hasArg(print)) print<-list(...)$print
 	else print<-TRUE
@@ -248,7 +253,7 @@ minRotate<-function(tree,x,...){
 	nn<-1:tree$Nnode+Ntip(tree)
 	x<-x[tree$tip.label]
 	for(i in 1:tree$Nnode){
-		tt<-read.tree(text=write.tree(rotate(tree,nn[i])))
+		tt<-read.tree(text=write.tree(if(isSingleton(tree,nn[i])) tree else rotate(tree,nn[i])))
 		oo<-sum(abs(order(x[tree$tip.label])-1:length(tree$tip.label)))
 		pp<-sum(abs(order(x[tt$tip.label])-1:length(tt$tip.label)))
 		if(oo>pp) tree<-tt
@@ -257,6 +262,8 @@ minRotate<-function(tree,x,...){
 	attr(tree,"minRotate")<-min(oo,pp)
 	return(tree)
 }
+
+isSingleton<-function(tree,node) if(sum(tree$edge[,1]==node)<=1) TRUE else FALSE
 
 print.phylo.to.map<-function(x,...){
 	cat("Object of class \"phylo.to.map\" containing:\n\n")
