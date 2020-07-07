@@ -182,7 +182,7 @@ plot.fitpolyMk<-function(x,...){
 				}
 			}
 			text(v.x,v.y,x$states,cex=cex.traits,
-					col=make.transparent("black",0.7))
+					col=make.transparent(par()$fg,0.7))
 		} else {
 			nlevs<-attr(x$ordered,"max.states")
 			Ns<-inv.ncombn2(nstates,nlevs)
@@ -220,7 +220,7 @@ plot.fitpolyMk<-function(x,...){
 				}
 			}
 			text(v.x,v.y,x$states,cex=cex.traits,
-				col=make.transparent("black",0.7))
+				col=make.transparent(par()$fg,0.7))
 		}
 	} else {
 		Ns<-inv.ncombn(nstates)
@@ -264,7 +264,7 @@ plot.fitpolyMk<-function(x,...){
 			}
 		}
 		text(v.x,v.y,x$states,cex=cex.traits,
-			col=make.transparent("black",0.7))
+			col=make.transparent(par()$fg,0.7))
 
 	}
 }
