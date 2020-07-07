@@ -10,8 +10,10 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	ns<-sapply(X,length)
 	if(ordered){
 		if(hasArg(max.poly)) max.poly<-list(...)$max.poly
-		else if(hasArg(max.states)) max.poly<-list(...)$max.states
-		else max.poly<-max(ns)		
+		else if(hasArg(max.states)){ 
+			max.states<-list(...)$max.states
+			max.poly<-max.states
+		} else max.poly<-max(ns)		
 	}
 	if(all(ns==1)){
 		cat("No polymorphic species found. Use fitMk.\n\n")
