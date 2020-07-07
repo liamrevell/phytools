@@ -1,16 +1,18 @@
 ## fitpolyMk 
+## fits several polymorphic discrete character evolution models
 ## written by Liam J. Revell 2019, 2020
 
 fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
-	if(ordered){
-		if(hasArg(max.states)) max.states<-list(...)$max.states
-		else max.states<-2
-	}
 	if(is.factor(x)) x<-setNames(as.character(x),names(x))
 	X<-strsplit(x,"+",fixed=TRUE)
 	ns<-sapply(X,length)
+	if(ordered){
+		if(hasArg(max.poly)) max.poly<-list(...)$max.poly
+		else if(hasArg(max.states)) max.poly<-list(...)$max.states
+		else max.poly<-max(ns)		
+	}
 	if(all(ns==1)){
 		cat("No polymorphic species found. Use fitMk.\n\n")
 		object<-NULL
@@ -24,7 +26,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			for(i in 1:(length(states)-1)){
 				ss<-c(ss,states[i])
 				for(j in (i+1):length(states)) 
-					if((j-i)<max.states) ss<-c(ss,paste(states[i:j],collapse="+"))
+					if((j-i)<max.poly) ss<-c(ss,paste(states[i:j],collapse="+"))
 			}
 			ss<-c(ss,states[i+1])	
 			tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
@@ -77,7 +79,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	}
 	object$model<-model
 	object$ordered<-ordered
-	if(ordered) attr(object$ordered,"max.states")<-max.states
+	if(ordered) attr(object$ordered,"max.poly")<-max.poly
 	object$data<-X
 	class(object)<-"fitpolyMk"
 	object
@@ -142,7 +144,7 @@ plot.fitpolyMk<-function(x,...){
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-length(x$states)
 	if(x$ordered){
-		if(attr(x$ordered,"max.states")==2){
+		if(attr(x$ordered,"max.poly")==2){
 			step<-360/nstates
 			angles<-seq(-floor(nstates/2)*step,360-ceiling(nstates/2)*step,by=step)/180*pi
 			if(nstates==2) angles<-angles+pi/2
@@ -184,7 +186,7 @@ plot.fitpolyMk<-function(x,...){
 			text(v.x,v.y,x$states,cex=cex.traits,
 					col=make.transparent(par()$fg,0.7))
 		} else {
-			nlevs<-attr(x$ordered,"max.states")
+			nlevs<-attr(x$ordered,"max.poly")
 			Ns<-inv.ncombn2(nstates,nlevs)
 			v.x<-v.y<-vector()
 			xx<-seq(-1,1,length.out=Ns)
