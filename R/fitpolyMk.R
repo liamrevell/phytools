@@ -191,7 +191,6 @@ plot.fitpolyMk<-function(x,...){
 			xx<-seq(-1,1,length.out=Ns)
 			for(i in 1:Ns){
 				for(j in 1:min(nlevs,Ns-i+1)){
-					print(c(i,j))
 					v.x<-c(v.x,mean(xx[i:(i+j-1)]))
 					v.y<-c(v.y,1-2*(j-1)/(nlevs-1))
 				}

@@ -1,5 +1,5 @@
 ## function does fast estimation of ML ancestral states using ace
-## written by Liam J. Revell 2012, 2013, 2015, 2019
+## written by Liam J. Revell 2012, 2013, 2015, 2019, 2020
 
 fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -22,7 +22,7 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	N<-length(btree$tip.label)
 	anc<-v<-vector()
 	for(i in 1:M+N){
-		a<-multi2di(ape::root.phylo(btree,node=i))
+		a<-collapse.singles(multi2di(ape::root.phylo(btree,node=i)))
    		anc[i-N]<-ace(x,a,method="pic")$ace[1]
    		names(anc)[i-N]<-i
 		if(vars||CI){
