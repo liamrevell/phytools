@@ -48,12 +48,17 @@ phylo.heatmap<-function(tree,X,fsize=1,colors=NULL,standardize=FALSE,...){
 	    segments(x, y[1], x, y[length(y)])
 	    segments(x[1], y, x[length(x)], y)
 	}
-	if(legend) add.color.bar(leg=END-START,cols=colors,lims=range(X,na.rm=TRUE),
-		title=if(standardize) "standardized value" else "value",
-		subtitle=if(standardize) "SD units" else "",prompt=FALSE,x=START,
-		y=-1/(2*(Ntip(cw)-1))-3*fsize[3]*strheight("W"),
-		digits=if(max(abs(X),na.rm=TRUE)<1) round(log10(1/max(abs(X),na.rm=TRUE)))+1 
-		else 2,fsize=fsize[3])
+	if(legend){
+		if(hasArg(leg.title)) leg.title<-list(...)$leg.title
+		else leg.title<-if(standardize) "standardized value" else "value"
+		if(hasArg(leg.subtitle)) leg.subtitle<-list(...)$leg.subtitle
+		else leg.subtitle<-if(standardize) "SD units" else ""
+		add.color.bar(leg=END-START,cols=colors,lims=range(X,na.rm=TRUE),
+			title=leg.title,subtitle=leg.subtitle,prompt=FALSE,x=START,
+			y=-1/(2*(Ntip(cw)-1))-3*fsize[3]*strheight("W"),
+			digits=if(max(abs(X),na.rm=TRUE)<1) round(log10(1/max(abs(X),na.rm=TRUE)))+1 
+			else 2,fsize=fsize[3])
+	}
 	if(labels) text(x=seq(START,END,by=(END-START)/(ncol(X)-1)),
 		y=rep(1+1/(2*(Ntip(cw)-1))+0.4*fsize[2]*strwidth("I"),ncol(X)),
 		colnames(X),srt=70,adj=c(0,0.5),cex=fsize[2])
