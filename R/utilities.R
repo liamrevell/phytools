@@ -2128,8 +2128,8 @@ matchType<-function(type,types){
 	return(type)
 }
 	
-# function 'untangles' (or attempts to untangle) a tree with crossing branches
-# written by Liam J. Revell 2013, 2015
+## function 'untangles' (or attempts to untangle) a tree with crossing branches
+## written by Liam J. Revell 2013, 2015, 2020
 untangle<-function(tree,method=c("reorder","read.tree")){
 	if(inherits(tree,"multiPhylo")){
 		tree<-lapply(tree,untangle,method=method)
@@ -2140,8 +2140,11 @@ untangle<-function(tree,method=c("reorder","read.tree")){
 		method<-method[1]
 		if(method=="reorder") tree<-reorder(reorder(tree,"pruningwise"))
 		else if(method=="read.tree"){
+			tip.label<-tree$tip.label
+			tree$tip.label<-1:Ntip(tree)
 			if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
 			else tree<-if(Ntip(tree)>1) read.tree(text=write.tree(tree)) else read.newick(text=write.tree(tree))
+			tree$tip.label<-tip.label[as.numeric(tree$tip.label)]
 		}
 		ii<-!names(obj)%in%names(attributes(tree))
 		attributes(tree)<-c(attributes(tree),obj[ii])
