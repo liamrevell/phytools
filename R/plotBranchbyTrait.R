@@ -166,3 +166,167 @@ add.color.bar<-function(leg,cols,title=NULL,lims=c(0,1),digits=1,prompt=TRUE,lwd
 			subtitle,pos=1,cex=fsize,srt=90)
 	}
 }
+
+## function to create "edge.widthMap" object
+edge.widthMap<-function(tree,x,...){
+	if(!inherits(tree,"phylo")) 
+		stop("tree should be an object of class \"phylo\".")
+	tree<-as.phylo(tree)
+	a<-fastAnc(tree,x)
+	node.values<-c(x[tree$tip.label],a)
+	edge.values<-apply(tree$edge,1,function(e,nv)
+		mean(nv[e]),nv=node.values)
+	edge.widths<-edge.values
+	object<-list(tree=tree,edge.widths=edge.widths,
+		node.values=node.values)
+	class(object)<-"edge.widthMap"
+	object
+}
+
+## print method
+print.edge.widthMap<-function(x,...){
+	cat("Object of class \"edge.widthMap\" containing:\n")
+	cat(paste("(1) Phylogenetic tree with",Ntip(x$tree),
+		"tips and",x$tree$Nnode,"internal nodes.\n"))
+	cat("(2) Vector of node values for a mapped quantitative\n")
+	cat("    trait.\n\n")
+}
+
+## plot method
+plot.edge.widthMap<-function(x,max.width=0.9,legend="trait value",...){
+	if(hasArg(min.width)) min.width<-list(...)$min.width
+	else min.width<-0
+	if(hasArg(vertical.as.polygon)) 
+		vertical.as.polygon<-list(...)$vertical.as.polygon
+	else vertical.as.polygon<-TRUE
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-2
+	h<-max(nodeHeights(x$tree))
+	node.values<-x$node.values-min(x$node.values)
+	node.values<-node.values*((max.width-min.width)/
+		max(node.values))+min.width
+	args.list<-list(...)
+	args.list$tree<-x$tree
+	args.list$type<-"phylogram"
+	if(!is.null(args.list$direction)){
+		if(!args.list$direction%in%c("leftwards","rightwards"))
+			args.list$direction<-"rightwards"
+	} else args.list$direction<-"rightwards"
+	if(is.null(args.list$ylim)) 
+		args.list$ylim<-c(1,Ntip(x$tree)+Ntip(x$tree)/25)
+	if(is.null(args.list$ftype)) args.list$ftype<-"i"
+	if(is.null(args.list$fsize)) 
+		args.list$fsize<-36*par()$pin[2]/par()$pin[1]/
+			Ntip(x$tree)
+	if(is.null(args.list$color)){ 
+		args.list$color<-"transparent"
+		color<-"gray62"
+	} else {
+		color<-args.list$color
+		args.list$color<-"transparent"
+	}
+	if(is.null(args.list$border)){
+		border<-color
+	} else {
+		border<-args.list$border
+		args.list$border<-NULL
+	}
+	do.call(plotTree,args.list)
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	asp<-par()$pin[2]/par()$pin[1]/
+		(diff(par()$usr[4:3])/diff(par()$usr[2:1]))
+	for(i in 1:nrow(x$tree$edge)){
+		if(vertical.as.polygon){
+			xx<-obj$xx[c(x$tree$edge[i,1],
+				x$tree$edge[i,1:2],
+				x$tree$edge[i,2:1],
+				x$tree$edge[i,1])]+c(0,
+				asp*node.values[x$tree$edge[i,1]]/2,
+				0,0,asp*node.values[x$tree$edge[i,1]]/2,0)
+			yy<-rep(obj$yy[x$tree$edge[i,2]],6)+
+				c(node.values[x$tree$edge[i,1]],
+				node.values[x$tree$edge[i,1:2]],
+				-node.values[x$tree$edge[i,2:1]],
+				-node.values[x$tree$edge[i,1]])/2
+		}
+		else {
+			xx<-obj$xx[c(x$tree$edge[i,1:2],
+				x$tree$edge[i,2:1])]
+			yy<-rep(obj$yy[x$tree$edge[i,2]],4)+
+				c(node.values[x$tree$edge[i,1:2]],
+				-node.values[x$tree$edge[i,2:1]])/2
+		}
+		polygon(x=crop.to.h(xx,h),y=yy,
+			border=border,col=color,lwd=lwd)	
+	}
+	for(i in 1:x$tree$Nnode+Ntip(x$tree)){
+		nn<-x$tree$edge[which(x$tree$edge[,1]==i),2]
+		yy<-range(obj$yy[nn])
+		if(vertical.as.polygon){
+			xx<-rep(obj$xx[i],4)+
+				asp*c(-node.values[i]/2,node.values[i]/2,
+				node.values[i]/2,-node.values[i]/2)
+			polygon(x=crop.to.h(xx,h),
+				y=c(rep(yy[1],2),rep(yy[2],2))+
+				c(-rep(node.values[i],2),
+				rep(node.values[i],2))/2,
+				border=border,col=color,lwd=lwd)
+		} else {
+			lines(rep(obj$xx[i],2),yy+c(-node.values[i],
+				node.values[i])/2,lend=2,col=border,
+				lwd=lwd)
+		}
+	}
+	if(border!=color&&vertical.as.polygon){
+		for(i in 1:nrow(x$tree$edge)){
+			xx<-obj$xx[c(x$tree$edge[i,1],
+				x$tree$edge[i,1:2],
+				x$tree$edge[i,2:1],
+				x$tree$edge[i,1])]+c(0,
+				asp*node.values[x$tree$edge[i,1]]/2,
+				0,0,asp*node.values[x$tree$edge[i,1]]/2,0)
+			yy<-rep(obj$yy[x$tree$edge[i,2]],6)+
+				c(node.values[x$tree$edge[i,1]],
+				node.values[x$tree$edge[i,1:2]],
+				-node.values[x$tree$edge[i,2:1]],
+				-node.values[x$tree$edge[i,1]])/2
+			polygon(x=crop.to.h(xx,h),y=yy,
+				border=FALSE,col=color)
+		}
+		for(i in 1:x$tree$Nnode+Ntip(x$tree)){
+			nn<-x$tree$edge[which(x$tree$edge[,1]==i),2]
+			yy<-range(obj$yy[nn])
+			xx<-rep(obj$xx[i],4)+
+				asp*c(-node.values[i]/2,node.values[i]/2,
+				node.values[i]/2,-node.values[i]/2)
+			polygon(x=crop.to.h(xx,h),
+				y=c(rep(yy[1],2),rep(yy[2],2))+
+				c(-rep(node.values[i],2),
+				rep(node.values[i],2))/2,
+				border=FALSE,col=color)
+		}
+	}
+	leg.length<-0.4*h
+	x.adj<-if(obj$direction=="rightwards") 0 else obj$x.lim[2]-leg.length
+	polygon(x=c(0,0,leg.length,leg.length)+x.adj,
+		y=Ntip(x$tree)+Ntip(x$tree)/25+
+		c(-min.width/2,min.width/2,max(node.values)/2,
+		-max(node.values)/2),
+		border=border,col=color,lwd=lwd)
+	if(border!=color)
+		polygon(x=c(0,0,leg.length,leg.length)+x.adj,
+			y=Ntip(x$tree)+Ntip(x$tree)/25+
+			c(-min.width/2,min.width/2,max(node.values)/2,
+			-max(node.values)/2),
+			border=FALSE,col=color)
+	text(0+x.adj,Ntip(x$tree)+Ntip(x$tree)/25-0.2*max.width,
+		round(min(x$node.values),2),pos=1,
+		cex=0.8)
+	text(leg.length+x.adj,Ntip(x$tree)+Ntip(x$tree)/25-0.2*max.width,
+		round(max(x$node.values),2),pos=1,cex=0.8)
+	text(leg.length/2+x.adj,Ntip(x$tree)+Ntip(x$tree)/25-0.2*max.width,
+		legend,pos=1,cex=0.8)
+	
+}
+
+crop.to.h<-function(x,h) sapply(x,function(x,h) if(x<=h) x else h,h=h)
