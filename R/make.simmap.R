@@ -303,7 +303,7 @@ print.simmap<-function(x,printlen=6,...){
 	if(N>printlen) cat(paste("\t",paste(x$tip.label[1:printlen],collapse=", "),", ...\n",sep=""))
 	else print(x$tip.label)
 	ss<-sort(unique(c(getStates(x,"tips"),getStates(x,"nodes"))))
-	cat(paste("\nThe tree includes a mapped, ",length(ss),"-state discrete character with states:\n",
+	cat(paste("\nThe tree includes a mapped, ",length(ss),"-state discrete character\nwith states:\n",
 		sep=""))
 	if(length(ss)>printlen) cat(paste("\t",paste(ss[1:printlen],collapse=", "),", ...\n",sep=""))
 	else cat(paste("\t",paste(ss,collapse=", "),"\n",sep=""))

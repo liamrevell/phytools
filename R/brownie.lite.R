@@ -88,31 +88,32 @@ brownie.lite<-function(tree,x,maxit=2000,test="chisq",nsim=100,se=NULL,...){
 }
 
 ## S3 print method for object of class "brownie.lite"
-## written by Liam J. Revell 2013
+## written by Liam J. Revell 2013, 2020
 
 print.brownie.lite<-function(x, ...){
 	if(hasArg(digits)) digits<-list(...)$digits
-	else digits<-4
+	else digits<-getOption("digits")
 	x<-lapply(x,function(a,b) if(is.numeric(a)) round(a,b) else a,b=digits)
 	cat("ML single-rate model:\n")
-	cat("\ts^2\tse\ta\tk\tlogL\n")
-	cat(paste("value",x$sig2.single,round(sqrt(x$var.single),digits),
-		x$a.single,x$k1,x$logL1,"\n\n",sep="\t"))
-	cat("ML multi-rate model:\n")
-	cat(paste(c("",paste("s^2(",names(x$sig2.multiple),")","\tse(",
-		names(x$sig2.multiple),")",sep=""),
-		"a","k","logL","\n"),collapse="\t"))
-	cat(paste(paste(c("value",paste(x$sig2.multiple,
-		round(sqrt(diag(x$vcv.multiple)),digits),sep="\t"),x$a.multiple,x$k2,
-		x$logL.multiple),collapse="\t"),"\n\n",sep=""))
-	if(!is.null(x$P.chisq)) cat(paste("P-value (based on X^2):",x$P.chisq,"\n\n"))
-	else if(!is.null(x$P.sim)) cat(paste("P-value (based on simulation):",
+	obj<-matrix(c(x$sig2.single,sqrt(x$var.single),
+		x$a.single,x$k1,x$logL1),1,5,
+		dimnames=list("value",c("s^2","se","a","k","logL")))
+	print(obj,digits=digits)
+	cat("\nML multi-rate model:\n")
+	nn<-c(unlist(strsplit(paste("s^2(",names(x$sig2.multipl),")__",
+		"se(",names(x$sig2.multiple),")",sep=""),"__")),"a","k",
+		"logL")
+	obj<-matrix(c(as.vector(rbind(x$sig2.multiple,sqrt(diag(x$vcv.multiple)))),
+		x$a.multiple,x$k2,x$logL.multiple),1,2*length(x$sig2.multiple)+3,
+		dimnames=list("value",nn))
+	print(obj,digits=digits)
+	if(!is.null(x$P.chisq)) cat(paste("\nP-value (based on X^2):",x$P.chisq,"\n\n"))
+	else if(!is.null(x$P.sim)) cat(paste("\nP-value (based on simulation):",
 		x$P.sim,"\n\n"))
 	if(x$convergence[1]=="Optimization has converged.") 
 		cat("R thinks it has found the ML solution.\n\n")
 	else cat("Optimization may not have converged.\n\n")
 }
-
 
 # function computes the likelihood for a single rate with sampling error
 # written by Liam J. Revell 2012
