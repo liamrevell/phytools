@@ -1,5 +1,5 @@
 ## this funciton creates a phylomorphospace plot (Sidlauskas 2006)
-## written by Liam J. Revell 2010-13, 2015, 2018
+## written by Liam J. Revell 2010-13, 2015, 2018, 2020
 
 phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),control=list(),...){
 	# some minor error checking
