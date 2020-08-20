@@ -303,6 +303,12 @@ plot.mccr<-function(x,...){
 	if(hasArg(main)) main<-list(...)$main
 	else main=expression(paste("null distribution of ",
 		gamma))
+	if(hasArg(las)) las<-list(...)$las
+	else las<-par()$las
+	if(hasArg(cex.axis)) cex.axis<-list(...)$cex.axis
+	else cex.axis<-par()$cex.axis
+	if(hasArg(cex.lab)) cex.lab<-list(...)$cex.lab
+	else cex.lab<-par()$cex.lab
 	hh<-hist(x$null.gamma,breaks=min(c(max(12,
 		round(length(x$null.gamma)/10)),20)),
 		plot=FALSE)
@@ -310,7 +316,7 @@ plot.mccr<-function(x,...){
 	else ylim<-c(0,1.15*max(hh$counts))
 	plot(hh,xlim=range(c(x$gamma,x$null.gamma)),
 		main=main,xlab=expression(gamma),col="lightgrey",
-		ylim=ylim)
+		ylim=ylim,las=las,cex.axis=cex.axis,cex.lab=cex.lab)
 	arrows(x0=x$gamma,y0=par()$usr[4],y1=0,length=0.12,
 		col=make.transparent("blue",0.5),lwd=2)
 	text(x$gamma,0.96*par()$usr[4],
