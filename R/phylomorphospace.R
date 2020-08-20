@@ -59,6 +59,8 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	else pch<-21
 	if(hasArg(bty)) bty<-list(...)$bty
 	else bty<-"o"
+	if(hasArg(las)) las<-list(...)$las
+	else las<-par()$las
 	# deprecate to logical label argument
 	label<-label[1]
 	if(label==TRUE||label==FALSE) 
@@ -72,7 +74,7 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	YY<-matrix(bb[as.character(tree$edge)],nrow(tree$edge),2)
 	# plot projection
 	if(!add) plot(x=A[1,1],y=A[1,2],xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,pch=16,cex=0.1,
-		col="white",axes=axes,frame.plot=TRUE,bty=bty)
+		col="white",axes=axes,frame.plot=TRUE,bty=bty,las=las)
 	if(is.null(tree$maps)){
 		for(i in 1:nrow(XX)) lines(XX[i,],YY[i,],col=con$col.edge[as.character(tree$edge[i,2])],
 			lwd=lwd)
