@@ -1,5 +1,5 @@
 ## function for computing phylogenetic signal by the lambda (Pagel 1999) of K (Blomberg et al. 2003) methods
-## written by Liam J. Revell 2011/2012, 2019
+## written by Liam J. Revell 2011/2012, 2019, 2020
 
 phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,control=list()){
 	# some minor error checking
@@ -229,11 +229,19 @@ plot.phylosig<-function(x,...){
 		if(attr(x,"method")=="K"&&attr(x,"test")) "K" else "sig2"
 	if(hasArg(res)) res<-list(...)$res
 	else res<-100
+	if(hasArg(las)) las<-list(...)$las
+	else las<-par()$las
+	if(hasArg(cex.lab)) cex.lab<-list(...)$cex.lab*par()$cex
+	else cex.lab<-par()$cex.lab
+	if(hasArg(cex.axis)) cex.axis<-list(...)$cex.axis*par()$cex
+	else cex.axis<-par()$cex.axis
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-par()$bty
 	if(attr(x,"method")=="lambda"){
 		lambda<-seq(0,max(c(1,x$lambda)),length.out=res)
 		logL<-sapply(lambda,x$lik)
 		plot(lambda,logL,xlab=expression(lambda),ylab="log(L)",
-			type="l",bty="l")
+			type="l",bty=bty,las=las,cex.lab=cex.lab,cex.axis=cex.axis)
 		lines(rep(x$lambda,2),c(par()$usr[3],x$logL),lty="dotted")
 		text(x=x$lambda+0.01*diff(par()$usr[1:2]),
 			par()$usr[3]+0.5*diff(par()$usr[3:4]),
@@ -256,8 +264,9 @@ plot.phylosig<-function(x,...){
 				cat("Sorry. This is not a valid plotting option for your object.\n\n")
 			else {
 				hist(x$sim.K,breaks=min(c(max(12,round(length(x$sim.K)/10)),
-					20)),bty="l",col="lightgrey",border="lightgrey",
-					main="",xlab="K",ylab="null distribution of K")
+					20)),bty=bty,col="lightgrey",border="lightgrey",
+					main="",xlab="K",ylab="null distribution of K",
+					las=las,cex.lab=cex.lab,cex.axis=cex.axis)
 				arrows(x0=x$K,y0=par()$usr[4],y1=0,length=0.12,
 					col=make.transparent("blue",0.5),lwd=2)
 				text(x$K,0.95*par()$usr[4],"observed value of K",
@@ -270,7 +279,8 @@ plot.phylosig<-function(x,...){
 				sig2<-seq(0.25*x$sig2,1.75*x$sig2,length.out=res)
 				logL<-sapply(sig2,x$lik)
 				plot(sig2,logL,xlab=expression(sigma^2),ylab="log(L)",
-					type="l",bty="l")
+					type="l",bty=bty,las=las,cex.lab=cex.lab,
+					cex.axis=cex.axis)
 				lines(rep(x$sig2,2),c(par()$usr[3],x$logL),lty="dotted")
 				text(x=x$sig2+0.01*diff(par()$usr[1:2]),
 					par()$usr[3]+0.5*diff(par()$usr[3:4]),
