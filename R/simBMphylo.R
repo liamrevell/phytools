@@ -38,6 +38,8 @@ plot.simBMphylo<-function(x,...){
 	else cex.axis<-0.9
 	if(hasArg(cex.lab)) cex.lab=list(...)$cex.lab
 	else cex.lab<-1
+	if(hasArg(las)) las<-list(...)$las
+	else las<-par()$las
 	plotTree(tree,mar=c(0.1,4.1,2.1,1.1),
 		xlim=c(0,1.05*max(H)),
 		ylim=c(1-2*(Ntip(tree)-1)*0.04,
@@ -48,8 +50,8 @@ plot.simBMphylo<-function(x,...){
 	plot.new()
 	par(mar=c(5.1,4.1,1.1,1.1))
 	plot.window(xlim=c(0,1.05*max(H)),ylim=range(xx))
-	axis(1,cex.axis=cex.axis)
-	axis(2,cex.axis=cex.axis)
+	axis(1,cex.axis=cex.axis,las=las)
+	axis(2,cex.axis=cex.axis,las=las)
 	for(i in 1:length(xx))
 		lines(H[i,1]:H[i,2],xx[[i]])
 	for(i in 1:Ntip(tree)){
