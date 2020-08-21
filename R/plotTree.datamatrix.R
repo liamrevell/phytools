@@ -3,7 +3,7 @@
 
 plotTree.datamatrix<-function(tree,X,...){
 	N<-Ntip(tree)
-	ss<-sapply(X,function(x) levels(x))
+	ss<-lapply(X,function(x) levels(x))
 	k<-sapply(ss,length)
 	if(hasArg(fsize)) fsize<-list(...)$fsize
 	else fsize<-40*par()$pin[2]/par()$pin[1]/Ntip(tree)
@@ -21,7 +21,8 @@ plotTree.datamatrix<-function(tree,X,...){
 			while(length(palettes)<length(k)) palettes<-c(palettes,palettes)
 			BREWER.PAL<-function(k,pal) brewer.pal(max(k,3),pal)[1:k]
 			colors<-mapply(setNames,mapply(BREWER.PAL,k,
-				palettes[1:length(ss)]),ss,SIMPLIFY=FALSE)
+				palettes[1:length(ss)],SIMPLIFY=FALSE),ss,
+				SIMPLIFY=FALSE)
         	}
     	}
 	if(hasArg(sep)) sep<-list(...)$sep
@@ -30,24 +31,27 @@ plotTree.datamatrix<-function(tree,X,...){
 	else srt<-60
 	if(hasArg(space)) space<-list(...)$space
 	else space<-0
+	if(hasArg(header)) header<-list(...)$header
+	else header<-TRUE
 	cw<-reorder(tree,"cladewise")
 	X<-X[cw$tip.label,]
 	plotTree(cw,plot=FALSE,fsize=fsize)
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	plotTree(cw,lwd=1,ylim=c(0,obj$y.lim[2]*yexp),
 		xlim=c(0,obj$x.lim[2]*xexp),fsize=fsize,
-		ftype="off")
+		ftype="off",add=TRUE)
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	h<-max(obj$xx)
 	for(i in 1:Ntip(cw)){
 		lines(c(obj$xx[i],h),rep(obj$yy[i],2),lty="dotted")
-		text(h,obj$yy[i],cw$tip.label[i],cex=fsize,pos=4,font=3,offset=0.1)
+		text(h,obj$yy[i],sub("_"," ",cw$tip.label[i]),cex=fsize,pos=4,
+			font=3,offset=0.1)
 	}
 	s<-max(fsize*strwidth(cw$tip.label))
 	start.x<-1.05*h+s
 	half<-0.5*(1-space)
 	for(i in 1:ncol(X)){
-    		text(start.x,max(obj$yy)+1,colnames(X)[i],pos=4,srt=srt,
+    	if(header) text(start.x,max(obj$yy)+1,colnames(X)[i],pos=4,srt=srt,
 			cex=fsize,offset=0)
 		for(j in 1:nrow(X)){
 			xy<-c(start.x,obj$yy[j])
