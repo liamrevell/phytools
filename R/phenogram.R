@@ -48,6 +48,12 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	else quiet<-FALSE
 	if(hasArg(label.pos)) label.pos<-list(...)$label.pos
 	else label.pos<-NULL
+	if(hasArg(cex.axis)) cex.axis<-list(...)$cex.axis
+	else cex.axis<-par()$cex.axis
+	if(hasArg(cex.lab)) cex.lab<-list(...)$cex.lab
+	else cex.lab<-par()$cex.lab
+	if(hasArg(las)) las<-list(...)$las
+	else las<-par()$las
 	## end optional arguments
 	# check tree
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -85,7 +91,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 		if(is.null(colors)) colors<-"black"
 		if(!add){ 
 			plot(H[1,],X[1,],type=type,lwd=lwd,lty=lty,col=colors,xlim=xlim,ylim=ylim,
-				log=log,asp=asp,xlab="",ylab="",frame=FALSE, axes=FALSE)
+				log=log,asp=asp,xlab="",ylab="",frame=FALSE,axes=FALSE)
 			if(spread.labels) tt<-spreadlabels(tree,x,fsize=fsize,cost=spread.cost,
 				range=spread.range,label.pos=label.pos) else tt<-x[1:length(tree$tip)]
 			if(tree$edge[1,2]<=length(tree$tip)){
@@ -149,7 +155,9 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	}
 	if(!add){
 		at<-round(0:(nticks-1)*max(H)/(nticks-1),digits)
-		axis(1,at=at); axis(2); title(xlab=xlab,ylab=ylab,main=main,sub=sub)
+		axis(1,at=at,cex.axis=cex.axis,cex.lab=cex.lab,las=las) 
+		axis(2,cex.axis=cex.axis,cex.lab=cex.lab,las=las)
+		title(xlab=xlab,ylab=ylab,main=main,sub=sub)
 	}
 	if(hold) null<-dev.flush()
 	xx<-setNames(c(H[1,1],H[,2]),c(tree$edge[1,1],tree$edge[,2]))

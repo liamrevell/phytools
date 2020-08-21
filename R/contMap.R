@@ -204,3 +204,8 @@ errorbar.contMap<-function(obj,...){
 			lwd=lwd)
 	}
 }
+
+keep.tip.contMap<-function(x,tip){
+	tips<-setdiff(x$tree$tip.label,tip)
+	drop.tip.contMap(x,tips)
+}

@@ -1,14 +1,16 @@
 \name{drop.tip.contMap}
 \alias{drop.tip.contMap}
 \alias{drop.tip.densityMap}
+\alias{keep.tip.contMap}
 \title{Drop tip or tips from an object of class "contMap" or "densityMap"}
 \usage{
 drop.tip.contMap(x, tip)
 drop.tip.densityMap(x, tip)
+keep.tip.contMap(x, tip)
 }
 \arguments{
 	\item{x}{an object of class \code{"contMap"} or \code{"densityMap"}.}
-	\item{tip}{name or names of species to be dropped.}
+	\item{tip}{name or names of species to be dropped or kept.}
 }
 \description{
 	This function drops one or multiple tips from an object of class \code{"contMap"} or \code{"densityMap"}. This function is equivalent to \code{\link{drop.tip}} but for an object of this class.
@@ -24,7 +26,7 @@ drop.tip.densityMap(x, tip)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link{drop.tip}}, \code{\link{drop.tip.simmap}}
+	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link{drop.tip}}, \code{\link{drop.tip.simmap}}, \code{\link{keep.tip}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}
