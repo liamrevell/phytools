@@ -136,7 +136,7 @@ plot.fitpolyMk<-function(x,...){
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-1
 	Q<-matrix(NA,length(x$states),length(x$states))
-    	Q[]<-c(0,x$rates)[x$index.matrix+1]
+    Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
 	spacer<-0.1
 	plot.new()
@@ -294,4 +294,186 @@ inv.ncombn2<-function(N,m){
 		n<-n+1
 	}
 	return(n-1)
+}
+
+## maybe this should be plot.mkModel or something?
+## then you create a model class & plot it?
+
+graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...){
+	if(hasArg(states)) states<-list(...)$states
+	else states<-0:(k-1)
+	if(hasArg(max.poly)) max.poly<-list(...)$max.poly
+	else max.poly<-k
+	if(hasArg(main)) main<-list(...)$main
+	else main<-NULL
+	if(hasArg(cex.main)) cex.main<-list(...)$cex.main
+	else cex.main<-1.2
+	if(hasArg(cex.traits)) cex.traits<-list(...)$cex.traits
+	else cex.traits<-1
+	if(hasArg(mar)) mar<-list(...)$mar
+	else mar<-c(1.1,1.1,3.1,1.1)
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-1
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-c(-1.2,1.2)
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(-1.2,1.2)
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
+	if(ordered){
+		ss<-vector()
+		for(i in 1:(length(states)-1)){
+			ss<-c(ss,states[i])
+			for(j in (i+1):length(states)) 
+				if((j-i)<max.poly) ss<-c(ss,paste(states[i:j],collapse="+"))
+		}
+		ss<-c(ss,states[i+1])	
+		tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
+	} else {
+		ss<-vector()
+		for(i in 1:length(states))
+			ss<-c(ss,apply(combinations(length(states),i,states),
+				1,paste,collapse="+"))
+		tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
+	}
+	nstates<-length(ss)
+	poly<-strsplit(ss,"+",fixed=TRUE)
+	index<-0
+	for(i in 1:nrow(tmodel)){
+		for(j in i:ncol(tmodel)){
+			INT<-intersect(poly[[i]],poly[[j]])
+			SDij<-setdiff(poly[[i]],poly[[j]])
+			SDji<-setdiff(poly[[j]],poly[[i]])
+			if(length(INT)>0
+				&&(0%in%c(length(SDij),length(SDji)))
+				&&(1%in%c(length(SDij),length(SDji)))){					
+				if(model=="ER"){ 
+					tmodel[i,j]<-tmodel[j,i]<-1
+				} else if(model%in%c("ARD","SYM")){
+					index<-index+1
+					tmodel[i,j]<-index
+					if(model=="SYM") tmodel[j,i]<-index
+					else {
+						tmodel[j,i]<-index+1
+						index<-index+1
+					}
+				} else if(model=="transient"){
+					if(length(poly[[i]])>length(poly[[j]])){ 
+						tmodel[i,j]<-1
+					 	tmodel[j,i]<-2
+					} else {
+						tmodel[i,j]<-2
+						tmodel[j,i]<-1
+					}
+				}
+			}
+		}
+	}
+	if(plot){
+		spacer<-0.1
+		plot.new()
+		par(mar=mar)
+		plot.window(xlim=xlim,ylim=ylim,asp=1)
+		if(!is.null(main)) title(main=main,cex.main=cex.main)
+		if(ordered){
+			if(max.poly==2){
+				step<-360/nstates
+				angles<-seq(-floor(nstates/2)*step,360-ceiling(nstates/2)*step,by=step)/180*pi
+				if(k==2) angles<-angles+pi/2
+				v.x<-sin(angles)
+				v.y<-cos(angles)
+				for(i in 1:nstates) for(j in 1:nstates){
+					if(if(!isSymmetric(tmodel)) i!=j else i>j){
+						dx<-v.x[j]-v.x[i]
+						dy<-v.y[j]-v.y[i]
+						slope<-abs(dy/dx)
+						shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
+						shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
+						s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
+							if(isSymmetric(tmodel)) 0 else shift.x,
+							v.y[i]+spacer*sin(atan(slope))*sign(dy)+
+							if(isSymmetric(tmodel)) 0 else shift.y)
+						e<-c(v.x[j]+spacer*cos(atan(slope))*sign(-dx)+
+							if(isSymmetric(tmodel)) 0 else shift.x,
+							v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
+							if(isSymmetric(tmodel)) 0 else shift.y)
+						if(tmodel[i,j]!=0){
+							arrows(s[1],s[2],e[1],e[2],length=0.05,
+								code=if(isSymmetric(tmodel)) 3 else 2,lwd=lwd)
+						}
+					}
+				}
+				text(v.x,v.y,colnames(tmodel),cex=cex.traits,
+					col=make.transparent(par()$fg,0.7))
+			} else {
+				nlevs<-max.poly
+				Ns<-inv.ncombn2(nstates,nlevs)
+				v.x<-v.y<-vector()
+				xx<-seq(-1,1,length.out=Ns)
+				for(i in 1:k){
+					for(j in 1:min(nlevs,Ns-i+1)){
+						v.x<-c(v.x,mean(xx[i:(i+j-1)]))
+						v.y<-c(v.y,1-2*(j-1)/(nlevs-1))
+					}
+				}
+				for(i in 1:nstates) for(j in 1:nstates){
+					if(if(!isSymmetric(tmodel)) i!=j else i>j){
+						dx<-v.x[j]-v.x[i]
+						dy<-v.y[j]-v.y[i]
+						slope<-abs(dy/dx)
+						shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
+						shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
+						s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
+							if(isSymmetric(tmodel)) 0 else shift.x,
+							v.y[i]+spacer*sin(atan(slope))*sign(dy)+
+							if(isSymmetric(tmodel)) 0 else shift.y)
+						e<-c(v.x[j]+spacer*cos(atan(slope))*sign(-dx)+
+							if(isSymmetric(tmodel)) 0 else shift.x,
+							v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
+							if(isSymmetric(tmodel)) 0 else shift.y)
+						if(tmodel[i,j]!=0){
+							arrows(s[1],s[2],e[1],e[2],length=0.05,
+								code=if(isSymmetric(tmodel)) 3 else 2,lwd=lwd)
+						}
+					}
+				}
+				text(v.x,v.y,rownames(tmodel),cex=cex.traits,
+					col=make.transparent(par()$fg,0.7))
+			}
+		} else {
+			step.y<-2/(k-1)
+			v.x<-v.y<-vector()
+			for(i in 1:k){
+				nc<-ncombn(k,i)
+				v.x<-c(v.x,if(nc>1) seq(-1,1,by=2/(nc-1)) else 0)
+				v.y<-c(v.y,rep(1-rep((i-1)*step.y,nc)))
+			}
+			for(i in 1:ncol(tmodel)) for(j in 1:ncol(tmodel)){
+				if(if(!isSymmetric(tmodel)) i!=j else i>j){
+					dx<-v.x[j]-v.x[i]
+					dy<-v.y[j]-v.y[i]
+					slope<-abs(dy/dx)
+					shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
+					shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
+					s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
+						if(isSymmetric(tmodel)) 0 else shift.x,
+						v.y[i]+spacer*sin(atan(slope))*sign(dy)+
+						if(isSymmetric(tmodel)) 0 else shift.y)
+					e<-c(v.x[j]+spacer*cos(atan(slope))*sign(-dx)+
+						if(isSymmetric(tmodel)) 0 else shift.x,
+						v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
+						if(isSymmetric(tmodel)) 0 else shift.y)
+					if(tmodel[i,j]!=0){
+						arrows(s[1],s[2],e[1],e[2],length=0.05,
+							code=if(isSymmetric(tmodel)) 3 else 2,lwd=lwd)
+					}
+				}
+			}
+			text(v.x,v.y,rownames(tmodel),cex=cex.traits,
+				col=make.transparent(par()$fg,0.7))
+		}
+	}
+	invisible(tmodel)
 }

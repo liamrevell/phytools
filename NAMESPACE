@@ -18,7 +18,7 @@ export(fit.yule, fitBayes, fitMk, fitmultiMk, fitpolyMk, fitDiversityModel, fitP
 export(force.ultrametric)
 export(gammatest, genus.to.species.tree, genSeq, geo.palette, geo.legend, get.treepos)
 export(getCladesofSize, getDescendants, getExtant, getExtinct, getnode, getParent)
-export(getSisters, getStates, gtt)
+export(getSisters, getStates, graph.polyMk, gtt)
 export(keep.tip.contMap)
 export(labelnodes, ladderize.simmap, lambda.transform, lik.bd, likMlambda)
 export(likSurface.rateshift, linklabels, locate.fossil, locate.yeti)

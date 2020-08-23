@@ -4,6 +4,7 @@
 \alias{plot.gfit}
 \alias{fitmultiMk}
 \alias{fitpolyMk}
+\alias{graph.polyMk}
 \alias{plot.fitpolyMk}
 \alias{mcmcMk}
 \alias{plot.mcmcMk}
@@ -16,6 +17,7 @@ fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 \method{plot}{gfit}(x, ...)
 fitmultiMk(tree, x, model="ER", ...)
 fitpolyMk(tree, x, model="SYM", ordered=FALSE, ...)
+graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...)
 \method{plot}{fitpolyMk}(x, ...)
 mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \method{plot}{mcmcMk}(x, ...)
@@ -28,6 +30,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 	\item{model}{model. See \code{make.simmap} or \code{ace} for details.}
 	\item{fixedQ}{fixed value of transition matrix \code{Q}, if one is desired.}
 	\item{ordered}{for \code{fitpolyMk}, a logical value indicating whether or not the character should be treated as ordered. For now the function assumes alphanumerical order (i.e., numbers sorted by their initial and then successive digits followed by characters or character strings in alphabetical order).}
+	\item{k}{For \code{graph.polyMk}, the number of monomorphic states for the discrete trait.}
 	\item{ngen}{number of generations of MCMC for \code{mcmcMk}.}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of Fitzjohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, \code{max.poly} can be set for the \code{ordered=TRUE} model. \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
