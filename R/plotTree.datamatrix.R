@@ -1,5 +1,5 @@
 ## function to plot a grid of discrete character data next to the tips of a tree
-## written by Liam J. Revell 2018
+## written by Liam J. Revell 2018, 2020
 
 plotTree.datamatrix<-function(tree,X,...){
 	N<-Ntip(tree)
@@ -34,7 +34,7 @@ plotTree.datamatrix<-function(tree,X,...){
 	if(hasArg(header)) header<-list(...)$header
 	else header<-TRUE
 	cw<-reorder(tree,"cladewise")
-	X<-X[cw$tip.label,]
+	X<-X[cw$tip.label,,drop=FALSE]
 	plotTree(cw,plot=FALSE,fsize=fsize)
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	plotTree(cw,lwd=1,ylim=c(0,obj$y.lim[2]*yexp),

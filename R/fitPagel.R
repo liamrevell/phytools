@@ -197,6 +197,8 @@ plot.fitPagel<-function(x,...){
 	else cex.traits<-0.9
 	if(hasArg(cex.rates)) cex.rates<-list(...)$cex.rates
 	else cex.rates<-0.8
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-2 ## only used if lwd.by.rate=FALSE
 	if(hasArg(lwd.by.rate)) lwd.by.rate<-list(...)$lwd.by.rate
 	else lwd.by.rate<-FALSE
 	if(lwd.by.rate){
@@ -207,7 +209,7 @@ plot.fitPagel<-function(x,...){
 		else max.lwd<-10
 		LWD.ind[LWD.ind>max.lwd]<-max.lwd
 		LWD.dep[LWD.dep>max.lwd]<-max.lwd
-	} else LWD.ind<-LWD.dep<-matrix(2,nrow(x$dependent.Q),
+	} else LWD.ind<-LWD.dep<-matrix(lwd,nrow(x$dependent.Q),
 		ncol(x$dependent.Q))
 	par(mfrow=c(2,1))
 	## INDEPENDENT MODEL

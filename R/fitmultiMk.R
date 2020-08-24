@@ -1,5 +1,5 @@
 ## new function to fit multi-regime Mk model
-## written by Liam J. Revell 2017
+## written by Liam J. Revell 2017, 2020
 ## adapted from ape::ace by E. Paradis et al. 2013
 
 fitmultiMk<-function(tree,x,model="ER",...){
@@ -103,6 +103,8 @@ fitmultiMk<-function(tree,x,model="ER",...){
 		regimes=regimes,
 		pi=pi,
 		method=opt.method)
+	lik.f<-function(q) -lik(q,output.liks=FALSE,pi=pi)
+	obj$lik<-lik.f
 	class(obj)<-"fitmultiMk"
 	return(obj)
 }
