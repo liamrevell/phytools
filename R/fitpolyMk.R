@@ -135,6 +135,8 @@ plot.fitpolyMk<-function(x,...){
 	else mar<-c(1.1,1.1,3.1,1.1)
 	if(hasArg(lwd)) lwd<-list(...)$lwd
 	else lwd<-1
+	if(hasArg(asp)) asp<-list(...)$asp
+	else asp<-1
 	Q<-matrix(NA,length(x$states),length(x$states))
     Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
@@ -142,7 +144,7 @@ plot.fitpolyMk<-function(x,...){
 	plot.new()
 	par(mar=mar)
 	xylim<-c(-1.2,1.2)
-	plot.window(xlim=xylim,ylim=xylim,asp=1)
+	plot.window(xlim=xylim,ylim=xylim,asp=asp)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-length(x$states)
 	if(x$ordered){
@@ -322,6 +324,8 @@ graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...){
 	else ylim<-c(-1.2,1.2)
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
+	if(hasArg(asp)) asp<-list(...)$asp
+	else asp<-1
 	if(ordered){
 		ss<-vector()
 		for(i in 1:(length(states)-1)){
@@ -375,7 +379,7 @@ graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...){
 		spacer<-0.1
 		plot.new()
 		par(mar=mar)
-		plot.window(xlim=xlim,ylim=ylim,asp=1)
+		plot.window(xlim=xlim,ylim=ylim,asp=asp)
 		if(!is.null(main)) title(main=main,cex.main=cex.main)
 		if(ordered){
 			if(max.poly==2){

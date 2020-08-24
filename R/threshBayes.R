@@ -309,8 +309,10 @@ plot.density.threshBayes<-function(x,...){
 	else xlim<-c(-1,1)
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-c(0,1.2*max(d$y))
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-"n"
 	plot(d,xlim=xlim,ylim=ylim,col="blue",xlab="Posterior sample of r",
-		ylab="Density",main="",bty="l")
+		ylab="Density",main="",bty=bty)
 	polygon(x=c(min(d$x),d$x,max(d$x)),y=c(0,d$y,0),
 		col=make.transparent("blue",0.2))
 	lines(rep(r,2),c(0,par()$usr[4]),col="blue",lty="dashed",
@@ -344,24 +346,28 @@ print.density.threshBayes<-function(x,...){
 plot.threshBayes<-function(x,...){
 	if(hasArg(bw)) bw<-list(...)$bw
 	else bw<-floor(length(x$par$gen)/100)
+	if(hasArg(bty)) bty<-list(...)$bty
+	else bty<-"n"
+	if(hasArg(las)) las<-list(...)$las
+	else las<-1
 	par(mfrow=c(3,1))
 	par(mar=c(5.1,4.1,2.1,1.1))
-	plot(x$par$gen,x$par$logL,type="l",bty="l",col=make.transparent("grey",0.5),
-		xlab="generation",ylab="log(L)")
-	mtext("a) log-likelihood trace",side=3,line=0,cex=1,at=0,outer=FALSE,
+	plot(x$par$gen,x$par$logL,type="l",bty=bty,col=make.transparent("grey",0.5),
+		xlab="generation",ylab="log(L)",las=las)
+	mtext("a) log-likelihood trace",side=3,line=0.5,cex=1,at=0,outer=FALSE,
 		adj=0)
 	par(mar=c(5.1,4.1,2.1,1.1))
 	accept<-vector()
 	for(i in 1:length(x$par$gen))
 		accept[i]<-mean(x$par$accept_rate[max(c(1,i-bw)):i])
-	plot(x$par$gen,accept,type="l",bty="l",col=make.transparent("red",0.5),
-		xlab="generation",ylab="mean acceptance rate")
+	plot(x$par$gen,accept,type="l",bty=bty,col=make.transparent("red",0.5),
+		xlab="generation",ylab="mean acceptance rate",las=las)
 	if(is.numeric(attr(x,"auto.tune"))) lines(c(par()$usr[1],max(x$par$gen)),
 		rep(attr(x,"auto.tune"),2),lty="dotted")
 	mtext(paste("b) mean acceptance rate (sliding window: bw=",bw,")",sep=""),
-		side=3,line=0,cex=1,at=0,outer=FALSE,adj=0)
-	plot(x$par$gen,x$par$r,type="l",bty="l",col=make.transparent("blue",0.5),
-		xlab="generation",ylab="r")
-	mtext("c) trace of the correlation coefficient, r",side=3,line=0,cex=1,at=0,
+		side=3,line=0.5,cex=1,at=0,outer=FALSE,adj=0)
+	plot(x$par$gen,x$par$r,type="l",bty=bty,col=make.transparent("blue",0.5),
+		xlab="generation",ylab="r",las=las)
+	mtext("c) trace of the correlation coefficient, r",side=3,line=0.5,cex=1,at=0,
 		outer=FALSE,adj=0)
 }
