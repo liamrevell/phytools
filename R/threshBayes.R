@@ -100,7 +100,8 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 		cont<-which(types=="cont")
 		for(i in 1:length(disc)) Y[Y[,disc[i]]==0,disc[i]]<--1
 	}
-	Y[,disc]<-Y[,disc]*abs(rnorm(n=length(as.vector(Y[,disc]))))
+	Y[,disc]<-Y[,disc]*abs(rnorm(n=length(as.vector(Y[,disc])),
+		sd=sqrt(max(nodeHeights(tree)))))
 
 	npar<-npar-n*(m-length(disc))-length(disc)
 	if(is.null(colnames(X))) colnames(Y)<-paste("V",1:m,sep="")
