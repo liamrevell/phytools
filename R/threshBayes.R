@@ -165,7 +165,7 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 		}
 		d<-i%%npar
 		if(ngen>=con$print.interval) if(i%%con$print.interval==0) if(!con$quiet){ 
-			cat(paste("genearation: ",i,"; mean acceptance rate: ",round(mean(accept.rate),2),"\n",sep=""))
+			cat(paste("generation: ",i,"; mean acceptance rate: ",round(mean(accept.rate),2),"\n",sep=""))
 			flush.console()
 		}
 		Yp[]<-Y
