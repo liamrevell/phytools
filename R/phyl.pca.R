@@ -1,7 +1,8 @@
 ## function to perform phylogenetic principal components analysis
 ## multiple morphological traits in Y
 ## also can use lambda transformation in which lambda is optimized by ML or REML (in progress)
-## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017, 2019 ref. Revell (2009; Evolution)
+## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017, 2019, 2020 
+## ref. Revell (2009; Evolution)
 
 phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
 	## get optional argument
@@ -195,10 +196,8 @@ scores.phyl.pca<-function(object,...){
 	else newdata<-NULL
 	if(!is.null(newdata)){
 		if(!is.matrix(newdata)) newdata<-as.matrix(newdata)
-		if(ncol(newdata)!=ncol(object$Evec)){
-			if(nrow(newdata)==ncol(object$Evec)) newdata<-t(newdata)
-			else stop("Dimensions of newdata incorrect.")
-		}
+		if(ncol(newdata)!=nrow(object$Evec))
+			stop("Dimensions of newdata incorrect.")
 		n<-nrow(newdata)
 		m<-ncol(newdata)
 		A<-matrix(rep(object$a,n),n,m,byrow=TRUE)
