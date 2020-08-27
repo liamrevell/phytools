@@ -411,3 +411,4 @@ print.Qmatrix<-function(x,...){
 }
 
 is.Qmatrix<-function(x) "Qmatrix" %in% class(x)
+

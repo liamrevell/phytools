@@ -10,6 +10,8 @@
 \alias{plot.mcmcMk}
 \alias{density.mcmcMk}
 \alias{plot.density.mcmcMk}
+\alias{fitHRM}
+\alias{plot.fitHRM}
 \title{Fits Mk model}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
@@ -23,6 +25,8 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \method{plot}{mcmcMk}(x, ...)
 \method{density}{mcmcMk}(x, ...)
 \method{plot}{density.mcmcMk}(x, ...)
+fitHRM(tree, x, model="ARD", ncat=2, ...)
+\method{plot}{fitHRM}(x, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
@@ -32,6 +36,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 	\item{ordered}{for \code{fitpolyMk}, a logical value indicating whether or not the character should be treated as ordered. For now the function assumes alphanumerical order (i.e., numbers sorted by their initial and then successive digits followed by characters or character strings in alphabetical order).}
 	\item{k}{For \code{graph.polyMk}, the number of monomorphic states for the discrete trait.}
 	\item{ngen}{number of generations of MCMC for \code{mcmcMk}.}
+	\item{ncat}{number of rate categories (per level of the discrete trait) in the hidden-rate model.}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of Fitzjohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, \code{max.poly} can be set for the \code{ordered=TRUE} model. \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
 \description{
@@ -43,17 +48,19 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 	
 	The function \code{fitpolyMk} fits an M\emph{k} model to data for a discrete character with intraspecific polymorphism. Polymorphic species should be coded with the name of the two or more states recorded for the species separated by a space (e.g., \code{A+B} would indicate that both states \code{A} and \code{B} are found in the corresponding taxon). Invariably it's assumed that transitions between states must occur through a polymorphic condition, whereas transitions \emph{cannot} occur directly between two incompatible polymorphic conditions. For instance, a transition between \code{A+B} and \code{B+C} would have to occur through the monomorphic state \code{B}. At time of writing, this function permits the models \code{"ER"} (equal rates for all permitted transitions), \code{"SYM"} (symmetric backward & forward rates for all permitted transitions), \code{"ARD"} (all-rates-different for permitted transitions), and a new model called \code{"transient"} in which the acquisition of polymorphism (e.g., \code{A -> A+B}) is assumed to occur at a different rate than its loss (e.g., \code{A+B -> B}). The method \code{plot.fitpolyMk} plots the fitted M\emph{k} model with intraspecific polymorphism.
 	
-	Finally, the function \code{mcmcMk} runs a Bayesian MCMC version of \code{fitMk}. The shape of the prior distribution of the transition rates is \eqn{\Gamma}, with \eqn{\alpha} and \eqn{\beta} via the argument \code{prior}, which takes the form of a list. The default value of \eqn{\alpha} is 0.1, and \eqn{\beta} defaults to a value such tha \eqn{\alpha/\beta} is equal to the parsimony score for \code{x} divided by the sum of the edge lengths of the tree. The shape of the proposal distribution is normal, with mean zero and a variance that can be controlled by the user via the optional argument \code{prior.var}. The argument \code{auto.tune}, if \code{TRUE} or \code{FALSE}, indicates whether or not to 'tune' the proposal variance up or down to target a particular acceptance rate (defaults to 0.5). \code{auto.tune} can also be a numeric value between 0 and 1, in which case this value will be the target acceptance ratio. The argument \code{plot} indicates whether the progress of the MCMC should be plotted (defaults to \code{TRUE}, but runs much faster when set to \code{FALSE}).
+	The function \code{mcmcMk} runs a Bayesian MCMC version of \code{fitMk}. The shape of the prior distribution of the transition rates is \eqn{\Gamma}, with \eqn{\alpha} and \eqn{\beta} via the argument \code{prior}, which takes the form of a list. The default value of \eqn{\alpha} is 0.1, and \eqn{\beta} defaults to a value such tha \eqn{\alpha/\beta} is equal to the parsimony score for \code{x} divided by the sum of the edge lengths of the tree. The shape of the proposal distribution is normal, with mean zero and a variance that can be controlled by the user via the optional argument \code{prior.var}. The argument \code{auto.tune}, if \code{TRUE} or \code{FALSE}, indicates whether or not to 'tune' the proposal variance up or down to target a particular acceptance rate (defaults to 0.5). \code{auto.tune} can also be a numeric value between 0 and 1, in which case this value will be the target acceptance ratio. The argument \code{plot} indicates whether the progress of the MCMC should be plotted (defaults to \code{TRUE}, but runs much faster when set to \code{FALSE}).
 	
 	The method \code{plot.mcmcMk} plots a log-likelihood trace and a trace of the rate parameters from the MCMC. (This the samem graph that is created by setting \code{plot=TRUE} in \code{mcmcMk}.) The method \code{density.mcmcMk} computes a posterior density on the transition rates in the model from the posterior sample obtained in the MCMC, will import the package \emph{coda} if it is available, and returns an object of class \code{"density.mcmcMk"}. Finally, the method \code{plot.density.mcmcMk} creates a plot of the posterior density (or a set of plots) for the transition rates between states.
+	
+	Finally, the function \code{fitHRM} fits a hidden-rate M\emph{k} model following Beaulieu et al. (2013). For the hidden-rate model we need to specify a number of rate categories for each level of the trait - and this can be a vector of different values for each trait. We can also choose a model (\code{"ER"}, \code{"SYM"}, or \code{"ARD"}), as well as whether or not to treat the character as a 'threshold' trait (\code{umbral=TRUE}, defaults to \code{FALSE}). This latter model is basically one that allows absorbing conditions for some hidden states. This is a work in progress.
 }
 \details{
-	Note that both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \emph{ape} package for computing the likelihood. \code{fitpolyMk} and \code{mcmcMk} use \code{fitMk} internally to compute the likelihood.
+	Note that both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \emph{ape} package for computing the likelihood. \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
 }
 \value{
-	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, or \code{"mcmcMk"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
+	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, or \code{"fitHRM"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
 	
-	\code{plot.fitMk} and \code{plot.gfit} invisibly return the coordinates of vertices of the plotted \bold{Q}-matrix.
+	\code{plot.fitMk}, \code{plot.gfit}, and \code{plot.HRM} invisibly return the coordinates of vertices of the plotted \bold{Q}-matrix.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

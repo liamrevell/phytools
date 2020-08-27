@@ -75,6 +75,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			cat("\nThis is the design matrix of the fitted model. Does it make sense?\n\n")
 			print(tmodel)
 			cat("\n")
+			flush.console()
 		}
 		X<-to.matrix(x,ss)
 		object<-fitMk(tree,X,model=tmodel,...)
