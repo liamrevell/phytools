@@ -119,8 +119,14 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	args$model<-model
 	args$tree<-tree
 	args$x<-X
+	if(hasArg(logscale)) logscale<-rep(list(...)$logscale,niter)
+	else logscale<-sample(c(TRUE,FALSE),niter,replace=TRUE)
+	if(hasArg(opt.method)) opt.method<-rep(list(...)$opt.method,niter)
+	else opt.method<-sample(c("nlminb","optim"),niter,replace=TRUE)
 	for(i in 1:niter){
-		args$q.init<-rexp(n=max(model),rate=1/(2*max(nodeHeights(tree))))
+		args$logscale<-logscale[i]
+		args$opt.method<-opt.method[i]
+		args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
 		fits[[i]]<-do.call(fitMk,args)
 		if(trace>0) print(fits[[i]])
 		logL<-sapply(fits,logLik)
@@ -135,7 +141,9 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	obj<-fits[[which(logL==max(logL))[1]]]
 	obj$ncat<-ncat
 	obj$model<-MODEL
+	obj$umbral<-umbral
 	obj$all.fits<-fits
+	obj$data<-X
 	class(obj)<-c("fitHRM","fitMk")
 	obj	
 }
@@ -170,6 +178,8 @@ isOdd<-function(x) (x%%2)==1
 plot.fitHRM<-function(x,...){
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-6
+	umbral<-x$umbral
+	ncat<-x$ncat
 	Q<-as.Qmatrix(x)
 	II<-x$index.matrix
 	for(i in 1:nrow(II)) for(j in 1:ncol(II)) 
@@ -185,5 +195,5 @@ plot.fitHRM<-function(x,...){
 	class(Q)<-"Qmatrix"
 	args.list<-list(...)
 	args.list$show.zeros<-FALSE
-	plot(Q,show.zeros=FALSE,...)
+	plot(Q,show.zeros=FALSE,umbral=umbral,ncat=ncat,...)
 }
