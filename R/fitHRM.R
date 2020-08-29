@@ -197,3 +197,11 @@ plot.fitHRM<-function(x,...){
 	args.list$show.zeros<-FALSE
 	plot(Q,show.zeros=FALSE,umbral=umbral,ncat=ncat,...)
 }
+
+as.Qmatrix.corhmm<-function(x,...){
+	Q<-x$solution
+	Q[is.na(Q)]<-0
+	diag(Q)<--rowSums(Q)
+	class(Q)<-"Qmatrix"
+	Q
+}

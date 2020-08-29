@@ -210,6 +210,7 @@ S3method(print, edge.widthMap)
 S3method(plot, edge.widthMap)
 S3method(plot, fitHRM)
 S3method(print, fitHRM)
+S3method(as.Qmatrix, corhmm)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)
