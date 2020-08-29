@@ -121,25 +121,27 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 ## print method for objects of class "fitPagel"
 ## written by Liam J. Revell 2014, 2016
 print.fitPagel<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-6
 	cat("\nPagel's binary character correlation test:\n")
 	cat(paste("\nAssumes \"",x$model,
 		"\" substitution model for both characters\n",sep=""))
 	cat("\nIndependent model rate matrix:\n")
-	print(x$independent.Q)
+	print(round(x$independent.Q,digits))
 	tmp<-if(x$dep.var=="xy") "x & y" 
 		else if(x$dep.var=="x") "x only" 
 		else if(x$dep.var=="y") "y only"
 	cat(paste("\nDependent (",tmp,") model rate matrix:\n",sep=""))
-	print(x$dependent.Q)
+	print(round(x$dependent.Q,digits))
 	cat("\nModel fit:\n")
 	obj<-matrix(c(x$independent.logL,x$dependent.logL,
 		x$independent.AIC,x$dependent.AIC),2,2)
 	rownames(obj)<-c("independent","dependent")
 	colnames(obj)<-c("log-likelihood","AIC")
-	print(obj)
+	print(round(obj,digits))
 	cat("\nHypothesis test result:\n")
-	cat(paste("  likelihood-ratio: ",signif(x$lik.ratio,7),"\n"))
-	cat(paste("  p-value: ",signif(x$P,7),"\n"))
+	cat(paste("  likelihood-ratio: ",signif(x$lik.ratio,digits),"\n"))
+	cat(paste("  p-value: ",signif(x$P,digits),"\n"))
 	cat(paste("\nModel fitting method used was",x$method,"\n\n"))
 }
 
