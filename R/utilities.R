@@ -444,7 +444,7 @@ getnode<-function(...){
 }
 
 ## function mostly to interactively label nodes by clicking
-## written by Liam J. Revell 2017
+## written by Liam J. Revell 2017, 2020
 labelnodes<-function(text,node=NULL,interactive=TRUE,
 	shape=c("circle","ellipse","rect"),...){
 	shape<-shape[1]
@@ -454,6 +454,8 @@ labelnodes<-function(text,node=NULL,interactive=TRUE,
 	else rect.exp<-1.6
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-1
+	if(hasArg(bg)) bg<-list(...)$bg
+	else bg<-"white"
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	h<-cex*strheight("A")
 	w<-cex*strwidth(text)
@@ -474,15 +476,15 @@ labelnodes<-function(text,node=NULL,interactive=TRUE,
 			node[i]<-ii
 		} else ii<-node[i]
 		if(shape=="circle")
-			draw.circle(obj$xx[ii],obj$yy[ii],rad,col="white")
+			draw.circle(obj$xx[ii],obj$yy[ii],rad,col=bg)
 		else if(shape=="ellipse")
 			draw.ellipse(obj$xx[ii],obj$yy[ii],0.8*w[i],h,
-				col="white")
+				col=bg)
 		else if(shape=="rect")
 			rect(xleft=obj$xx[ii]-0.5*rect.exp*w[i],
 				ybottom=obj$yy[ii]-0.5*rect.exp*h,
 				xright=obj$xx[ii]+0.5*rect.exp*w[i],
-				ytop=obj$yy[ii]+0.5*rect.exp*h,col="white",
+				ytop=obj$yy[ii]+0.5*rect.exp*h,col=bg,
 				ljoin=1)
 		text(obj$xx[ii],obj$yy[ii],label=text[i],cex=cex)
 	}
