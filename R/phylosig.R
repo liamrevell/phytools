@@ -1,4 +1,5 @@
-## function for computing phylogenetic signal by the lambda (Pagel 1999) of K (Blomberg et al. 2003) methods
+## function for computing phylogenetic signal by the lambda (Pagel 1999)
+## or K (Blomberg et al. 2003) methods
 ## written by Liam J. Revell 2011/2012, 2019, 2020
 
 phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,control=list()){
@@ -270,7 +271,7 @@ plot.phylosig<-function(x,...){
 				arrows(x0=x$K,y0=par()$usr[4],y1=0,length=0.12,
 					col=make.transparent("blue",0.5),lwd=2)
 				text(x$K,0.95*par()$usr[4],"observed value of K",
-					pos=if(x$K>mean(x$sim.K)) 2 else 4)
+					pos=if(x$K>mean(range(x$sim.K))) 2 else 4)
 			}
 		} else if(what=="sig2"){
 			if(attr(x,"se")==FALSE)
