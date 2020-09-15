@@ -1,5 +1,5 @@
 ## find the temporal position of a rate shift using ML
-## written by Liam J. Revell 2013, 2014, 2015
+## written by Liam J. Revell 2013, 2014, 2015, 2020
 
 rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -123,7 +123,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 }
 
 ## S3 print method for object of class "rateshift"
-## written by Liam J. Revell 2013
+## written by Liam J. Revell 2013, 2020
 print.rateshift<-function(x,...){
 	sqroot<-function(x){
 		if(length(x)==1) if(x>=0) sqrt(x) else NaN
@@ -156,9 +156,9 @@ print.rateshift<-function(x,...){
 		for(i in 1:length(x$shift)){
 			tmp[2*i-1]<-x$shift[i]
 			tmp[2*i]<-sqroot(diag(x$vcv)[i+length(x$sig2)])
-			nn[2*i-1]<-paste(strsplit(names(x$shift[i]),"<->")[[1]],collapse="")
+			nn[2*i-1]<-paste(strsplit(names(x$shift[i]),"<->")[[1]],collapse="|")
 			nn[2*i]<-paste("se(",paste(strsplit(names(x$shift[i]),"<->")[[1]],
-				collapse=""),")",sep="")
+				collapse="|"),")",sep="")
 		}
 		tmp<-as.data.frame(tmp)
 		colnames(tmp)<-nn
@@ -182,7 +182,7 @@ logLik.rateshift<-function(object,...){
 }
 
 ## S3 plot method for object of class "rateshift"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2020
 plot.rateshift<-function(x,...){
 	if(length(x$sig2)>1){
 		cols<-colorRampPalette(c("blue","purple","red"))(101)
