@@ -15,6 +15,8 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	else minL<--1e12
 	if(hasArg(fixed.shift)) fixed.shift<-list(...)$fixed.shift
 	else fixed.shift<-FALSE
+	if(hasArg(compute.se)) compute.se<-list(...)$compute.se
+	else compute.se<-TRUE
 	fn<-if(method=="ML") brownie.lite else brownieREML
 	if(!fixed.shift[1]){
 		if(print){
@@ -95,8 +97,10 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 		}
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fit$par)) else make.era.map(tree,0)
 		obj<-fn(mtree,x)
-		H<-optimHess(c(obj$sig2.multiple,fit$par),likHess,tree=tree,y=x,nrates=nrates,tol=tol,maxh=h)
-		vcv<-if(nrates>1) solve(H) else 1/H
+		if(compute.se){
+			H<-optimHess(c(obj$sig2.multiple,fit$par),likHess,tree=tree,y=x,nrates=nrates,tol=tol,maxh=h)
+			vcv<-if(nrates>1) solve(H) else 1/H
+		} else vcv<-matrix(-1,2*nrates-1,2*nrates-1)
 		if(nrates>1)
 			rownames(vcv)<-colnames(vcv)<-c(paste("sig2(",1:nrates,")",sep=""),paste(1:(nrates-1),"<->",2:nrates,sep=""))
 		else rownames(vcv)<-colnames(vcv)<-"sig2(1)"
@@ -129,28 +133,47 @@ print.rateshift<-function(x,...){
 	else digits<-4
 	x<-lapply(x,function(a,b) if(is.numeric(a)) round(a,b) else a,b=digits)
 	cat(paste("ML ",length(x$sig2),"-rate model:\n",sep=""))
-	cat(paste(c("",paste("s^2(",names(x$sig2),")","\tse(",names(x$sig2),")",sep=""), 
-      	"k","logL","\n"),collapse="\t"))
-	cat(paste(paste(c("value",paste(x$sig2,round(sqroot(diag(x$vcv)[1:length(x$sig2)]),digits),
-		sep="\t"),2*length(x$sig2),x$logL),collapse="\t"),"\n\n",sep=""))
+	tmp<-list()
+	nn<-vector()
+	for(i in 1:length(x$sig2)){
+		tmp[2*i-1]<-x$sig2[i]
+		tmp[2*i]<-sqroot(diag(x$vcv)[i])
+		nn[2*i-1]<-paste("s^2(",names(x$sig2)[i],")",sep="")
+		nn[2*i]<-paste("se(",names(x$sig2)[i],")",sep="")
+	}
+	tmp[2*i+1]<-2*length(x$sig2)
+	tmp[2*i+2]<-x$logL
+	nn[2*i+1]<-"k"
+	nn[2*i+2]<-"logL"
+	tmp<-as.data.frame(tmp)
+	colnames(tmp)<-nn
+	rownames(tmp)<-"value"
+	print(tmp,digits=digits)
 	if(!is.null(x$shift)){
-		cat("Shift point(s) between regimes (height above root):\n")
-		nn<-sapply(strsplit(names(x$shift),"<->"),paste,collapse="|")
-		cat(paste(c("",paste(nn,paste("se(",nn,")",sep=""),sep="\t"),"\n"),
-			collapse="\t"))
-		cat(paste(paste(c("value",paste(x$shift,
-			round(sqroot(diag(x$vcv)[1:length(x$shift)+length(x$sig2)]),digits),
-			sep="\t")),collapse="\t"),"\n\n",sep=""))
-	} else cat("This is a one-rate model.\n\n")
-	if(x$method=="ML") cat("Model fit using ML.\n\n") 
-	else if(x$method=="REML") cat("Model fit using REML.\n\n")
+		cat("\nShift point(s) between regimes (height above root):\n")
+		tmp<-list()
+		nn<-vector()
+		for(i in 1:length(x$shift)){
+			tmp[2*i-1]<-x$shift[i]
+			tmp[2*i]<-sqroot(diag(x$vcv)[i+length(x$sig2)])
+			nn[2*i-1]<-paste(strsplit(names(x$shift[i]),"<->")[[1]],collapse="")
+			nn[2*i]<-paste("se(",paste(strsplit(names(x$shift[i]),"<->")[[1]],
+				collapse=""),")",sep="")
+		}
+		tmp<-as.data.frame(tmp)
+		colnames(tmp)<-nn
+		rownames(tmp)<-"value"
+		print(tmp,digits=digits)
+	} else cat("\nThis is a one-rate model.\n")
+	if(x$method=="ML") cat("\nModel fit using ML.\n\n") 
+	else if(x$method=="REML") cat("\nModel fit using REML.\n\n")
 	cat(paste("Frequency of best fit:",x$frequency.best,"\n\n"))
 	if (x$convergence==0) cat(paste("R thinks it has found the",x$method,"solution.\n\n"))
     	else cat("Optimization may not have converged.\n\n")
 }
 
 ## S3 logLik method for object of class "rateshift"
-## written by Liam J. Revell 2013
+## written by Liam J. Revell 2013, 2020
 logLik.rateshift<-function(object,...){
 	logLik<-object$logL
 	class(logLik)<-"logLik"
@@ -179,10 +202,9 @@ plot.rateshift<-function(x,...){
 		colors<-setNames("blue",1)
 		plot(x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
 			colors=colors,...)
-		txt<-as.character(round(x$sig2,3))
-		add.simmap.legend(leg=expression(paste(sigma^2," = ",sep="")),
-			colors="blue",prompt=FALSE,x=0,y=-0.05*Ntip(x$tree))
-		text(x=5.5*strwidth("W"),y=-0.05*Ntip(x$tree),round(x$sig2,3))
+		legend(x=0,y=0,
+			legend=bquote(sigma^2 == .(round(x$sig2,3))),
+			pch=15,col="blue",pt.cex=2,bty="n")
 	}
 }
 

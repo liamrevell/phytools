@@ -42,8 +42,9 @@ brownie.lite<-function(tree,x,maxit=2000,test="chisq",nsim=100,se=NULL,...){
 		method="L-BFGS-B",lower=l)	
 	logL2<--model2$value
 	while(logL2<logL1){
-		if(!quiet) 
+		if(!quiet){ 
 			message("False convergence on first try; trying again with new starting values.")
+		} 
 		model2<-optim(s*2*runif(n=length(s)),fn=lik.multiple,
 			y=x,C=C2,se=se,control=list(maxit=maxit),
 			hessian=TRUE,method="L-BFGS-B",lower=l)
