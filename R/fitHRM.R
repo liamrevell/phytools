@@ -109,7 +109,7 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	}
 	colnames(model)<-rownames(model)<-colnames(X)<-cols
 	if(!quiet){
-		cat("\nThis is the design matrix of the fitted model. Does it make sense?\n\n")
+		cat("\nThis is the design matrix of the fitted model.\nDoes it make sense?\n\n")
 		print(model)
 		cat("\n")
 		flush.console()
