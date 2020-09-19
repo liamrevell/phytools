@@ -91,20 +91,20 @@ data(flatworm.tree)
 ## extract discrete character (habitat)
 habitat<-setNames(flatworm.data$Habitat,
 	rownames(flatworm.data))
-## fit polymorphic models "ARD" and "transient"
-fitpoly.ARD<-fitpolyMk(flatworm.tree,habitat,
-	model="ARD")
+## fit polymorphic models "ER" and "transient"
+fitpoly.ER<-fitpolyMk(flatworm.tree,habitat,
+	model="ER")
 fitpoly.transient<-fitpolyMk(flatworm.tree,habitat,
 	model="transient")
 ## print fitted models
-print(fitpoly.ARD)
+print(fitpoly.ER)
 print(fitpoly.transient)
 ## compare model
-AIC(fitpoly.ARD,fitpoly.transient)
+AIC(fitpoly.ER,fitpoly.transient)
 ## plot models
 par(mfrow=c(2,1))
-plot(fitpoly.ARD)
-mtext("a) ARD polymorphic model",adj=0,line=1)
+plot(fitpoly.ER)
+mtext("a) ER polymorphic model",adj=0,line=1)
 plot(fitpoly.transient)
 mtext("b) Transient polymorphic model",adj=0,
 	line=1)

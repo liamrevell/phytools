@@ -24,7 +24,7 @@
 	
 	\code{sunfish.tree} and \code{sunfish.data} are the phylogeny and dataset for Centrarchidae and buccal morphology (respectively) from Revell and Collar (2009).
 	
-	\code{vertebrate.tree} is a time-calibrated phylogeny of vertebrates and \code{vertebrate.data} is a dataset of phenotypic traits. The phylogeny is from \href{http://www.timetree.org/}{http://www.timetree.org/} (Hedges et al. 2006).
+	\code{vertebrate.tree} is a time-calibrated phylogeny of vertebrates and \code{vertebrate.data} is a dataset of phenotypic traits. The phylogeny is from \url{http://www.timetree.org/} (Hedges et al. 2006).
 	
 	\code{wasp.trees} and \code{wasp.data} are the phylogeny and host-parasite associations from Lopez-Vaamonde et al. (2001).
 }
