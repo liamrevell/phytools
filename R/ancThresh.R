@@ -4,10 +4,20 @@
 ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 	model=c("BM","OU","lambda"),control=list(),...){
 
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
+	if(!inherits(tree,"phylo")) 
+		stop("tree should be an object of class \"phylo\".")
+	
+	if(hasArg(auto.tune)) auto.tune<-list(...)$auto.tune
+	else auto.tune<-TRUE
+	if(is.logical(auto.tune)) if(auto.tune==TRUE) auto.tune<-0.234
+	else if(is.numeric(auto.tune)) if(auto.tune>=1.0||auto.tune<=0.0){
+		cat("value for auto.tune outside allowable range. Resetting....\n")
+		auto.tune<-0.234
+	}
 	
 	# check method
-	if(method!="mcmc") stop(paste(c("do not recognize method =",method,",quitting")))
+	if(method!="mcmc") stop(paste(c("do not recognize method =",method,
+		",quitting")))
 
 	# get model for the evolution of liability
 	model<-model[1]
@@ -34,9 +44,22 @@ ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 	X<-X[,seq] # order columns by seq
 
 	# ok, now set starting thresholds
-	th<-c(1:length(seq))-1; names(th)<-seq
+	th<-c(1:length(seq))-1
+	names(th)<-seq
 	x<-to.vector(X)
-	l<-sapply(x,function(x) runif(n=1,min=th[x]-1,max=th[x])) # set plausible starting liability
+	## set plausible starting liabilities
+	MU<-mean(th)
+	SD<-2*sd(th)
+	# now change the upper limit of th to Inf
+	th[length(th)]<-Inf
+	l<-setNames(vector(mode="numeric",length=length(x)),names(x))
+	for(i in 1:length(l)){
+		l[i]<-rnorm(n=1,mean=MU,sd=SD)
+		while(threshState(l[i],thresholds=th)!=x[i]) l[i]<-rnorm(n=1,mean=MU,
+			sd=SD)
+	}
+	## set plausible starting liability
+	## l<-sapply(x,function(x) runif(n=1,min=th[x]-1,max=th[x])) 
 	if(model=="OU") alpha<-0.1*max(nodeHeights(tree))
 	if(model=="lambda") lambda<-1.0
 
@@ -77,10 +100,13 @@ ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 	# now set ancestral liabilities, by first picking ancestral states from their prior
 	temp<-apply(con$pr.anc,1,rstate)
 	# assign random liabilities consistent with the starting thresholds
-	a<-sapply(temp,function(x) runif(n=1,min=th[x]-1,max=th[x]))
-
-	# now change the upper limit of th to Inf
-	th[length(th)]<-Inf
+	## a<-sapply(temp,function(x) runif(n=1,min=th[x]-1,max=th[x]))
+	a<-setNames(vector(mode="numeric",length=length(temp)),names(temp))
+	for(i in 1:length(a)){
+		a[i]<-rnorm(n=1,mean=MU,sd=SD)
+		while(threshState(a[i],thresholds=th)!=temp[i]) a[i]<-rnorm(n=1,mean=MU,
+			sd=SD)
+	}
 
 	# compute some matrices & values
 	V<-if(model=="BM") vcvPhylo(tree) 
@@ -94,14 +120,21 @@ ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 	lik1<-likLiab(l,a,V,invV,detV)+log(probMatch(X,l,th,seq))
 	
 	# store
-	A<-matrix(NA,ngen/con$sample+1,tree$Nnode,dimnames=list(NULL,n+1:tree$Nnode))
-	B<-if(model=="BM") matrix(NA,ngen/con$sample+1,m+2,dimnames=list(NULL,c("gen",names(th),"logLik")))
-	   else if(model=="OU") matrix(NA,ngen/con$sample+1,m+3,dimnames=list(NULL,c("gen",names(th),"alpha","logLik")))
-	   else if(model=="lambda") matrix(NA,ngen/con$sample+1,m+3,dimnames=list(NULL,c("gen",names(th),"lambda","logLik")))
+	A<-matrix(NA,ngen/con$sample+1,tree$Nnode,dimnames=list(NULL,
+		n+1:tree$Nnode))
+	B<-if(model=="BM") matrix(NA,ngen/con$sample+1,m+2,
+		dimnames=list(NULL,c("gen",names(th),"logLik")))
+		else if(model=="OU") matrix(NA,ngen/con$sample+1,m+3,
+		dimnames=list(NULL,c("gen",names(th),"alpha","logLik")))
+		else if(model=="lambda") matrix(NA,ngen/con$sample+1,m+3,
+		dimnames=list(NULL,c("gen",names(th),"lambda","logLik")))
 
-	C<-matrix(NA,ngen/con$sample+1,tree$Nnode+n,dimnames=list(NULL,c(tree$tip.label,1:tree$Nnode+n)))
+	C<-matrix(NA,ngen/con$sample+1,tree$Nnode+n,dimnames=list(NULL,
+		c(tree$tip.label,1:tree$Nnode+n)))
 	A[1,]<-threshState(a,thresholds=th)
-	B[1,]<-if(model=="BM") c(0,th,lik1) else if(model=="OU") c(0,th,alpha,lik1) else if(model=="lambda") c(0,th,lambda,lik1)
+	B[1,]<-if(model=="BM") c(0,th,lik1) else 
+		if(model=="OU") c(0,th,alpha,lik1) else 
+		if(model=="lambda") c(0,th,lambda,lik1)
 	C[1,]<-c(l[tree$tip.label],a[as.character(1:tree$Nnode+n)])
 
 	# run MCMC
@@ -143,7 +176,8 @@ ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 			}
 		}
 		lik2<-likLiab(lp,ap,Vp,invVp,detVp)+log(probMatch(X,lp,thp,seq))
-		p.odds<-min(c(1,exp(lik2+logPrior(threshState(ap,thresholds=thp),thp,con)-lik1-logPrior(threshState(a,thresholds=th),th,con))))
+		p.odds<-min(c(1,exp(lik2+logPrior(threshState(ap,thresholds=thp),thp,con)-
+			lik1-logPrior(threshState(a,thresholds=th),th,con))))
 
 		if(p.odds>runif(n=1)){
 			a<-ap; l<-lp; th<-thp
@@ -154,7 +188,9 @@ ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 		} else logL<-lik1
 		if(i%%con$sample==0){ 
 			A[i/con$sample+1,]<-threshState(a,thresholds=th)
-			B[i/con$sample+1,]<-if(model=="BM") c(i,th[colnames(B)[1+1:m]],logL) else if(model=="OU") c(i,th[colnames(B)[1+1:m]],alpha,logL) else if(model=="lambda") c(i,th[colnames(B)[1+1:m]],lambda,logL)
+			B[i/con$sample+1,]<-if(model=="BM") c(i,th[colnames(B)[1+1:m]],logL) else 
+				if(model=="OU") c(i,th[colnames(B)[1+1:m]],alpha,logL) else 
+				if(model=="lambda") c(i,th[colnames(B)[1+1:m]],lambda,logL)
 			C[i/con$sample+1,]<-c(l[tree$tip.label],a[as.character(1:tree$Nnode+n)])
 		}
 	}
@@ -181,12 +217,14 @@ ancThresh<-function(tree,x,ngen=100000,sequence=NULL,method="mcmc",
 ## some S3 methods (added in 2017)
 
 print.ancThresh<-function(x,...){
-	cat("\nObject containing the results from an MCMC analysis\nof the threshold model using ancThresh.\n\n")
+	cat("\nObject containing the results from an MCMC analysis\n")
+	cat("of the threshold model using ancThresh.\n\n")
 	cat("List with the following components:\n")
 	cat(paste("ace:\tmatrix with posterior probabilities assuming",x$burnin,
 		"\n\tburn-in generations.\n"))
 	cat("mcmc:\tposterior sample of liabilities at tips & internal\n")
-	cat(paste("\tnodes (a matrix with",nrow(x$mcmc),"rows &",ncol(x$mcmc),"columns).\n"))
+	cat(paste("\tnodes (a matrix with",nrow(x$mcmc),"rows &",ncol(x$mcmc),
+		"columns).\n"))
 	cat("par:\tposterior sample of the relative positions of the\n")
 	cat(paste("\tthresholds, the log-likelihoods, and any other\n",
 		"\tmodel variables (a matrix with",nrow(x$par),"rows).\n\n"))
@@ -202,7 +240,10 @@ plot.ancThresh<-function(x,...){
 	else burnin<-x$burnin
 	args<-list(...)
 	if(is.null(args$lwd)) args$lwd<-1
-	if(is.null(args$ylim)) args$ylim<-c(-0.1*Ntip(x$tree),Ntip(x$tree))
+	if(is.null(args$type)) args$type<-"phylogram"
+	if(is.null(args$ylim))
+		if(args$type=="phylogram") 
+			args$ylim<-c(-0.1*Ntip(x$tree),Ntip(x$tree))
 	if(is.null(args$offset)) args$offset<-0.5
 	if(is.null(args$ftype)) args$ftype="i"
 	args$tree<-x$tree	
@@ -212,8 +253,8 @@ plot.ancThresh<-function(x,...){
 	THRESH<-as.matrix(x$par)[ii:nrow(x$par),1:length(x$seq)+1]
 	STATES<-matrix(NA,nrow(LIAB),ncol(LIAB),dimnames=dimnames(LIAB))
 	for(i in 1:nrow(LIAB)) STATES[i,]<-threshState(LIAB[i,],THRESH[i,])
-	PP<-t(apply(STATES,2,function(x,levs) summary(factor(x,levels=levs))/length(x),
-		levs=x$seq))
+	PP<-t(apply(STATES,2,function(x,levs) 
+		summary(factor(x,levels=levs))/length(x),levs=x$seq))
 	if(hasArg(piecol)) piecol<-list(...)$piecol
 	else piecol<-setNames(colorRampPalette(c("blue",
 		"yellow"))(length(x$seq)),x$seq)
@@ -225,7 +266,7 @@ plot.ancThresh<-function(x,...){
 	else tip.cex<-0.4
 	tiplabels(pie=PP[x$tree$tip.label,],piecol=piecol,
 		cex=tip.cex)
-	legend(x=par()$usr[1],y=par()$usr[1],legend=x$seq,pch=21,pt.bg=piecol,
+	legend(x="bottomleft",legend=x$seq,pch=21,pt.bg=piecol,
 		pt.cex=2.2,bty="n")
 	invisible(PP)
 }
@@ -245,11 +286,14 @@ plotThresh<-function(tree,x,mcmc,burnin=NULL,piecol,tipcol="input",legend=TRUE,.
 
 	# plot tree
 	par(lend=2)
-	plotTree(tree,ftype="i",lwd=1,ylim=if(legend) c(-0.1*length(tree$tip.label),length(tree$tip.label)) else NULL,...)
+	plotTree(tree,ftype="i",lwd=1,ylim=if(legend) c(-0.1*length(tree$tip.label),
+		length(tree$tip.label)) else NULL,...)
 	if(legend){
 		zz<-par()$cex; par(cex=0.6)
 		for(i in 1:length(piecol))
-			add.simmap.legend(leg=leg[i],colors=piecol[i],prompt=FALSE,x=0.02*max(nodeHeights(tree)),y=-0.1*length(tree$tip.label),vertical=FALSE,shape="square",fsize=1)
+			add.simmap.legend(leg=leg[i],colors=piecol[i],prompt=FALSE,
+				x=0.02*max(nodeHeights(tree)),y=-0.1*length(tree$tip.label),vertical=FALSE,
+				shape="square",fsize=1)
 		par(cex=zz)
 	}
 	# pull matrices from mcmc
@@ -277,8 +321,10 @@ plotThresh<-function(tree,x,mcmc,burnin=NULL,piecol,tipcol="input",legend=TRUE,.
 	# plot tip labels
 	if(tipcol=="input") tiplabels(pie=X,piecol=piecol[colnames(X)],cex=0.6)
 	else if(tipcol=="estimated") {
-		XX<-matrix(NA,nrow(liab),length(tree$tip),dimnames=list(rownames(liab),colnames(liab)[1:length(tree$tip)]))
-		for(i in 1:nrow(liab)) XX[i,]<-threshState(liab[i,1:length(tree$tip)],thresholds=param[i,1:ncol(X)+1])
+		XX<-matrix(NA,nrow(liab),length(tree$tip),dimnames=list(rownames(liab),
+			colnames(liab)[1:length(tree$tip)]))
+		for(i in 1:nrow(liab)) XX[i,]<-threshState(liab[i,1:length(tree$tip)],
+			thresholds=param[i,1:ncol(X)+1])
 		X<-t(apply(XX,2,function(x) summary(factor(x,levels=colnames(X)))))
 		tiplabels(pie=X/rowSums(X),piecol=piecol[colnames(X)],cex=0.6)
 	}
@@ -319,9 +365,14 @@ threshDIC<-function(tree,x,mcmc,burnin=NULL,sequence=NULL,method="pD"){
 	thBar<-colMeans(mcmc$par[start:nrow(mcmc$par),2:(ncol(mcmc$par)-k)])
 	liabBar<-colMeans(mcmc$liab[start:nrow(mcmc$liab),])
 	if(model=="BM")	V<-vcvPhylo(tree)
-	else if(model=="OU") V<-vcvPhylo(tree,model="OU",alpha=mean(mcmc$par[start:nrow(mcmc$par),"alpha"]))
-	else if(model=="lambda") V<-vcvPhylo(tree,model="lambda",lambda=mean(mcmc$par[start:nrow(mcmc$par),"lambda"]))
-	Dtheta<--2*(likLiab(liabBar[tree$tip.label],liabBar[as.character(1:tree$Nnode+length(tree$tip))],V,solve(V),determinant(V,logarithm=TRUE)$modulus[1])+log(probMatch(X[tree$tip.label,],liabBar[tree$tip.label],thBar,seq)))
+	else if(model=="OU") V<-vcvPhylo(tree,model="OU",
+		alpha=mean(mcmc$par[start:nrow(mcmc$par),"alpha"]))
+	else if(model=="lambda") V<-vcvPhylo(tree,model="lambda",
+		lambda=mean(mcmc$par[start:nrow(mcmc$par),"lambda"]))
+	Dtheta<--2*(likLiab(liabBar[tree$tip.label],
+		liabBar[as.character(1:tree$Nnode+length(tree$tip))],V,solve(V),
+		determinant(V,logarithm=TRUE)$modulus[1])+log(probMatch(X[tree$tip.label,],
+		liabBar[tree$tip.label],thBar,seq)))
 	D<--2*mcmc$par[start:nrow(mcmc$par),"logLik"]
 	Dbar<-mean(D)
 	if(method=="pD"){		
