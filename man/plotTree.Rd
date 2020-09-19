@@ -22,8 +22,10 @@ plotTree(tree, ...)
 	\code{\link{plot.phylo}}, \code{\link{plotSimmap}}
 }
 \examples{
-tree<-pbtree(n=25)
-plotTree(tree,color="blue",ftype="i")
+data(vertebrate.tree)
+plotTree(vertebrate.tree,fsize=1.2,ftype="i")
+## reset margins
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}

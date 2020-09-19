@@ -56,6 +56,21 @@ par(mar=c(5.1,4.1,4.1,2.1))
 plotTree.barplot(anoletree,exp(svl),
     args.plotTree=list(fsize=0.5),
     args.barplot=list(xlab="SVL (mm)"))
+	
+## load vertebrate tree and data
+data(vertebrate.tree)
+data(vertebrate.data)
+## plotTree.barplot
+options(scipen=3) ## change sci-notation
+plotTree.barplot(vertebrate.tree,
+	setNames(vertebrate.data$Mass,
+	rownames(vertebrate.data)),
+	args.barplot=list(log="x",
+	xlab="mass (kg)",
+	xlim=c(0.01,500000),
+	col=palette()[4]))
+options(scipen=0)
+
 ## reset par to defaults
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
 }

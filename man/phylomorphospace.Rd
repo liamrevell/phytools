@@ -47,7 +47,7 @@ phylomorphospace(sunfish.tree,sunfish.data[,3:2],
     node.size=c(0,1.2),xlab="relative buccal length",
     ylab="relative gape width")
 title(main="Phylomorphospace of buccal morphology in Centrarchidae",
-    font.main=3)
+    font.main=3)	
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

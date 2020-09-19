@@ -1,9 +1,13 @@
 anole.data
 anoletree
+flatworm.data
+flatworm.tree
 mammal.data
 mammal.tree
 salamanders
 sunfish.data
 sunfish.tree
+vertebrate.data
+vertebrate.tree
 wasp.data
 wasp.trees

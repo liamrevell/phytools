@@ -19,7 +19,7 @@ fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
 \method{plot}{gfit}(x, ...)
 fitmultiMk(tree, x, model="ER", ...)
 fitpolyMk(tree, x, model="SYM", ordered=FALSE, ...)
-graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...)
+graph.polyMk(k=2, model="SYM", ordered=FALSE, ...)
 \method{plot}{fitpolyMk}(x, ...)
 mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \method{plot}{mcmcMk}(x, ...)
@@ -84,6 +84,31 @@ fit.ARD<-fitMk(sunfish.tree,fmode,model="ARD")
 print(fit.ARD)
 ## compare the models
 AIC(fit.ER,fit.ARD)
+
+## load tree and data from Benitez-Alvarez et al. (2000)
+data(flatworm.data)
+data(flatworm.tree)
+## extract discrete character (habitat)
+habitat<-setNames(flatworm.data$Habitat,
+	rownames(flatworm.data))
+## fit polymorphic models "ARD" and "transient"
+fitpoly.ARD<-fitpolyMk(flatworm.tree,habitat,
+	model="ARD")
+fitpoly.transient<-fitpolyMk(flatworm.tree,habitat,
+	model="transient")
+## print fitted models
+print(fitpoly.ARD)
+print(fitpoly.transient)
+## compare model
+AIC(fitpoly.ARD,fitpoly.transient)
+## plot models
+par(mfrow=c(2,1))
+plot(fitpoly.ARD)
+mtext("a) ARD polymorphic model",adj=0,line=1)
+plot(fitpoly.transient)
+mtext("b) Transient polymorphic model",adj=0,
+	line=1)
+par(mfrow=c(1,1))
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
