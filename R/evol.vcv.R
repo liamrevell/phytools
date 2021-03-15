@@ -1,68 +1,133 @@
 # this function fits the model of Revell & Collar (2009; Evolution)
-# written by Liam J. Revell 2010, 2011, 2013, 2014, 2015, 2016, 2020
+# written by Liam J. Revell 2010, 2011, 2013, 2014, 2015, 2016, 2020, 2021
 
 evol.vcv<-function(tree,X,maxit=2000,vars=FALSE,...){
+
+	## start checks
+	
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+
+	## end checks
+
+	## likelihood functions (to be used internally)
+	
+	# compute the log-likelihood (from the cholesky matrices)
+	lik.chol<-function(theta,y,C,D,E){
+		m<-length(y)/dim(C[[1]])[1]
+		n<-length(y)/m
+		p<-length(C)
+		cholR<-array(data=0,dim=c(m,m,p))
+		l<-1
+		for(i in 1:p) for(j in 1:m) for(k in j:m){ 
+			cholR[j,k,i]<-theta[l]
+			l<-l+1
+		}
+		V<-matrix(0,nrow(D),nrow(D))
+		for(i in 1:p) V<-V+kronecker(t(cholR[,,i])%*%cholR[,,i],C[[i]])
+		V<-V+E
+		a<-solve(t(D)%*%solve(V)%*%D)%*%(t(D)%*%solve(V)%*%y)
+		logL<--t(y-D%*%a)%*%solve(V)%*%(y-D%*%a)/2-n*m*log(2*pi)/2-
+			determinant(V)$modulus[1]/2
+		return(-logL)
+	}
+	
+	# compute the log-likelihood (from the original matrices)
+	lik.R<-function(theta,y,C,D,E){
+		m<-length(y)/nrow(C[[1]])
+		n<-length(y)/m
+		p<-length(C)
+		R<-array(data=0,dim=c(m,m,p)); l<-1
+		for(i in 1:p) for(j in 1:m) for(k in j:m){ 
+			R[j,k,i]<-theta[l]
+			R[k,j,i]<-theta[l]
+			l<-l+1
+		}
+		V<-matrix(0,nrow(D),nrow(D))
+		for(i in 1:p) V<-V+kronecker(R[,,i],C[[i]])
+		V<-V+E
+		a<-solve(t(D)%*%solve(V)%*%D)%*%(t(D)%*%solve(V)%*%y)
+		logL<--t(y-D%*%a)%*%solve(V)%*%(y-D%*%a)/2-n*m*log(2*pi)/2-determinant(V)$modulus[1]/2
+		return(-logL)
+	}
+	
+	## end likelihood functions
+	
+	## start preliminaries
+	
 	if(is.data.frame(X)) X<-as.matrix(X)
 	n<-nrow(X) # number of species
 	m<-ncol(X) # number of traits
-	if(hasArg(se)){ 
-		se<-list(...)$se
-		se<-se[tree$tip.label]
+	if(hasArg(err_vcv)){ 
+		err_vcv<-list(...)$err_vcv
+		err_vcv<-err_vcv[tree$tip.label]
 	} else { 
-		se<-replicate(n,matrix(0,m,m),simplify=FALSE)
-		names(se)<-tree$tip.label
+		err_vcv<-replicate(n,matrix(0,m,m),simplify=FALSE)
+		names(err_vcv)<-tree$tip.label
 	}
-	SE<-matrix(0,n*m,n*m)
+	E<-matrix(0,n*m,n*m)
 	for(i in 1:n){
 		ii<-0:(m-1)*n+i
-		SE[ii,ii]<-se[[i]]
+		E[ii,ii]<-err_vcv[[i]]
 	}
+	tree1rate<-paintSubTree(tree,Ntip(tree)+1,"fitted")
+	tree<-if(inherits(tree,"simmap")) tree else tree1rate
 	p<-ncol(tree$mapped.edge) # number of states
 	D<-matrix(0,n*m,m)
 	for(i in 1:(n*m)) for(j in 1:m) if((j-1)*n<i&&i<=j*n) D[i,j]=1.0
-	C<-vcv(tree)
-	X<-X[rownames(C),,drop=FALSE]
-	y<-as.matrix(as.vector(X))
+	X<-X[rownames(C<-vcv(tree)),,drop=FALSE]
+	y<-as.matrix(as.vector(X))	
+	
+	## end preliminaries 
+	
+	## get starting parameter values
+	
 	a<-colSums(solve(C))%*%X/sum(solve(C)) # ancestral states
 	R<-t(X-rep(1,nrow(X))%*%a)%*%solve(C)%*%(X-rep(1,nrow(X))%*%a)/n
-	# likelihood for a single matrix
-	lik1<-function(rr,y,D,a,C,n,mm){
-		R<-to.symmetric(rr)
-		return(-t(y-D%*%t(a))%*%solve(kronecker(R,C))%*%(y-D%*%t(a))/2-n*mm*log(2*pi)/2-
-			determinant(kronecker(R,C))$modulus[1]/2)
+	
+	## end starting parameter values
+	
+	## start fit single matrix model
+	
+	C<-multiC(tree1rate)
+		
+	# populate the starting parameter vector
+	ss<-vector(mode="numeric")
+	for(i in 1:p) ss<-c(ss,to.upper(chol(R)))
+	# optimize using generic optimizer
+	r=optim(ss,fn=lik.chol,y=y,C=C,D=D,E=E,control=list(maxit=maxit))
+	# update R
+	R<-matrix(data=t(upper.diag(r$par[((i-1)*m*(m+1)/2+1):(i*(m*(m+1)/2))]))%*%
+		upper.diag(r$par[((i-1)*m*(m+1)/2+1):(i*(m*(m+1)/2))]),m,m,dimnames=list(colnames(X),
+		colnames(X)))
+	dimnames(R)<-list(rownames(R),colnames(R))
+	# log-likelihood for the single model
+	logL1<--r$value
+	# convert R to a vector
+	Rv<-to.upper(R)
+	H<-hessian(lik.R,Rv,y=y,C=C,D=D,E=E)
+	# convert Hessian diagonal to matrices
+	if(vars){ 
+		print(H)
+		Vh<-diag(solve(H))
+		vars.single<-matrix(data=t(to.symmetric(Vh[((i-1)*m*(m+1)/2+1):(i*(m*(m+1)/2))])),m,m)
+		dimnames(vars.single)<-list(rownames(R),colnames(R))
 	}
-	logL1<-lik1(to.upper(R),y,D,a,C,n,m)
-	if(vars){
-		H<-hessian(lik1,to.upper(R),y=y,D=D,a=a,C=C,n=n,mm=m) # compute Hessian
-		vars.single<-to.symmetric(diag(solve(-H))) # compute variances
-		dimnames(vars.single)<-list(colnames(X),colnames(X))
-	}
-	if(inherits(tree,"simmap")){
+	# report convergence
+	convergence<-r$convergence
+	
+	## end fitting single matrix model
+	
+	## start fit multi-matrix model
+
+	if(p>1){
+
 		C<-multiC(tree) # compute separate C for each state
-		# compute the log-likelihood (from the cholesky matrices)
-		lik.cholR<-function(theta,y,C,D){
-			m<-length(y)/dim(C[[1]])[1]
-			n<-length(y)/m
-			p<-length(C)
-			cholR<-array(data=0,dim=c(m,m,p))
-			l<-1
-			for(i in 1:p) for(j in 1:m) for(k in j:m){ 
-				cholR[j,k,i]<-theta[l]
-				l<-l+1
-			}
-			V<-matrix(0,nrow(D),nrow(D))
-			for(i in 1:p) V<-V+kronecker(t(cholR[,,i])%*%cholR[,,i],C[[i]])
-			a<-solve(t(D)%*%solve(V)%*%D)%*%(t(D)%*%solve(V)%*%y)
-			logL<--t(y-D%*%a)%*%solve(V)%*%(y-D%*%a)/2-n*m*log(2*pi)/2-
-				determinant(V)$modulus[1]/2
-			return(-logL)
-		}
+		
 		# compute the starting parameter values
 		ss<-vector(mode="numeric")
 		for(i in 1:p) ss<-c(ss,to.upper(chol(R)))
 		# optimize using generic optimizer
-		r=optim(ss,fn=lik.cholR,y=y,C=C,D=D,control=list(maxit=maxit))
+		r=optim(ss,fn=lik.chol,y=y,C=C,D=D,E=E,control=list(maxit=maxit))
 		# convert parameter estimates to matrices
 		R.i<-array(dim=c(m,m,p))
 		ss<-colnames(tree$mapped.edge)
@@ -73,27 +138,11 @@ evol.vcv<-function(tree,X,maxit=2000,vars=FALSE,...){
 		dimnames(R.i)<-list(rownames(R),colnames(R),ss)
 		# log-likelihood for the multi-matrix model
 		logL2<--r$value
-		# compute the log-likelihood (from the original matrices)
-		lik2<-function(theta,y,C,D){
-			m<-length(y)/nrow(C[[1]])
-			n<-length(y)/m
-			p<-length(C)
-			R<-array(data=0,dim=c(m,m,p)); l<-1
-			for(i in 1:p) for(j in 1:m) for(k in j:m){ 
-				R[j,k,i]<-theta[l]
-				R[k,j,i]<-theta[l]
-				l<-l+1
-			}
-			V<-matrix(0,nrow(D),nrow(D))
-			for(i in 1:p) V<-V+kronecker(R[,,i],C[[i]])
-			a<-solve(t(D)%*%solve(V)%*%D)%*%(t(D)%*%solve(V)%*%y)
-			logL<--t(y-D%*%a)%*%solve(V)%*%(y-D%*%a)/2-n*m*log(2*pi)/2-determinant(V)$modulus[1]/2
-			return(-logL)
-		}
+
 		# convert R.i to a vector
 		Rv<-vector(mode="numeric")
 		for(i in 1:p) Rv<-c(Rv,to.upper(R.i[,,i]))
-		H<-hessian(lik2,Rv,y=y,C=C,D=D)
+		H<-hessian(lik.R,Rv,y=y,C=C,D=D,E=E)
 		# convert Hessian diagonal to matrices
 		if(vars){ 
 			Vars<-array(dim=c(m,m,p))
@@ -102,10 +151,12 @@ evol.vcv<-function(tree,X,maxit=2000,vars=FALSE,...){
 			dimnames(Vars)<-list(rownames(R),colnames(R),ss)
 		}
 		# report convergence
-		if(r$convergence==0) converged<-"Optimization has converged."
-		else converged<-"Optimization may not have converged. Consider increasing maxit."
+		convergence[2]==r$convergence
 	}
-	if(inherits(tree,"simmap")){
+	if(all(convergence==0)) converged<-"Optimization has converged."
+	else converged<-"Optimization may not have converged. Consider increasing maxit."
+	
+	if(p>1){
 		if(vars) obj<-list(R.single=R,vars.single=vars.single,logL1=as.numeric(logL1),
 			k1=m*(m+1)/2+m,R.multiple=R.i,vars.multiple=Vars,logL.multiple=logL2,
 			k2=p*m*(m+1)/2+m,P.chisq=pchisq(2*(logL2-as.numeric(logL1)),(p-1)*m*(m+1)/2,

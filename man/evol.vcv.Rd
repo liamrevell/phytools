@@ -9,7 +9,7 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 	\item{X}{an \code{n} x \code{m} matrix of tip values for \code{m} continuously valued traits in \code{n} species - row names should be species names. If \code{X} is supplied as a data frame it will be coerced into a matrix without warning.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization. This quantity may need to be increased for difficult optimizations.}
 	\item{vars}{an optional logical value indicating whether or not to estimate the variances of the parameter estimates from the Hessian matrix.}
-	\item{...}{optional arguments.}
+	\item{...}{optional arguments. The most important optional argument at this time is \code{error_vcv} which should contain a list of matrices of sampling \emph{variances} and covariances for (and between) the means of each species. The sampling variance for the mean is just the square of the sampling error. Sampling covariances will tend to be zero (or close to zero) if error for different traits is uncorrelated, for instance, because different specimens were used to estimate the means for different traits, and non-zero otherwise.}
 }
 \description{
 	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for an arbitrary number of continuously valued character. It then fits the multiple evolutionary variance-covariance matrix (rate matrix) model of Revell & Collar (2009; \emph{Evolution}).
