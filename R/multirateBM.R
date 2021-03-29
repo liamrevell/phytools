@@ -85,7 +85,7 @@ print.multirateBM<-function(x,digits=6,printlen=NULL,...){
 	cat("Multi-rate Brownian model using multirateBM.\n\n")
 	cat("Fitted rates:\n")
 	if(printlen>=length(x$sig2)) print(round(x$sig2,digits))
-	else phytools:::printDotDot(x$sig2,digits,printlen)
+	else printDotDot(x$sig2,digits,printlen)
 	cat(paste("\nlog-likelihood: ",round(x$logLik,digits),"\n"))
 	cat(paste("AIC: ",round(AIC(x),digits),"\n\n"))
 	if(x$convergence==0) cat("R thinks it has found a solution.\n\n") 
