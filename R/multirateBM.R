@@ -92,9 +92,9 @@ print.multirateBM<-function(x,digits=6,printlen=NULL,...){
 	else cat("R may not have found a solution.\n\n")
 }
 
-logLik.multirateBM<-function(x){
-	lik<-x$logLik
-	attr(lik,"df")<-x$k
+logLik.multirateBM<-function(object,...){
+	lik<-object$logLik
+	attr(lik,"df")<-object$k
 	lik
 }
 
