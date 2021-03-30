@@ -3,17 +3,24 @@
 
 p.func<-function(x,a,C) dmnorm(x,rep(a,nrow(C)),C,log=TRUE)
 
-log_lik<-function(lnsig2,tree,x,trace=0){
-	sig2<-exp(lnsig2)
+#p.func<-function(x,a,C)
+#	as.numeric(-t(x-a)%*%solve(C)%*%(x-a)/2-
+#		length(x)*log(2*pi)/2-determinant(C)$modulus[1]/2)
+
+log_lik<-function(lnsig2,tree,x,sig2.bm=1,trace=0){
+	SCALE<-exp(lnsig2[1])
+	sig2<-SCALE*exp(c(0,lnsig2[2:length(lnsig2)]))
 	tt<-tree
-	tt$edge.length<-tree$edge.length*apply(tree$edge,1,
-		function(e,x) mean(x[e]),x=sig2)
+	tt$edge.length<-tree$edge.length*apply(tree$edge,
+		1,function(e,x) mean(x[e]),x=sig2)
 	Tips<-phyl.vcv(as.matrix(x),vcv(tt),1)
 	root<-Ntip(tree)+1
 	n<-nrow(Tips$C)
 	m<-tree$Nnode
-	logL<-p.func(x,Tips$alpha[1,1],Tips$C)+
-		p.func(lnsig2[-root],lnsig2[root],vcvPhylo(tree))
+	ln.p1<-p.func(x,Tips$alpha[1,1],Tips$C)
+	ln.p2<-p.func(log(sig2)[-root],log(sig2)[root],
+		sig2.bm*vcvPhylo(tree))
+	logL<-ln.p1+ln.p2
 	if(trace>0){
 		cat(paste("log(L) =",round(logL,4),"\n"))
 		flush.console()
@@ -22,10 +29,11 @@ log_lik<-function(lnsig2,tree,x,trace=0){
 }
 
 log_relik<-function(lnsig2,tree,x,trace=0){
-	sig2<-exp(lnsig2)
+	sig2<-exp(lnsig2[1:(length(lnsig2)-1)])
+	SCALE<-exp(lnsig2[length(lnsig2)])
 	tt<-tree
-	tt$edge.length<-tree$edge.length*apply(tree$edge,1,
-		function(e,x) mean(x[e]),x=sig2)
+	tt$edge.length<-SCALE*tree$edge.length*apply(tree$edge,
+		1,function(e,x) mean(x[e]),x=sig2)
 	px<-pic(x,tt)
 	dLNSIG<-apply(tree$edge,1,function(edge,lnsig2) diff(lnsig2[edge]),
 		lnsig2=lnsig2)/sqrt(tree$edge.length)
@@ -39,8 +47,10 @@ log_relik<-function(lnsig2,tree,x,trace=0){
 
 multirateBM<-function(tree,x,method=c("ML","REML"),
 	optim=c("Nelder-Mead","BFGS","CG"),
-	maxit=2000,n.iter=1,...){
+	maxit=NULL,n.iter=1,sig2BM=1,...){
 	method<-method[1]
+	if(!is.null(maxit)) control<-list(maxit=maxit)
+	else control<-list()
 	if(method=="REML"){
 		cat("Sorry! method=\"REML\" doesn't work. Switching to \"ML\".\n")
 		method<-"ML"
@@ -51,25 +61,39 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	x<-x[tree$tip.label]
 	fit<-list()
 	fit$convergence<-99
-	fit$par<-rep(log(mean(pic(x,multi2di(tree))^2)),Ntip(tree)+tree$Nnode)
-	ii<-0
+	init<-log(mean(pic(x,multi2di(tree))^2)*(Ntip(tree)-1)/Ntip(tree))
+	fit$par<-c(init,rep(0,Ntip(tree)+tree$Nnode-1))
+	class(fit)<-"try-error"
+	ii<-1
 	cat("Beginning optimization....\n")
-	while(fit$convergence!=0||ii<n.iter){
-		cat(paste("Optimization iteration ",ii+1,".\n",sep=""))
-		flush.console()
-		OPTIM<-optim[if(ii%%length(optim)) ii%%length(optim) else 
+	while(inherits(fit,"try-error")||fit$convergence!=0||ii<=n.iter){
+		if(length(optim)==1) OPTIM<-optim[1]
+		else OPTIM<-optim[if(ii!=length(optim)) ii%%length(optim) else 
 			length(optim)]
-		fit<-optim(fit$par,
-			lik,tree=tree,x=x,trace=trace,
-			control=list(maxit=maxit),
-			method=OPTIM)
+		cat(paste("Optimization iteration ",ii,". Using \"",
+			OPTIM,"\" optimization method.\n",sep=""))
+		flush.console()
+		cur.vals<-fit$par
+		fit<-try(optim(fit$par,
+			lik,tree=tree,x=x,sig2.bm=sig2BM,trace=trace,
+			control=control,
+			method=OPTIM))
+		if(inherits(fit,"try-error")){
+			fit<-list()
+			fit$convergence<-99
+			fit$par<-cur.vals
+			class(fit)<-"try-error"
+			cat("Caught error without failing. Trying again....\n")
+		}
 		ii<-ii+1
 	}
 	cat("Done optimization.\n")
-	LIK<-function(sig2) -lik(log(sig2),tree=tree,x=x)
+	LIK<-function(sig2) -lik(log(sig2),tree=tree,x=x,
+		sig2.bm=sig2BM)
 	object<-list(
-		sig2=setNames(exp(fit$par),c(tree$tip.label,
-		1:tree$Nnode+Ntip(tree))),
+		sig2=setNames(exp(fit$par[1])*exp(c(0,fit$par[2:length(fit$par)])),
+		c(tree$tip.label,1:tree$Nnode+Ntip(tree))),
+		sig2.bm=sig2BM,
 		logLik=-fit$value,
 		k=length(fit$par)+1,
 		tree=tree,
@@ -86,6 +110,8 @@ print.multirateBM<-function(x,digits=6,printlen=NULL,...){
 	cat("Fitted rates:\n")
 	if(printlen>=length(x$sig2)) print(round(x$sig2,digits))
 	else printDotDot(x$sig2,digits,printlen)
+	cat(paste("\nAssumd sigma^2 for Brownian rate evolution:",
+		round(x$sig2.bm,digits)))
 	cat(paste("\nlog-likelihood: ",round(x$logLik,digits),"\n"))
 	cat(paste("AIC: ",round(AIC(x),digits),"\n\n"))
 	if(x$convergence==0) cat("R thinks it has found a solution.\n\n") 

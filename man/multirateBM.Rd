@@ -4,15 +4,16 @@
 \usage{
 multirateBM(tree, x, method=c("ML","REML"), 
 	optim=c("Nelder-Mead","BFGS","CG"),
-	maxit=2000, n.iter=1, ...)
+	maxit=NULL, n.iter=1, sig2BM=1, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{a named numerical vector.}
 	\item{method}{method of optimization. Currently only \code{method="ML"}.}
 	\item{optim}{optimization routine to be used by \code{\link{optim}}. If more than one is specified and \code{n.iter>1} then they will be alternated.}
-	\item{maxit}{to be passed to \code{optim}.}
+	\item{maxit}{to be passed to \code{optim}. If set to \code{maxit=NULL}, the default value of \code{maxit} will be used, depending on the optimization method.}
 	\item{n.iter}{number of times to reiterate failed optimization.}
+	\item{sig2BM}{fixed value of the instantaneous variance of the Brownian evolutionary process for the log-rates.}
 	\item{...}{optional arguments.}
 }
 \description{
