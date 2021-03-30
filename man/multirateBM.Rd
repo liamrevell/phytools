@@ -4,7 +4,7 @@
 \usage{
 multirateBM(tree, x, method=c("ML","REML"), 
 	optim=c("Nelder-Mead","BFGS","CG"),
-	maxit=NULL, n.iter=1, sig2BM=1, ...)
+	maxit=NULL, n.iter=1, lambda=1, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
@@ -13,11 +13,11 @@ multirateBM(tree, x, method=c("ML","REML"),
 	\item{optim}{optimization routine to be used by \code{\link{optim}}. If more than one is specified and \code{n.iter>1} then they will be alternated.}
 	\item{maxit}{to be passed to \code{optim}. If set to \code{maxit=NULL}, the default value of \code{maxit} will be used, depending on the optimization method.}
 	\item{n.iter}{number of times to reiterate failed optimization.}
-	\item{sig2BM}{fixed value of the instantaneous variance of the Brownian evolutionary process for the log-rates.}
+	\item{lambda}{lambda penalty term. High values of \code{lambda} correspond to high penalty for rate heterogeneity among edges. Low values of \code{lambda} correspond to low penalty.}
 	\item{...}{optional arguments.}
 }
 \description{
-	This function fits a flexible Brownian multi-rate model
+	This function fits a flexible Brownian multi-rate model using penalized likelihood.
 }
 \value{
 	An object of class \code{"multirateBM"}.

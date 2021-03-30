@@ -3,13 +3,8 @@
 
 p.func<-function(x,a,C) dmnorm(x,rep(a,nrow(C)),C,log=TRUE)
 
-#p.func<-function(x,a,C)
-#	as.numeric(-t(x-a)%*%solve(C)%*%(x-a)/2-
-#		length(x)*log(2*pi)/2-determinant(C)$modulus[1]/2)
-
-log_lik<-function(lnsig2,tree,x,sig2.bm=1,trace=0){
-	SCALE<-exp(lnsig2[1])
-	sig2<-SCALE*exp(c(0,lnsig2[2:length(lnsig2)]))
+log_lik<-function(lnsig2,tree,x,lambda=1,trace=0){
+	sig2<-exp(lnsig2)
 	tt<-tree
 	tt$edge.length<-tree$edge.length*apply(tree$edge,
 		1,function(e,x) mean(x[e]),x=sig2)
@@ -19,8 +14,8 @@ log_lik<-function(lnsig2,tree,x,sig2.bm=1,trace=0){
 	m<-tree$Nnode
 	ln.p1<-p.func(x,Tips$alpha[1,1],Tips$C)
 	ln.p2<-p.func(log(sig2)[-root],log(sig2)[root],
-		sig2.bm*vcvPhylo(tree))
-	logL<-ln.p1+ln.p2
+		vcvPhylo(tree))
+	logL<-ln.p1+lambda*ln.p2
 	if(trace>0){
 		cat(paste("log(L) =",round(logL,4),"\n"))
 		flush.console()
@@ -47,7 +42,7 @@ log_relik<-function(lnsig2,tree,x,trace=0){
 
 multirateBM<-function(tree,x,method=c("ML","REML"),
 	optim=c("Nelder-Mead","BFGS","CG"),
-	maxit=NULL,n.iter=1,sig2BM=1,...){
+	maxit=NULL,n.iter=1,lambda=1,...){
 	method<-method[1]
 	if(!is.null(maxit)) control<-list(maxit=maxit)
 	else control<-list()
@@ -62,7 +57,7 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	fit<-list()
 	fit$convergence<-99
 	init<-log(mean(pic(x,multi2di(tree))^2)*(Ntip(tree)-1)/Ntip(tree))
-	fit$par<-c(init,rep(0,Ntip(tree)+tree$Nnode-1))
+	fit$par<-rep(init,Ntip(tree)+tree$Nnode)
 	class(fit)<-"try-error"
 	ii<-1
 	cat("Beginning optimization....\n")
@@ -75,7 +70,7 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 		flush.console()
 		cur.vals<-fit$par
 		fit<-try(optim(fit$par,
-			lik,tree=tree,x=x,sig2.bm=sig2BM,trace=trace,
+			lik,tree=tree,x=x,lambda=lambda,trace=trace,
 			control=control,
 			method=OPTIM))
 		if(inherits(fit,"try-error")){
@@ -89,12 +84,12 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	}
 	cat("Done optimization.\n")
 	LIK<-function(sig2) -lik(log(sig2),tree=tree,x=x,
-		sig2.bm=sig2BM)
+		lambda=0)
 	object<-list(
-		sig2=setNames(exp(fit$par[1])*exp(c(0,fit$par[2:length(fit$par)])),
+		sig2=setNames(exp(fit$par),
 		c(tree$tip.label,1:tree$Nnode+Ntip(tree))),
-		sig2.bm=sig2BM,
-		logLik=-fit$value,
+		lambda=lambda,
+		logLik=LIK(exp(fit$par)),
 		k=length(fit$par)+1,
 		tree=tree,
 		convergence=fit$convergence,
@@ -110,8 +105,8 @@ print.multirateBM<-function(x,digits=6,printlen=NULL,...){
 	cat("Fitted rates:\n")
 	if(printlen>=length(x$sig2)) print(round(x$sig2,digits))
 	else printDotDot(x$sig2,digits,printlen)
-	cat(paste("\nAssumd sigma^2 for Brownian rate evolution:",
-		round(x$sig2.bm,digits)))
+	cat(paste("\nlambda penalty term:",
+		round(x$lambda,digits)))
 	cat(paste("\nlog-likelihood: ",round(x$logLik,digits),"\n"))
 	cat(paste("AIC: ",round(AIC(x),digits),"\n\n"))
 	if(x$convergence==0) cat("R thinks it has found a solution.\n\n") 
