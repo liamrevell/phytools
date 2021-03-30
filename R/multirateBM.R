@@ -13,9 +13,9 @@ log_lik<-function(lnsig2,tree,x,lambda=1,trace=0){
 	n<-nrow(Tips$C)
 	m<-tree$Nnode
 	ln.p1<-p.func(x,Tips$alpha[1,1],Tips$C)
-	ln.p2<-p.func(log(sig2)[-root],log(sig2)[root],
+	ln.p2<--p.func(log(sig2)[-root],log(sig2)[root],
 		vcvPhylo(tree))
-	logL<-ln.p1+lambda*ln.p2
+	logL<-ln.p1-lambda*ln.p2
 	if(trace>0){
 		cat(paste("log(L) =",round(logL,4),"\n"))
 		flush.console()
