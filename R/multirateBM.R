@@ -1,13 +1,23 @@
 ## function
 ## by Liam J. Revell 2021
 
-p.func<-function(x,a,C) dmnorm(x,rep(a,nrow(C)),C,log=TRUE)
+p.func<-function(x,a,C) dmnorm(x,rep(a,nrow(C)),C,
+	log=TRUE)
+	
+ln.mean<-function(x){
+	if(x[1]==x[2]) return(x[1])
+	else {
+		a<-x[2]
+		b<-log(x[1])-log(x[2])
+		return(a/b*exp(b)-a/b)
+	}
+}
 
 log_lik<-function(lnsig2,tree,x,lambda=1,trace=0){
 	sig2<-exp(lnsig2)
 	tt<-tree
 	tt$edge.length<-tree$edge.length*apply(tree$edge,
-		1,function(e,x) mean(x[e]),x=sig2)
+		1,function(e,x) ln.mean(x[e]),x=sig2)
 	Tips<-phyl.vcv(as.matrix(x),vcv(tt),1)
 	root<-Ntip(tree)+1
 	n<-nrow(Tips$C)
@@ -44,6 +54,7 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	optim=c("Nelder-Mead","BFGS","CG"),
 	maxit=NULL,n.iter=1,lambda=1,...){
 	method<-method[1]
+	optim.method<-optim
 	if(!is.null(maxit)) control<-list(maxit=maxit)
 	else control<-list()
 	if(method=="REML"){
@@ -62,9 +73,9 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	ii<-1
 	cat("Beginning optimization....\n")
 	while(inherits(fit,"try-error")||fit$convergence!=0||ii<=n.iter){
-		if(length(optim)==1) OPTIM<-optim[1]
-		else OPTIM<-optim[if(ii!=length(optim)) ii%%length(optim) else 
-			length(optim)]
+		if(length(optim.method)==1) OPTIM<-optim.method[1]
+		else OPTIM<-optim.method[if(ii!=length(optim.method)) ii%%length(optim.method) else 
+			length(optim.method)]
 		cat(paste("Optimization iteration ",ii,". Using \"",
 			OPTIM,"\" optimization method.\n",sep=""))
 		flush.console()
@@ -123,7 +134,7 @@ plot.multirateBM<-function(x,digits=1,...){
 	cols<-setNames(rainbow(1000,start=0.7,end=0),
 		1:1000)
 	est.sig2<-apply(x$tree$edge,1,function(e,x) 
-		mean(x[e]),x=x$sig2)
+		ln.mean(x[e]),x=x$sig2)
 	ln.sig2<-log(est.sig2)
 	min.sig2<-min(ln.sig2)
 	max.sig2<-max(ln.sig2)
