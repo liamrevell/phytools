@@ -130,7 +130,7 @@ logLik.multirateBM<-function(object,...){
 	lik
 }
 
-plot.multirateBM<-function(x,digits=1,...){
+plot.multirateBM<-function(x,digits=2,...){
 	cols<-setNames(rainbow(1000,start=0.7,end=0),
 		1:1000)
 	est.sig2<-apply(x$tree$edge,1,function(e,x) 
@@ -148,32 +148,61 @@ plot.multirateBM<-function(x,digits=1,...){
 	for(i in 2:length(edge.states))
 		tree<-paintBranches(tree,edge=tree$edge[i,2],
 			state=edge.states[i])
-	plotTree(x$tree,plot=FALSE,...)
+	nticks<-10
+	ticks<-exp(seq(min(log(x$sig2)),max(log(x$sig2)),
+		length.out=nticks))
+	object<-list(tree=tree,cols=cols,ticks=ticks)
+	class(object)<-"multirateBM_plot"
+	plot(object,digits=digits,...)
+	invisible(object)
+}
+
+plot.multirateBM_plot<-function(x,digits=2,...){
+	args<-list(...)
+	if(!is.null(args$type)) if(args$type=="fan") args$type<-"phylogram"
+	if(is.null(args$lwd)) args$lwd<-3
+	args$split.vertical<-TRUE
+	args$tree<-x$tree
+	args$plot<-FALSE
+	do.call(plotTree,args)
 	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	obj<-plot(tree,colors=cols,lwd=3,split.vertical=TRUE,
-		xlim=c(-0.3,1.05)*diff(lastPP$x.lim),
-		add=TRUE,...)
+	args$plot<-TRUE
+	args$colors<-x$cols
+	args$xlim<-c(-0.3,1.05)*diff(lastPP$x.lim)
+	args$add<-TRUE
+	do.call(plotSimmap,args)
 	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	h<-max(nodeHeights(x$tree))
 	LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
 	lines(x=rep(-0.25*h+LWD*15/2,2),y=c(2,Ntip(x$tree)-1))
-	nticks<-10
+	nticks<-length(x$ticks)
 	Y<-cbind(seq(2,Ntip(x$tree)-1,length.out=nticks),
     		seq(2,Ntip(x$tree)-1,length.out=nticks))
 	X<-cbind(rep(-0.25*h+LWD*15/2,nticks),
     		rep(-0.25*h+LWD*15/2+0.02*h,nticks))
 	for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
-	ticks<-exp(seq(min(log(x$sig2)),max(log(x$sig2)),
-		length.out=nticks))
 	add.color.bar(Ntip(x$tree)-3,
-		rainbow(1000,start=0.7,end=0),
+		x$cols,
 		title=expression(paste("evolutionary rate ( ",sigma^2,")")),
 		lims=NULL,digits=3,
 		direction="upwards",
-    		subtitle="",lwd=15,
+    	subtitle="",lwd=15,
 		x=-0.25*h,
 		y=2,prompt=FALSE)
-	text(x=X[,2],y=Y[,2],signif(ticks,digits),pos=4,cex=0.7)
+	text(x=X[,2],y=Y[,2],signif(x$ticks,digits),pos=4,cex=0.7)
 }
 
-		
+print.multirateBM_plot<-function(x,...){
+	cat("Object of class \"multirateBM_plot\" containing:\n\n")
+	cat(paste("(1) A phylogenetic tree with ",length(x$tree$tip.label)," tips and ",x$tree$Nnode," internal nodes.\n\n",sep=""))
+	cat("(2) A mapped set of Brownian evolution rates.\n\n") 
+}
+
+setMap.multirateBM_plot<-function(x,...){
+	if(hasArg(invert)) invert<-list(...)$invert
+	else invert<-FALSE
+	n<-length(x$cols)
+	if(invert) x$cols<-setNames(rev(x$cols),names(x$cols))
+	else x$cols[1:n]<-colorRampPalette(...)(n)
+	x
+}

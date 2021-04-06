@@ -40,7 +40,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 					fg<-par()$fg
 					par(fg="transparent")
 					black<-colors
-					black[]<-"black"
+					black[]<-fg
 					updownPhylogram(tree,colors=black,fsize,ftype,lwd=lwd+2,pts,
 						node.numbers,mar,add,offset,direction,setEnv,xlim,ylim,nodes,
 						tips,split.vertical,lend,asp,plot)
@@ -54,7 +54,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 					fg<-par()$fg
 					par(fg="transparent")
 					black<-colors
-					black[]<-"black"
+					black[]<-fg
 					plotPhylogram(tree,colors=black,fsize,ftype,lwd=lwd+2,pts,
 						node.numbers,mar,add,offset,direction,setEnv,xlim,ylim,nodes,
 						tips,split.vertical,lend,asp,plot)
@@ -69,7 +69,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 				fg<-par()$fg
 				par(fg="transparent")
 				black<-colors
-				black[]<-"black"
+				black[]<-fg
 				plotFan(tree,colors=black,fsize,ftype,lwd=lwd+2,mar,add,part,setEnv,
 					xlim,ylim,tips,maxY,lend,plot,offset)
 				par(fg=fg)
@@ -81,7 +81,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 				fg<-par()$fg
 				par(fg="transparent")
 				black<-colors
-				black[]<-"black"
+				black[]<-fg
 				plotCladogram(tree,colors=black,fsize,ftype,lwd=lwd+2,mar,add,offset,
 					direction,xlim,ylim,nodes,tips,lend,asp,plot)
 				par(fg=fg)
