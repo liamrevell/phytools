@@ -154,6 +154,8 @@ logLik.multirateBM<-function(object,...){
 }
 
 plot.multirateBM<-function(x,digits=2,...){
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-TRUE
 	cols<-setNames(rainbow(1000,start=0.7,end=0),
 		1:1000)
 	est.sig2<-apply(x$tree$edge,1,function(e,x) 
@@ -176,7 +178,7 @@ plot.multirateBM<-function(x,digits=2,...){
 		length.out=nticks))
 	object<-list(tree=tree,cols=cols,ticks=ticks)
 	class(object)<-"multirateBM_plot"
-	plot(object,digits=digits,...)
+	if(plot) plot(object,digits=digits,...)
 	invisible(object)
 }
 
