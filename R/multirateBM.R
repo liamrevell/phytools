@@ -51,7 +51,7 @@ log_relik<-function(lnsig2,tree,x,trace=0){
 }
 
 multirateBM<-function(tree,x,method=c("ML","REML"),
-	optim=c("Nelder-Mead","BFGS","CG"),
+	optim=c("L-BFGS-B","Nelder-Mead","BFGS","CG"),
 	maxit=NULL,n.iter=1,lambda=1,...){
 	method<-method[1]
 	optim.method<-optim
@@ -61,6 +61,21 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 		cat("Sorry! method=\"REML\" doesn't work. Switching to \"ML\".\n")
 		method<-"ML"
 	}
+	if("L-BFGS-B"%in%optim.method){
+		vv<-log(var(x)/max(nodeHeights(tree)))
+		if(hasArg(lower)){ 
+			lower<-list(...)$lower
+			lower<-log(lower)
+		} else lower<-rep(-10+vv,Ntip(tree)+tree$Nnode)
+		if(length(lower)!=(Ntip(tree)+tree$Nnode)) 
+			lower<-rep(lower[1],Ntip(tree)+tree$Nnode)
+		if(hasArg(upper)){ 
+			upper<-list(...)$upper
+			lower<-log(lower)
+		} else upper<-rep(10+vv,Ntip(tree)+tree$Nnode)
+		if(length(upper)!=(Ntip(tree)+tree$Nnode))
+			upper<-rep(upper[1],Ntip(tree)+tree$Nnode)
+	}	
 	lik<-if(method=="ML") log_lik else log_relik
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-0
@@ -78,18 +93,26 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 			length(optim.method)]
 		cat(paste("Optimization iteration ",ii,". Using \"",
 			OPTIM,"\" optimization method.\n",sep=""))
+		if(OPTIM=="L-BFGS-B"){
+			fit$par[which(fit$par<lower)]<-lower
+			fit$par[which(fit$par>upper)]<-upper
+		}
 		flush.console()
 		cur.vals<-fit$par
 		fit<-try(optim(fit$par,
 			lik,tree=tree,x=x,lambda=lambda,trace=trace,
 			control=control,
-			method=OPTIM))
+			method=OPTIM,
+			lower=if(OPTIM=="L-BFGS-B") lower else -Inf,
+			upper=if(OPTIM=="L-BFGS-B") upper else Inf))
 		if(inherits(fit,"try-error")){
 			fit<-list()
 			fit$convergence<-99
 			fit$par<-cur.vals
 			class(fit)<-"try-error"
 			cat("Caught error without failing. Trying again....\n")
+		} else {
+			cat(paste("Best (penalized) log-likelihood so far:",signif(-fit$value,6),"\n"))
 		}
 		ii<-ii+1
 	}

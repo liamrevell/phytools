@@ -3,7 +3,7 @@
 \title{Function to fit a multi-rate Brownian evolution model}
 \usage{
 multirateBM(tree, x, method=c("ML","REML"), 
-	optim=c("Nelder-Mead","BFGS","CG"),
+	optim=c("L-BFGS-B","Nelder-Mead","BFGS","CG"),
 	maxit=NULL, n.iter=1, lambda=1, ...)
 }
 \arguments{
