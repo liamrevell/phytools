@@ -225,6 +225,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res1$par)+2)+2*res1$value)
 		}
 		object$model1=m1
+		msg(paste("Best log(L) from model 1: ",round(m1$logLik,4),".\n",sep=""))
 	}
 	makeError<-function(description,names,p,k){
 		list(description=description,
@@ -267,6 +268,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res2$par)+2)+2*res2$value)
 		}
 		object$model2<-m2
+		msg(paste("Best log(L) from model 2: ",round(m2$logLik,4),".\n",sep=""))
 	}
 	if("2b"%in%models){
 		msg("Fitting model 2b: different rates (trait 1), common correlation...\n")
@@ -302,6 +304,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res2b$par)+2)+2*res2b$value)
 		}
 		object$model2b<-m2b
+		msg(paste("Best log(L) from model 2b: ",round(m2b$logLik,4),".\n",sep=""))
 	}
 	if("2c"%in%models){
 		msg("Fitting model 2c: different rates (trait 2), common correlation...\n")
@@ -337,6 +340,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res2c$par)+2)+2*res2c$value)
 		}
 		object$model2c<-m2c
+		msg(paste("Best log(L) from model 2c: ",round(m2c$logLik,4),".\n",sep=""))
 	}
 	if("3"%in%models){
 		msg("Fitting model 3: common rates, different correlation...\n")
@@ -370,6 +374,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res3$par)+2)+2*res3$value)
 		}
 		object$model3<-m3
+		msg(paste("Best log(L) from model 3: ",round(m3$logLik,4),".\n",sep=""))
 	}
 	if("3b"%in%models){
 		msg("Fitting model 3b: different rates (trait 1), different correlation...\n")
@@ -405,6 +410,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res3b$par)+2)+2*res3b$value)
 		}
 		object$model3b<-m3b
+		msg(paste("Best log(L) from model 3b: ",round(m3b$logLik,4),".\n",sep=""))
 	}
 	if("3c"%in%models){
 		msg("Fitting model 3c: different rates (trait 2), different correlation...\n")
@@ -440,6 +446,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res3c$par)+2)+2*res3c$value)
 		}
 		object$model3c<-m3c
+		msg(paste("Best log(L) from model 3c: ",round(m3c$logLik,4),".\n",sep=""))
 	}
 	if("4"%in%models){
 		msg("Fitting model 4: no common structure...\n")
@@ -474,6 +481,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				AIC=2*(length(res4$par)+2)+2*res4$value)
 		}
 		object$model4<-m4
+		msg(paste("Best log(L) from model 4: ",round(m4$logLik,4),".\n",sep=""))
 	}
 	object
 }
