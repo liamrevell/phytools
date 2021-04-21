@@ -2,18 +2,19 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2017, 2019, 2020, 2021
 
 evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
+	## check 'phylo' object
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+	## get some optional arguments
 	if(hasArg(models)) models<-list(...)$models
 	else models<-as.character(1:4)
-	
 	if(models[1]=="all models") models<-c("1","2","2b","2c","3","3b","3c","4")
-	
 	models<-as.character(models)
-	
 	if(hasArg(try.iter)) try.iter<-list(...)$try.iter
 	else try.iter<-10
-	
-	models<-as.character(models)
+	if(hasArg(lower)) lower<-list(...)$lower
+	else lower<--10
+	if(hasArg(upper)) upper<-list(...)$upper
+	else upper<-10
 	
 	if(!inherits(tree,"simmap")) models<-intersect("1",models)
 	
@@ -206,7 +207,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		while((inherits(res1,"try-error")||res1$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2)*log(c(sv1,sv2)),runif(n=1,-1,1))
 			res1<-try(optim(init,lik1,C=C,D=D,y=y,E=E,
-				method="L-BFGS-B",lower=c(-Inf,-Inf,-1)+tol,upper=c(Inf,Inf,1)-tol))
+				method="L-BFGS-B",lower=c(lower,lower,-1)+tol,
+				upper=c(upper,upper,1)-tol))
 			iter<-iter+1
 		}
 		if(inherits(res1,"try-error")){
@@ -241,8 +243,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		while((inherits(res2,"try-error")||res2$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2*p)*log(c(sv1,sv2)),runif(n=1,-1,1))
 			res2<-try(optim(init,lik2,C=mC,
-				D=D,y=y,E=E,method="L-BFGS-B",lower=tol+c(rep(-Inf,2*p),-1),
-				upper=c(rep(Inf,2*p),1)-tol))
+				D=D,y=y,E=E,method="L-BFGS-B",lower=tol+c(rep(lower,2*p),-1),
+				upper=c(rep(upper,2*p),1)-tol))
 			iter<-iter+1
 		}
 		if(inherits(res2,"try-error")){
@@ -276,8 +278,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			init<-c(rnorm(n=p+1)*log(c(rep(sv1,p),sv2)),runif(n=1,-1,1))
 			res2b<-try(optim(init,lik2b,C=mC,
 				D=D,y=y,E=E,method="L-BFGS-B",
-				lower=c(rep(-Inf,p),-Inf,-1)+tol,
-				upper=c(rep(Inf,p),Inf,1)-tol))
+				lower=c(rep(lower,p),lower,-1)+tol,
+				upper=c(rep(upper,p),upper,1)-tol))
 			iter<-iter+1
 		}
 		if(inherits(res2b,"try-error")){
@@ -311,8 +313,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			init<-c(rnorm(n=p+1)*log(c(sv1,rep(sv2,p))),runif(n=1,-1,1))
 			res2c<-try(optim(init,lik2c,C=mC,
 				D=D,y=y,E=E,method="L-BFGS-B",
-				lower=c(-Inf,rep(-Inf,p),-1)+tol,
-				upper=c(Inf,rep(Inf,p),1)-tol))
+				lower=c(lower,rep(lower,p),-1)+tol,
+				upper=c(upper,rep(upper,p),1)-tol))
 			iter<-iter+1
 		}
 		if(inherits(res2c,"try-error")){
@@ -345,8 +347,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		while((inherits(res3,"try-error")||res3$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2)*log(c(sv1,sv2)),runif(n=p,-1,1))
 			res3<-try(optim(init,lik3,C=mC,D=D,
-				y=y,E=E,method="L-BFGS-B",lower=tol+c(-Inf,-Inf,rep(-1,p)),
-				upper=c(Inf,Inf,rep(1,p))-tol))
+				y=y,E=E,method="L-BFGS-B",lower=tol+c(lower,lower,rep(-1,p)),
+				upper=c(upper,upper,rep(1,p))-tol))
 			iter<-iter+1
 		} 
 		if(inherits(res3,"try-error")){
@@ -379,8 +381,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			init<-c(rnorm(n=p+1)*log(c(rep(sv1,p),sv2)),runif(n=p,-1,1))
 			res3b<-try(optim(init,lik3b,C=mC,
 				D=D,y=y,E=E,method="L-BFGS-B",
-				lower=c(rep(-Inf,p),-Inf,rep(-1,p))+tol,
-				upper=c(rep(Inf,p),Inf,rep(1,p))-tol))
+				lower=c(rep(lower,p),lower,rep(-1,p))+tol,
+				upper=c(rep(upper,p),upper,rep(1,p))-tol))
 			iter<-iter+1
 		}
 		if(inherits(res3b,"try-error")){
@@ -414,8 +416,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			init<-c(rnorm(n=p+1)*log(c(sv1,rep(sv2,p))),runif(n=p,-1,1))
 			res3c<-try(optim(init,lik3c,C=mC,
 				D=D,y=y,E=E,method="L-BFGS-B",
-				lower=c(-Inf,rep(-Inf,p),rep(-1,p))+tol,
-				upper=c(Inf,rep(Inf,p),rep(1,p))-tol))
+				lower=c(lower,rep(lower,p),rep(-1,p))+tol,
+				upper=c(upper,rep(upper,p),rep(1,p))-tol))
 			iter<-iter+1
 		}
 		if(inherits(res3c,"try-error")){
@@ -448,8 +450,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		while((inherits(res4,"try-error")||res4$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2*p)*log(rep(c(sv1,sv2),p)),runif(n=p,-1,1))
 			res4<-try(optim(init,lik4,C=mC,
-				D=D,y=y,E=E,method="L-BFGS-B",lower=c(rep(-Inf,2*p),rep(-1,p))+tol,
-				upper=c(rep(Inf,2*p),rep(1,p))-tol))
+				D=D,y=y,E=E,method="L-BFGS-B",lower=c(rep(lower,2*p),rep(-1,p))+tol,
+				upper=c(rep(upper,2*p),rep(1,p))-tol))
 			iter<-iter+1
 		}
 		if(inherits(res4[1],"try-error")){
