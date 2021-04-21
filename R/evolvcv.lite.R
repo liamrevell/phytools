@@ -204,12 +204,18 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res1$convergence<-99
 		class(res1)<-"try-error"
 		iter<-0
-		best<-(-1-tol)*evol.vcv(as.phylo(tree),X)$logL1
+		best<--evol.vcv(as.phylo(tree),X)$logL1+tol
 		while((inherits(res1,"try-error")||res1$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2)*log(c(sv1,sv2)),runif(n=1,-1,1))
 			res1<-try(optim(init,lik1,C=C,D=D,y=y,E=E,
 				method="L-BFGS-B",lower=c(lower,lower,-1)+tol,
 				upper=c(upper,upper,1)-tol))
+			if(inherits(res1,"try-error")){
+				res1<-list()
+				res1$convergence<-99
+				class(res1)<-"try-error"
+				res1$value<-best+tol
+			}
 			if(res1$value>best){
 				if(res1$convergence==0) res1$convergence<-99
 			} else best<-res1$value
@@ -251,6 +257,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			res2<-try(optim(init,lik2,C=mC,
 				D=D,y=y,E=E,method="L-BFGS-B",lower=tol+c(rep(lower,2*p),-1),
 				upper=c(rep(upper,2*p),1)-tol))
+			if(inherits(res2,"try-error")){
+				res2<-list()
+				res2$convergence<-99
+				class(res2)<-"try-error"
+				res2$value<-best+tol
+			}
 			if(res2$value>best){
 				if(res2$convergence==0) res2$convergence<-99
 			} else best<-res2$value
@@ -291,6 +303,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				D=D,y=y,E=E,method="L-BFGS-B",
 				lower=c(rep(lower,p),lower,-1)+tol,
 				upper=c(rep(upper,p),upper,1)-tol))
+			if(inherits(res2b,"try-error")){
+				res2b<-list()
+				res2b$convergence<-99
+				class(res2b)<-"try-error"
+				res2b$value<-best+tol
+			}
 			if(res2b$value>best){
 				if(res2b$convergence==0) res2b$convergence<-99
 			} else best<-res2b$value
@@ -303,7 +321,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				2*ncol(tree$mapped.edge)+2)
 		} else {
 			R<-list()
-			res2b$par[1:(p+1)]<-exp(res2b$par[1:p+1])
+			res2b$par[1:(p+1)]<-exp(res2b$par[1:(p+1)])
 			for(i in 1:p) R[[i]]<-matrix(c(res2b$par[i],
 				rep(res2b$par[p+2]*sqrt(res2b$par[i]*res2b$par[p+1]),2),
 				res2b$par[p+1]),2,2)
@@ -331,6 +349,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				D=D,y=y,E=E,method="L-BFGS-B",
 				lower=c(lower,rep(lower,p),-1)+tol,
 				upper=c(upper,rep(upper,p),1)-tol))
+			if(inherits(res2c,"try-error")){
+				res2c<-list()
+				res2c$convergence<-99
+				class(res2c)<-"try-error"
+				res2c$value<-best+tol
+			}
 			if(res2c$value>best){
 				if(res2c$convergence==0) res2c$convergence<-99
 			} else best<-res2c$value
@@ -370,6 +394,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			res3<-try(optim(init,lik3,C=mC,D=D,
 				y=y,E=E,method="L-BFGS-B",lower=tol+c(lower,lower,rep(-1,p)),
 				upper=c(upper,upper,rep(1,p))-tol))
+			if(inherits(res3,"try-error")){
+				res3<-list()
+				res3$convergence<-99
+				class(res3)<-"try-error"
+				res3$value<-best+tol
+			}
 			if(res3$value>best){
 				if(res3$convergence==0) res3$convergence<-99
 			} else best<-res3$value
@@ -409,6 +439,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				D=D,y=y,E=E,method="L-BFGS-B",
 				lower=c(rep(lower,p),lower,rep(-1,p))+tol,
 				upper=c(rep(upper,p),upper,rep(1,p))-tol))
+			if(inherits(res3b,"try-error")){
+				res3b<-list()
+				res3b$convergence<-99
+				class(res3b)<-"try-error"
+				res3b$value<-best+tol
+			}
 			if(res3b$value>best){
 				if(res3b$convergence==0) res3b$convergence<-99
 			} else best<-res3b$value
@@ -449,6 +485,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				D=D,y=y,E=E,method="L-BFGS-B",
 				lower=c(lower,rep(lower,p),rep(-1,p))+tol,
 				upper=c(upper,rep(upper,p),rep(1,p))-tol))
+			if(inherits(res3c,"try-error")){
+				res3c<-list()
+				res3c$convergence<-99
+				class(res3c)<-"try-error"
+				res3c$value<-best+tol
+			}
 			if(res3c$value>best){
 				if(res3c$convergence==0) res3c$convergence<-99
 			} else best<-res3c$value
@@ -488,6 +530,12 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			res4<-try(optim(init,lik4,C=mC,
 				D=D,y=y,E=E,method="L-BFGS-B",lower=c(rep(lower,2*p),rep(-1,p))+tol,
 				upper=c(rep(upper,2*p),rep(1,p))-tol))
+			if(inherits(res4,"try-error")){
+				res4<-list()
+				res4$convergence<-99
+				class(res4)<-"try-error"
+				res4$value<-best+tol
+			}
 			if(res4$value>best){
 				if(res4$convergence==0) res4$convergence<-99
 			} else best<-res4$value
