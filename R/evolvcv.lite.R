@@ -541,7 +541,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			} else best<-res4$value
 			iter<-iter+1
 		}
-		if(inherits(res4[1],"try-error")){
+		if(inherits(res4,"try-error")){
 			m4<-makeError("no common structure",
 				colnames(tree$mapped.edge),
 				ncol(tree$mapped.edge),
