@@ -4,12 +4,12 @@
 \title{Drop tip or tips from an object of class "multiPhylo" or "multiSimmap"}
 \usage{
 drop.tip.multiPhylo(phy, tip, ...)
-drop.tip.multiSimmap(phy, tip)
+drop.tip.multiSimmap(phy, tip, ...)
 }
 \arguments{
 	\item{phy}{an object of class \code{"multiPhylo"} or \code{"multiSimmap"}.}
 	\item{tip}{name or names of species to be dropped.}
-	\item{...}{optional arguments to be passed to \code{\link{drop.tip}}. Most optional arguments work, with the exception of \code{interactive=TRUE} which will return an error.}
+	\item{...}{optional arguments to be passed to \code{\link{drop.tip}} or \code{\link{drop.tip.simmap}}. Most optional arguments work, with the exception of \code{interactive=TRUE} which will return an error.}
 }
 \description{
 	This function drops one or multiple tips from all the trees of an object of class \code{"multiPhylo"} or \code{"multiSimmap"}.	

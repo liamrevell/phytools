@@ -1,5 +1,5 @@
 # function plots posterior density of mapped states from stochastic mapping
-# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2021
 
 densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legend=NULL,
 	outline=FALSE,type="phylogram",direction="rightwards",plot=TRUE,...){
@@ -72,7 +72,9 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 	tree$mapped.edge<-makeMappedEdge(tree$edge,tree$maps)
 	tree$mapped.edge<-tree$mapped.edge[,order(as.numeric(colnames(tree$mapped.edge)))]
 	class(tree)<-c("simmap",setdiff(class(tree),"simmap"))
-	x<-list(tree=tree,cols=cols,states=ss); class(x)<-"densityMap"
+	attr(tree,"map.order")<-"right-to-left"
+	x<-list(tree=tree,cols=cols,states=ss)
+	class(x)<-"densityMap"
 	if(plot) plot.densityMap(x,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,
 		type=type,mar=mar,direction=direction,offset=offset,hold=hold)
 	invisible(x)
@@ -250,10 +252,10 @@ SetMap<-function(x,...){
 ## drop tips from an object of class 'densityMap'
 ## written by Liam J. Revell 2014, 2015
 
-drop.tip.densityMap<-function(x,tip){
+drop.tip.densityMap<-function(x,tip,...){
 	if(inherits(x,"densityMap")){ 
 		class(x)<-"contMap"
-		x<-drop.tip.contMap(x,tip)
+		x<-drop.tip.contMap(x,tip,...)
 		class(x)<-"densityMap"
 		return(x)
 	} else cat("x should be an object of class \"densityMap\"\n")

@@ -2131,7 +2131,7 @@ matchType<-function(type,types){
 }
 	
 ## function 'untangles' (or attempts to untangle) a tree with crossing branches
-## written by Liam J. Revell 2013, 2015, 2020
+## written by Liam J. Revell 2013, 2015, 2020, 2021
 untangle<-function(tree,method=c("reorder","read.tree")){
 	if(inherits(tree,"multiPhylo")){
 		tree<-lapply(tree,untangle,method=method)
@@ -2144,7 +2144,8 @@ untangle<-function(tree,method=c("reorder","read.tree")){
 		else if(method=="read.tree"){
 			tip.label<-tree$tip.label
 			tree$tip.label<-1:Ntip(tree)
-			if(inherits(tree,"simmap")) tree<-read.simmap(text=write.simmap(tree))
+			if(inherits(tree,"simmap")) 
+				tree<-read.simmap(text=capture.output(write.simmap(tree,file=stdout())))
 			else tree<-if(Ntip(tree)>1) read.tree(text=write.tree(tree)) else read.newick(text=write.tree(tree))
 			tree$tip.label<-tip.label[as.numeric(tree$tip.label)]
 		}

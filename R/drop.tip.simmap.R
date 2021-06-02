@@ -1,7 +1,9 @@
 ## function drops tip or tips from an object of class "simmap"
-## written by Liam J. Revell 2012, 2015, 2018
+## written by Liam J. Revell 2012, 2015, 2018, 2021
 
-drop.tip.simmap<-function(tree,tip){
+drop.tip.simmap<-function(tree,tip,...){
+	if(hasArg(untangle)) untangle<-list(...)$untangle
+	else untangle<-FALSE
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
 	tip<-which(tree$tip.label%in%tip)
 	edges<-match(tip,tree$edge[,2])
@@ -63,11 +65,12 @@ drop.tip.simmap<-function(tree,tip){
 	tree$mapped.edge<-matrix(data=0,length(tree$edge.length),length(allstates),dimnames=list(edge=apply(tree$edge,1,function(x) paste(x,collapse=",")),state=allstates))
 	for(i in 1:length(tree$maps)) for(j in 1:length(tree$maps[[i]])) tree$mapped.edge[i,names(tree$maps[[i]])[j]]<-tree$mapped.edge[i,names(tree$maps[[i]])[j]]+tree$maps[[i]][j]
 	class(tree)<-c("simmap",setdiff(class(tree),"simmap"))
-	return(tree)
+	if(untangle) tree<-untangle(tree,"read.tree")
+	tree
 }
 
 ## drop.tip.multiPhylo
-## written by Liam J. Revell 2020
+## written by Liam J. Revell 2020, 2021
 
 drop.tip.multiPhylo<-function(phy,tip,...){
     if(!inherits(phy,"multiPhylo"))
@@ -82,12 +85,12 @@ drop.tip.multiPhylo<-function(phy,tip,...){
 				class(trees)<-class(phy)
 			}
 		} else {
-			trees<-lapply(phy,drop.tip.simmap,tip=tip)
+			trees<-lapply(phy,drop.tip.simmap,tip=tip,...)
 			class(trees)<-class(phy)
 		}
     }
     trees
 }
 
-drop.tip.multiSimmap<-function(phy,tip) drop.tip.multiPhylo(phy,tip)
+drop.tip.multiSimmap<-function(phy,tip,...) drop.tip.multiPhylo(phy,tip,...)
 

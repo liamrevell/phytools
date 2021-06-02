@@ -1,8 +1,20 @@
 ## function
 ## by Liam J. Revell 2021
 
-p.func<-function(x,a,C) dmnorm(x,rep(a,nrow(C)),C,
-	log=TRUE)
+VCV<-function(tree){
+	H<-nodeHeights(tree)
+	h<-c(H[1,1],H[,2])[order(c(tree$edge[1,1],tree$edge[,2]))]
+	M<-mrca(tree,full=TRUE)
+	M[lower.tri(M)]<-t(M)[lower.tri(M)]
+	ROOT<-Ntip(tree)+1
+	M<-M[-ROOT,-ROOT]
+	matrix(h[M],nrow(M),ncol(M),
+		dimnames=list(c(tree$tip.label,2:tree$Nnode+Ntip(tree)),
+		c(tree$tip.label,2:tree$Nnode+Ntip(tree))))
+}
+
+p.func<-function(x,a,C) dmnorm(x,rep(a,nrow(C)),C,log=TRUE)
+
 	
 ln.mean<-function(x){
 	if(x[1]==x[2]) return(x[1])
@@ -24,7 +36,7 @@ log_lik<-function(lnsig2,tree,x,lambda=1,trace=0){
 	m<-tree$Nnode
 	ln.p1<-p.func(x,Tips$alpha[1,1],Tips$C)
 	ln.p2<--p.func(log(sig2)[-root],log(sig2)[root],
-		vcvPhylo(tree))
+		VCV(tree))
 	logL<-ln.p1-lambda*ln.p2
 	if(trace>0){
 		cat(paste("log(L) =",round(logL,4),"\n"))
@@ -82,7 +94,7 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	x<-x[tree$tip.label]
 	fit<-list()
 	fit$convergence<-99
-	init<-log(mean(pic(x,multi2di(tree))^2)*(Ntip(tree)-1)/Ntip(tree))
+	init<-log(mean(pic(x,multi2di(collapse.singles(tree)))^2)*(Ntip(tree)-1)/Ntip(tree))
 	fit$par<-rep(init,Ntip(tree)+tree$Nnode)
 	class(fit)<-"try-error"
 	ii<-1
@@ -126,6 +138,7 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 		logLik=LIK(exp(fit$par)),
 		k=length(fit$par)+1,
 		tree=tree,
+		x=x,
 		convergence=fit$convergence,
 		method=method,
 		lik=LIK)

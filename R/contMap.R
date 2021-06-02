@@ -70,6 +70,7 @@ contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	tree$mapped.edge<-makeMappedEdge(tree$edge,tree$maps)
 	tree$mapped.edge<-tree$mapped.edge[,order(as.numeric(colnames(tree$mapped.edge)))]
 	class(tree)<-c("simmap",setdiff(class(tree),"simmap"))
+	attr(tree,"map.order")<-"right-to-left"
 	xx<-list(tree=tree,cols=cols,lims=lims)
 	class(xx)<-"contMap"
 	if(plot) plot.contMap(xx,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,
@@ -153,10 +154,10 @@ print.contMap<-function(x,digits=6,...){
 
 ## drop tips from an object of class 'contMap'
 ## written by Liam J. Revell 2014
-drop.tip.contMap<-function(x,tip){
+drop.tip.contMap<-function(x,tip,...){
 	if(!inherits(x,"contMap")) cat("x should be an object of class \"contMap\"\n")
 	else {
-		x$tree<-drop.tip.simmap(x$tree,tip)
+		x$tree<-drop.tip.simmap(x$tree,tip,...)
 		return(x)
 	}
 }
@@ -205,7 +206,7 @@ errorbar.contMap<-function(obj,...){
 	}
 }
 
-keep.tip.contMap<-function(x,tip){
+keep.tip.contMap<-function(x,tip,...){
 	tips<-setdiff(x$tree$tip.label,tip)
-	drop.tip.contMap(x,tips)
+	drop.tip.contMap(x,tips,...)
 }
