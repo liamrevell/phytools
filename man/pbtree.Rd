@@ -21,6 +21,8 @@ pbtree(b=1, d=0, n=NULL, t=NULL, scale=NULL, nsim=1, type=c("continuous",
 	\code{method="direct"} is presently experimental. It does not really perform direct sampling; however waiting times & birth or death events are sampled first - with only wait-times consistent with \code{n} and \code{t} being retained. This rejection sampling occurs one layer earlier than for \code{method="rejection"}. This results in a significant (several-fold) speed-up of the code and enables sampling conditioned on \code{n} and \code{t} simultaneously for much higher \code{b} and \code{d}. At the present time, \code{extant.only=TRUE} does not work for this mode, nor does \code{type="discrete"}.
 
 	Note that if \code{ape=FALSE}, then the function will run faster, and the tree is theoretically compatible with the ape \code{"phylo"} standard; however some downstream errors with functions such as \code{\link{bind.tree}} have been observed.
+	
+	Lastly, under the taxon number stopping criterion (\code{n}) for a non-zero extinction rate (\code{d>0}) sometimes a tree containing fewer than \code{n} extant tips is returned because it has gone completely extinct before the end of the simulation.
 }
 \value{
 	A tree or list of trees as an object of class \code{"phylo"} or \code{"multiPhylo"}, respectively.
