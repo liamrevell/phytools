@@ -40,7 +40,7 @@ fitHRM(tree, x, model="ARD", ncat=2, ...)
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of Fitzjohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, \code{max.poly} can be set for the \code{ordered=TRUE} model. \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
 \description{
-	The function \code{fitMk} fits a so-called M\emph{k} model for discrete character evolution.
+	The function \code{fitMk} fits a so-called extended M\emph{k} model for discrete character evolution (Lewis, 2001).
 	
 	\code{plot.fitMk} plots an object of class \code{"fitMk"} returned by \code{fitMk}. \code{plot.gfit} plots an object of class \code{"gfit"} from geiger's \code{fitDiscrete} function. Both plots portray the fitted model using a graph of arrows connecting states.
 	
@@ -63,6 +63,10 @@ fitHRM(tree, x, model="ARD", ncat=2, ...)
 	\code{plot.fitMk}, \code{plot.gfit}, and \code{plot.HRM} invisibly return the coordinates of vertices of the plotted \bold{Q}-matrix.
 }
 \references{
+	Beaulieu, J. M., B. C. O'Meara, and M. J. Donoghue (2013) Identifying hidden rate changes in the evolution of a binary morphological character: The evolution of plant habit in campanulid angiosperms. \emph{Systematic Biology}, \bold{62}, 725-737.
+
+	Lewis, P. O. (2001) A likelihood approach to estimating phylogeny from discrete morphological character data. \emph{Systematic Biology}, \bold{50}, 913-925.
+
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}

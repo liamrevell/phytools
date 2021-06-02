@@ -24,6 +24,8 @@ multirateBM(tree, x, method=c("ML","REML"),
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	
+	Revell, L. J. (Accepted) A variable-rate quantitative trait evolution model using penalized-likelihood. \emph{PeerJ}.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
