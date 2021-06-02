@@ -1,12 +1,12 @@
 Package: phytools
-Version: 0.7-79
-Date: 2021-5-28
+Version: 0.7-80
+Date: 2021-6-02
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
 Depends: R (>= 3.5.0), ape (>= 4.0), maps
 Imports: clusterGeneration, coda, combinat, expm, graphics,  
-	grDevices, gtools, MASS, methods, mnormt, nlme, numDeriv, 
+	grDevices, MASS, methods, mnormt, nlme, numDeriv, 
 	phangorn (>= 2.3.1), plotrix, scatterplot3d, stats, utils
 Suggests: animation, geiger, RColorBrewer, rgl
 ZipData: no

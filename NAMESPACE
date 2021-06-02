@@ -237,7 +237,6 @@ importFrom(graphics, rect, curve, image, mtext, arrows, barplot, boxplot, contou
 importFrom(graphics, abline, legend, grid)
 importFrom(grDevices, palette, colors, dev.hold, dev.flush, rainbow, heat.colors, gray)
 importFrom(grDevices, colorRampPalette, dev.new, rgb, pdf, dev.off, col2rgb, dev.size)
-importFrom(gtools, combinations)
 importFrom(maps, map)
 importFrom(MASS, ginv)
 importFrom(methods, hasArg)
@@ -255,4 +254,4 @@ importFrom(stats, nlminb, biplot, pchisq, rexp, optimize, logLik, as.dist, pnorm
 importFrom(stats, cor, aggregate, rgamma, dgamma, lm, rbinom, rgeom, pt, anova, p.adjust) 
 importFrom(stats, screeplot, rchisq, optimHess, rmultinom, sd, dunif, dist, plogis) 
 importFrom(stats, density, coef, cmdscale, AIC)
-importFrom(utils, flush.console, head, installed.packages, str, capture.output)
+importFrom(utils, flush.console, head, installed.packages, str, capture.output, combn)

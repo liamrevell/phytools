@@ -2,6 +2,11 @@
 ## fits several polymorphic discrete character evolution models
 ## written by Liam J. Revell 2019, 2020
 
+Combinations<-function(n,r,v=1:n){
+	if(n!=length(v)) stop("n and v should have the same length")
+	else return(t(combn(v,r)))
+}
+
 fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
@@ -35,7 +40,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 		} else {
 			ss<-vector()
 			for(i in 1:length(states))
-				ss<-c(ss,apply(combinations(length(states),i,states),
+				ss<-c(ss,apply(Combinations(length(states),i,states),
 					1,paste,collapse="+"))
 			tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
 		}
@@ -339,7 +344,7 @@ graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...){
 	} else {
 		ss<-vector()
 		for(i in 1:length(states))
-			ss<-c(ss,apply(combinations(length(states),i,states),
+			ss<-c(ss,apply(Combinations(length(states),i,states),
 				1,paste,collapse="+"))
 		tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
 	}
