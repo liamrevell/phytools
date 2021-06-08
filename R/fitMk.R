@@ -428,10 +428,21 @@ as.Qmatrix.fitMk<-function(x,...){
 	Q<-matrix(NA,length(x$states),length(x$states))
 	Q[]<-c(0,x$rates)[x$index.matrix+1]
 	rownames(Q)<-colnames(Q)<-x$states
-	diag(Q)<-0
-	diag(Q)<--rowSums(Q)
+	diag(Q)<--rowSums(Q,na.rm=TRUE)
 	class(Q)<-"Qmatrix"
 	Q
+}
+
+as.Qmatrix.ace<-function(x, ...){
+	if("index.matrix"%in%names(x)){
+		k<-nrow(x$index.matrix)
+		Q<-matrix(NA,k,k)
+		Q[]<-c(0,x$rates)[x$index.matrix+1]
+		rownames(Q)<-colnames(Q)<-colnames(x$lik.anc)
+		diag(Q)<--rowSums(Q,na.rm=TRUE)
+		class(Q)<-"Qmatrix"
+		return(Q)
+	} else cat("\"ace\" object does not appear to contain a Q matrix.\n")
 }
 
 print.Qmatrix<-function(x,...){
