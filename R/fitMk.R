@@ -296,7 +296,7 @@ plot.Qmatrix<-function(x,...){
 	nstates<-nrow(Q)
 	if(color){
 		col_pal<-function(qq) if(is.na(qq)) NA else 
-			if(is.infinite(qq)) "grey" else
+			if(is.infinite(qq)) make.transparent("grey",0.4) else
 			rgb(colorRamp(c("blue","purple","red"))(qq),maxColorValue=255)
 		qq<-Q
 		diag(qq)<-NA
@@ -354,7 +354,7 @@ plot.Qmatrix<-function(x,...){
 			}
 		}
 	text(v.x,v.y,rownames(Q),cex=cex.traits,
-		col=make.transparent(par("fg"),0.7))
+		col=make.transparent(par("fg"),0.9))
 	if(color){
 		h<-1.5
 		LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
