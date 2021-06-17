@@ -1,5 +1,5 @@
 ## function for conditional likelihoods at nodes
-## written by Liam J. Revell 2015, 2016, 2019, 2020
+## written by Liam J. Revell 2015, 2016, 2019, 2020, 2021
 ## with input from (& structural similarity to) function ace by E. Paradis et al. 2013
 
 fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
@@ -253,6 +253,10 @@ plot.gfit<-function(x,...){
 	}
 	invisible(object)
 }
+
+MIN<-function(x,...) min(x[is.finite(x)],...)
+MAX<-function(x,...) max(x[is.finite(x)],...)
+RANGE<-function(x,...) range(x[is.finite(x)],...)
 	
 ## S3 method for "Qmatrix" object class
 plot.Qmatrix<-function(x,...){
@@ -281,12 +285,25 @@ plot.Qmatrix<-function(x,...){
 	else ncat<-NULL
 	if(hasArg(spacer)) spacer<-list(...)$spacer
 	else spacer<-0.1
+	if(hasArg(color)) color<-list(...)$color
+	else color<-FALSE
 	plot.new()
 	par(mar=mar)
 	xylim<-c(-1.2,1.2)
-	plot.window(xlim=xylim,ylim=xylim,asp=1)
+	if(!color) plot.window(xlim=xylim,ylim=xylim,asp=1) else 
+		plot.window(xlim=c(-1.4,xylim[2]-0.2),ylim=xylim,asp=1)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-nrow(Q)
+	if(color){
+		col_pal<-function(qq) if(is.na(qq)) NA else 
+			if(is.infinite(qq)) "grey" else
+			rgb(colorRamp(c("blue","purple","red"))(qq),maxColorValue=255)
+		qq<-Q
+		diag(qq)<-NA
+		qq<-log(qq)
+		qq<-(qq-MIN(qq,na.rm=TRUE))/diff(RANGE(qq,na.rm=TRUE))
+		cols<-apply(qq,c(1,2),col_pal)
+	} else cols<-matrix(par("fg"),nstates,nstates)
 	if(!umbral||is.null(ncat)){
 		step<-360/nstates
 		angles<-seq(0,360-step,by=step)/180*pi
@@ -332,11 +349,33 @@ plot.Qmatrix<-function(x,...){
 						round(Q[i,j],signif),cex=cex.rates,
 						srt=atan(dy/dx)*180/pi)
 				arrows(s[1],s[2],e[1],e[2],length=0.05,
-					code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
+					code=if(isSymmetric(Q)) 3 else 2,lwd=lwd,
+					col=cols[i,j])
 			}
 		}
 	text(v.x,v.y,rownames(Q),cex=cex.traits,
-		col=make.transparent("black",0.7))
+		col=make.transparent(par("fg"),0.7))
+	if(color){
+		h<-1.5
+		LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
+		lines(x=rep(-1.3+LWD*15/2,2),y=c(-h/2,h/2))
+		nticks<-6
+		Y<-cbind(seq(-h/2,h/2,length.out=nticks),
+			seq(-h/2,h/2,length.out=nticks))
+		X<-cbind(rep(-1.3+LWD*15/2,nticks),
+			rep(-1.3+LWD*15/2+0.02*h,nticks))
+		for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
+		add.color.bar(h,sapply(seq(0,1,length.out=100),col_pal),
+			title="evolutionary rate (q)",
+			lims=NULL,digits=3,
+			direction="upwards",
+			subtitle="",lwd=15,
+			x=-1.3,y=-h/2,prompt=FALSE)
+		QQ<-Q
+		diag(QQ)<-0
+		text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
+			MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
+	}
 	object<-data.frame(states=rownames(Q),x=v.x,y=v.y)
 	invisible(object)
 }

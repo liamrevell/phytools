@@ -236,7 +236,7 @@ importFrom(graphics, plot, layout, plot.new, title, axis, points, plot.window, p
 importFrom(graphics, rect, curve, image, mtext, arrows, barplot, boxplot, contour, hist)
 importFrom(graphics, abline, legend, grid)
 importFrom(grDevices, palette, colors, dev.hold, dev.flush, rainbow, heat.colors, gray)
-importFrom(grDevices, colorRampPalette, dev.new, rgb, pdf, dev.off, col2rgb, dev.size)
+importFrom(grDevices, colorRamp, colorRampPalette, dev.new, rgb, pdf, dev.off, col2rgb, dev.size)
 importFrom(maps, map)
 importFrom(MASS, ginv)
 importFrom(methods, hasArg)
