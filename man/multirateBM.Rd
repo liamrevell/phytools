@@ -21,7 +21,7 @@ multirateBM(tree, x, method=c("ML","REML"),
 	
 	The model that is being fit is one in which the rate of Brownian motion evolution itself evolves from edge to edge in the tree under a process of geometric Brownian evolution (i.e., Brownian motion evolution on a log scale).
 	
-	The penalty term, \code{lambda}, determines the cost of variation in the rate of evolution from branch to branch. If lambda is \emph{high}, then the rate of evolution will vary relative little between edges (and in the limiting case converge to the single-rate MLE estimate of the rate). By contrast, if the value of \code{lambda} is set to be low, then the rate of evolution can vary from edge to edge with relatively little penalty. 
+	The penalty term, \code{lambda}, determines the cost of variation in the rate of evolution from branch to branch. If lambda is \emph{high}, then the rate of evolution will vary relatively little between edges (and in the limiting case converge to the single-rate MLE estimate of the rate). By contrast, if the value of \code{lambda} is set to be low, then the rate of evolution can vary from edge to edge with relatively little penalty. 
 	
 	Decreasing the penalty term, however, is not with cost. As \code{lambda} is decreased towards zero, estimated rates will tend to become less and less accurate.
 }
