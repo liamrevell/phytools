@@ -47,11 +47,12 @@ gw<-setNames(sunfish.data$gape.width,
     rownames(sunfish.data))
 ## run penalized-likelihood optimization
 ## lambda=0.1 is arbitrary
-fitBM<-multirateBM(sunfish.tree,gw,lambda=0.1)
+fitBM<-multirateBM(sunfish.tree,gw,
+	lambda=0.01)
 ## print and plot the results
 print(fitBM)
-plot(fitBM,ftype="i",fsize=0.8,lwd=4)
-}
+plot(fitBM,ftype="i",fsize=0.8,lwd=6,
+	outline=TRUE)}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
