@@ -23,7 +23,7 @@ multirateBM(tree, x, method=c("ML","REML"),
 	
 	The penalty term, \code{lambda}, determines the cost of variation in the rate of evolution from branch to branch. If lambda is \emph{high}, then the rate of evolution will vary relatively little between edges (and in the limiting case converge to the single-rate MLE estimate of the rate). By contrast, if the value of \code{lambda} is set to be low, then the rate of evolution can vary from edge to edge with relatively little penalty. 
 	
-	Decreasing the penalty term, however, is not with cost. As \code{lambda} is decreased towards zero, estimated rates will tend to become less and less accurate.
+	Decreasing the penalty term, however, is not without cost. As \code{lambda} is decreased towards zero, estimated rates will tend to become less and less accurate.
 }
 \value{
 	An object of class \code{"multirateBM"}.
