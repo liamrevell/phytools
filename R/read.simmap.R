@@ -283,7 +283,9 @@ readNexusData<-function(file,version){
 		X<-scan(file=file,what="",sep="\n",quiet=TRUE)
 		left<-grep("\\[",X)
 		right<-grep("\\]",X)
-		skip<-if(version<=2.0) grep("\\&map",X) else if(version>2.0) grep("\\&prob",X)
+		skip<-if(version<=2.0) grep("\\&map",X) else 
+			if(version>2.0&&version<=3.0) grep("\\&prob",X) else 
+			if(version>3.0) grep("\\&label",X)
 		left<-setdiff(left,skip)
 		right<-setdiff(right,skip)
 		if(length(left)){
