@@ -1,5 +1,5 @@
 ## functions plot stochastic character mapped trees
-## written by Liam Revell 2011-2020
+## written by Liam Revell 2011-2021
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",

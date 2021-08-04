@@ -151,12 +151,15 @@ plot.densityMap<-function(x,...){
 			}
 		} else if(is.null(ylim)) ylim<-NULL
 		if(outline){
+			COL<-par()$col
 			par(col="transparent")
 			plotTree(tree,fsize=fsize[1],lwd=lwd[1]+2,
-				offset=offset+0.2*lwd[1]/3+0.2/3,ftype=ftype[1],xlim=xlim,
+				offset=offset+0.2*lwd[1]/3+0.2/3,
+				color=par()$fg,
+				ftype=ftype[1],xlim=xlim,
 				ylim=ylim,mar=mar,direction=direction,hold=FALSE,
 				add=direction%in%c("upwards","downwards")&&legend)
-			par(col="black")
+			par(col=COL)
 		}
 		plotSimmap(tree,cols,pts=FALSE,lwd=lwd[1],fsize=fsize[1],mar=mar,ftype=ftype[1],add=outline,
 			xlim=xlim,ylim=ylim,direction=direction,offset=offset,hold=FALSE)
@@ -171,13 +174,14 @@ plot.densityMap<-function(x,...){
 				add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
 					digits=dig,prompt=FALSE,x=if(direction=="leftwards") max(H)-legend else 0,
 					y=1-0.08*(N-1),lwd=lwd[2],
-					fsize=fsize[2],
+					fsize=fsize[2],outline=outline,
 					direction=if(!is.null(xlim)) if(xlim[2]<xlim[1]) "leftwards" else 
 					"rightwards" else "rightwards")
 			else if(direction%in%c("upwards","downwards")){
 				sf<-abs(diff(par()$usr[1:2])/diff(par()$usr[3:4]))*
 					par()$pin[2]/par()$pin[1]
-				add.color.bar(legend*sf,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),
+				add.color.bar(legend*sf,cols,title=leg.txt[2],outline=outline,
+					lims<-as.numeric(leg.txt[c(1,3)]),
 					digits=dig,prompt=FALSE,x=1,y=ylim[1]+0.04*max(nodeHeights(x$tree)),lwd=lwd[2],
 					fsize=fsize[2],direction="rightwards",subtitle=paste("length=",round(legend,
 					3),sep=""))
@@ -185,11 +189,12 @@ plot.densityMap<-function(x,...){
 		}
 	} else if(type=="fan"){
 		if(outline){
+			COL<-par()$col
 			par(col="white")
 			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd[1]+2,
-				mar=mar,fsize=fsize[1],
+				mar=mar,fsize=fsize[1],color=par()$fg,
 				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE,offset=offset)))
-			par(col="black")
+			par(col=COL)
 		}
 		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd[1],
 			mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
@@ -202,6 +207,7 @@ plot.densityMap<-function(x,...){
 			}
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
 			add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),digits=dig,
+				outline=outline,
 				prompt=FALSE,x=0.9*par()$usr[1],y=0.9*par()$usr[3],lwd=lwd[2],
 				fsize=fsize[2])
 		}
