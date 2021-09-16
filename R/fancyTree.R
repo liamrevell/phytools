@@ -29,7 +29,7 @@ fancyTree<-function(tree,type=c("extinction","traitgram3d","droptip",
 }
 
 ## phyloScattergram internal function
-## written by Liam J. Revell 2013, 2014, 2017, 2019
+## written by Liam J. Revell 2013, 2014, 2017, 2019, 2021
 
 phyloScattergram<-function(tree,X=NULL,...){
 	if(is.null(X)) stop("phenotypic data should be provided in the matrix X")
@@ -55,7 +55,7 @@ phyloScattergram<-function(tree,X=NULL,...){
 	obj<-list(tree=tree,contMaps=cmaps,X=X,A=A)
 	class(obj)<-"phyloScattergram"
 	if(plot) plot(obj,...)
-	obj
+	invisible(obj)
 }
 
 plot.phyloScattergram<-function(x,...){
