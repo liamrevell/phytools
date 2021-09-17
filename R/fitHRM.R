@@ -1,5 +1,5 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
-## written by Liam J. Revell 2020
+## written by Liam J. Revell 2020, 2021
 
 fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	if(hasArg(trace)) trace<-list(...)$trace
@@ -132,8 +132,8 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		logL<-sapply(fits,logLik)
 		if(!quiet){
 			cat(paste("log-likelihood from current iteration:",
-				logLik(fits[[i]]),"\n"))
-			cat(paste(" --- Best log-likelihood so far:",max(logL),
+				round(logLik(fits[[i]]),4),"\n"))
+			cat(paste(" --- Best log-likelihood so far:",round(max(logL),4),
 				"---\n"))
 			flush.console()
 		}
