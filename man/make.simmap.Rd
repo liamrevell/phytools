@@ -52,6 +52,7 @@ make.simmap(tree, x, model="SYM", nsim=1, ...)
 	\code{\link{brownie.lite}}, \code{\link{brownieREML}}, \code{\link{countSimmap}}, \code{\link{describe.simmap}}, \code{\link{evol.vcv}}, \code{\link{plotSimmap}}, \code{\link{read.simmap}}, \code{\link{write.simmap}}
 }
 \examples{
+\dontrun{
 ## load tree and data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
@@ -73,6 +74,7 @@ par(mar=c(5.1,4.1,4.1,2.1))
 plot(density(smap.trees),bty="l")
 title(main="Posterior distribution of changes of each type",
     font.main=3)
+}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}
