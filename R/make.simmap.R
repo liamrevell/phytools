@@ -1,5 +1,5 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
-## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019
+## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -48,13 +48,15 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		m<-ncol(xx)
 		root<-N+1
 		# get conditional likelihoods & model
-		if(is.character(Q)&&Q=="empirical"){
+		if(is.character(Q)&&Q=="empirical"){				
 			XX<-getPars(bt,xx,model,Q=NULL,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			Q<-XX$Q
 			logL<-XX$loglik
+			pi<-XX$pi
 			if(pi[1]=="equal") pi<-setNames(rep(1/m,m),colnames(L)) # set equal
 			else if(pi[1]=="estimated") pi<-statdist(Q) # set from stationary distribution
+			else if(pi[1]=="fitzjohn") pi<-"fitzjohn"
 			else pi<-pi/sum(pi) # obtain from input
 			if(pm) printmessage(Q,pi,method="empirical")
 			mtrees<-replicate(nsim,smap(tree,x,N,m,root,L,Q,pi,logL),simplify=FALSE)
@@ -66,14 +68,17 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			get.stationary<-if(pi[1]=="estimated") TRUE else FALSE
 			if(pi[1]%in%c("equal","estimated"))
 				pi<-setNames(rep(1/m,m),colnames(xx)) # set equal
+			else if(pi[1]=="fitzjohn") pi<-"fitzjohn"
 			else pi<-pi/sum(pi) # obtain from input
 			XX<-mcmcQ(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi=pi)
 			L<-lapply(XX,function(x) x$L)
 			Q<-lapply(XX,function(x) x$Q)
 			logL<-lapply(XX,function(x) x$loglik)
-			pi<-if(get.stationary) lapply(Q,statdist) else lapply(1:nsim,function(x,y) y,
-				y=pi)
-			if(pm) printmessage(Reduce('+',Q)/length(Q),pi,method="mcmc")
+			pi<-if(get.stationary) lapply(Q,statdist) else 
+				if(pi=="fitzjohn") lapply(XX,function(x) x$pi) else 
+				lapply(1:nsim,function(x,y) y,y=pi)
+			if(pm) printmessage(Reduce('+',Q)/length(Q),Reduce('+',pi)/length(pi),
+				method="mcmc")
 			mtrees<-if(nsim>1) mapply(smap,L=L,Q=Q,pi=pi,logL=logL,MoreArgs=
 				list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE) else
 				list(smap(tree=tree,x=x,N=N,m=m,root=root,L=L[[1]],Q=Q[[1]],pi=pi[[1]],
@@ -82,8 +87,10 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			logL<-XX$loglik
+			pi<-XX$pi
 			if(pi[1]=="equal") pi<-setNames(rep(1/m,m),colnames(L)) # set equal
 			else if(pi[1]=="estimated") pi<-statdist(Q) # set from stationary distribution
+			else if(pi[1]=="fitzjohn") pi<-"fitzjohn"
 			else pi<-pi/sum(pi) # obtain from input
 			if(pm) printmessage(Q,pi,method="fixed")
 			mtrees<-replicate(nsim,smap(tree,x,N,m,root,L,Q,pi,logL),simplify=FALSE)
@@ -190,12 +197,13 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi,args=l
 }
 
 # get pars
-# written by Liam J. Revell 2013, 2017
+# written by Liam J. Revell 2013, 2017, 2021
 getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
 	if(!is.null(args$pi)) args$pi<-NULL
 	args<-c(list(tree=bt,x=xx,model=model,fixedQ=Q,output.liks=liks,pi=pi),args)
 	obj<-do.call(fitMk,args)
 	N<-length(bt$tip.label)
+	pi<-obj$pi
 	II<-obj$index.matrix+1
 	lvls<-obj$states
 	if(liks){
@@ -216,7 +224,7 @@ getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
 		for(i in 1:length(ii)) Q[ii[i],setdiff(1:ncol(Q),ii[i])]<-tol/(ncol(Q)-1)
 	}
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	return(list(Q=Q,L=L,loglik=logLik(obj)))
+	return(list(Q=Q,L=L,loglik=logLik(obj),pi=pi))
 }
 
 # convert vector of x to binary matrix
@@ -231,11 +239,14 @@ to.matrix<-function(x,seq){
 ## written by Liam J. Revell 2013, 2017
 smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 	# create the map tree object
-	mtree<-tree; mtree$maps<-list()
-	mtree$mapped.edge<-matrix(0,nrow(tree$edge),m,dimnames=list(paste(tree$edge[,1],",",tree$edge[,2],sep=""),colnames(L)))
+	mtree<-tree
+	mtree$maps<-list()
+	mtree$mapped.edge<-matrix(0,nrow(tree$edge),m,dimnames=list(paste(tree$edge[,1],",",
+		tree$edge[,2],sep=""),colnames(L)))
 	# now we want to simulate the node states & histories by pre-order traversal
 	NN<-matrix(NA,nrow(tree$edge),2) # our node values
-	NN[which(tree$edge[,1]==root),1]<-rstate(L[as.character(root),]*pi/sum(L[as.character(root),]*pi)) # assign root
+	NN[which(tree$edge[,1]==root),1]<-rstate(L[as.character(root),]*pi/
+		sum(L[as.character(root),]*pi)) # assign root
 	for(j in 1:nrow(tree$edge)){
 		# conditioned on the start value, assign end value of node (if internal)
 		p<-EXPM(Q*tree$edge.length[j])[NN[j,1],]*L[as.character(tree$edge[j,2]),]
@@ -249,11 +260,13 @@ smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 		}	
 		mtree$maps[[j]]<-map
 		for(k in 1:length(mtree$maps[[j]])) 
-			mtree$mapped.edge[j,names(mtree$maps[[j]])[k]]<-mtree$mapped.edge[j,names(mtree$maps[[j]])[k]]+mtree$maps[[j]][k]
+			mtree$mapped.edge[j,names(mtree$maps[[j]])[k]]<-mtree$mapped.edge[j,
+				names(mtree$maps[[j]])[k]]+mtree$maps[[j]][k]
 	}
 	mtree$Q<-Q
 	mtree$logL<-logL
-	if(!inherits(mtree,"simmap")) class(mtree)<-c("simmap",setdiff(class(mtree),"simmap"))
+	if(!inherits(mtree,"simmap")) class(mtree)<-c("simmap",setdiff(class(mtree),
+		"simmap"))
 	attr(mtree,"map.order")<-"right-to-left"
 	return(mtree)
 }

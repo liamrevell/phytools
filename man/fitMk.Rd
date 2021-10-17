@@ -64,6 +64,8 @@ fitHRM(tree, x, model="ARD", ncat=2, ...)
 }
 \references{
 	Beaulieu, J. M., B. C. O'Meara, and M. J. Donoghue (2013) Identifying hidden rate changes in the evolution of a binary morphological character: The evolution of plant habit in campanulid angiosperms. \emph{Systematic Biology}, \bold{62}, 725-737.
+	
+	Fitzjohn, R. G., W. P. Maddison, and S. P. Otto (2009) Estimating trait-dependent speciation and extinction rates from incompletely resolved phylogenies. \emph{Systematic Biology}, \bold{58}, 595-611.
 
 	Lewis, P. O. (2001) A likelihood approach to estimating phylogeny from discrete morphological character data. \emph{Systematic Biology}, \bold{50}, 913-925.
 
