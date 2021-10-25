@@ -47,6 +47,20 @@ phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
 \seealso{
 	\code{\link{phyl.cca}}, \code{\link{phyl.pca}}, \code{\link{phyl.resid}}
 }
+\examples{
+## load data from Garland et al. (1992)
+data(mammal.data)
+data(mammal.tree)
+## pull out & log transform variables
+lnBodyMass<-setNames(log(mammal.data$bodyMass),
+	rownames(mammal.data))
+lnHomeRange<-setNames(log(mammal.data$homeRange),
+	rownames(mammal.data))
+## fit RMA regression & print results
+fitted.rma<-phyl.RMA(lnBodyMass,lnHomeRange,
+	mammal.tree)
+print(fitted.rma)
+}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{maximum likelihood}
