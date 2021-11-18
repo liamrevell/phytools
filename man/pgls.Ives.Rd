@@ -5,7 +5,7 @@
 \usage{
 pgls.Ives(tree, X, y, Vx=NULL, Vy=NULL, Cxy=NULL, lower=c(1e-8,1e-8),
 	fixed.b1=NULL)
-pgls.SEy(model, data, corClass=corBrownian, tree=tree,
+pgls.SEy(model, data, corClass=corBrownian, tree,
    se=NULL, method=c("REML","ML"), interval=c(0,1000), ...)
 }
 \arguments{
