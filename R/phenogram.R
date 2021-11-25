@@ -1,5 +1,5 @@
 ## function creates a phenogram (i.e., 'traitgram')
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2020
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2020, 2021
 
 phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FALSE,...){
 	## get optional arguments
@@ -93,7 +93,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			plot(H[1,],X[1,],type=type,lwd=lwd,lty=lty,col=colors,xlim=xlim,ylim=ylim,
 				log=log,asp=asp,xlab="",ylab="",frame=FALSE,axes=FALSE)
 			if(spread.labels) tt<-spreadlabels(tree,x,fsize=fsize,cost=spread.cost,
-				range=spread.range,label.pos=label.pos) else tt<-x[1:length(tree$tip)]
+				range=spread.range,label.pos=label.pos,log=log) else tt<-x[1:length(tree$tip)]
 			if(tree$edge[1,2]<=length(tree$tip)){
 				if(fsize&&!add){
 					text(gsub("_"," ",tree$tip.label[tree$edge[1,2]]),x=H[1,2]+link,
@@ -135,7 +135,7 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 						lty=lty,xlim=xlim,ylim=ylim,log=log,asp=asp,axes=FALSE,xlab="",
 						ylab="")
 					if(spread.labels) tt<-spreadlabels(tree,x[1:length(tree$tip)],
-						fsize=fsize,cost=spread.cost,range=spread.range) else 
+						fsize=fsize,cost=spread.cost,range=spread.range,log=log) else 
 						tt<-x[1:length(tree$tip)]
 				} else lines(a,b,col=colors[names(tree$maps[[i]])[j]],lwd=lwd,lty=lty,
 					type=type)
@@ -175,11 +175,15 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 }
 
 ## function to spread labels
-## written by Liam J. Revell 2013, 2014, 2016
-spreadlabels<-function(tree,x,fsize=1,cost=c(1,1),range=NULL,label.pos=NULL){
+## written by Liam J. Revell 2013, 2014, 2016, 2021
+spreadlabels<-function(tree,x,fsize=1,cost=c(1,1),range=NULL,label.pos=NULL,log=""){
 	if(!is.null(label.pos)) return(label.pos[tree$tip.label])
 	else {
+		if(log=="y") x<-log(x)
 		if(is.null(range)) range<-range(x)
+		else {
+			if(log=="y") range<-log(range)
+		}
 		yy<-x[1:Ntip(tree)]
 		zz<-setNames((rank(yy,ties.method="random")-1)/(length(yy)-1)*diff(range(yy))+
 			range(yy)[1],names(yy))
@@ -201,7 +205,7 @@ spreadlabels<-function(tree,x,fsize=1,cost=c(1,1),range=NULL,label.pos=NULL){
 		else {
 			rr<-optim(zz,ff,yy=yy,mo=mo,ms=ms,cost=cost,method="L-BFGS-B",
 				lower=rep(range[1],length(yy)),upper=rep(range[2],length(yy)))
-			return(rr$par)
+			if(log=="y") return(exp(rr$par)) else return(rr$par)
 		}
 	}
 }
