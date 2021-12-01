@@ -1,8 +1,9 @@
 ## plotTree.boxplot
-## written by Liam J. Revell 2016
+## written by Liam J. Revell 2016, 2021
 
 plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	args.boxplot=list()){
+	tree<-untangle(tree,"read.tree")
 	cw<-reorder(tree)
 	if(!is.list(x)&&class(x)!="formula"){
 		obj<-setNames(
@@ -50,10 +51,11 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 }
 
 ## plotTree.barplot
-## written by Liam J. Revell 2016, 2017, 2018
+## written by Liam J. Revell 2016, 2017, 2018, 2021
 
 plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	args.barplot=list(), ...){
+	tree<-untangle(tree,"read.tree")
 	if(hasArg(add)) add<-list(...)$add
 	else add<-FALSE
 	if(hasArg(args.axis)) args.axis<-list(...)$args.axis
