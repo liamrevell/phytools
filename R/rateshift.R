@@ -182,29 +182,37 @@ logLik.rateshift<-function(object,...){
 }
 
 ## S3 plot method for object of class "rateshift"
-## written by Liam J. Revell 2015, 2020
+## written by Liam J. Revell 2015, 2020, 2021
 plot.rateshift<-function(x,...){
 	if(length(x$sig2)>1){
-		cols<-colorRampPalette(c("blue","purple","red"))(101)
+		if(hasArg(col)) col<-list(...)$col
+		else col<-c("blue","purple","red")
+		cols<-colorRampPalette(col)(101)
 		rr<-range(x$sig2)
 		names(cols)<-seq(rr[1],rr[2],by=diff(rr)/100)
 		ii<-sapply(x$sig2,function(x,y) order(abs(y-x))[1],
 			y=as.numeric(names(cols)))
 		colors<-setNames(cols[ii],names(ii))
-		plot(x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
+		args<-list(x=x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
 			colors=colors,...)
+		args$col<-NULL
+		do.call(plot,args)
 		nulo<-lapply(x$shift,function(x,y) lines(rep(x,2),c(1,Ntip(y)),
 			lty="dotted",col="grey"),y=x$tree)
 		add.color.bar(leg=0.5*max(nodeHeights(x$tree)),cols=cols,
 			prompt=FALSE,x=0,y=-0.05*Ntip(x$tree),lims=round(rr,3),
 			title=expression(sigma^2))
 	} else {
-		colors<-setNames("blue",1)
-		plot(x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
+		if(hasArg(col)) col<-list(...)$col
+		else col<-"blue"
+		colors<-setNames(col[1],1)
+		args<-list(x=x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
 			colors=colors,...)
+		args$col<-NULL
+		do.call(plot,args)
 		legend(x=0,y=0,
 			legend=bquote(sigma^2 == .(round(x$sig2,3))),
-			pch=15,col="blue",pt.cex=2,bty="n")
+			pch=15,col=colors,pt.cex=2,bty="n")
 	}
 }
 
