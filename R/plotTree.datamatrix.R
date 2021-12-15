@@ -1,5 +1,5 @@
 ## function to plot a grid of discrete character data next to the tips of a tree
-## written by Liam J. Revell 2018, 2020
+## written by Liam J. Revell 2018, 2020, 2021
 
 plotTree.datamatrix<-function(tree,X,...){
 	N<-Ntip(tree)
@@ -16,15 +16,24 @@ plotTree.datamatrix<-function(tree,X,...){
 		chk<-.check.pkg("RColorBrewer")
 		if(!chk) brewer.pal<-function(...) NULL
 		else {
-			palettes<-c("Accent","Dark2","Paired","Pastel1","Pastel2",
-				"Set1","Set2","Set3")
+			if(hasArg(palettes)) palettes<-list(...)$palettes
+			else {
+				palettes<-c("Accent","Dark2","Paired","Pastel1","Pastel2",
+					"Set1","Set2","Set3")
+			}
 			while(length(palettes)<length(k)) palettes<-c(palettes,palettes)
-			BREWER.PAL<-function(k,pal) brewer.pal(max(k,3),pal)[1:k]
+			BREWER.PAL<-function(k,pal){
+				ii<-if(k==2) c(1,3) else 1:k
+				brewer.pal(max(k,3),pal)[ii]
+			}
 			colors<-mapply(setNames,mapply(BREWER.PAL,k,
 				palettes[1:length(ss)],SIMPLIFY=FALSE),ss,
 				SIMPLIFY=FALSE)
         	}
     	}
+	if(!is.list(colors)) colors<-list(colors)
+	if(!is.null(colnames(X))) names(colors)<-colnames(X) else 
+		names(colors)<-rep("",length(colors))
 	if(hasArg(sep)) sep<-list(...)$sep
 	else sep<-0.5
 	if(hasArg(srt)) srt<-list(...)$srt
