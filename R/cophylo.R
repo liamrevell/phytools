@@ -1,5 +1,5 @@
 ## creates an object of class "cophylo"
-## written by Liam J. Revell 2015, 2016, 2017, 2019
+## written by Liam J. Revell 2015, 2016, 2017, 2019, 2021
 
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
@@ -197,6 +197,80 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	invisible(d*max(h+fsize*strwidth(tree$tip.label)+tip.len*(max(X)-min(X))))
 }
 
+cladogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,...){
+	if(hasArg(pts)) pts<-list(...)$pts
+	else pts<-TRUE
+	if(hasArg(edge.col)) edge.col<-list(...)$edge.col
+	else edge.col<-rep("black",nrow(tree$edge))
+	if(hasArg(tip.lwd)) tip.lwd<-list(...)$tip.lwd
+	else tip.lwd<-1
+	if(hasArg(tip.lty)) tip.lty<-list(...)$tip.lty
+	else tip.lty<-"dotted"
+	if(hasArg(tip.len)) tip.len<-list(...)$tip.len
+	else tip.len<-0.1
+	if(pts==TRUE&&tip.len==0) tip.len<-0.1
+	d<-if(direction=="rightwards") 1 else -1
+	## sub "_" for " "
+	tree$tip.label<-gsub("_"," ",tree$tip.label)
+	## check if edge lenths
+	if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
+	## rescale tree so it fits in one half of the plot
+	## with enough space for labels
+	if(ftype=="off") fsize<-0
+	n<-Ntip(tree)
+	sh<-fsize*strwidth(tree$tip.label)
+	H<-nodeHeights(tree)
+	th<-sapply(1:n,function(i,x,e) x[which(e==i)],x=H[,2],
+		e=tree$edge[,2])+tip.len*max(H)
+	tree$edge.length<-tree$edge.length/max(th/(part-sh))
+	## reorder cladewise to assign tip positions
+	cw<-reorder(tree,"cladewise")
+	y<-vector(length=n+cw$Nnode)
+	y[cw$edge[cw$edge[,2]<=n,2]]<-0:(n-1)/(n-1)
+	## reorder pruningwise for post-order traversal
+	pw<-reorder(tree,"pruningwise")
+	nn<-unique(pw$edge[,1])
+	## compute vertical position of each edge
+	for(i in 1:length(nn)){
+		desc<-pw$edge[which(pw$edge[,1]==nn[i]),2]
+		n1<-desc[which(y[desc]==min(y[desc]))]
+		n2<-desc[which(y[desc]==max(y[desc]))]
+		v1<-pw$edge.length[which(pw$edge[,2]==n1)]
+		v2<-pw$edge.length[which(pw$edge[,2]==n2)]
+		y[nn[i]]<-((1/v1)*y[n1]+(1/v2)*y[n2])/(1/v1+1/v2)
+	}
+	## compute start & end points of each edge
+	X<-nodeHeights(cw)-0.5
+	## plot horizontal edges
+	for(i in 1:nrow(X)) lines(d*X[i,],y[cw$edge[i,]],lwd=lwd,lend=2,
+		col=edge.col[i])
+	h<-part-0.5-tip.len*(max(X)-min(X))-fsize*strwidth(tree$tip.label)
+	## plot links to tips
+	for(i in 1:n){ 
+		lines(d*c(X[which(cw$edge[,2]==i),2],h[i]+tip.len*(max(X)-min(X))),rep(y[i],2),
+			lwd=tip.lwd,lty=tip.lty)
+		if(pts) points(d*X[which(cw$edge[,2]==i),2],y[i],pch=16,cex=pts*0.7*sqrt(lwd))
+	}	
+	## plot tip labels
+	font<-which(c("off","reg","b","i","bi")==ftype)-1
+	if(font>0){
+		for(i in 1:n) TEXTBOX(d*(h[i]+fsize*strwidth(tree$tip.label[i])+
+			tip.len*(max(X)-min(X))),y[i],
+			tree$tip.label[i], pos=if(d<0) 4 else 2,offset=0,
+			cex=fsize,font=font)
+	}	
+	PP<-list(type="cladogram",use.edge.length=TRUE,node.pos=1,
+		show.tip.label=if(ftype!="off") TRUE else FALSE,show.node.label=FALSE,
+		font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0,
+		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
+		direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+		edge=cw$edge,xx=d*sapply(1:(Ntip(cw)+cw$Nnode),
+		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
+	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
+	## return rightmost or leftmost edge of tip labels
+	invisible(d*max(h+fsize*strwidth(tree$tip.label)+tip.len*(max(X)-min(X))))
+}
+
 ## internally used function
 
 TEXTBOX<-function(x,y,label,pos,offset,cex,font){
@@ -238,10 +312,12 @@ plot.multiCophylo<-function(x,...){
 }
 
 ## plot an object of class "cophylo"
-## written by Liam J. Revell 2015, 2016, 2017
+## written by Liam J. Revell 2015, 2016, 2017, 2021
 
 plot.cophylo<-function(x,...){
 	plot.new()
+	if(hasArg(type)) type<-list(...)$type
+	else type<-"phylogram"
 	if(hasArg(mar)) mar<-list(...)$mar
 	else mar<-c(0.1,0.1,0.1,0.1)
 	if(hasArg(xlim)) xlim<-list(...)$xlim
@@ -276,9 +352,10 @@ plot.cophylo<-function(x,...){
 			sb.fsize<- if(length(obj$fsize)>2) obj$fsize[3] else 1
 		} else sb.fsize<-1
 	} else sb.fsize<-1
-	x1<-do.call("phylogram",c(list(tree=x$trees[[1]]),leftArgs))
+	plotter<-if(type=="cladogram") "cladogram" else "phylogram"
+	x1<-do.call(plotter,c(list(tree=x$trees[[1]]),leftArgs))
 	left<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	x2<-do.call("phylogram",c(list(tree=x$trees[[2]],direction="leftwards"),
+	x2<-do.call(plotter,c(list(tree=x$trees[[2]],direction="leftwards"),
 		rightArgs))
 	right<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(!is.null(x$assoc)) makelinks(x,c(x1,x2),link.type,link.lwd,link.col,
