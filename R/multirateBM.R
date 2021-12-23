@@ -94,15 +94,16 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	x<-x[tree$tip.label]
 	fit<-list()
 	fit$convergence<-99
-	init<-log(mean(pic(x,multi2di(collapse.singles(tree)))^2)*(Ntip(tree)-1)/Ntip(tree))
+	init<-log(mean(pic(x,multi2di(collapse.singles(tree),
+		random=FALSE))^2)*(Ntip(tree)-1)/Ntip(tree))
 	fit$par<-rep(init,Ntip(tree)+tree$Nnode)
 	class(fit)<-"try-error"
 	ii<-1
 	cat("Beginning optimization....\n")
 	while(inherits(fit,"try-error")||fit$convergence!=0||ii<=n.iter){
 		if(length(optim.method)==1) OPTIM<-optim.method[1]
-		else OPTIM<-optim.method[if(ii!=length(optim.method)) ii%%length(optim.method) else 
-			length(optim.method)]
+		else OPTIM<-optim.method[if(ii!=length(optim.method)) 
+			ii%%length(optim.method) else length(optim.method)]
 		cat(paste("Optimization iteration ",ii,". Using \"",
 			OPTIM,"\" optimization method.\n",sep=""))
 		if(OPTIM=="L-BFGS-B"){
@@ -124,7 +125,8 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 			class(fit)<-"try-error"
 			cat("Caught error without failing. Trying again....\n")
 		} else {
-			cat(paste("Best (penalized) log-likelihood so far:",signif(-fit$value,6),"\n"))
+			cat(paste("Best (penalized) log-likelihood so far:",
+				signif(-fit$value,6),"\n"))
 		}
 		ii<-ii+1
 	}
@@ -232,7 +234,9 @@ plot.multirateBM_plot<-function(x,digits=2,...){
 
 print.multirateBM_plot<-function(x,...){
 	cat("Object of class \"multirateBM_plot\" containing:\n\n")
-	cat(paste("(1) A phylogenetic tree with ",length(x$tree$tip.label)," tips and ",x$tree$Nnode," internal nodes.\n\n",sep=""))
+	cat(paste("(1) A phylogenetic tree with ",
+		length(x$tree$tip.label)," tips and ",x$tree$Nnode,
+		" internal nodes.\n\n",sep=""))
 	cat("(2) A mapped set of Brownian evolution rates.\n\n") 
 }
 

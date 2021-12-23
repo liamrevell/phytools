@@ -1,6 +1,6 @@
 # function conducts phylogenetic ANOVA & posthoc tests
 # some code from phy.anova() in "geiger"
-# written by Liam Revell 2011, 2015, 2017
+# written by Liam Revell 2011, 2015, 2017, 2021
 
 phylANOVA<-function(tree,x,y,nsim=1000,posthoc=TRUE,p.adj="holm"){
 	if(is.null(names(x))){
@@ -14,7 +14,7 @@ phylANOVA<-function(tree,x,y,nsim=1000,posthoc=TRUE,p.adj="holm"){
 	}	
 	y<-y[tree$tip.label]
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	sig2<-mean(pic(y,multi2di(tree))^2) # compute BM rate for y
+	sig2<-mean(pic(y,multi2di(tree,random=FALSE))^2) # compute BM rate for y
 	x<-as.factor(x) # change x to factor
 	m<-length(levels(x))
 	aov<-anova(lm(y~x))

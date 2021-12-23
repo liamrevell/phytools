@@ -433,8 +433,8 @@ tipRotate<-function(tree,x,...){
 
 ## multi2di for "multiPhylo" object
 
-MULTI2DI<-function(x){
-	obj<-lapply(x,multi2di)
+MULTI2DI<-function(x,...){
+	obj<-lapply(x,multi2di,...)
 	class(obj)<-"multiPhylo"
 	obj
 }

@@ -4,7 +4,7 @@
 ## Row names of X should match the species names of the tree.
 ## types=c("discrete","discrete"), c("discrete","continuous"), c("cont","disc") etc. should 
 ## be used to indicate the data type of each column in X
-## written by Liam J. Revell 2012, 2014, 2017, 2018, 2020
+## written by Liam J. Revell 2012, 2014, 2017, 2018, 2020, 2021
 
 threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 
@@ -107,7 +107,7 @@ threshBayes<-function(tree,X,types=NULL,ngen=10000,control=list(),...){
 	if(is.null(colnames(X))) colnames(Y)<-paste("V",1:m,sep="")
 	else colnames(Y)<-colnames(X)
 	r<-0 # for the correlation
-	sig2<-colMeans(apply(Y,2,pic,phy=multi2di(tree))^2)
+	sig2<-colMeans(apply(Y,2,pic,phy=multi2di(tree,random=FALSE))^2)
 	sig2[disc]<-1
 	a<-colMeans(Y)
 	a[disc]<-0

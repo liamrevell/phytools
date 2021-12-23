@@ -1,8 +1,9 @@
 ## function for computing phylogenetic signal by the lambda (Pagel 1999)
 ## or K (Blomberg et al. 2003) methods
-## written by Liam J. Revell 2011/2012, 2019, 2020
+## written by Liam J. Revell 2011/2012, 2019, 2020, 2021
 
-phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,control=list()){
+phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
+	se=NULL,start=NULL,control=list()){
 	# some minor error checking
 	if(!inherits(tree,"phylo")) 
 		stop("tree should be an object of class \"phylo\".")
@@ -155,7 +156,7 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,se=NULL,start=NULL,con
 			control$fnscale=-1
 			M<-M[rownames(C),colnames(C)]
 			if(is.null(start)) s<-c(0.02*runif(n=1)*mean(pic(x,
-				multi2di(tree))^2),runif(n=1))
+				multi2di(tree,random=FALSE))^2),runif(n=1))
 			else s<-start
 			res<-optim(s,likelihoodLambda.me,C=C,y=x,M=M,
 				method="L-BFGS-B",lower=c(0,0),upper=c(Inf,maxlam),

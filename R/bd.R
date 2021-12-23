@@ -1,5 +1,5 @@
 ## likelihood functions for birth-death & Yule model with incomplete sampling
-## written by Liam J. Revell 2017, 2018, 2019, 2020
+## written by Liam J. Revell 2017, 2018, 2019, 2020, 2021
 ## based on likelihood functions in Stadler (2012)
 
 lik.bd<-function(theta,t,rho=1,N=NULL){
@@ -31,7 +31,7 @@ fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
     else init.d<-0.1*qb(tree)
 	if(hasArg(iter)) iter<-list(...)$iter
 	else iter<-10
-    if(!is.binary(tree)) tree<-multi2di(tree)
+    if(!is.binary(tree)) tree<-multi2di(tree,random=FALSE)
     T<-sort(branching.times(tree),decreasing=TRUE)
 	fit<-nlminb(c(init.b,init.d),lik.bd,t=T,rho=rho,lower=rep(0,2),
 		upper=rep(Inf,2))
@@ -56,7 +56,7 @@ fit.bd<-function(tree,b=NULL,d=NULL,rho=1,...){
 fit.yule<-function(tree,b=NULL,d=NULL,rho=1,...){
 	if(hasArg(interval)) interval<-list(...)$interval
 	else interval<-c(0,2*qb(tree)/rho)
-    if(!is.binary(tree)) tree<-multi2di(tree)
+    if(!is.binary(tree)) tree<-multi2di(tree,random=FALSE)
     T<-sort(branching.times(tree),decreasing=TRUE)
 	fit<-optimize(lik.bd,interval,t=T,rho=rho)
 	obj<-list(b=fit$minimum,d=0,rho=rho,logL=-fit$objective,

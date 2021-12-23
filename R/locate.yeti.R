@@ -1,5 +1,5 @@
 ## code to place a missing extant taxon into a tree using ML or REML on continuous data
-## written by Liam J. Revell 2014, 2018
+## written by Liam J. Revell 2014, 2018, 2021
 
 locate.yeti<-function(tree,X,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -118,7 +118,7 @@ yetiREML<-function(tree,X,quiet,tip,root.node,constraint,plot,search){
 		for(i in 1:length(ee)) trees[[i]]<-bind.tip(tree,tip,where=ee[i],position=if(ee[i]==root.node) 0 else 0.5*tree$edge.length[i-1])
 		class(trees)<-"multiPhylo"
 		lik.edge<-function(tree,XX){
-			tree<-multi2di(tree)
+			tree<-multi2di(tree,random=FALSE)
 			YY<-apply(XX[tree$tip.label,],2,pic,phy=tree)
 			vcv<-t(YY)%*%YY/nrow(YY)
 			E<-eigen(vcv)$vectors
@@ -146,7 +146,7 @@ yetiREML<-function(tree,X,quiet,tip,root.node,constraint,plot,search){
 	lik.tree<-function(position,tip,tree,edge,XX,rt){
 		if(edge==rt) tree<-bind.tip(tree,tip,edge.length=position,where=edge)
 		else tree<-bind.tip(tree,tip,where=edge,position=position)
-		tree<-multi2di(tree)
+		tree<-multi2di(tree,random=FALSE)
 		YY<-apply(XX,2,pic,phy=tree,scaled=FALSE)
 		vcv<-t(YY)%*%YY/nrow(YY)
 		sum(dmnorm(YY,mean=rep(0,ncol(YY)),varcov=vcv,log=TRUE))

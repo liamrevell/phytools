@@ -1,3 +1,6 @@
+## some average tree methods
+## written by Liam J. Revell
+
 ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 	D<-Reduce("+",lapply(trees,function(x,t) cophenetic(x)[t,t], 
 		t=trees[[1]]$tip.label))/length(trees)
@@ -72,7 +75,7 @@ averageTree<-function(trees,start=NULL,method="quadratic.path.difference",
 			"\" criterion...\n",sep=""))
 	if(is.null(start)){
 		if(method%in%c("symmetric.difference","path.difference"))
-			start<-multi2di(consensus(trees,p=0.5))
+			start<-multi2di(consensus(trees,p=0.5),random=FALSE)
 		else start<-ls.consensus(trees,quiet=TRUE)
 	}
 	if(method%in%c("branch.score.difference","quadratic.path.difference")){

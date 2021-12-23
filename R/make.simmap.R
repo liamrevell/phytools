@@ -42,7 +42,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		xx<-xx/rowSums(xx)
 		# reorder to cladewise
 		tree<-bt<-reorder.phylo(tree,"cladewise")
-		if(!is.binary(bt)) bt<-multi2di(bt)
+		if(!is.binary(bt)) bt<-multi2di(bt,random=FALSE)
 		# some preliminaries
 		N<-Ntip(tree)
 		m<-ncol(xx)
@@ -75,7 +75,7 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			Q<-lapply(XX,function(x) x$Q)
 			logL<-lapply(XX,function(x) x$loglik)
 			pi<-if(get.stationary) lapply(Q,statdist) else 
-				if(pi=="fitzjohn") lapply(XX,function(x) x$pi) else 
+				if(pi[1]=="fitzjohn") lapply(XX,function(x) x$pi) else 
 				lapply(1:nsim,function(x,y) y,y=pi)
 			if(pm) printmessage(Reduce('+',Q)/length(Q),Reduce('+',pi)/length(pi),
 				method="mcmc")

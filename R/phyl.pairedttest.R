@@ -1,5 +1,5 @@
 ## function for phylogenetic paired t-test (Lindenfors et al. 2010)
-## written by Liam Revell 2011, 2013, 2015
+## written by Liam Revell 2011, 2013, 2015, 2021
 
 phyl.pairedttest<-function(tree,x1,x2=NULL,se1=NULL,se2=NULL,lambda=1.0,
 	h0=0.0,fixed=FALSE,...){
@@ -61,15 +61,16 @@ phyl.pairedttest<-function(tree,x1,x2=NULL,se1=NULL,se2=NULL,lambda=1.0,
 		-logL[1,1]
 	}
 	## rescale for optimization:
-	dscale<-1/sqrt(mean(pic(d,multi2di(tree))^2))
+	dscale<-1/sqrt(mean(pic(d,multi2di(tree,random=FALSE))^2))
 	d<-d*dscale
 	V.diff<-V.diff*dscale^2
 	## maximize the likelihood
-	if(!fixed) fit<-optim(c(mean(pic(d,multi2di(tree))^2),lambda,mean(d)),likelihood,
+	if(!fixed) fit<-optim(c(mean(pic(d,multi2di(tree,random=FALSE))^2),lambda,mean(d)),likelihood,
 		d=d,C=C,V.diff=V.diff,method="L-BFGS-B",lower=c(tol,0,-Inf),upper=c(Inf,1,Inf),
 		hessian=TRUE)
-	else fit<-optim(c(mean(pic(d,multi2di(tree))^2),mean(d)),likelihood,d=d,C=C,V.diff=V.diff,
-		fixed.lambda=lambda,method="L-BFGS-B",lower=c(tol,-Inf),upper=c(Inf,Inf),hessian=TRUE)
+	else fit<-optim(c(mean(pic(d,multi2di(tree,random=FALSE))^2),mean(d)),likelihood,
+		d=d,C=C,V.diff=V.diff,fixed.lambda=lambda,method="L-BFGS-B",lower=c(tol,-Inf),
+		upper=c(Inf,Inf),hessian=TRUE)
 	## run t-test
 	se.dbar<-if(fixed) sqrt(1/fit$hessian[2,2]) else sqrt(1/fit$hessian[3,3])
 	t<-if(fixed) (fit$par[2]-h0)/se.dbar else (fit$par[3]-h0)/se.dbar
