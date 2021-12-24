@@ -1,6 +1,29 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021
 
+## function to get states at internal nodes from simmap style trees
+## written by Liam J. Revell 2013, 2014, 2015, 2021
+getStates<-function(tree,type=c("nodes","tips","both")){
+	type<-type[1]
+	if(inherits(tree,"multiPhylo")){
+		tree<-unclass(tree)
+		obj<-lapply(tree,getStates,type=type)
+		nn<-names(obj[[1]])
+		y<-sapply(obj,function(x,n) x[n],n=nn)
+	} else if(inherits(tree,"phylo")){ 
+		if(type%in%c("nodes","both")){
+			a<-setNames(sapply(tree$maps,function(x) names(x)[1]),tree$edge[,1])
+			a<-a[as.character(Ntip(tree)+1:tree$Nnode)]
+		}
+		if(type%in%c("tips","both")){
+			b<-setNames(sapply(tree$maps,function(x) names(x)[length(x)]),tree$edge[,2])
+			b<-setNames(b[as.character(1:Ntip(tree))],tree$tip.label)
+		}
+		y<-if(type=="both") c(a,b) else if(type=="nodes") a else b
+	} else stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
+	return(y)
+}
+
 ## di2multi & multi2di for "contMap" & "densityMap" object classes
 
 di2multi.contMap<-function(phy,...){
@@ -1270,8 +1293,8 @@ plot.describe.simmap<-function(x,...){
 }
 
 
-# function to summarize the results of stochastic mapping
-# written by Liam J. Revell 2013, 2014, 2015
+## function to summarize the results of stochastic mapping
+## written by Liam J. Revell 2013, 2014, 2015, 2021
 describe.simmap<-function(tree,...){
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-FALSE
@@ -1287,7 +1310,7 @@ describe.simmap<-function(tree,...){
 			check<-all(TT)
 			if(!check) cat("Note: Some trees are not equal.\nA \"reference\" tree will be computed if none was provided.\n\n")
 		} else check<-TRUE
-		YY<-getStates(tree)
+		YY<-getStates(tree,"both")
 		states<-sort(unique(as.vector(YY)))
 		if(is.null(ref.tree)&&check) ZZ<-t(apply(YY,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,levels=states,Nsim=length(tree)))
 		else {
@@ -1804,27 +1827,6 @@ getCladesofSize<-function(tree,clade.size=2){
 	trees<-lapply(nodes,extract.clade,phy=tree)
 	class(trees)<-"multiPhylo"
 	return(trees)
-}
-
-# function to get states at internal nodes from simmap style trees
-# written by Liam J. Revell 2013, 2014, 2015
-getStates<-function(tree,type=c("nodes","tips")){
-	type<-type[1]
-	if(inherits(tree,"multiPhylo")){
-		tree<-unclass(tree)
-		obj<-lapply(tree,getStates,type=type)
-		nn<-names(obj[[1]])
-		y<-sapply(obj,function(x,n) x[n],n=nn)
-	} else if(inherits(tree,"phylo")){ 
-		if(type=="nodes"){
-			y<-setNames(sapply(tree$maps,function(x) names(x)[1]),tree$edge[,1])
-			y<-y[as.character(Ntip(tree)+1:tree$Nnode)]
-		} else if(type=="tips"){
-			y<-setNames(sapply(tree$maps,function(x) names(x)[length(x)]),tree$edge[,2])
-			y<-setNames(y[as.character(1:Ntip(tree))],tree$tip.label)
-		}
-	} else stop("tree should be an object of class \"phylo\" or \"multiPhylo\".")
-	return(y)
 }
 
 # function counts transitions from a mapped history

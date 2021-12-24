@@ -2,7 +2,7 @@
 \alias{getStates}
 \title{Get the states at nodes or tips from a mapped tree}
 \usage{
-getStates(tree, type=c("nodes","tips"))
+getStates(tree, type=c("nodes","tips","both"))
 }
 \arguments{
 	\item{tree}{is a modified object of class \code{"phylo"} or \code{"multiPhylo"}.}
