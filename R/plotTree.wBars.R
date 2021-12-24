@@ -2,7 +2,7 @@
 ## written by Liam J. Revell 2016, 2021
 
 plotTree.boxplot<-function(tree,x,args.plotTree=list(),
-	args.boxplot=list()){
+	args.boxplot=list(),...){
 	tree<-untangle(tree,"read.tree")
 	cw<-reorder(tree)
 	if(!is.list(x)&&class(x)!="formula"){
@@ -37,8 +37,13 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	args.boxplot<-c(args.boxplot[ii],args.boxplot[-ii])
 	args.boxplot$plot<-FALSE
 	obj<-do.call(boxplot,args.boxplot)
+	N<-ncol(obj$stats)
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(0.5,N+0.5)
+	args.boxplot$xlim<-ylim
 	args.boxplot$plot<-TRUE
 	args.plotTree$tips<-setNames(1:Ntip(cw),obj$names)
+	args.plotTree$ylim<-ylim
 	do.call(plotTree,args.plotTree)
 	par(mar=args.boxplot$mar)
 	ii<-which(names(args.boxplot)%in%c("formula","x"))
@@ -54,7 +59,7 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 ## written by Liam J. Revell 2016, 2017, 2018, 2021
 
 plotTree.barplot<-function(tree,x,args.plotTree=list(),
-	args.barplot=list(), ...){
+	args.barplot=list(),...){
 	tree<-untangle(tree,"read.tree")
 	if(hasArg(add)) add<-list(...)$add
 	else add<-FALSE
@@ -79,10 +84,14 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 		args.barplot$mar<-c(5.1,0,2.1,1.1)
 	else args.barplot$mar[2]<-0.1
 	obj<-as.matrix(do.call(barplot,args.barplot))
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(min(obj)-mean(args.barplot$space),
+		max(obj)+mean(args.barplot$space))
 	if(dim(obj)[2]==1) obj<-t(obj)
 	args.plotTree$tips<-setNames(colMeans(obj),cw$tip.label)
 	args.barplot$plot<-TRUE
-	args.barplot$ylim<-range(args.plotTree$tips)
+	args.barplot$ylim<-ylim
+	args.plotTree$ylim<-ylim
 	args.plotTree$tree<-cw
 	if(is.null(args.plotTree$mar)) 
 		args.plotTree$mar<-c(5.1,1.1,2.1,0)
