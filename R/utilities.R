@@ -895,7 +895,7 @@ markChanges<-function(tree,colors=NULL,cex=1,lwd=2,plot=TRUE){
 ## function to label clades
 ## written by Liam J. Revell 2014, 2015
 cladelabels<-function(tree=NULL,text,node,offset=NULL,wing.length=NULL,cex=1,
-	orientation="vertical"){
+	orientation="vertical",move=c(0,0),exp.c=0.7){
 	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(is.null(tree)){
 		wing.length<-1
@@ -910,17 +910,17 @@ cladelabels<-function(tree=NULL,text,node,offset=NULL,wing.length=NULL,cex=1,
 	if(is.null(offset)) offset<-0.5
 	xx<-mapply(labelSubTree,node,text,
 		MoreArgs=list(tree=tree,pp=lastPP,offset=offset,wl=wing.length,cex=cex,
-		orientation=orientation))
+		orientation=orientation,move=move,exp.c=exp.c))
 }
 
 ## internal function used by cladelabels
 ## written by Liam J. Revell 2014, 2015
-labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation){
+labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation,move,exp.c){
 	if(is.null(wl)) wl<-1
 	tree<-reorder(tree)
 	tips<-getDescendants(tree,nn)
 	tips<-tips[tips<=Ntip(tree)]
-	ec<-0.7 ## expansion constant
+	ec<-exp.c ## expansion constant
 	sw<-pp$cex*max(strwidth(tree$tip.label[tips]))
 	sh<-pp$cex*max(strheight(tree$tip.label))
 	cw<-mean(strwidth(LETTERS)*cex)	
@@ -933,7 +933,7 @@ labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation){
 		c(y[1]-ec*sh,y[1]-ec*sh))
 	lines(c(h-wl*cw,h),
 		c(y[2]+ec*sh,y[2]+ec*sh))
-	text(h+cw,mean(y),
+	text(h+cw+move[1],mean(y)+move[2],
 		label,srt=if(orientation=="horizontal") 0 else 90,
 		adj=if(orientation=="horizontal") 0 else 0.5,cex=cex)
 }
