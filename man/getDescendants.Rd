@@ -12,7 +12,7 @@ getParent(tree, node)
 	\item{curr}{the set of previously stored node numbers - used in recursive function calls.}
 }
 \description{
-	\code{getDescendants} returns the set of node & tip numbers descended from \code{node}.
+	\code{getDescendants} returns the set of node & tip numbers descended from one \code{node}. If the more than one node is supplied, \code{getDescendants} will fetch the descendants of the first.
 	
 	\code{getParent} returns the \emph{single} parent node of a specified node number (or \code{NULL} if \code{node} is already the root).
 }
