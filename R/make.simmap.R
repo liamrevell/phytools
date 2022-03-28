@@ -245,8 +245,8 @@ smap<-function(tree,x,N,m,root,L,Q,pi,logL){
 		tree$edge[,2],sep=""),colnames(L)))
 	# now we want to simulate the node states & histories by pre-order traversal
 	NN<-matrix(NA,nrow(tree$edge),2) # our node values
-	NN[which(tree$edge[,1]==root),1]<-rstate(L[as.character(root),]*pi/
-		sum(L[as.character(root),]*pi)) # assign root
+	NN[which(tree$edge[,1]==root),1]<-rstate(L[as.character(root),]/
+		sum(L[as.character(root),])) # assign root
 	for(j in 1:nrow(tree$edge)){
 		# conditioned on the start value, assign end value of node (if internal)
 		p<-EXPM(Q*tree$edge.length[j])[NN[j,1],]*L[as.character(tree$edge[j,2]),]
