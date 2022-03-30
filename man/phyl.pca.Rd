@@ -3,6 +3,8 @@
 \alias{biplot.phyl.pca}
 \alias{scores}
 \alias{scores.phyl.pca}
+\alias{as.princomp}
+\alias{as.princomp.phyl.pca}
 \title{Phylogenetic principal components analysis}
 \usage{
 phyl.pca(tree, Y, method="BM", mode="cov", ...)
