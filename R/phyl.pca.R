@@ -1,7 +1,7 @@
 ## function to perform phylogenetic principal components analysis
 ## multiple morphological traits in Y
 ## also can use lambda transformation in which lambda is optimized by ML or REML (in progress)
-## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017, 2019, 2020 
+## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017, 2019, 2020, 2022 
 ## ref. Revell (2009; Evolution)
 
 phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
@@ -95,6 +95,7 @@ phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
 	obj$V<-temp$R
 	obj$a<-a
 	obj$mode<-mode
+	obj$call<-match.call()
 	## assign class attribute (for S3 methods)
 	class(obj)<-"phyl.pca"
 	# return obj
@@ -212,3 +213,27 @@ scores.phyl.pca<-function(object,...){
 	Scores
 }
 
+## S3 as.princomp method to convert to "princomp" object class
+
+as.princomp<-function(x,...) UseMethod("as.princomp")
+
+as.princomp.default<-function(x,...){
+	warning(paste(
+		"as.princomp does not know how to handle objects of class ",
+		class(x),"."))
+}
+
+as.princomp.phyl.pca<-function(x,...){
+	nn<-paste("Comp.",1:ncol(x$Evec),sep="")
+	obj<-list()
+	obj$sdev<-setNames(sqrt(diag(x$Eval)),nn)
+	obj$loadings<-x$L
+	colnames(obj$loadings)<-nn
+	obj$center<-setNames(x$a[1,],rownames(x$Evec))
+	obj$scale<-setNames(rep(1,length(obj$center)),names(obj$center))
+	obj$scores<-x$S
+	colnames(obj$scores)<-nn
+	obj$call<-x$call
+	class(obj)<-"princomp"
+	obj
+}
