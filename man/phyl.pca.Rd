@@ -9,13 +9,15 @@ phyl.pca(tree, Y, method="BM", mode="cov", ...)
 \method{biplot}{phyl.pca}(x, ...)
 scores(object, ...)
 \method{scores}{phyl.pca}(object, ...)
+as.princomp(x, ...)
+\method{as.princomp}{phyl.pca}(x, ...)
 }
 \arguments{
 	\item{tree}{phylogeny as an object of class \code{"phylo"}.}
 	\item{Y}{data matrix with traits in columns.}
 	\item{method}{method to obtain the correlation structure: can be \code{"BM"} or \code{"lambda"}.}
 	\item{mode}{is the mode for the PCA: can be \code{"cov"} or \code{"corr"}.}
-	\item{x}{object of class \code{"phyl.pca"} for \code{biplot} method.}
+	\item{x}{object of class \code{"phyl.pca"} for \code{biplot} and \code{as.princomp} methods.}
 	\item{object}{object of class \code{"phyl.pca"} for \code{scores} method.}
 	\item{...}{for S3 plotting method \code{biplot.phyl.pca}, other arguments to be passed to \code{\link{biplot}}.}
 }
