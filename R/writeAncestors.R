@@ -1,5 +1,5 @@
-# function writes a "phylo" object to a Newick string with ancestor state estimates
-# written by Liam J. Revell 2013, 2015
+## function writes a "phylo" object to a Newick string with ancestor state estimates
+## written by Liam J. Revell 2013, 2015, 2022
 
 writeAncestors<-function(tree,Anc=NULL,file="",digits=6,format=c("phylip","nexus"),...){
 	format=format[1]
@@ -21,9 +21,9 @@ writeAncestors<-function(tree,Anc=NULL,file="",digits=6,format=c("phylip","nexus
 		} else stop("must have argument 'Anc' or 'x'")
 	}
 	if(format=="phylip"){
-		if(class(tree)=="multiPhylo")
+		if(inherits(tree,"multiPhylo"))
 			XX<-mapply(writeAnc,tree,Anc,MoreArgs=list(digits=digits))
-		else if(class(tree)=="phylo")
+		else if(inherits(tree,"phylo"))
 			XX<-writeAnc(tree,Anc,digits)
 		else stop("tree should be an object of class 'phylo' or 'multiPhylo'")
 		write(XX,file)

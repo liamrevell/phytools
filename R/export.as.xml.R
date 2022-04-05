@@ -1,9 +1,9 @@
-# makes xml data and tree file for SIMMAP
-# written by Liam J. Revell 2012, 2015
+## makes xml data and tree file for SIMMAP
+## written by Liam J. Revell 2012, 2015, 2022
  
 export.as.xml<-function(file,trees,X){
 	if(is.vector(X)) X<-data.frame(X)
-	if(class(X)=="DNAbin") { 
+	if(inherits(X,"DNAbin")) { 
 		X<-as.character(X)
 		datatype="nucleotide"
 	} else datatype="standard"

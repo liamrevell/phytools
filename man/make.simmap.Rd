@@ -21,13 +21,11 @@ make.simmap(tree, x, model="SYM", nsim=1, ...)
 	For \code{Q} set to a matrix, \code{make.simmap} samples stochastic mappings conditioned on the fixed input matrix.
 }
 \details{
-	\code{make.simmap} uses code modified from \code{\link{ace}} (by Paradis et al.) to perform Felsenstein's pruning algorithm to compute the likelihood.
+	\code{make.simmap} uses code that has been adapted from \emph{ape}'s function \code{\link{ace}} (by Paradis et al.) to perform Felsenstein's pruning algorithm to compute the likelihood.
 
 	As of \emph{phytools} >= 0.2-33 \code{x} can be a vector of states or a matrix containing the prior probabilities of tip states in rows. In this case the column names of \code{x} should contain the states, and the row names should contain the tip names.
 
-	Note that there was a small (but potentially significant) bug in how node states were simulated by \code{make.simmap} in versions of \emph{phytools} <= 0.2-26. Between \emph{phytools} 0.2-26 and 0.2-36 there was also a bug for asymmetric models of character change (e.g., \code{model="ARD"}). Finally, between \emph{phytools} 0.2-33 and \emph{phytools} 0.2-47 there was an error in use of the conditional likelihoods for the root node, which caused the root node of the tree to be sampled incorrectly. These issues should be fixed in all later versions.
-
-	\code{Q="mcmc"} and \code{Q} set to a fixed value were introduced to \emph{phytools} >= 0.2-53.
+	Note that there was a small (but potentially significant) bug in how node states were simulated by \code{make.simmap} in versions of \emph{phytools} <= 0.2-26. Between \emph{phytools} 0.2-26 and 0.2-36 there was also a bug for asymmetric models of character change (e.g., \code{model="ARD"}). Finally, between \emph{phytools} 0.2-33 and \emph{phytools} 0.2-47 there was an error in use of the conditional likelihoods for the root node, which caused the root node of the tree to be sampled incorrectly. Giorgio Bianchini pointed out that in \emph{phytools} 1.0-1 (and probably prior recent versions) there was an error sampling the state at the root node of the tree based on the input prior (\code{pi}) supplied by a user -- except for \code{pi="equal"} (a flat prior, the default) or for a prior distribution in which one or another state was known to be the global root state (e.g., \code{pi=c(1,0)}, \code{pi=c(0,1)}, etc.). All of these issues should be fixed in the current and all later versions.
 
 	If \code{tree} is an object of class \code{"multiPhylo"} then \code{nsim} stochastic maps are generated for each input tree.
 }

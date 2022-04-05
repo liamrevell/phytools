@@ -1,5 +1,5 @@
 ## function depends on phytools (& dependencies) and maps (& dependencies)
-## written by Liam J. Revell 2013, 2017, 2019
+## written by Liam J. Revell 2013, 2017, 2019, 2022
 
 phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -36,7 +36,7 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 
 plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	type<-type[1]
-	if(class(x)=="phylo.to.map"){
+	if(inherits(x,"phylo.to.map")){
 		tree<-x$tree
 		map<-x$map
 		coords<-x$coords

@@ -1,8 +1,9 @@
-# function performs least-squares phylogeny inference by nni
-# written by Liam J. Revell 2011, 2013, 2015, 2019
+## function performs least-squares phylogeny inference by nni
+## written by Liam J. Revell 2011, 2013, 2015, 2019, 2022
+
 optim.phylo.ls<-function(D,stree=NULL,set.neg.to.zero=TRUE,fixed=FALSE,tol=1e-10,collapse=TRUE){
 	# change D to a matrix (if actually an object of class "dist")
-	if(class(D)=="dist") D<-as.matrix(D)
+	if(inherits(D,"dist")) D<-as.matrix(D)
 	# compute the number of species
 	n<-nrow(D)
 	if(is.null(stree))

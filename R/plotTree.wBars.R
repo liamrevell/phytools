@@ -1,16 +1,16 @@
 ## plotTree.boxplot
-## written by Liam J. Revell 2016, 2021
+## written by Liam J. Revell 2016, 2021, 2022
 
 plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	args.boxplot=list(),...){
 	tree<-untangle(tree,"read.tree")
 	cw<-reorder(tree)
-	if(!is.list(x)&&class(x)!="formula"){
+	if(!is.list(x)&&inherits(x,"formula",FALSE)){
 		obj<-setNames(
 			lapply(cw$tip.label,function(x,y) y[which(names(y)==x)],
 			y=x),cw$tip.label)
 	} else obj<-x
-	if(class(x)=="formula") 
+	if(inherits(x,"formula")) 
 		args.boxplot$formula<-obj else args.boxplot$x<-obj
 	args.boxplot$horizontal<-TRUE
 	args.boxplot$axes<-FALSE

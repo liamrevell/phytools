@@ -1,5 +1,5 @@
 ## function for multiple matrix regression with P-values computed by Mantel permutation of the dependent matrix
-## written by Liam J. Revell 2012, 2017
+## written by Liam J. Revell 2012, 2017, 2022
 
 multi.mantel<-function(Y,X,nperm=1000){
 	y<-unfoldLower(Y)
@@ -42,11 +42,11 @@ multi.mantel<-function(Y,X,nperm=1000){
 	object
 }
 
-# function unfolds the sub-diagonal of a "dist" object or symmetric matrix into a vector
-# written by Liam J. Revell 2012
+## function unfolds the sub-diagonal of a "dist" object or symmetric matrix into a vector
+## written by Liam J. Revell 2012, 2022
 
 unfoldLower<-function(X){
-	if(class(X)=="dist") X<-as.matrix(X)
+	if(inherits(X,"dist")) X<-as.matrix(X)
 	x<-vector()
 	for(i in 2:ncol(X)-1) x<-c(x,X[(i+1):nrow(X),i])
 	names(x)<-NULL

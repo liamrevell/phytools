@@ -1,6 +1,6 @@
-# function for Matrix Representation Parsimony supertree estimation in R
-# uses pratchet() or optim.parsimony() from the "phangorn" package
-# written by Liam J. Revell 2011, 2013, 2015
+## function for Matrix Representation Parsimony supertree estimation in R
+## uses pratchet() or optim.parsimony() from the "phangorn" package
+## written by Liam J. Revell 2011, 2013, 2015, 2022
 
 compute.mr<-function(trees,type=c("phyDat","matrix")){
 	type<-type[1]
@@ -48,7 +48,7 @@ mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
 	if(method=="pratchet"){
 		if(hasArg(start)){
 			start<-list(...)$start
-			if(class(start)=="phylo"){
+			if(inherits(start,"phylo")){
 				supertree<-pratchet(XX,all=TRUE,...)
 			} else {
 				if(start=="NJ") start<-NJ(dist.hamming(XX))
@@ -64,16 +64,16 @@ mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
 				supertree<-do.call(pratchet,args)
 			}
 		} else supertree<-pratchet(XX,all=TRUE,...)
-		if(class(supertree)=="phylo")
+		if(inherits(supertree,"phylo"))
 			message(paste("The MRP supertree, optimized via pratchet(),\nhas a parsimony score of ",
 				attr(supertree,"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
-		else if(class(supertree)=="multiPhylo")
+		else if(inherits(supertree,"multiPhylo"))
 			message(paste("pratchet() found ",length(supertree)," supertrees\nwith a parsimony score of ",
 				attr(supertree[[1]],"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
 	} else if(method=="optim.parsimony"){
 		if(hasArg(start)){
 			start<-list(...)$start
-			if(class(start)=="phylo"){
+			if(inherits(start,"phylo")){
 				supertree<-optim.parsimony(tree=start,data=XX,...)
 			} else {
 				if(start=="NJ") start<-NJ(dist.hamming(XX))
@@ -89,10 +89,10 @@ mrp.supertree<-function(trees,method=c("pratchet","optim.parsimony"),...){
 			start<-rtree(n=length(XX),tip.label=names(XX))
 			supertree<-optim.parsimony(tree=start,data=XX,...)
 		}
-		if(class(supertree)=="phylo")
+		if(inherits(supertree,"phylo"))
 			message(paste("The MRP supertree, optimized via optim.parsimony(),\nhas a parsimony score of ",
 				attr(supertree,"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
-		else if(class(supertree)=="multiPhylo")
+		else if(inherits(supertree,"multiPhylo"))
 			message(paste("optim.parsimony() found ",length(supertree)," supertrees\nwith a parsimony score of ",
 				attr(supertree[[1]],"pscore")," (minimum ",attr(XX,"nr"),")",sep=""))
 	}

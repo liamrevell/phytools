@@ -1,5 +1,5 @@
 ## code to place a fossil taxon into a tree using ML and continuous data
-## written by Liam J. Revell 2014, 2015, 2017
+## written by Liam J. Revell 2014, 2015, 2017, 2022
 
 locate.fossil<-function(tree,X,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -87,7 +87,7 @@ fossilML<-function(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,
 	}
 	if(!quiet) cat("Done.\n")
 	if(plot){
-		if(class(mltree)=="phylo"){
+		if(inherits(mltree,"phylo")){
 			plotTree(mltree,mar=c(2.1,0.1,3.1,0.1),ftype="i",fsize=0.8)
 			obj<-lapply(time.constraint,function(x,tree) lines(rep(x,2),
 				c(0,Ntip(tree)+1),col="red",lty="dashed"),tree=tree)

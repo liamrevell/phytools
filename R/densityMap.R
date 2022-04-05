@@ -1,5 +1,5 @@
 # function plots posterior density of mapped states from stochastic mapping
-# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2021
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2021, 2022
 
 densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legend=NULL,
 	outline=FALSE,type="phylogram",direction="rightwards",plot=TRUE,...){
@@ -82,10 +82,10 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 
 ## S3 plot method for objects of class "densityMap"
 ## also used internally by plot.contMap
-## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020, 2022
 
 plot.densityMap<-function(x,...){
-	if(class(x)=="densityMap"){
+	if(inherits(x,"densityMap")){
 		tree<-x$tree
 		cols<-x$cols
 	} else stop("x should be an object of class \"densityMap\"")
