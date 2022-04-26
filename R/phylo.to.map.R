@@ -32,7 +32,7 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 }
 
 ## S3 method to plot object of class "phylo.to.map"
-## written by Liam J. Revell 2013, 2014, 2016, 2019, 2020
+## written by Liam J. Revell 2013, 2014, 2016, 2019, 2020, 2022
 
 plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	type<-type[1]
@@ -91,6 +91,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	else pts<-TRUE
 	if(hasArg(col.edge)) col.edge<-list(...)$col.edge
 	else col.edge<-rep(par()$fg,nrow(x$tree$edge))
+	if(hasArg(map.bg)) map.bg<-list(...)$map.bg
+	else map.bg<-"gray95"
 	if(type=="phylogram"){
 		if(x$direction=="downwards"&&direction=="rightwards"){
 			cat("\"phylo.to.map\" direction is \"downwards\" but plot direction has been given as \"rightwards\".\n")
@@ -122,7 +124,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	plot.new()
 	par(mar=mar)
 	plot.window(xlim=xlim,ylim=ylim,asp=asp)
-	map(map,add=TRUE,fill=TRUE,col="gray95",mar=rep(0,4))
+	map(map,add=TRUE,fill=TRUE,col=map.bg,mar=rep(0,4))
 	if(type=="phylogram"){
 		## preliminaries
 		cw<-reorder(tree,"cladewise")
@@ -132,7 +134,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			# plot a white rectangle
 			dx<-abs(diff(xlim))
 			rect(xlim[1]-1.04*dx,ylim[2]-split[1]*(ylim[2]-ylim[1]),
-				xlim[2]+1.04*dx,ylim[2],col="white",border="white")
+				xlim[2]+1.04*dx,ylim[2],col=par()$bg,border=par()$bg)
 			# rescale tree so it fits in the upper half of the plot
 			# with enough space for labels
 			pdin<-par()$din[2]
@@ -184,14 +186,14 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,
 				label.offset=fsize*strwidth(" ")/(par()$usr[2]-
 				par()$usr[1])*(par()$usr[4]-par()$usr[3]),
-				x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
-				direction=direction,tip.color="black",Ntip=Ntip(cw),
+				x.lim=xlim,y.lim=ylim,
+				direction=direction,tip.color=par()$fg,Ntip=Ntip(cw),
 				Nnode=cw$Nnode,edge=cw$edge,xx=x,yy=sapply(1:(Ntip(cw)+
 				cw$Nnode),function(x,y,z) y[match(x,z)],y=Y,z=cw$edge))
 		} else {
 			dy<-abs(diff(ylim))
 			rect(xlim[1],ylim[1],xlim[1]+split[1]*(xlim[2]-
-				xlim[1]),ylim[2],col="white",border="white")
+				xlim[1]),ylim[2],col=par()$bg,border=par()$bg)
 			sh<-fsize*strwidth(paste(" ",cw$tip.label,sep=""))+
 				0.2*fsize*strwidth("W")
 			cw$edge.length<-cw$edge.length/max(nodeHeights(cw))*
@@ -228,8 +230,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
 				font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
-				x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
-				direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+				x.lim=xlim,y.lim=ylim,
+				direction=direction,tip.color=par()$fg,Ntip=Ntip(cw),Nnode=cw$Nnode,
 				edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 				function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 		}
