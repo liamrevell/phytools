@@ -413,10 +413,17 @@ density.multiSimmap<-function(x,...){
 plot.changesMap<-function(x,...){
 	if(hasArg(bty)) bty<-list(...)$bty
 	else bty<-"l"
+	if(hasArg(transition)){ 
+		transition<-list(...)$transition
+		if(length(transition)>1){
+			cat("transition should be of length 1; truncating to first element.\n")
+			transition<-transition[1]
+		}
+	} else transition<-NULL
 	p<-x$p
 	hpd<-x$hpd
 	bw<-x$bw
-	if(length(x$trans)==2){
+	if(length(x$trans)==2&&is.null(transition)){
 		plot(p[[1]]$mids,p[[1]]$density,xlim=c(min(x$mins)-1,
 			max(x$maxs)+1),ylim=c(0,1.2*max(c(p[[1]]$density,
 			p[[2]]$density))),
@@ -458,13 +465,13 @@ plot.changesMap<-function(x,...){
 			paste("HPD(",x$trans[2],")",sep=""),
 			pos=3)
 	} else {
-		k<-length(x$states)
+		k<-if(is.null(transition)) length(x$states) else 1
 		par(mfrow=c(k,k))
-		ii<-1
+		ii<-if(is.null(transition)) 1 else which(x$trans==transition)
 		max.d<-max(unlist(lapply(p,function(x) x$density)))
 		for(i in 1:k){
 			for(j in 1:k){
-				if(i==j) plot.new()
+				if(i==j&&is.null(transition)) plot.new()
 				else {
 					plot(p[[ii]]$mids,p[[ii]]$density,xlim=c(min(x$mins)-1,
 						max(x$maxs)+1),ylim=c(0,1.2*max.d),
