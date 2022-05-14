@@ -1,5 +1,5 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
-## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021
+## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -466,7 +466,7 @@ plot.changesMap<-function(x,...){
 			pos=3)
 	} else {
 		k<-if(is.null(transition)) length(x$states) else 1
-		par(mfrow=c(k,k))
+		if(k>1) par(mfrow=c(k,k))
 		ii<-if(is.null(transition)) 1 else which(x$trans==transition)
 		max.d<-max(unlist(lapply(p,function(x) x$density)))
 		for(i in 1:k){
@@ -478,7 +478,6 @@ plot.changesMap<-function(x,...){
 						type="n",xlab="number of changes",
 						ylab="relative frequency",main=x$trans[ii],font.main=1,
 						bty=bty)
-					##title(main=)
 					y2<-rep(p[[ii]]$density,each=2)
 					y2<-y2[-length(y2)]
 					x2<-rep(p[[ii]]$mids-bw/2,each=2)[-1]
