@@ -453,17 +453,23 @@ plot.changesMap<-function(x,...){
 			max(p[[1]]$density)+dd-0.005))
 		lines(rep(hpd[[1]][2],2),c(max(p[[1]]$density)+dd,
 			max(p[[1]]$density)+dd-0.005))
+		CHARS<-strsplit(x$trans[1],"->")[[1]]
+		CHARS[1]<-paste("HPD(",CHARS[1],collapse="")
+		CHARS[2]<-paste(CHARS[2],")",collapse="")
+		T1<-bquote(.(CHARS[1])%->%.(CHARS[2]))
 		text(mean(hpd[[1]]),max(p[[1]]$density)+dd,
-			paste("HPD(",x$trans[1],")",sep=""),
-			pos=3)
+			T1,pos=3)
 		lines(hpd[[2]],rep(max(p[[2]]$density)+dd,2))
 		lines(rep(hpd[[2]][1],2),c(max(p[[2]]$density)+dd,
 			max(p[[2]]$density)+dd-0.005))
 		lines(rep(hpd[[2]][2],2),c(max(p[[2]]$density)+dd,
 			max(p[[2]]$density)+dd-0.005))
+		CHARS<-strsplit(x$trans[2],"->")[[1]]
+		CHARS[1]<-paste("HPD(",CHARS[1],collapse="")
+		CHARS[2]<-paste(CHARS[2],")",collapse="")
+		T2<-bquote(.(CHARS[1])%->%.(CHARS[2]))
 		text(mean(hpd[[2]]),max(p[[2]]$density)+dd,
-			paste("HPD(",x$trans[2],")",sep=""),
-			pos=3)
+			T2,pos=3)
 	} else {
 		k<-if(is.null(transition)) length(x$states) else 1
 		if(k>1) par(mfrow=c(k,k))
@@ -473,10 +479,12 @@ plot.changesMap<-function(x,...){
 			for(j in 1:k){
 				if(i==j&&is.null(transition)) plot.new()
 				else {
+					CHARS<-strsplit(x$trans[ii],"->")[[1]]
+					MAIN<-bquote(.(CHARS[1])%->%.(CHARS[2]))
 					plot(p[[ii]]$mids,p[[ii]]$density,xlim=c(min(x$mins)-1,
 						max(x$maxs)+1),ylim=c(0,1.2*max.d),
 						type="n",xlab="number of changes",
-						ylab="relative frequency",main=x$trans[ii],font.main=1,
+						ylab="relative frequency",main=MAIN,font.main=1,
 						bty=bty)
 					y2<-rep(p[[ii]]$density,each=2)
 					y2<-y2[-length(y2)]
