@@ -444,9 +444,6 @@ plot.changesMap<-function(x,...){
 		y3<-c(0,y2,0)
 		polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
 		lines(p[[2]]$mids-bw/2,p[[2]]$density,type="s")
-		add.simmap.legend(colors=setNames(c(make.transparent("red",0.3),
-			make.transparent("blue",0.3)),x$trans[1:2]),
-			prompt=FALSE,x=min(x$mins),y=0.95*par()$usr[4])
 		dd<-0.01*diff(par()$usr[3:4])
 		lines(hpd[[1]],rep(max(p[[1]]$density)+dd,2))
 		lines(rep(hpd[[1]][1],2),c(max(p[[1]]$density)+dd,
@@ -470,6 +467,12 @@ plot.changesMap<-function(x,...){
 		T2<-bquote(.(CHARS[1])%->%.(CHARS[2]))
 		text(mean(hpd[[2]]),max(p[[2]]$density)+dd,
 			T2,pos=3)
+		CHARS<-strsplit(x$trans[1],"->")[[1]]
+		T1<-bquote(.(CHARS[1])%->%.(CHARS[2]))
+		CHARS<-strsplit(x$trans[2],"->")[[1]]
+		T2<-bquote(.(CHARS[1])%->%.(CHARS[2]))
+		legend("topleft",legend=c(T1,T2),pch=22,pt.cex=2.2,bty="n",
+			pt.bg=make.transparent(c("red","blue"),0.3))
 	} else {
 		k<-if(is.null(transition)) length(x$states) else 1
 		if(k>1) par(mfrow=c(k,k))
