@@ -413,6 +413,22 @@ density.multiSimmap<-function(x,...){
 plot.changesMap<-function(x,...){
 	if(hasArg(bty)) bty<-list(...)$bty
 	else bty<-"l"
+	if(hasArg(alpha)) alpha<-list(...)$alpha
+	else alpha<-0.3
+	if(hasArg(colors)){ 
+		colors<-list(...)$colors
+		nn<-names(colors)
+		colors<-setNames(make.transparent(colors,alpha),nn)
+	} else { 
+		colors<-if(length(x$trans)==2) 
+			setNames(make.transparent(c("blue","red"),alpha),x$trans)
+		else
+			setNames(rep(make.transparent("blue",alpha),length(x$trans)),
+				x$trans)
+	}
+	if(length(colors)<length(x$trans))
+		colors<-rep(colors,ceiling(length(x$trans)/length(colors)))[1:length(x$trans)]
+	if(is.null(names(colors))) colors<-setNames(colors,x$trans)
 	if(hasArg(transition)){ 
 		transition<-list(...)$transition
 		if(length(transition)>1){
@@ -435,14 +451,14 @@ plot.changesMap<-function(x,...){
 		x2<-rep(p[[1]]$mids-bw/2,each=2)[-1]
 		x3<-c(min(x2),x2,max(x2))
 		y3<-c(0,y2,0)
-		polygon(x3,y3,col=make.transparent("red",0.3),border=FALSE)
+		polygon(x3,y3,col=colors[x$trans[1]],border=FALSE)
 		lines(p[[1]]$mids-bw/2,p[[1]]$density,type="s")
 		y2<-rep(p[[2]]$density,each=2)
 		y2<-y2[-length(y2)]
 		x2<-rep(p[[2]]$mids-bw/2,each=2)[-1]
 		x3<-c(min(x2),x2,max(x2))
 		y3<-c(0,y2,0)
-		polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+		polygon(x3,y3,col=colors[x$trans[2]],border=FALSE)
 		lines(p[[2]]$mids-bw/2,p[[2]]$density,type="s")
 		dd<-0.01*diff(par()$usr[3:4])
 		lines(hpd[[1]],rep(max(p[[1]]$density)+dd,2))
@@ -472,7 +488,7 @@ plot.changesMap<-function(x,...){
 		CHARS<-strsplit(x$trans[2],"->")[[1]]
 		T2<-bquote(.(CHARS[1])%->%.(CHARS[2]))
 		legend("topleft",legend=c(T1,T2),pch=22,pt.cex=2.2,bty="n",
-			pt.bg=make.transparent(c("red","blue"),0.3))
+			pt.bg=colors[x$trans])
 	} else {
 		k<-if(is.null(transition)) length(x$states) else 1
 		if(k>1) par(mfrow=c(k,k))
@@ -494,7 +510,7 @@ plot.changesMap<-function(x,...){
 					x2<-rep(p[[ii]]$mids-bw/2,each=2)[-1]
 					x3<-c(min(x2),x2,max(x2))
 					y3<-c(0,y2,0)
-					polygon(x3,y3,col=make.transparent("blue",0.3),border=FALSE)
+					polygon(x3,y3,col=colors[x$trans[ii]],border=FALSE)
 					lines(p[[ii]]$mids-bw/2,p[[ii]]$density,type="s")
 					dd<-0.03*diff(par()$usr[3:4])
 					lines(hpd[[ii]],rep(max(p[[ii]]$density)+dd,2))
