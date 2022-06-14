@@ -79,6 +79,8 @@ bm<-function(X,T,...){
 th<-function(X,T,...){
 	if(hasArg(bty)) bty<-list(...)$bty
 	else bty<-"o"
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-1
 	minX<-min(sapply(X,min))
 	maxX<-max(sapply(X,max))
 	if(hasArg(thresholds)) thresholds<-list(...)$thresholds
