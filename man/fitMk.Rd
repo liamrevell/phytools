@@ -12,6 +12,7 @@
 \alias{plot.density.mcmcMk}
 \alias{fitHRM}
 \alias{plot.fitHRM}
+\alias{fitMk.parallel}
 \title{Fits Mk model}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
@@ -27,6 +28,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \method{plot}{density.mcmcMk}(x, ...)
 fitHRM(tree, x, model="ARD", ncat=2, ...)
 \method{plot}{fitHRM}(x, ...)
+fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
@@ -37,6 +39,7 @@ fitHRM(tree, x, model="ARD", ncat=2, ...)
 	\item{k}{For \code{graph.polyMk}, the number of monomorphic states for the discrete trait.}
 	\item{ngen}{number of generations of MCMC for \code{mcmcMk}.}
 	\item{ncat}{number of rate categories (per level of the discrete trait) in the hidden-rate model.}
+	\item{ncores}{number of cores for \code{fitMk.parallel}.}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of Fitzjohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, \code{max.poly} can be set for the \code{ordered=TRUE} model. \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
 \description{
