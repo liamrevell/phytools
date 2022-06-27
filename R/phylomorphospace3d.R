@@ -86,7 +86,7 @@ phylomorphospace3d<-function(tree,X,A=NULL,label=TRUE,control=list(),method=c("d
 
 ## check for a package (modified from 'geiger')
 ## primarily used for rgl
-## written by Liam J. Revell 2014
+## written by Liam J. Revell 2014, 2022
 .check.pkg<-function(pkg){
 	if(pkg%in%rownames(installed.packages())){
 		require(pkg,character.only=TRUE)
