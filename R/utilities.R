@@ -1,5 +1,5 @@
 ## some utility functions
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022
 
 ## function to get states at internal nodes from simmap style trees
 ## written by Liam J. Revell 2013, 2014, 2015, 2021
@@ -407,7 +407,7 @@ force.ultrametric<-function(tree,method=c("nnls","extend"),...){
 }
 
 ## function to create curved clade labels for a fan tree
-## written by Liam J. Revell 2017
+## written by Liam J. Revell 2017, 2022
 
 arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	lab.offset=1.06,cex=1,orientation="curved",...){
@@ -432,6 +432,8 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	else clockwise<-TRUE
 	if(hasArg(n)) n<-list(...)$n
 	else n<-0.05
+	if(hasArg(stretch)) stretch<-list(...)$stretch
+	else stretch<-1.0
 	if(mark.node) points(obj$xx[node],obj$yy[node],pch=21,
 		bg="red")
 	if(is.null(tree)){
@@ -453,7 +455,7 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	if(orientation=="curved")
 		arctext(text,radius=lab.offset*h,
 			middle=mean(range(deg*pi/180)),cex=cex,
-			clockwise=clockwise)
+			clockwise=clockwise,stretch=stretch)
 	else if(orientation=="horizontal"){
 		x0<-lab.offset*cos(median(deg)*pi/180)*h
 		y0<-lab.offset*sin(median(deg)*pi/180)*h

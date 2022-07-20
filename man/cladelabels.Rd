@@ -6,7 +6,7 @@
 cladelabels(tree=NULL, text, node, offset=NULL, wing.length=NULL, cex=1,
    orientation="vertical")
 arc.cladelabels(tree=NULL, text, node=NULL, ln.offset=1.02,
-   lab.offset=1.06, cex=1, orientation="curved",...)
+   lab.offset=1.06, cex=1, orientation="curved", stretch=1, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. If not supplied, the function will obtain the last plotted phylogeny from the environmental variable \code{last_plot.phylo}.}
@@ -18,6 +18,7 @@ arc.cladelabels(tree=NULL, text, node=NULL, ln.offset=1.02,
 	\item{orientation}{orientation of the text. Can be \code{orientation = "vertical"} (the default) or \code{"horizontal"}.}
 	\item{ln.offset}{line offset (as a function of total tree height) for \code{arc.cladelabels}.}
 	\item{lab.offset}{label offset for \code{arc.cladelabels}.}
+	\item{stretch}{argument for \code{arc.cladelabels} to be passed to \code{arctext}.}
 	\item{...}{optional arguments for \code{arc.cladelabels}.}
 }
 \description{
