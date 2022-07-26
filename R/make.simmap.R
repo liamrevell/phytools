@@ -83,7 +83,8 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 				list(tree=tree,x=x,N=N,m=m,root=root),SIMPLIFY=FALSE) else
 				list(smap(tree=tree,x=x,N=N,m=m,root=root,L=L[[1]],Q=Q[[1]],pi=pi[[1]],
 				logL=logL[[1]]))
-		} else if(is.matrix(Q)){
+		} else if(is(Q,"Qmatrix")||is.matrix(Q)){
+			if(is(Q,"Qmatrix")) Q<-unclass(Q)
 			XX<-getPars(bt,xx,model,Q=Q,tree,tol,m,pi=pi,args=list(...))
 			L<-XX$L
 			logL<-XX$loglik
