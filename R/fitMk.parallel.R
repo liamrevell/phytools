@@ -1,3 +1,5 @@
+## parallelized version of fitMk using optimParallel
+
 fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 	## compute states
 	ss<-sort(unique(x))
@@ -38,7 +40,6 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 		parallel=list(cl=cl,forward=FALSE,
 		loginfo=TRUE)
 	)
-	print(fit.parallel)
 	## stop cluster
 	## setDefaultCluster(cl=NULL)
 	stopCluster(cl)
