@@ -410,7 +410,7 @@ force.ultrametric<-function(tree,method=c("nnls","extend"),...){
 ## written by Liam J. Revell 2017, 2022
 
 arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
-	lab.offset=1.06,cex=1,orientation="curved",...){
+	lab.offset=1.06,cex=1,orientation="curved",stretch=1,...){
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(obj$type!="fan") stop("method works only for type=\"fan\"")
 	h<-max(sqrt(obj$xx^2+obj$yy^2))
@@ -432,8 +432,6 @@ arc.cladelabels<-function(tree=NULL,text,node=NULL,ln.offset=1.02,
 	else clockwise<-TRUE
 	if(hasArg(n)) n<-list(...)$n
 	else n<-0.05
-	if(hasArg(stretch)) stretch<-list(...)$stretch
-	else stretch<-1.0
 	if(mark.node) points(obj$xx[node],obj$yy[node],pch=21,
 		bg="red")
 	if(is.null(tree)){
