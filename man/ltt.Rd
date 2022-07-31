@@ -1,10 +1,14 @@
 \name{ltt}
 \alias{ltt}
+\alias{ltt.phylo}
+\alias{ltt.multiPhylo}
 \alias{gtt}
 \alias{mccr}
 \title{Creates lineage-through-time plot (including extinct lineages)}
 \usage{
-ltt(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
+ltt(tree, ...)
+\method{ltt}{phylo}(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
+\method{ltt}{multiPhylo}(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
 gtt(tree, n=100, ...)
 mccr(obj, rho=1, nsim=100, ...)
 }

@@ -3,18 +3,37 @@
 ## that is ultrametric.  Optionally, the function can remove extinct
 ## species from the phylogeny. If the input tree is an object of class 
 ## "multiPhylo" then the function will simultaneously plot all ltts.
-## written by Liam J. Revell 2010-2015
+## written by Liam J. Revell 2010-2015, 2022
 
-ltt<-function(tree,plot=TRUE,drop.extinct=FALSE,log.lineages=TRUE,gamma=TRUE,...){
-	# set tolerance
-	tol<-1e-6
-	# check "phylo" object
-	if(!inherits(tree,"phylo")&&!inherits(tree,"multiPhylo"))
-		stop("tree must be object of class \"phylo\" or \"multiPhylo\".")
-	if(inherits(tree,"multiPhylo")){
+## ltt method (added 2022)
+
+ltt<-function(tree,...) UseMethod("ltt")
+
+ltt.default<-function(tree,...){
+	warning(paste(
+		"ltt does not know how to handle objects of class ",
+		class(tree),"."))
+}
+
+ltt.multiPhylo<-function(tree,plot=TRUE,drop.extinct=FALSE,log.lineages=TRUE,
+	gamma=TRUE,...){
+	if(!inherits(tree,"multiPhylo")){
+		stop("tree must be object of class \"multiPhylo\".")
+	} else {
 		obj<-lapply(tree,ltt,plot=FALSE,drop.extinct=drop.extinct,
 			log.lineages=log.lineages,gamma=gamma)
 		class(obj)<-"multiLtt"
+		return(obj)
+	}
+}
+
+ltt.phylo<-function(tree,plot=TRUE,drop.extinct=FALSE,log.lineages=TRUE,
+	gamma=TRUE,...){
+	# set tolerance
+	tol<-1e-6
+	# check "phylo" object
+	if(!inherits(tree,"phylo")){
+		stop("tree must be object of class \"phylo\".")
 	} else {
 		# reorder the tree
 		tree<-reorder.phylo(tree,order="cladewise")
