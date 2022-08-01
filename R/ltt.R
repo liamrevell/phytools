@@ -67,6 +67,81 @@ ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 	obj
 }
 
+plot.ltt.multiSimmap<-function(x,...){
+	hh<-max(sapply(x,function(x) max(nodeHeights(x$tree))))
+	if(hasArg(alpha)) alpha<-list(...)$alpha else alpha<-0.05
+	if(hasArg(res)) res<-list(...)$res else res<-1000
+	if(hasArg(log.lineages)) log.lineages<-list(...)$log.lineages
+	else log.lineages<-FALSE
+	levs<-sort(unique(unlist(lapply(x,function(x) 
+		c(getStates(x$tree,"tips"),getStates(x$tree,"nodes"))))))
+	if(hasArg(colors)) colors<-list(...)$colors	
+	else colors<-setNames(c(palette()[1:length(levs)+1],par()$fg),
+		c(levs,"total"))
+	if(hasArg(legend)) legend<-list(...)$legend else 
+		legend<-"topleft"
+	plot.leg<-TRUE
+	if(is.logical(legend)) if(legend) plot.leg<-TRUE else 
+		plot.leg<-FALSE
+	if(hasArg(lwd)) lwd<-list(...)$lwd else lwd<-5
+	if(hasArg(show.total)) show.total<-list(...)$show.total else
+		show.total<-TRUE
+	nn<-max(sapply(x,function(x,tot) if(!tot) 
+		max(x$ltt[,-which(colnames(x$ltt)=="total")]) else
+		Ntip(x$tree),tot=show.total))
+	xlim<-if(hasArg(xlim)) list(...)$xlim else c(0,hh)
+	ylim<-if(hasArg(ylim)) list(...)$ylim else 
+		if(log.lineages) log(c(1,1.05*nn)) else 
+		c(0,1.05*nn)
+	xlab<-if(hasArg(xlab)) list(...)$xlab else "time"
+	ylab<-if(hasArg(ylab)) list(...)$ylab else if(log.lineages) 
+		"log(lineages)" else "lineages"
+	TIMES<-seq(0,hh,length.out=res)
+	LINEAGES<-matrix(0,length(TIMES),length(levs)+1)
+	colnames(LINEAGES)<-c(levs,"total")
+	for(i in 1:length(TIMES)){
+		for(j in 1:length(x)){
+			ii<-which(x[[j]]$times<=TIMES[i])
+			ADD<-if(length(ii)==0) rep(0,length(levs)) else 
+				x[[j]]$ltt[max(ii),]/length(x)
+			LINEAGES[i,]<-LINEAGES[i,]+ADD
+		}
+	}
+	args<-list(...)
+	args$res<-NULL
+	args$alpha<-NULL
+	args$log.lineages<-NULL
+	args$colors<-NULL
+	args$legend<-NULL
+	args$show.total<-NULL
+	args$xlim<-xlim
+	args$ylim<-ylim
+	args$xlab<-xlab
+	args$ylab<-ylab
+	args$x<-NA
+	do.call(plot,args)
+	if(!show.total) dd<-1 else dd<-0
+	for(i in 1:length(x)){
+		for(j in 1:(ncol(LINEAGES)-dd)){
+			ltt<-if(log.lineages) log(x[[i]]$ltt[,j]) else x[[i]]$ltt[,j]
+			lines(x[[i]]$times,ltt,type="s",lwd=1,
+				col=make.transparent(colors[colnames(x[[i]]$ltt)[j]],
+				alpha))
+		}
+	}
+	for(i in 1:(ncol(LINEAGES)-dd)){
+		ltt<-if(log.lineages) log(LINEAGES[,i]) else LINEAGES[,i]
+		lines(TIMES,ltt,lwd=lwd,col=colors[i])
+	}
+	if(plot.leg){
+		nm<-c(levs,"total")
+		if(!show.total) nm<-setdiff(nm,"total")
+		legend(legend,legend=nm,pch=22,pt.bg=colors[nm],pt.cex=1.2,
+			cex=0.8,bty="n")
+	}
+	invisible(list(times=TIMES,ltt=LINEAGES))
+}
+
 plot.ltt.simmap<-function(x,...){
 	if(hasArg(log.lineages)) log.lineages<-list(...)$log.lineages
 	else log.lineages<-FALSE

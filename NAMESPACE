@@ -227,6 +227,7 @@ S3method(plot, ltt.simmap)
 S3method(print, ltt.simmap)
 S3method(ltt, multiSimmap)
 S3method(print, multiLtt.simmap)
+S3method(plot, ltt.multiSimmap)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)
