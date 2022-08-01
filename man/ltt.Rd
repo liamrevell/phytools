@@ -8,7 +8,7 @@
 \usage{
 ltt(tree, ...)
 \method{ltt}{phylo}(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
-\method{ltt}{multiPhylo}(tree, plot=TRUE, drop.extinct=FALSE, log.lineages=TRUE, gamma=TRUE, ...)
+\method{ltt}{multiPhylo}(tree, drop.extinct=FALSE, gamma=TRUE, ...)
 gtt(tree, n=100, ...)
 mccr(obj, rho=1, nsim=100, ...)
 }

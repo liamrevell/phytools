@@ -15,11 +15,11 @@ ltt.default<-function(tree,...){
 		class(tree),"."))
 }
 
-ltt.multiSimmap<-function(tree,log.lineages=TRUE,gamma=TRUE,...){
+ltt.multiSimmap<-function(tree,gamma=TRUE,...){
 	if(!inherits(tree,"multiSimmap")){
 		stop("tree must be object of class \"multiSimmap\".")
 	} else {
-		obj<-lapply(tree,ltt,plot=FALSE,gamma=gamma)
+		obj<-lapply(tree,ltt,plot=FALSE,log.lineages=FALSE,gamma=gamma)
 		class(obj)<-"multiLtt.simmap"
 		return(obj)
 	}
@@ -110,12 +110,12 @@ print.ltt.simmap<-function(x,digits=4,...){
 			round(x$p,digits),".\n\n",sep=""))
 }
 
-ltt.multiPhylo<-function(tree,drop.extinct=FALSE,log.lineages=TRUE,gamma=TRUE,...){
+ltt.multiPhylo<-function(tree,drop.extinct=FALSE,gamma=TRUE,...){
 	if(!inherits(tree,"multiPhylo")){
 		stop("tree must be object of class \"multiPhylo\".")
 	} else {
 		obj<-lapply(tree,ltt,plot=FALSE,drop.extinct=drop.extinct,
-			log.lineages=log.lineages,gamma=gamma)
+			log.lineages=FALSE,gamma=gamma)
 		class(obj)<-"multiLtt"
 		return(obj)
 	}
