@@ -68,23 +68,40 @@ ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 }
 
 plot.ltt.simmap<-function(x,...){
-	mar<-par()$mar
 	if(hasArg(log.lineages)) log.lineages<-list(...)$log.lineages
 	else log.lineages<-FALSE
 	if(hasArg(colors)) colors<-list(...)$colors	
 	else colors<-setNames(c(palette()[2:ncol(x$ltt)],par()$fg),
 		colnames(x$ltt))
-	ylim<-if(log.lineages) log(c(1,1.1*max(x$ltt))) else 
+	if(hasArg(legend)) legend<-list(...)$legend else 
+		legend<-"topleft"
+	plot.leg<-TRUE
+	if(is.logical(legend)) if(legend) plot.leg<-TRUE else 
+		plot.leg<-FALSE
+	xlim<-if(hasArg(xlim)) list(...)$xlim else range(x$times)
+	ylim<-if(hasArg(ylim)) list(...)$ylim else 
+		if(log.lineages) log(c(1,1.05*max(x$ltt))) else 
 		c(0,1.1*max(x$ltt))
-	ylab<-if(log.lineages) "log(lineages)" else "lineages"
+	xlab<-if(hasArg(xlab)) list(...)$xlab else "time"
+	ylab<-if(hasArg(ylab)) list(...)$ylab else if(log.lineages) 
+		"log(lineages)" else "lineages"
+	args<-list(...)
+	args$log.lineages<-NULL
+	args$colors<-NULL
+	args$legend<-NULL
+	args$xlim<-xlim
+	args$ylim<-ylim
+	args$xlab<-xlab
+	args$ylab<-ylab
+	args$x<-NA
+	do.call(plot,args)
 	tips<-if(log.lineages) seq(0,log(Ntip(x$tree)),
 		length.out=Ntip(x$tree)) else 1:Ntip(x$tree)
-	plot(NA,xlim=range(x$times),ylim=ylim,xlab="time",
-		ylab=ylab,bty="n",las=1,mar=mar)
+	mar<-par()$mar
 	plot(x$tree,make.transparent(colors[1:(ncol(x$ltt)-1)],0.5),
 		tips=tips,xlim=range(x$times),ylim=ylim,
 		ftype="off",add=TRUE,lwd=1,mar=mar)
-	plot.window(xlim=range(x$times),ylim=ylim)
+	plot.window(xlim=xlim,ylim=ylim)
 	for(i in 1:ncol(x$ltt)){
 		LTT<-if(log.lineages) log(x$ltt) else x$ltt
 		lines(x$times,LTT[,i],type="s",lwd=5,
@@ -92,7 +109,7 @@ plot.ltt.simmap<-function(x,...){
 				par()$bg)
 		lines(x$times,LTT[,i],type="s",lwd=3,col=colors[i])
 	}
-	legend("topleft",colnames(x$ltt),
+	if(plot.leg) legend(legend,colnames(x$ltt),
 		pch=22,pt.bg=colors,pt.cex=1.2,cex=0.8,
 		bty="n")
 }
