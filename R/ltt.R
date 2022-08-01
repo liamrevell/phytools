@@ -15,6 +15,10 @@ ltt.default<-function(tree,...){
 		class(tree),"."))
 }
 
+print.multiLtt.simmap<-function(x,...){
+	cat(paste(length(x),"objects of class \"ltt.simmap\" in a list\n"))
+}
+
 ltt.multiSimmap<-function(tree,gamma=TRUE,...){
 	if(!inherits(tree,"multiSimmap")){
 		stop("tree must be object of class \"multiSimmap\".")
