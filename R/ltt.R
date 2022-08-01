@@ -78,6 +78,13 @@ plot.ltt.simmap<-function(x,...){
 	plot.leg<-TRUE
 	if(is.logical(legend)) if(legend) plot.leg<-TRUE else 
 		plot.leg<-FALSE
+	if(hasArg(show.tree)) show.tree<-list(...)$show.tree else
+		show.tree<-FALSE
+	if(hasArg(lwd)) lwd<-list(...)$lwd else lwd<-3
+	if(hasArg(outline)) outline<-list(...)$outline else 
+		outline<-show.tree
+	if(hasArg(show.total)) show.total<-list(...)$show.total else
+		show.total<-TRUE
 	xlim<-if(hasArg(xlim)) list(...)$xlim else range(x$times)
 	ylim<-if(hasArg(ylim)) list(...)$ylim else 
 		if(log.lineages) log(c(1,1.05*max(x$ltt))) else 
@@ -89,6 +96,8 @@ plot.ltt.simmap<-function(x,...){
 	args$log.lineages<-NULL
 	args$colors<-NULL
 	args$legend<-NULL
+	args$show.tree<-NULL
+	args$show.total<-NULL
 	args$xlim<-xlim
 	args$ylim<-ylim
 	args$xlab<-xlab
@@ -97,21 +106,28 @@ plot.ltt.simmap<-function(x,...){
 	do.call(plot,args)
 	tips<-if(log.lineages) seq(0,log(Ntip(x$tree)),
 		length.out=Ntip(x$tree)) else 1:Ntip(x$tree)
-	mar<-par()$mar
-	plot(x$tree,make.transparent(colors[1:(ncol(x$ltt)-1)],0.5),
-		tips=tips,xlim=range(x$times),ylim=ylim,
-		ftype="off",add=TRUE,lwd=1,mar=mar)
-	plot.window(xlim=xlim,ylim=ylim)
-	for(i in 1:ncol(x$ltt)){
+	if(show.tree){
+		mar<-par()$mar
+		plot(x$tree,
+			make.transparent(colors[1:(ncol(x$ltt)-1)],0.5),
+			tips=tips,xlim=xlim,ylim=ylim,
+			ftype="off",add=TRUE,lwd=1,mar=mar)
+		plot.window(xlim=xlim,ylim=ylim)
+	}
+	if(!show.total) dd<-1 else dd<-0
+	for(i in 1:(ncol(x$ltt)-dd)){
 		LTT<-if(log.lineages) log(x$ltt) else x$ltt
-		lines(x$times,LTT[,i],type="s",lwd=5,
+		if(outline) lines(x$times,LTT[,i],type="s",lwd=lwd+2,
 				col=if(par()$bg=="transparent") "white" else 
 				par()$bg)
-		lines(x$times,LTT[,i],type="s",lwd=3,col=colors[i])
+		lines(x$times,LTT[,i],type="s",lwd=lwd,col=colors[i])
 	}
-	if(plot.leg) legend(legend,colnames(x$ltt),
-		pch=22,pt.bg=colors,pt.cex=1.2,cex=0.8,
-		bty="n")
+	if(plot.leg){
+		nn<-colnames(x$ltt)
+		if(!show.total) nn<-setdiff(nn,"total")
+		legend(legend,nn,pch=22,pt.bg=colors[nn],pt.cex=1.2,
+		cex=0.8,bty="n")
+	}
 }
 
 print.ltt.simmap<-function(x,digits=4,...){
