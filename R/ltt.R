@@ -15,7 +15,7 @@ ltt.default<-function(tree,...){
 		class(tree),"."))
 }
 
-print.multiLtt.simmap<-function(x,...){
+print.ltt.multiSimmap<-function(x,...){
 	cat(paste(length(x),"objects of class \"ltt.simmap\" in a list\n"))
 }
 
