@@ -24,7 +24,7 @@ ltt.multiSimmap<-function(tree,gamma=TRUE,...){
 		stop("tree must be object of class \"multiSimmap\".")
 	} else {
 		obj<-lapply(tree,ltt,plot=FALSE,log.lineages=FALSE,gamma=gamma)
-		class(obj)<-"multiLtt.simmap"
+		class(obj)<-"ltt.multiSimmap"
 		return(obj)
 	}
 }
