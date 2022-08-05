@@ -1,9 +1,11 @@
 \name{roundPhylogram}
 \alias{roundPhylogram}
-\title{Plot a round phylogram}
+\alias{sigmoidPhylogram}
+\title{Plot a round or sigmoidal phylogram or cladogram}
 \usage{
 roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL, 
    direction="rightwards", type="phylogram", xlim=NULL, ylim=NULL, ...)
+sigmoidPhylogram(tree, ...)
 }
 \arguments{
  	\item{tree}{an object of class "phylo" or "multiPhylo" containing one or multiple phylogenies.}
@@ -16,10 +18,10 @@ roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL,
 	\item{type}{plot type. Can be \code{"phylogram"} or \code{"cladogram"}. If \code{type="cladogram"} then the branch lengths are not necessary (and, indeed, are not used).}
 	\item{xlim}{x-limits for the plot.}
 	\item{ylim}{y-limits for the plot.}
-	\item{...}{optional arguments.}
+	\item{...}{optional arguments. In the case of \code{roundPhylogram}, these are mostly as in \code{\link{plotTree}} and \code{\link{plotSimmap}}.}
 }
 \description{
-	Function plots one or multiple round phylograms.
+	Function plots one or multiple round phylograms or a sigmoidal phylogram or cladogram.
 }
 \details{
 	The underscore character \code{"_"} is automatically swapped for a space in tip labels, as in \code{\link{plotSimmap}}.
@@ -38,6 +40,9 @@ roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL,
 data(mammal.tree)
 roundPhylogram(compute.brlen(mammal.tree),
     fsize=0.8,ftype="i")
+data(anoletree)
+sigmoidPhylogram(anoletree,fsize=0.6,
+	ftype="i")
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default
 }
 \keyword{phylogenetics}
