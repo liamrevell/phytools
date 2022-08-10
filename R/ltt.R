@@ -122,16 +122,19 @@ plot.ltt.multiSimmap<-function(x,...){
 	do.call(plot,args)
 	if(!show.total) dd<-1 else dd<-0
 	for(i in 1:length(x)){
+		print(1:(ncol(LINEAGES)-dd))
 		for(j in 1:(ncol(LINEAGES)-dd)){
+			nm<-colnames(x[[i]]$ltt)[j]
 			ltt<-if(log.lineages) log(x[[i]]$ltt[,j]) else x[[i]]$ltt[,j]
 			lines(x[[i]]$times,ltt,type="s",lwd=1,
-				col=make.transparent(colors[colnames(x[[i]]$ltt)[j]],
+				col=make.transparent(colors[nm],
 				alpha))
 		}
 	}
 	for(i in 1:(ncol(LINEAGES)-dd)){
+		nm<-colnames(LINEAGES)[i]
 		ltt<-if(log.lineages) log(LINEAGES[,i]) else LINEAGES[,i]
-		lines(TIMES,ltt,lwd=lwd,col=colors[i])
+		lines(TIMES,ltt,lwd=lwd,col=colors[nm])
 	}
 	if(plot.leg){
 		nm<-c(levs,"total")
