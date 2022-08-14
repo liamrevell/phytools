@@ -1,6 +1,11 @@
 ## fitpolyMk 
 ## fits several polymorphic discrete character evolution models
-## written by Liam J. Revell 2019, 2020
+## written by Liam J. Revell 2019, 2020, 2022
+
+as.Qmatrix.fitpolyMk<-function(x,...){
+	class(x)<-"fitMk"
+	as.Qmatrix(x,...)
+}
 
 Combinations<-function(n,r,v=1:n){
 	if(n!=length(v)) stop("n and v should have the same length")
