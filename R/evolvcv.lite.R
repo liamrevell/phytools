@@ -264,10 +264,9 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		UPPER<-c(rep(upper[1:2],2*p),upper[3])
 		while((inherits(res2,"try-error")||res2$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2*p)*log(c(sv1,sv2)),runif(n=1,-1,1))
-			for(i in 1:p) Lower<-c(lower[i],
 			res2<-try(optim(init,lik2,C=mC,
-				D=D,y=y,E=E,method="L-BFGS-B",lower=tol+LOWER,
-				upper=UPPER-tol))
+				D=D,y=y,E=E,method="L-BFGS-B",
+				lower=tol+LOWER,upper=UPPER-tol))
 			if(inherits(res2,"try-error")){
 				res2<-list()
 				res2$convergence<-99
