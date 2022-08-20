@@ -68,6 +68,8 @@ ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 }
 
 plot.ltt.multiSimmap<-function(x,...){
+	if(hasArg(add)) add<-list(...)$add
+	else add<-FALSE
 	hh<-max(sapply(x,function(x) max(nodeHeights(x$tree))))
 	if(hasArg(alpha)) alpha<-list(...)$alpha else alpha<-0.05
 	if(hasArg(res)) res<-list(...)$res else res<-1000
@@ -114,12 +116,13 @@ plot.ltt.multiSimmap<-function(x,...){
 	args$colors<-NULL
 	args$legend<-NULL
 	args$show.total<-NULL
+	args$add<-NULL
 	args$xlim<-xlim
 	args$ylim<-ylim
 	args$xlab<-xlab
 	args$ylab<-ylab
 	args$x<-NA
-	do.call(plot,args)
+	if(!add) do.call(plot,args)
 	if(!show.total) dd<-1 else dd<-0
 	for(i in 1:length(x)){
 		for(j in 1:(ncol(LINEAGES)-dd)){
@@ -145,6 +148,7 @@ plot.ltt.multiSimmap<-function(x,...){
 }
 
 plot.ltt.simmap<-function(x,...){
+	if(hasArg(add)) add<-list(...)$add else add<-FALSE
 	if(hasArg(log.lineages)) log.lineages<-list(...)$log.lineages
 	else log.lineages<-FALSE
 	if(hasArg(colors)) colors<-list(...)$colors	
@@ -175,12 +179,13 @@ plot.ltt.simmap<-function(x,...){
 	args$legend<-NULL
 	args$show.tree<-NULL
 	args$show.total<-NULL
+	args$add<-NULL
 	args$xlim<-xlim
 	args$ylim<-ylim
 	args$xlab<-xlab
 	args$ylab<-ylab
 	args$x<-NA
-	do.call(plot,args)
+	if(!add) do.call(plot,args)
 	tips<-if(log.lineages) seq(0,log(Ntip(x$tree)),
 		length.out=Ntip(x$tree)) else 1:Ntip(x$tree)
 	if(show.tree){
