@@ -192,14 +192,18 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		mC<-multiC(tree)
 		C<-Reduce("+",mC)
 	} else C<-vcv.phylo(tree)
-	sv1<-mean(pic(X[,1],tree)^2)
-	sv2<-mean(pic(X[,2],tree)^2)
+	sv1<-mean(pic(X[,1],multi2di(as.phylo(tree)))^2)
+	sv2<-mean(pic(X[,2],multi2di(as.phylo(tree)))^2)
 	sr<-mean(pic(X[,1],tree)*pic(X[,2],tree))/sqrt(sv1*sv2)
-	if(is.null(lower)) lower<-c(log(0.01*c(sv1,sv2)),-1)
-	if(is.null(upper)) upper<-c(log(100*c(sv1,sv2)),1)
-
+	if(is.null(lower)) lower<-c(log(0.1*c(sv1,sv2)),-1)
+	if(is.null(upper)) upper<-c(log(10*c(sv1,sv2)),1)
+	
 	object<-list()
 	class(object)<-"evolvcv.lite"
+	
+	loglik_model1<-if(hasArg(err_vcv)) 
+		evol.vcv(as.phylo(tree),X,err_vcv=err_vcv)$logL1 else 
+		evol.vcv(as.phylo(tree),X)$logL1
 
 	# now optimize models
 	msg<-function(text){
@@ -212,12 +216,14 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res1$convergence<-99
 		class(res1)<-"try-error"
 		iter<-0
-		best<--evol.vcv(as.phylo(tree),X)$logL1+tol
+		best<--loglik_model1+tol
+		LOWER<-lower
+		UPPER<-upper
 		while((inherits(res1,"try-error")||res1$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2)*log(c(sv1,sv2)),runif(n=1,-1,1))
 			res1<-try(optim(init,lik1,C=C,D=D,y=y,E=E,
-				method="L-BFGS-B",lower=lower+tol,
-				upper=upper-tol))
+				method="L-BFGS-B",lower=LOWER+tol,
+				upper=UPPER-tol))
 			if(inherits(res1,"try-error")){
 				res1<-list()
 				res1$convergence<-99
@@ -233,6 +239,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 			m1<-list(description="common rates, common correlation",
 				R=matrix(NA,p,p),logLik=NA,k=5,AIC=NA)
 		} else {
+			if(any(res1$par<(LOWER+2*tol))||any(res1$par>(UPPER-2*tol)))
+				res1$convergence<-77
 			res1$par[1:2]<-exp(res1$par[1:2])
 			m1<-list(description="common rates, common correlation",
 				R=matrix(c(res1$par[1],res1$par[3]*sqrt(res1$par[1]*res1$par[2]),
@@ -244,7 +252,7 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		}
 		object$model1=m1
 		msg(paste("Best log(L) from model 1: ",round(m1$logLik,4),".\n",sep=""))
-	}
+	}  else m1<-NULL
 	makeError<-function(description,names,p,k){
 		list(description=description,
 			R=setNames(replicate(p,matrix(NA,2,2),simplify=FALSE),names),
@@ -259,9 +267,10 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res2$convergence<-99
 		class(res2)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
-		LOWER<-c(rep(lower[1:2],2*p),lower[3])
-		UPPER<-c(rep(upper[1:2],2*p),upper[3])
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			-m1$logLik
+		LOWER<-c(rep(lower[1:2],p),lower[3])
+		UPPER<-c(rep(upper[1:2],p),upper[3])
 		while((inherits(res2,"try-error")||res2$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2*p)*log(c(sv1,sv2)),runif(n=1,-1,1))
 			res2<-try(optim(init,lik2,C=mC,
@@ -284,6 +293,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				2*ncol(tree$mapped.edge)+1)
 		} else {
+			if(any(res2$par<(LOWER+2*tol))||any(res2$par>(UPPER-2*tol)))
+				res2$convergence<-77
 			R<-list()
 			res2$par[1:(2*p)]<-exp(res2$par[1:(2*p)])
 			for(i in 1:p) R[[i]]<-matrix(c(res2$par[2*(i-1)+1],
@@ -306,7 +317,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res2b$convergence<-99
 		class(res2b)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			(-m1$logLik)
 		LOWER<-c(rep(lower[1],p),lower[2],lower[3])
 		UPPER<-c(rep(upper[1],p),upper[2],upper[3])
 		while((inherits(res2b,"try-error")||res2b$convergence!=0)&&iter<try.iter){
@@ -331,6 +343,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				2*ncol(tree$mapped.edge)+2)
 		} else {
+			if(any(res2b$par<(LOWER+2*tol))||any(res2b$par>(UPPER-2*tol)))
+				res2b$convergence<-77
 			R<-list()
 			res2b$par[1:(p+1)]<-exp(res2b$par[1:(p+1)])
 			for(i in 1:p) R[[i]]<-matrix(c(res2b$par[i],
@@ -353,7 +367,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res2c$convergence<-99
 		class(res2c)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			(-m1$logLik)
 		LOWER<-c(lower[1],rep(lower[2],p),lower[3])
 		UPPER<-c(upper[1],rep(upper[2],p),upper[3])
 		while((inherits(res2c,"try-error")||res2c$convergence!=0)&&iter<try.iter){
@@ -378,6 +393,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				2*ncol(tree$mapped.edge)+2)
 		} else {
+			if(any(res2c$par<(LOWER+2*tol))||any(res2c$par>(UPPER-2*tol)))
+				res2c$convergence<-77
 			R<-list()
 			res2c$par[1:(p+1)]<-exp(res2c$par[1:(p+1)])
 			for(i in 1:p) R[[i]]<-matrix(c(res2c$par[1],
@@ -400,7 +417,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res3$convergence<-99
 		class(res3)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			(-m1$logLik)
 		LOWER<-c(lower[1],lower[2],rep(lower[3],p))
 		UPPER<-c(upper[1],upper[2],rep(upper[3],p))
 		while((inherits(res3,"try-error")||res3$convergence!=0)&&iter<try.iter){
@@ -425,6 +443,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				ncol(tree$mapped.edge)+2)
 		} else {
+			if(any(res3$par<(LOWER+2*tol))||any(res3$par>(UPPER-2*tol)))
+				res3$convergence<-77
 			R<-list()
 			res3$par[1:2]<-exp(res3$par[1:2])
 			for(i in 1:p) R[[i]]<-matrix(c(res3$par[1],
@@ -446,7 +466,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res3b$convergence<-99
 		class(res3b)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			(-m1$logLik)
 		LOWER<-c(rep(lower[1],p),lower[2],rep(lower[3],p))
 		UPPER<-c(rep(upper[1],p),upper[2],rep(upper[3],p))
 		while((inherits(res3b,"try-error")||res3b$convergence!=0)&&iter<try.iter){
@@ -471,6 +492,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				2*ncol(tree$mapped.edge)+1)
 		} else {
+			if(any(res3b$par<(LOWER+2*tol))||any(res3b$par>(UPPER-2*tol)))
+				res3b$convergence<-77
 			R<-list()
 			res3b$par[1:(p+1)]<-exp(res3b$par[1:(p+1)])
 			for(i in 1:p) R[[i]]<-matrix(c(res3b$par[i],
@@ -493,7 +516,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res3c$convergence<-99
 		class(res3c)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			(-m1$logLik)
 		LOWER<-c(lower[1],rep(lower[2],p),rep(lower[3],p))
 		UPPER<-c(upper[1],rep(upper[2],p),rep(upper[3],p))
 		while((inherits(res3c,"try-error")||res3c$convergence!=0)&&iter<try.iter){
@@ -518,6 +542,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				2*ncol(tree$mapped.edge)+1)
 		} else {
+			if(any(res3c$par<(LOWER+2*tol))||any(res3c$par>(UPPER-2*tol)))
+				res3c$convergence<-77
 			R<-list()
 			res3c$par[1:(p+1)]<-exp(res3c$par[1:(p+1)])
 			for(i in 1:p) R[[i]]<-matrix(c(res3c$par[1],
@@ -540,9 +566,10 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 		res4$convergence<-99
 		class(res4)<-"try-error"
 		iter<-0
-		best<-(-m1$logLik)
-		LOWER<-c(rep(lower[1:2],2*p),rep(lower[3],p))
-		UPPER<-c(rep(upper[1:2],2*p),rep(upper[3],p))
+		best<-if(is.null(m1)) -loglik_model1+tol else 
+			(-m1$logLik)
+		LOWER<-c(rep(lower[1:2],p),rep(lower[3],p))
+		UPPER<-c(rep(upper[1:2],p),rep(upper[3],p))
 		while((inherits(res4,"try-error")||res4$convergence!=0)&&iter<try.iter){
 			init<-c(rnorm(n=2*p)*log(rep(c(sv1,sv2),p)),runif(n=p,-1,1))
 			res4<-try(optim(init,lik4,C=mC,
@@ -565,6 +592,8 @@ evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 				ncol(tree$mapped.edge),
 				3*ncol(tree$mapped.edge)+2)
 		} else {
+			if(any(res4$par<(LOWER+2*tol))||any(res4$par>(UPPER-2*tol)))
+				res4$convergence<-77
 			R<-list()
 			res4$par[1:(2*p)]<-exp(res4$par[1:(2*p)])
 			for(i in 1:p) R[[i]]<-matrix(c(res4$par[2*(i-1)+1],
@@ -601,6 +630,7 @@ print.evolvcv.lite<-function(x,...){
 		cat(paste("fitted",paste(m1$R[upper.tri(m1$R,diag=TRUE)],collapse="\t"),m1$k,
 			m1$logLik,m1$AIC,"\n",sep="\t"))
 		if(m1$convergence==0) cat("\n(R thinks it has found the ML solution for model 1.)\n\n")
+		else if(m1$convergence==77) cat("\n(Model 1 optimization may be at bounds.)\n\n")
 		else cat("\n(Model 1 optimization may not have converged.)\n\n")
 		ii<-which(names(x)=="model1")
 		x<-x[-ii]
@@ -624,6 +654,8 @@ print.evolvcv.lite<-function(x,...){
 			}
 			if(m$convergence==0) 
 				cat(paste("\n(R thinks it has found the ML solution for model ",model,".)\n\n",sep=""))
+			else if(m$convergence==77)
+				cat(paste("\n(Model ",model," optimization may be at bounds.)\n\n",sep=""))
 			else cat(paste("\n(Model ",model," optimization may not have converged.)\n\n",sep=""))
 		}
 	}
