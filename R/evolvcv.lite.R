@@ -1,6 +1,19 @@
 ## function is simplified version of evol.vcv
 ## written by Liam J. Revell 2011, 2012, 2013, 2017, 2019, 2020, 2021, 2022
 
+anova.evolvcv.lite<-function(object,...){
+	models<-paste("model",sapply(strsplit(names(object),"model"),
+		function(x) x[2]))
+	logL<-sapply(object,function(x) x$logLik)
+	df<-sapply(object,function(x) x$k)
+	AIC<-sapply(object,function(x) x$AIC)
+	value<-data.frame(logL=logL,df=df,AIC=AIC,weight=unclass(aic.w(AIC)))
+	rownames(value)<-models
+	colnames(value)<-c("log(L)","d.f.","AIC","weight")
+	print(value)
+	invisible(value)
+}
+
 evolvcv.lite<-function(tree,X,maxit=2000,tol=1e-10,...){
 	## check 'phylo' object
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
