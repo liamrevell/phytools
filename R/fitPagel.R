@@ -3,20 +3,24 @@
 ## written by Liam J. Revell 2014, 2015, 2016, 2020, 2022
 
 anova.fitPagel<-function(object,...){
+	fits<-list(...)
 	nm<-c(
 		"independent",
 		deparse(substitute(object)),
+		if(length(fits)>0) 
 		sapply(substitute(list(...))[-1],deparse)
 	)
-	fits<-list(...)
 	logL<-c(object$independent.logL,
 		object$dependent.logL,
+		if(length(fits)>0)
 		sapply(fits,function(x) x$dependent.logL))
 	df<-c(attr(object$independent.logL,"df"),
 		attr(object$dependent.logL,"df"),
+		if(length(fits)>0) 
 		sapply(fits,function(x) attr(x$dependent.logL,"df")))
 	AICvals<-c(object$independent.AIC,
 		object$dependent.AIC,
+		if(length(fits)>0) 
 		sapply(fits,function(x) x$dependent.AIC))
 	ww<-aic.w(AICvals)
 	result<-data.frame(logL,df,AICvals,unclass(ww))
