@@ -1,6 +1,30 @@
 ## function fits Pagel '94 model of correlated evolution of two binary characters
 ## uses fitMk, ape::ace, or geiger::fitDiscrete internally
-## written by Liam J. Revell 2014, 2015, 2016, 2020
+## written by Liam J. Revell 2014, 2015, 2016, 2020, 2022
+
+anova.fitPagel<-function(object,...){
+	nm<-c(
+		"independent",
+		deparse(substitute(object)),
+		sapply(substitute(list(...))[-1],deparse)
+	)
+	fits<-list(...)
+	logL<-c(object$independent.logL,
+		object$dependent.logL,
+		sapply(fits,function(x) x$dependent.logL))
+	df<-c(attr(object$independent.logL,"df"),
+		attr(object$dependent.logL,"df"),
+		sapply(fits,function(x) attr(x$dependent.logL,"df")))
+	AICvals<-c(object$independent.AIC,
+		object$dependent.AIC,
+		sapply(fits,function(x) x$dependent.AIC))
+	ww<-aic.w(AICvals)
+	result<-data.frame(logL,df,AICvals,unclass(ww))
+	rownames(result)<-nm
+	colnames(result)<-c("log(L)","d.f.","AIC","weight")
+	print(result)
+	invisible(result)
+}
 
 fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
