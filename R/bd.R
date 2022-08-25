@@ -1,6 +1,25 @@
 ## likelihood functions for birth-death & Yule model with incomplete sampling
-## written by Liam J. Revell 2017, 2018, 2019, 2020, 2021
+## written by Liam J. Revell 2017, 2018, 2019, 2020, 2021, 2022
 ## based on likelihood functions in Stadler (2012)
+
+anova.fit.bd<-function(object,...){
+	fits<-list(...)
+	nm<-c(
+		deparse(substitute(object)),
+		if(length(fits)>0) 
+			sapply(substitute(list(...))[-1],deparse)
+	)
+	fits<-if(length(fits)==0) list(object) else c(list(object),fits)
+	logL<-sapply(fits,logLik)
+	df<-sapply(fits,function(x) attr(logLik(x),"df"))
+	AIC<-sapply(fits,AIC)
+	weight<-unclass(aic.w(AIC))
+	result<-data.frame(logL,df,AIC,weight)
+	rownames(result)<-nm
+	colnames(result)<-c("log(L)","d.f.","AIC","weight")
+	print(result)
+	invisible(result)
+}
 
 lik.bd<-function(theta,t,rho=1,N=NULL){
     lam<-theta[1]

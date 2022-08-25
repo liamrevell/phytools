@@ -55,7 +55,7 @@ print(bd.fit)
 yule.fit<-fit.yule(salamanders,rho=sampling.f)
 print(yule.fit)
 ## compare b-d and yule models
-AIC(yule.fit,bd.fit)
+anova(yule.fit,bd.fit)
 ## create a likelihood surface for b-d model
 ngrid<-100
 b<-seq(0.01,0.06,length.out=ngrid)
