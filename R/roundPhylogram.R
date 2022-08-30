@@ -68,6 +68,7 @@ sigmoidPhylogram<-function(tree,...){
 	dev.hold()
 	par_fg<-par()$fg
 	par(fg="transparent")
+	args$add<-TRUE
 	do.call(plotTree,args)
 	par(fg=par_fg)
 	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
