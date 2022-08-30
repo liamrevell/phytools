@@ -22,6 +22,8 @@ sigmoidPhylogram<-function(tree,...){
 	m1<-if(hasArg(m1)) list(...)$m1 else 0.01
 	m2<-if(hasArg(m2)) list(...)$m2 else 0.5
 	v<-if(hasArg(v)) list(...)$v else 1
+	direction<-if(hasArg(direction)) list(...)$direction else "rightwards"
+	show.hidden<-if(hasArg(show.hidden)) list(...)$show.hidden else FALSE
 	if(inherits(tree,"simmap")){
 		if(hasArg(colors)) colors<-list(...)$colors
 		else {
@@ -61,19 +63,39 @@ sigmoidPhylogram<-function(tree,...){
 	args$m2<-NULL
 	args$v<-NULL
 	args$tree<-tree
-	args$color<-"transparent"
+	args$color<-if(show.hidden) make.transparent("red",0.25) else
+		"transparent"
 	dev.hold()
+	par_fg<-par()$fg
+	par(fg="transparent")
+	do.call(plotTree,args)
+	par(fg=par_fg)
+	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	par_usr<-par()$usr
+	if(direction=="downwards"){
+		args$xlim<-pp$x.lim
+		args$ylim<-pp$y.lim[2:1]-pp$y.lim[1]
+		args$direction<-"upwards"
+		args$add<-TRUE
+	} else if(direction=="leftwards"){
+		args$xlim<-pp$x.lim[2:1]-pp$x.lim[1]
+		args$ylim<-pp$y.lim
+		args$direction<-"rightwards"
+		args$add<-TRUE
+	}
 	do.call(plotTree,args)
 	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	xx<-if(direction%in%c("rightwards","leftwards")) pp$xx else pp$yy
+	yy<-if(direction%in%c("rightwards","leftwards")) pp$yy else pp$xx
 	## Yt<-A+(K-A)/((C+exp(-B*(t-M)))^(1/v))
 	sigmoid<-function(x,.A=A,.K=K,.C=C,.B=B,.M=M,.v=v)
 		return(.A+(.K-.A)/((.C+exp(-.B*(x-.M)))^(1/.v)))
 	for(i in 1:nrow(tree$edge)){
-		A<-pp$yy[tree$edge[i,1]]
-		K<-pp$yy[tree$edge[i,2]]
+		A<-yy[tree$edge[i,1]]
+		K<-yy[tree$edge[i,2]]
 		if(i==1) dy<-abs(A-K)
 		B<-b*Ntip(tree)/h
-		t<-seq(pp$xx[tree$edge[i,1]],pp$xx[tree$edge[i,2]],
+		t<-seq(xx[tree$edge[i,1]],xx[tree$edge[i,2]],
 			length.out=res)
 		t<-sort(c(t,t[1]+cumsum(tree$maps[[i]])))
 		dd<-diff(range(t))
@@ -86,8 +108,12 @@ sigmoidPhylogram<-function(tree,...){
 		for(j in 1:length(t)) 
 			COLS[j]<-colors[names(bb[which(t[j]<=bb)])[1]]
 		nn<-length(t)
-		segments(t[1:(nn-1)],Yt[1:(nn-1)],x1=t[2:nn],y1=Yt[2:nn],
-			col=COLS,lwd=lwd)
+		if(direction%in%c("rightwards","leftwards"))
+			segments(t[1:(nn-1)],Yt[1:(nn-1)],x1=t[2:nn],y1=Yt[2:nn],
+				col=COLS,lwd=lwd)
+		else if(direction%in%c("upwards","downwards"))
+			segments(Yt[1:(nn-1)],t[1:(nn-1)],x1=Yt[2:nn],y1=t[2:nn],
+				col=COLS,lwd=lwd)
 	}
 	nulo<-dev.flush()
 }
