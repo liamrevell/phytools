@@ -1,6 +1,6 @@
 ## this function fits two or more evolutionary rates for a continuous trait on the tree
 ## based on O'Meara et al. (2006)
-## written by Liam J. Revell 2011/2012, 2019
+## written by Liam J. Revell 2011/2012, 2019, 2022
 
 brownie.lite<-function(tree,x,maxit=2000,test="chisq",nsim=100,se=NULL,...){
 	if(hasArg(quiet)) quiet<-list(...)$quiet
@@ -12,8 +12,10 @@ brownie.lite<-function(tree,x,maxit=2000,test="chisq",nsim=100,se=NULL,...){
 		tree<-paintSubTree(tree,Ntip(tree)+1,"1")
 	x<-matchDatatoTree(tree,x,"x")
 	x<-x[tree$tip.label]
-	if(!is.null(se)) se<-matchDatatoTree(tree,se,"se")
-	else {
+	if(!is.null(se)){ 
+		se<-matchDatatoTree(tree,se,"se")
+		se<-se[tree$tip.label]
+	} else {
 		se<-rep(0,length(x))
 		names(se)<-names(x)
 	}
