@@ -233,6 +233,7 @@ S3method(as.Qmatrix, fitpolyMk)
 S3method(anova, evolvcv.lite)
 S3method(anova, fitPagel)
 S3method(anova, fit.bd)
+S3method(anova, fitMk)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)
