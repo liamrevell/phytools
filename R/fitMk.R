@@ -447,8 +447,8 @@ plot.Qmatrix<-function(x,...){
 			QQ<-Q
 			diag(QQ)<-0
 			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
-				MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
-			}
+				MAX(log(QQ),na.rm=TRUE),length.out=1)),signif),pos=4,cex=0.7)
+		}
 	}
 	object<-data.frame(states=rownames(Q),x=v.x,y=v.y)
 	invisible(object)
