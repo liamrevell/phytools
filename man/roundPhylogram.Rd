@@ -42,7 +42,7 @@ roundPhylogram(compute.brlen(mammal.tree),
     fsize=0.8,ftype="i")
 data(anoletree)
 sigmoidPhylogram(anoletree,fsize=0.6,
-	ftype="i")
+	ftype="i",direction="upwards")
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default
 }
 \keyword{phylogenetics}

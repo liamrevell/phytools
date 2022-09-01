@@ -68,21 +68,19 @@ sigmoidPhylogram<-function(tree,...){
 	dev.hold()
 	par_fg<-par()$fg
 	par(fg="transparent")
-	args$add<-TRUE
 	do.call(plotTree,args)
 	par(fg=par_fg)
 	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	par_usr<-par()$usr
+	args$add<-TRUE
 	if(direction=="downwards"){
 		args$xlim<-pp$x.lim
 		args$ylim<-pp$y.lim[2:1]-pp$y.lim[1]
 		args$direction<-"upwards"
-		args$add<-TRUE
 	} else if(direction=="leftwards"){
 		args$xlim<-pp$x.lim[2:1]-pp$x.lim[1]
 		args$ylim<-pp$y.lim
 		args$direction<-"rightwards"
-		args$add<-TRUE
 	}
 	do.call(plotTree,args)
 	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
