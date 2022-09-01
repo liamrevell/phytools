@@ -527,7 +527,7 @@ labelnodes<-function(text,node=NULL,interactive=TRUE,
 
 ## convert object of class "birthdeath" into birth & death rates
 bd<-function(x){
-	if(class(x)!="birthdeath") stop("x should be an object of class 'birthdeath'")
+	if(!inherits(x,"birthdeath")) stop("x should be an object of class 'birthdeath'")
 	b<-x$para[2]/(1-x$para[1])
 	d<-b-x$para[2]
 	setNames(c(b,d),c("b","d"))
