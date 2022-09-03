@@ -191,7 +191,8 @@ plot.multirateBM<-function(x,digits=2,...){
 	nticks<-10
 	ticks<-exp(seq(min(log(x$sig2)),max(log(x$sig2)),
 		length.out=nticks))
-	object<-list(tree=tree,cols=cols,ticks=ticks)
+	object<-list(tree=tree,cols=cols,ticks=ticks,
+		sig2=est.sig2)
 	class(object)<-"multirateBM_plot"
 	if(plot) plot(object,digits=digits,...)
 	invisible(object)
