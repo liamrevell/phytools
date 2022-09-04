@@ -1,5 +1,5 @@
 ## function
-## by Liam J. Revell 2021
+## by Liam J. Revell 2021, 2022
 
 VCV<-function(tree){
 	H<-nodeHeights(tree)
@@ -65,8 +65,15 @@ log_relik<-function(lnsig2,tree,x,trace=0){
 multirateBM<-function(tree,x,method=c("ML","REML"),
 	optim=c("L-BFGS-B","Nelder-Mead","BFGS","CG"),
 	maxit=NULL,n.iter=1,lambda=1,...){
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE
+	if(parallel){
+		if(hasArg(ncores)) ncores<-list(...)$ncores
+		else ncores<-detectCores()
+		if(is.na(ncores)) ncores<-1 
+	}
 	method<-method[1]
-	optim.method<-optim
+	optim.method<-if(!parallel) optim else "L-BFGS-B"
 	if(!is.null(maxit)) control<-list(maxit=maxit)
 	else control<-list()
 	if(method=="REML"){
@@ -100,24 +107,40 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	class(fit)<-"try-error"
 	ii<-1
 	cat("Beginning optimization....\n")
+	if(parallel) {
+		## create cluster
+		cl<-makeCluster(ncores)
+		tmp<-capture.output(print(cl))
+		cat(paste("Using ",tmp,".\n",sep=""))
+	}
 	while(inherits(fit,"try-error")||fit$convergence!=0||ii<=n.iter){
 		if(length(optim.method)==1) OPTIM<-optim.method[1]
 		else OPTIM<-optim.method[if(ii!=length(optim.method)) 
 			ii%%length(optim.method) else length(optim.method)]
 		cat(paste("Optimization iteration ",ii,". Using \"",
-			OPTIM,"\" optimization method.\n",sep=""))
+			OPTIM,"\"",if(parallel) " (parallel) " else " ",
+			"optimization method.\n",sep=""))
 		if(OPTIM=="L-BFGS-B"){
 			fit$par[which(fit$par<lower)]<-lower
 			fit$par[which(fit$par>upper)]<-upper
 		}
 		flush.console()
 		cur.vals<-fit$par
-		fit<-try(optim(fit$par,
-			lik,tree=tree,x=x,lambda=lambda,trace=trace,
-			control=control,
-			method=OPTIM,
-			lower=if(OPTIM=="L-BFGS-B") lower else -Inf,
-			upper=if(OPTIM=="L-BFGS-B") upper else Inf))
+		if(parallel){
+			fit<-try(optimParallel(fit$par,
+				lik,tree=tree,x=x,lambda=lambda,trace=trace,
+				control=control,
+				lower=lower,upper=upper,
+				parallel=list(cl=cl,forward=FALSE,
+				loginfo=TRUE)))
+		} else {
+			fit<-try(optim(fit$par,
+				lik,tree=tree,x=x,lambda=lambda,trace=trace,
+				control=control,
+				method=OPTIM,
+				lower=if(OPTIM=="L-BFGS-B") lower else -Inf,
+				upper=if(OPTIM=="L-BFGS-B") upper else Inf))
+		}
 		if(inherits(fit,"try-error")){
 			fit<-list()
 			fit$convergence<-99
@@ -129,6 +152,11 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 				signif(-fit$value,6),"\n"))
 		}
 		ii<-ii+1
+	}
+	if(parallel){
+		## stop cluster
+		## setDefaultCluster(cl=NULL)
+		stopCluster(cl)
 	}
 	cat("Done optimization.\n")
 	LIK<-function(sig2) -lik(log(sig2),tree=tree,x=x,
