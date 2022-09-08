@@ -312,6 +312,8 @@ plot.Qmatrix<-function(x,...){
 	else text<-TRUE
 	if(hasArg(max.lwd)) max.lwd<-list(...)$max.lwd
 	else max.lwd<-if(text) 5 else 8
+	if(hasArg(rotate)) rotate<-list(...)$rotate
+	else rotate<-NULL
 	plot.new()
 	par(mar=mar)
 	xylim<-c(-1.2,1.2)
@@ -319,6 +321,10 @@ plot.Qmatrix<-function(x,...){
 		plot.window(xlim=c(-1.4,xylim[2]-0.2),ylim=xylim,asp=1)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-nrow(Q)
+	if(is.null(rotate)){
+		if(nstates==2) rotate<--90
+		else rotate<--90*(nstates-2)/(nstates)
+	}
 	if(color){
 		col_pal<-function(qq) if(is.na(qq)) NA else 
 			if(is.infinite(qq)) make.transparent("grey",0.6) else
@@ -353,7 +359,7 @@ plot.Qmatrix<-function(x,...){
 	} else lwd<-matrix(lwd,nstates,nstates)
 	if(!umbral||is.null(ncat)){
 		step<-360/nstates
-		angles<-seq(0,360-step,by=step)/180*pi
+		angles<-seq(rotate,360-step+rotate,by=step)/180*pi
 		if(nstates==2) angles<-angles+pi/2
 		v.x<-cos(angles)
 		v.y<-sin(angles)
