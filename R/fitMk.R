@@ -314,11 +314,24 @@ plot.Qmatrix<-function(x,...){
 	else max.lwd<-if(text) 5 else 8
 	if(hasArg(rotate)) rotate<-list(...)$rotate
 	else rotate<-NULL
-	plot.new()
+	if(hasArg(add)) add<-list(...)$add
+	else add<-FALSE
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-NULL
+	if(!add) plot.new()
 	par(mar=mar)
-	xylim<-c(-1.2,1.2)
-	if(!color) plot.window(xlim=xylim,ylim=xylim,asp=1) else 
-		plot.window(xlim=c(-1.4,xylim[2]-0.2),ylim=xylim,asp=1)
+	if(is.null(xlim)) xlim<-ylim
+	if(is.null(ylim)) ylim<-xlim
+	if(is.null(xlim)&&is.null(ylim)){
+		if(!color) xlim<-ylim<-c(-1.2,1.2)
+		else { 
+			xlim<-c(-1.4,1)
+			ylim<-c(-1.2,1.2)
+		}
+	}
+	plot.window(xlim=xlim,ylim=ylim,asp=1)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-nrow(Q)
 	if(is.null(rotate)){
@@ -541,6 +554,16 @@ as.Qmatrix.default<-function(x, ...){
 	warning(paste(
 		"as.Qmatrix does not know how to handle objects of class ",
 		class(x),"."))
+}
+
+as.Qmatrix.matrix<-function(x, ...){
+	if(ncol(x)!=nrow(x)){
+		warning("\"matrix\" object does not appear to contain a valid Q matrix.\n")
+	} else {
+		diag(x)<--rowSums(x)
+		class(x)<-"Qmatrix"
+		return(x)
+	}
 }
 
 as.Qmatrix.fitMk<-function(x,...){
