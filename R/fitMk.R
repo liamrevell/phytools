@@ -320,6 +320,9 @@ plot.Qmatrix<-function(x,...){
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
+	## set all Q<tol to zero (may remove later)
+	Q[Q<tol]<-0
+	## end may remove later
 	if(!add) plot.new()
 	par(mar=mar)
 	if(is.null(xlim)) xlim<-ylim
