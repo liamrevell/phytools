@@ -320,6 +320,8 @@ plot.Qmatrix<-function(x,...){
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
+	if(hasArg(offset)) offset<-list(...)$offset
+	else offset<-0.02
 	## set all Q<tol to zero (may remove later)
 	Q[Q<tol]<-0
 	## end may remove later
@@ -394,8 +396,8 @@ plot.Qmatrix<-function(x,...){
 			dx<-v.x[j]-v.x[i]
 			dy<-v.y[j]-v.y[i]
 			slope<-abs(dy/dx)
-			shift.x<-0.02*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
-			shift.y<-0.02*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
+			shift.x<-offset*sin(atan(dy/dx))*sign(j-i)*if(dy/dx>0) 1 else -1
+			shift.y<-offset*cos(atan(dy/dx))*sign(j-i)*if(dy/dx>0) -1 else 1
 			s<-c(v.x[i]+spacer*cos(atan(slope))*sign(dx)+
 				if(isSymmetric(Q)) 0 else shift.x,
 				v.y[i]+spacer*sin(atan(slope))*sign(dy)+
