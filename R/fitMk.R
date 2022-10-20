@@ -253,7 +253,10 @@ summary.fitMk<-function(object,...){
 ## logLik method for objects of class "fitMk"
 logLik.fitMk<-function(object,...){ 
 	lik<-object$logLik
-	attr(lik,"df")<-length(object$rates)
+	if(!is.null(object$index.matrix)) 
+		attr(lik,"df")<-max(object$index.matrix,na.rm=TRUE)
+	else
+		attr(lik,"df")<-length(object$rates)
 	lik
 }
 
