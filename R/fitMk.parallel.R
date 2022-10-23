@@ -43,13 +43,21 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 	## stop cluster
 	## setDefaultCluster(cl=NULL)
 	stopCluster(cl)
-	## get Q matrix
+	## create object
 	estQ<-makeQ(nrow(unfitted$index.matrix),
 		exp(fit.parallel$par),
 		unfitted$index.matrix)
 	colnames(estQ)<-rownames(estQ)<-ss
-	## get object
-	object<-fitMk(tree,x,fixedQ=estQ,pi=pi)
+	temp<-fitMk(tree,x,fixedQ=estQ,pi=pi)
+	object<-list()
+	object$logLik<-(-fit.parallel$value[1])
+	object$rates<-exp(fit.parallel$par)
+	object$index.matrix<-unfitted$index.matrix
+	object$states<-unfitted$states
+	object$pi<-temp$pi
 	object$method<-"optimParallel"
+	object$root.prior<-temp$root.prior
+	object$lik<-temp$lik
+	class(object)<-"fitMk"
 	object
 }
