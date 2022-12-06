@@ -339,6 +339,8 @@ plot.Qmatrix<-function(x,...){
 	else ylim<-NULL
 	if(hasArg(offset)) offset<-list(...)$offset
 	else offset<-0.02
+	if(hasArg(palette)) palette<-list(...)$palette
+	else palette<-c("blue","purple","red")
 	## set all Q<tol to zero (may remove later)
 	Q[Q<tol]<-0
 	## end may remove later
@@ -363,13 +365,13 @@ plot.Qmatrix<-function(x,...){
 	if(color){
 		col_pal<-function(qq) if(is.na(qq)) NA else 
 			if(is.infinite(qq)) make.transparent("grey",0.6) else
-			rgb(colorRamp(c("blue","purple","red"))(qq),maxColorValue=255)
+			rgb(colorRamp(palette)(qq),maxColorValue=255)
 		qq<-Q
 		diag(qq)<-NA
 		qq<-log(qq)
 		dq<-diff(RANGE(qq,na.rm=TRUE))
 		if(dq<tol){
-			cols<-matrix("blue",nstates,nstates)
+			cols<-matrix(palette[1],nstates,nstates)
 			cols[Q<tol]<-make.transparent("grey",0.6)
 		} else {
 			qq<-(qq-MIN(qq,na.rm=TRUE))/dq
@@ -469,7 +471,7 @@ plot.Qmatrix<-function(x,...){
 			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
 				MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
 		} else {
-			BLUE<-function(...) "blue"
+			BLUE<-function(...) palette[1]
 			h<-1.5
 			LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
 			lines(x=rep(-1.3+LWD*15/2,2),y=c(-h/2,h/2))
