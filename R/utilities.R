@@ -958,12 +958,12 @@ markChanges<-function(tree,colors=NULL,cex=1,lwd=2,plot=TRUE){
 }
 
 ## function to label clades
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2022
 cladelabels<-function(tree=NULL,text,node,offset=NULL,wing.length=NULL,cex=1,
 	orientation="vertical"){
 	lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(is.null(tree)){
-		wing.length<-1
+		if(is.null(wing.length)) wing.length<-1
 		if(is.null(offset)) offset<-8
 		tree<-list(edge=lastPP$edge,
 			tip.label=1:lastPP$Ntip,
@@ -979,7 +979,7 @@ cladelabels<-function(tree=NULL,text,node,offset=NULL,wing.length=NULL,cex=1,
 }
 
 ## internal function used by cladelabels
-## written by Liam J. Revell 2014, 2015
+## written by Liam J. Revell 2014, 2015, 2022
 labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation){
 	if(is.null(wl)) wl<-1
 	tree<-reorder(tree)
@@ -993,14 +993,15 @@ labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation){
 		nodeHeights(tree)[which(tree$edge[,2]==x),2],
 		tree=tree))+sw+offset*cw
 	y<-range(pp$yy[tips])
-	lines(c(h,h),y+ec*c(-sh,sh))
+	lines(c(h,h),y+ec*c(-sh,sh),col=par()$fg)
 	lines(c(h-wl*cw,h),
-		c(y[1]-ec*sh,y[1]-ec*sh))
+		c(y[1]-ec*sh,y[1]-ec*sh),col=par()$fg)
 	lines(c(h-wl*cw,h),
-		c(y[2]+ec*sh,y[2]+ec*sh))
+		c(y[2]+ec*sh,y[2]+ec*sh),col=par()$fg)
 	text(h+cw,mean(y),
 		label,srt=if(orientation=="horizontal") 0 else 90,
-		adj=if(orientation=="horizontal") 0 else 0.5,cex=cex)
+		adj=if(orientation=="horizontal") 0 else 0.5,cex=cex,
+		col=par()$col.lab)
 }
 
 ## get all the extant/extinct tip names
