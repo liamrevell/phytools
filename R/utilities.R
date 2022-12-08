@@ -975,7 +975,7 @@ cladelabels<-function(tree=NULL,text,node,offset=NULL,wing.length=NULL,cex=1,
 	if(is.null(offset)) offset<-0.5
 	xx<-mapply(labelSubTree,node,text,
 		MoreArgs=list(tree=tree,pp=lastPP,offset=offset,wl=wing.length,cex=cex,
-		orientation=orientation))
+		orientation=orientation),SIMPLIFY=FALSE)
 }
 
 ## internal function used by cladelabels
@@ -1002,6 +1002,7 @@ labelSubTree<-function(tree,nn,label,pp,offset,wl,cex,orientation){
 		label,srt=if(orientation=="horizontal") 0 else 90,
 		adj=if(orientation=="horizontal") 0 else 0.5,cex=cex,
 		col=par()$col.lab)
+	list(xx=c(h,h),yy=y+ec*c(-sh,sh))
 }
 
 ## get all the extant/extinct tip names
