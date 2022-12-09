@@ -1,9 +1,9 @@
 ## compute consensus edge lengths from a set of trees given (or not) a consensus topology
 ## written by Liam J. Revell 2016
 
-consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
+consensus.edges<-function(trees,method=c("mean.edge","least.squares"),rooted=FALSE,...){
 	if(hasArg(consensus.tree)) consensus.tree<-list(...)$consensus.tree
-	else consensus.tree<-consensus(trees,p=0.5)
+	else consensus.tree<-consensus(trees,p=0.5,rooted=rooted)
 	tree<-consensus.tree ## get rid of this cumbersome name
 	if(hasArg(if.absent)) if.absent<-list(...)$if.absent
 	else if.absent<-"zero"
