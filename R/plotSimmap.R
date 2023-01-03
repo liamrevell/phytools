@@ -1,17 +1,17 @@
 ## functions plot stochastic character mapped trees
-## written by Liam Revell 2011-2022
+## written by Liam Revell 2011-2023
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
 	type="phylogram",setEnv=TRUE,part=1.0,xlim=NULL,ylim=NULL,nodes="intermediate",
 	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA,outline=FALSE,
-	plot=TRUE){
+	plot=TRUE,underscore=FALSE){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,
 			ftype=ftype,lwd=lwd,pts=pts,node.numbers=node.numbers,mar,add,offset,
 			direction,type,setEnv,part,xlim,ylim,nodes,tips,maxY,hold,split.vertical,
-			lend,asp,outline,plot)
+			lend,asp,outline,plot,underscore)
 	} else {
 		# check tree
 		if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\"")
@@ -30,7 +30,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 			}
 		}
 		# swap out "_" character for spaces (assumes _ is a place holder)
-		tree$tip.label<-gsub("_"," ",tree$tip.label)
+		if(underscore) tree$tip.label<-gsub("_"," ",tree$tip.label)
 		# get margin
 		if(is.null(mar)) mar=rep(0.1,4)
 		if(hold) null<-dev.hold()
@@ -43,12 +43,12 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 					black[]<-fg
 					updownPhylogram(tree,colors=black,fsize,ftype,lwd=lwd+2,pts,
 						node.numbers,mar,add,offset,direction,setEnv,xlim,ylim,nodes,
-						tips,split.vertical,lend,asp,plot)
+						tips,split.vertical,lend,asp,plot,underscore)
 					par(fg=fg)
 				}
 				updownPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
-				add=if(outline) TRUE else add,offset,direction,setEnv,xlim,ylim,nodes,
-				tips,split.vertical,lend,asp,plot)
+					add=if(outline) TRUE else add,offset,direction,setEnv,xlim,ylim,nodes,
+					tips,split.vertical,lend,asp,plot,underscore)
 			} else {
 				if(outline){
 					fg<-par()$fg
@@ -57,12 +57,12 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 					black[]<-fg
 					plotPhylogram(tree,colors=black,fsize,ftype,lwd=lwd+2,pts,
 						node.numbers,mar,add,offset,direction,setEnv,xlim,ylim,nodes,
-						tips,split.vertical,lend,asp,plot)
+						tips,split.vertical,lend,asp,plot,underscore)
 					par(fg=fg)
 				}
 				plotPhylogram(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
-				add=if(outline) TRUE else add,offset,direction,setEnv,xlim,ylim,nodes,
-				tips,split.vertical,lend,asp,plot)
+					add=if(outline) TRUE else add,offset,direction,setEnv,xlim,ylim,nodes,
+					tips,split.vertical,lend,asp,plot,underscore)
 			}
 		} else if(type=="fan"){
 			if(outline){
@@ -94,10 +94,10 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 }
 
 ## function to plot simmap tree in type "phylogram"
-## written by Liam J. Revell 2011-2017
+## written by Liam J. Revell 2011-2023
 updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
-	asp,plot){
+	asp,plot,underscore){
 	if(split.vertical&&!setEnv){
 		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
 		spit.vertical<-FALSE
@@ -116,7 +116,7 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
 		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
-		else tips[gsub(" ","_",cw$tip.label)]
+		else if(underscore) tips[gsub(" ","_",cw$tip.label)]
 	# get Y coordinates of the nodes
 	nodes<-unique(pw$edge[,1])
 	for(i in 1:m){
@@ -231,10 +231,10 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 }
 
 # function to plot simmap tree in type "phylogram"
-# written by Liam J. Revell 2011-2017
+# written by Liam J. Revell 2011-2023
 plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	add,offset,direction,setEnv,xlim,ylim,placement,tips,split.vertical,lend,
-	asp,plot){
+	asp,plot,underscore){
 	if(split.vertical&&!setEnv){
 		cat("split.vertical requires setEnv=TRUE. Setting split.vertical to FALSE.\n")
 		spit.vertical<-FALSE
@@ -253,7 +253,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
 		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
-		else tips[gsub(" ","_",cw$tip.label)]
+		else if(underscore) tips[gsub(" ","_",cw$tip.label)]
 	# get Y coordinates of the nodes
 	nodes<-unique(pw$edge[,1])
 	for(i in 1:m){
@@ -462,10 +462,10 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 }
 
 ## internal function for slanted cladogram
-## written by Liam J. Revell 2017
+## written by Liam J. Revell 2017-2023
 plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 	add=FALSE,offset=NULL,direction="rightwards",xlim=NULL,ylim=NULL,
-	nodes="intermediate",tips=NULL,lend=2,asp=NA,plot=TRUE){
+	nodes="intermediate",tips=NULL,lend=2,asp=NA,plot=TRUE,underscore=FALSE){
 	placement<-nodes
 	# set offset fudge (empirically determined)
 	offsetFudge<-1.37
@@ -481,7 +481,7 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
 		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
-		else tips[gsub(" ","_",cw$tip.label)]
+		else if(underscore) tips[gsub(" ","_",cw$tip.label)]
 	# get Y coordinates of the nodes
 	nodes<-unique(pw$edge[,1])
 	for(i in 1:m){
