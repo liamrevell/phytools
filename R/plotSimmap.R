@@ -1,5 +1,5 @@
 ## functions plot stochastic character mapped trees
-## written by Liam Revell 2011-2021
+## written by Liam Revell 2011-2022
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
@@ -167,7 +167,7 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			for(i in 1:m) lines(Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],
 				H[which(cw$edge[,1]==nodes[i]),1],
 				col=colors[names(cw$maps[[match(nodes[i],
-				cw$edge[,1])]])[1]],lwd=lwd)
+				cw$edge[,1])]])[1]],lwd=lwd,lend=lend)
 		}
 		for(i in 1:nrow(cw$edge)){
 			x<-H[i,1]
@@ -303,7 +303,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 		if(!split.vertical){
 			for(i in 1:m) lines(H[which(cw$edge[,1]==nodes[i]),1],
 				Y[cw$edge[which(cw$edge[,1]==nodes[i]),2]],col=colors[names(cw$maps[[match(nodes[i],
-				cw$edge[,1])]])[1]],lwd=lwd)
+				cw$edge[,1])]])[1]],lwd=lwd,lend=lend)
 		}
 		for(i in 1:nrow(cw$edge)){
 			x<-H[i,1]
