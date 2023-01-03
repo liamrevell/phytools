@@ -1,9 +1,11 @@
 ## compute consensus edge lengths from a set of trees given (or not) a consensus topology
-## written by Liam J. Revell 2016
+## written by Liam J. Revell 2016, 2022
 
 consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
+	if(hasArg(rooted)) rooted<-list(...)$rooted
+	else rooted<-if(all(sapply(trees,is.rooted))) TRUE else FALSE
 	if(hasArg(consensus.tree)) consensus.tree<-list(...)$consensus.tree
-	else consensus.tree<-consensus(trees,p=0.5)
+	else consensus.tree<-consensus(trees,p=0.5,rooted=rooted)
 	tree<-consensus.tree ## get rid of this cumbersome name
 	if(hasArg(if.absent)) if.absent<-list(...)$if.absent
 	else if.absent<-"zero"
@@ -26,7 +28,10 @@ consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
 		tree$edge.length<-edge.length
 	} else if(method[1]=="least.squares"){
 		D<-Reduce('+',lapply(trees,function(x,t) cophenetic(x)[t,t],t=tree$tip.label))/N
-		tree<-nnls.tree(D,tree=tree,rooted=all(sapply(trees,is.ultrametric)))
+		if(rooted)
+			method<-if(all(sapply(trees,is.ultrametric))) "ultrametric" else "tipdated"
+		else method<-"unrooted"
+		tree<-nnls.tree(D,tree=tree,rooted=rooted,method=method)
 	}
 	tree
 }
