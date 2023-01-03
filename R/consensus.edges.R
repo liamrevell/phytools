@@ -1,5 +1,5 @@
 ## compute consensus edge lengths from a set of trees given (or not) a consensus topology
-## written by Liam J. Revell 2016, 2022
+## written by Liam J. Revell 2016, 2023
 
 consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
 	if(hasArg(rooted)) rooted<-list(...)$rooted
