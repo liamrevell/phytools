@@ -30,7 +30,7 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 			}
 		}
 		# swap out "_" character for spaces (assumes _ is a place holder)
-		if(underscore) tree$tip.label<-gsub("_"," ",tree$tip.label)
+		if(!underscore) tree$tip.label<-gsub("_"," ",tree$tip.label)
 		# get margin
 		if(is.null(mar)) mar=rep(0.1,4)
 		if(hold) null<-dev.hold()
@@ -116,7 +116,7 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
 		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
-		else if(underscore) tips[gsub(" ","_",cw$tip.label)]
+		else if(!underscore) tips[gsub(" ","_",cw$tip.label)]
 	# get Y coordinates of the nodes
 	nodes<-unique(pw$edge[,1])
 	for(i in 1:m){
@@ -253,7 +253,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
 		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
-		else if(underscore) tips[gsub(" ","_",cw$tip.label)]
+		else if(!underscore) tips[gsub(" ","_",cw$tip.label)]
 	# get Y coordinates of the nodes
 	nodes<-unique(pw$edge[,1])
 	for(i in 1:m){
@@ -481,7 +481,7 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 	if(is.null(tips)) Y[cw$edge[cw$edge[,2]<=n,2]]<-1:n
 	else Y[cw$edge[cw$edge[,2]<=n,2]]<-if(is.null(names(tips))) 
 		tips[sapply(1:Ntip(cw),function(x,y) which(y==x),y=cw$edge[cw$edge[,2]<=n,2])]
-		else if(underscore) tips[gsub(" ","_",cw$tip.label)]
+		else if(!underscore) tips[gsub(" ","_",cw$tip.label)]
 	# get Y coordinates of the nodes
 	nodes<-unique(pw$edge[,1])
 	for(i in 1:m){
