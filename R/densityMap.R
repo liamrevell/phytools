@@ -1,5 +1,5 @@
 # function plots posterior density of mapped states from stochastic mapping
-# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2021, 2022
+# written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2021, 2022, 2023
 
 densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legend=NULL,
 	outline=FALSE,type="phylogram",direction="rightwards",plot=TRUE,...){
@@ -82,7 +82,7 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 
 ## S3 plot method for objects of class "densityMap"
 ## also used internally by plot.contMap
-## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020, 2022
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020, 2022, 2023
 
 plot.densityMap<-function(x,...){
 	if(inherits(x,"densityMap")){
@@ -119,6 +119,8 @@ plot.densityMap<-function(x,...){
 	else ylim<-NULL
 	if(hasArg(hold)) hold<-list(...)$hold
 	else hold<-TRUE
+	if(hasArg(underscore)) underscore<-list(...)$underscore
+	else underscore<-FALSE
 	if(is.null(legend)) legend<-0.5*max(H)
 	if(is.null(fsize)) fsize<-c(1,1)
 	if(length(fsize)==1) fsize<-rep(fsize,2)
@@ -158,11 +160,12 @@ plot.densityMap<-function(x,...){
 				color=par()$fg,
 				ftype=ftype[1],xlim=xlim,
 				ylim=ylim,mar=mar,direction=direction,hold=FALSE,
-				add=direction%in%c("upwards","downwards")&&legend)
+				add=direction%in%c("upwards","downwards")&&legend,
+				underscore=underscore)
 			par(col=COL)
 		}
 		plotSimmap(tree,cols,pts=FALSE,lwd=lwd[1],fsize=fsize[1],mar=mar,ftype=ftype[1],add=outline,
-			xlim=xlim,ylim=ylim,direction=direction,offset=offset,hold=FALSE)
+			xlim=xlim,ylim=ylim,direction=direction,offset=offset,hold=FALSE,underscore=underscore)
 		if(legend){
 			ff<-function(dd){
 				if(!("."%in%dd)) dig<-0
@@ -193,12 +196,14 @@ plot.densityMap<-function(x,...){
 			par(col="white")
 			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd[1]+2,
 				mar=mar,fsize=fsize[1],color=par()$fg,
-				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE,offset=offset)))
+				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE,offset=offset,
+				underscore=underscore)))
 			par(col=COL)
 		}
 		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd[1],
 			mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
-			type="fan",xlim=xlim,ylim=ylim,hold=FALSE,offset=offset)))
+			type="fan",xlim=xlim,ylim=ylim,hold=FALSE,offset=offset,
+			underscore=underscore)))
 		if(legend){
 			ff<-function(dd){
 				if(!("."%in%dd)) dig<-0
