@@ -1,5 +1,5 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
-## written by Liam J. Revell 2020, 2021
+## written by Liam J. Revell 2020, 2021, 2023
 
 fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	if(hasArg(trace)) trace<-list(...)$trace
@@ -11,6 +11,8 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	if(length(ncat)==1) ncat<-rep(ncat,k)
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE
 	if(is.numeric(model)||(model%in%c("ARD","SYM","ER")==FALSE)){
 		cat("Only models \"ER\", \"SYM\", and \"ARD\" are permitted.\n")
 		cat("Setting model to \"ARD\".\n\n")
@@ -123,20 +125,42 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	else logscale<-sample(c(TRUE,FALSE),niter,replace=TRUE)
 	if(hasArg(opt.method)) opt.method<-rep(list(...)$opt.method,niter)
 	else opt.method<-sample(c("nlminb","optim"),niter,replace=TRUE)
-	for(i in 1:niter){
-		args$logscale<-logscale[i]
-		args$opt.method<-opt.method[i]
-		args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
-		fits[[i]]<-do.call(fitMk,args)
-		if(trace>0) print(fits[[i]])
-		logL<-sapply(fits,logLik)
+	## parallelize
+	if(!parallel){
+		for(i in 1:niter){
+			args$logscale<-logscale[i]
+			args$opt.method<-opt.method[i]
+			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
+			fits[[i]]<-do.call(fitMk,args)
+			if(trace>0) print(fits[[i]])
+			logL<-sapply(fits,logLik)
+			if(!quiet){
+				cat(paste("log-likelihood from current iteration:",
+					round(logLik(fits[[i]]),4),"\n"))
+				cat(paste(" --- Best log-likelihood so far:",round(max(logL),4),
+					"---\n"))
+				flush.console()
+			}
+		}
+	} else if(parallel){
+		if(hasArg(ncores)) ncores<-list(...)$ncores
+		else ncores<-detectCores()-1
+		mc<-makeCluster(ncores,type="PSOCK")
+		registerDoParallel(cl=mc)
 		if(!quiet){
-			cat(paste("log-likelihood from current iteration:",
-				round(logLik(fits[[i]]),4),"\n"))
-			cat(paste(" --- Best log-likelihood so far:",round(max(logL),4),
-				"---\n"))
+			cat(paste("Opened cluster with",ncores,"cores.\n"))
+			cat("Running optimization iterations in parallel.\n")
+			cat("Please wait....\n")
 			flush.console()
 		}
+		fits<-foreach(i=1:niter)%dopar%{
+			args$logscale<-logscale[i]
+			args$opt.method<-opt.method[i]
+			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
+			do.call(phytools::fitMk,args)
+		}
+		logL<-sapply(fits,logLik)
+		stopCluster(cl=mc)
 	}
 	obj<-fits[[which(logL==max(logL))[1]]]
 	obj$ncat<-ncat
