@@ -1,13 +1,14 @@
 Package: phytools
-Version: 1.3-4
-Date: 2023-01-03
+Version: 1.3-5
+Date: 2023-01-04
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
 Depends: R (>= 3.5.0), ape (>= 4.0), maps
-Imports: clusterGeneration, coda, combinat, expm, graphics,  
-	grDevices, MASS, methods, mnormt, nlme, numDeriv, optimParallel,
-	parallel, phangorn (>= 2.3.1), plotrix, scatterplot3d, stats, utils
+Imports: clusterGeneration, coda, combinat, doParallel, expm, foreach, 
+	graphics, grDevices, MASS, methods, mnormt, nlme, numDeriv, 
+	optimParallel, parallel, phangorn (>= 2.3.1), plotrix, scatterplot3d, 
+	stats, utils
 Suggests: animation, geiger, RColorBrewer, rgl
 ZipData: no
 Description: A wide range of functions for phylogenetic analysis - concentrated in phylogenetic comparative biology, but also including numerous methods for visualizing, manipulating, reading or writing, and even inferring phylogenetic trees. Included among the functions in phylogenetic comparative biology are various for ancestral state reconstruction, model-fitting, and simulation of phylogenies and data, for continuous, discrete, and multivariate characters. A broad range of plotting methods for phylogenies and comparative data include, but are not restricted to, methods for mapping trait evolution on trees, for projecting trees into phenotypic space or a geographic map, and for visualizing correlated speciation between trees. Finally, numerous functions are designed for reading, writing, analyzing, inferring, simulating, and manipulating phylogenetic trees and comparative data. For instance, there are functions for randomly or non-randomly attaching species or clades to a phylogeny, for computing consensus phylogenies from a set, for simulating trees and phylogenetic data under a range of models, and for a wide variety of other manipulations and analyses that phylogenetic biologists might find useful in their research.
