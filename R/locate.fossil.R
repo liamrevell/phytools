@@ -1,5 +1,5 @@
 ## code to place a fossil taxon into a tree using ML and continuous data
-## written by Liam J. Revell 2014, 2015, 2017, 2022
+## written by Liam J. Revell 2014, 2015, 2017, 2022, 2023
 
 locate.fossil<-function(tree,X,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -13,15 +13,18 @@ locate.fossil<-function(tree,X,...){
 	else edge.constraint<-tree$edge[,2]
 	if(hasArg(time.constraint)) time.constraint<-list(...)$time.constraint
 	else time.constraint<-c(0,max(nodeHeights(tree)))
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-6
 	if(any(time.constraint<0)) time.constraint<-max(nodeHeights(tree))+time.constraint
 	if(length(time.constraint)==1) time.constraint<-rep(time.constraint,2)
 	if(!is.matrix(X)) X<-as.matrix(X)
 	tip<-setdiff(rownames(X),tree$tip.label)
-	fossilML(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,rotate)
+	fossilML(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,rotate,tol)
 }
 
-fossilML<-function(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,rotate){
-	if(!quiet) cat(paste("Optimizing the phylogenetic position of ",tip," using ML. Please wait....\n",sep=""))
+fossilML<-function(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,rotate,tol){
+	if(!quiet) cat(paste("Optimizing the phylogenetic position of ",tip,
+		" using ML. Please wait....\n",sep=""))
 	if(ncol(X)>1&&rotate){
 		pca<-phyl.pca(tree,X[tree$tip.label,])
 		obj<-phyl.vcv(X[tree$tip.label,],vcv(tree),1)
@@ -32,13 +35,15 @@ fossilML<-function(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,
 		tip.height<-par[2]
 		if(tip.height>(tip.depth+1e-6)){
 			ii<-which(tree$edge[,2]==edge)
-			tree<-bind.tip(tree,tip,where=edge,position=min(height[2]-tip.depth,tree$edge.length[ii]),
+			tree<-bind.tip(tree,tip,where=edge,position=min(height[2]-tip.depth,
+				tree$edge.length[ii]),
 				edge.length=tip.height-tip.depth)
 			if(!rotate) XX<-phyl.pca(tree,XX[tree$tip.label,])$S
 			obj<-phyl.vcv(as.matrix(XX[tree$tip.label,]),vcv(tree),1)
 			ll<-vector()
 			for(i in 1:ncol(XX)) 
-				ll[i]<-sum(dmnorm(XX[tree$tip.label,i],mean=rep(obj$a[i,1],nrow(XX)),obj$C*obj$R[i,i],log=TRUE)) 
+				ll[i]<-sum(dmnorm(XX[tree$tip.label,i],mean=rep(obj$a[i,1],nrow(XX)),
+					obj$C*obj$R[i,i],log=TRUE)) 
 			if(plot){
 				plotTree(tree,mar=c(2.1,0.1,3.1,0.1),ftype="i",fsize=0.8)
 				obj<-lapply(time.constraint,function(x,tree) lines(rep(x,2),
@@ -52,17 +57,22 @@ fossilML<-function(tree,X,quiet,tip,edge.constraint,time.constraint,plot,search,
 	}
 	ee<-intersect(tree$edge[,2],edge.constraint)
 	H<-nodeHeights(tree)
-	hh<-unique(c(tree$edge[H[,1]<=time.constraint[2],2],tree$edge[H[,2]<=time.constraint[2],2]))
+	hh<-unique(c(tree$edge[H[,1]<=time.constraint[2],2],
+		tree$edge[H[,2]<=time.constraint[2],2]))
 	ee<-intersect(ee,hh)
 	fit<-vector(mode="list",length=length(ee))
 	for(i in 1:length(ee)){
 		ii<-which(tree$edge[,2]==ee[i])
-		lower<-c(H[ii,1],time.constraint[1])
-		upper<-c(H[ii,2],time.constraint[2])
+		lower<-c(H[ii,1],time.constraint[1])+
+			tol*diff(c(H[ii,1],time.constraint[1]))
+		upper<-c(H[ii,2],time.constraint[2])+
+			tol*diff(c(H[ii,2],time.constraint[2]))
 		par<-c(mean(lower),mean(upper))
-		fit[[i]]<-optim(par,lik.tree,tip=tip,tree=tree,edge=ee[i],height=H[ii,],XX=X,rotate=rotate,
+		fit[[i]]<-optim(par,lik.tree,tip=tip,tree=tree,edge=ee[i],
+			height=H[ii,],XX=X,rotate=rotate,
 			time.constraint=time.constraint,
-			method="L-BFGS-B",lower=lower,upper=upper,control=list(fnscale=-1))
+			method="L-BFGS-B",lower=lower,upper=upper,
+			control=list(fnscale=-1))
 	}
 	logL<-sapply(fit,function(x) x$value)
 	ii<-which(logL==max(logL))
