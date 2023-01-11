@@ -20,6 +20,12 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	}
 	if(hasArg(umbral)) umbral<-list(...)$umbral
 	else umbral<-FALSE
+	if(hasArg(corHMM_model)) corHMM_model<-list(...)$corHMM_model
+	else corHMM_model<-FALSE
+	if(umbral&&corHMM_model){
+		cat("The \"umbral\" and corHMM models are inconsistent. Setting \"corHMM_model=FALSE\".\n")
+		corHMM_model<-FALSE
+	}
 	XX<-to.matrix(x,levels(x))
 	X<-matrix(NA,nrow(XX),sum(ncat),dimnames=list(rownames(XX)))
 	ii<-1
@@ -108,6 +114,27 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 				} else model[i,j]<-if(umbral) 2 else max(ncat)+1
 			}
 		}
+	}
+	if(corHMM_model){
+		mm<-model
+		ind<-which(model>0,arr.ind=TRUE)
+		for(i in 1:max(ncat)){
+			ii<-grep(paste("R",i,sep=""),rownames(model))
+			for(j in 1:max(ncat)){
+				if(i!=j){
+					jj<-grep(paste("R",j,sep=""),rownames(model))
+					if(any(mm[ii,jj]>0)){
+						kk<-ind[which(ind[,1]%in%ii),,drop=FALSE]
+						kk<-kk[which(kk[,2]%in%jj),,drop=FALSE]
+						mm[kk]<-min(model[kk])
+					}
+				}
+			}
+		}
+		old<-sort(unique(as.vector(mm)))
+		new<-0:length(old)
+		for(i in 1:length(old)) mm[which(mm==old[i],arr.ind=TRUE)]<-new[i]
+		model<-mm
 	}
 	colnames(model)<-rownames(model)<-colnames(X)<-cols
 	if(!quiet){

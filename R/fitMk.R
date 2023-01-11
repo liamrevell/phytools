@@ -1,7 +1,7 @@
 ## optimizing, graphing, and analyzing extended Mk model for discrete
 ## character evolution
 ## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022)
-## likelihood function (with pruning) adapted from ace (Paradis et al. 2013)
+## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
 
 anova.fitMk<-function(object,...){
 	fits<-list(...)

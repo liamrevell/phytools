@@ -2,8 +2,16 @@
 
 fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 	## compute states
-	ss<-sort(unique(x))
-	m<-length(ss)
+	if(is.matrix(x)){
+		x<-x[tree$tip.label,]
+		m<-ncol(x)
+		ss<-colnames(x)
+	} else {
+		x<-to.matrix(x,sort(unique(x)))
+		x<-x[tree$tip.label,]
+		m<-ncol(x)
+		ss<-colnames(x)
+	}
 	## set pi
 	if(hasArg(pi)) pi<-list(...)$pi
 	else pi<-"equal"
