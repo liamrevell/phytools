@@ -4,7 +4,7 @@ Date: 2023-01-16
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
-Depends: R (>= 3.5.0), ape (>= 5.7), maps
+Depends: R (>= 3.5.0), ape (>= 5.6-5), maps
 Imports: clusterGeneration, coda, combinat, doParallel, expm, foreach, 
 	graphics, grDevices, MASS, methods, mnormt, nlme, numDeriv, 
 	optimParallel, parallel, phangorn (>= 2.3.1), plotrix, scatterplot3d, 
