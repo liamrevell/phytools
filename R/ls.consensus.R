@@ -4,11 +4,22 @@
 ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 	D<-Reduce("+",lapply(trees,function(x,t) cophenetic(x)[t,t], 
 		t=trees[[1]]$tip.label))/length(trees)
+	tip.dates<-NULL
 	if(is.null(start)) start<-NJ(D)
-	if(hasArg(ultrametric)) ultrametric<-list(...)$ultrametric ## should the consensus tree be ultrametric
+	if(hasArg(ultrametric)) ultrametric<-list(...)$ultrametric
 	else ultrametric<-all(sapply(trees,is.ultrametric))
+	if(ultrametric){ 
+		method<-"ultrametric"
+	} else {
+		if(hasArg(tipdated)) tipdated<-list(...)$tipdated
+		else tipdated<-FALSE
+		if(tipdated){
+			tip.dates<-diag(D)
+			method<-"tip.dated"
+		} else method<-"unrooted"
+	}
 	if(ultrametric&&!is.rooted(start)) start<-midpoint(start)
-	curr<-nnls.tree(D,tree=start,rooted=ultrametric,trace=0)
+	curr<-nnls.tree(D,tree=start,method=method,trace=0,tip.dates=tip.dates)
 	if(hasArg(optNNI)) optNNI<-list(...)$optNNI
 	else optNNI<-TRUE
 	if(optNNI){
@@ -22,7 +33,8 @@ ls.consensus<-function(trees,start=NULL,tol=1e-12,quiet=FALSE,...){
 			curr<-list(curr)
 			class(curr)<-"multiPhylo"
 			NNIs<-c(NNIs,curr)
-			NNIs<-lapply(NNIs,nnls.tree,dm=D,rooted=ultrametric,trace=0)
+			NNIs<-lapply(NNIs,nnls.tree,dm=D,method=method,trace=0,
+				tip.dates=tip.dates)
 			qs<-sapply(NNIs,rss,D=D)
 			ii<-which(qs==min(qs))[1]
 			if(!quiet) message(paste("Best Q =",qs[ii]))
@@ -82,6 +94,7 @@ averageTree<-function(trees,start=NULL,method="quadratic.path.difference",
 		D<-Reduce("+",lapply(trees,function(x,t) cophenetic(x)[t,t], 
 			t=trees[[1]]$tip.label))/length(trees)
 		rt<-all(sapply(trees,is.ultrametric))
+		nnls.method<-if(rt) "ultrametric" else "unrooted"
 	} else if(method%in%c("symmetric.difference","path.difference")){
 		rt<-all(sapply(trees,is.rooted))
 		if(!rt) start<-unroot(start)
@@ -104,8 +117,8 @@ averageTree<-function(trees,start=NULL,method="quadratic.path.difference",
 				function(y,x,m) setNames(treedist(y,x)[m],NULL),
 				y=x,m=m),y=trees,m=method)^2)
 		else {
-			if(!rt) NNIs<-lapply(NNIs,unroot)
-			NNIs<-lapply(NNIs,nnls.tree,dm=D,rooted=rt,trace=0)
+			if(nnls.method=="unrooted") NNIs<-lapply(NNIs,unroot)
+			NNIs<-lapply(NNIs,nnls.tree,dm=D,method=nnls.method,trace=0)
 			NNIs<-lapply(NNIs,minTreeDist,trees=trees,method=method,
 				...)
 			SSp<-sapply(NNIs,function(x) attr(x,"SQD"))
@@ -114,6 +127,7 @@ averageTree<-function(trees,start=NULL,method="quadratic.path.difference",
 		if(!quiet) message(paste("  Best SS so far =",SSp[ii]))
 		SSp<-SSp[ii]
 		curr<-NNIs[[ii]]
+		plotTree(curr)
 		ct<-ct+1
 	}
 	if(!quiet) message(paste("\n  Solution found after",ct,
