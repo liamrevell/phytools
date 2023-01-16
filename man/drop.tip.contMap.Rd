@@ -4,12 +4,12 @@
 \alias{keep.tip.contMap}
 \title{Drop tip or tips from an object of class "contMap" or "densityMap"}
 \usage{
-drop.tip.contMap(x, tip, ...)
-drop.tip.densityMap(x, tip, ...)
-keep.tip.contMap(x, tip, ...)
+\method{drop.tip}{contMap}(phy, tip, ...)
+\method{drop.tip}{densityMap}(phy, tip, ...)
+\method{keep.tip}{contMap}(phy, tip, ...)
 }
 \arguments{
-	\item{x}{an object of class \code{"contMap"} or \code{"densityMap"}.}
+	\item{phy}{an object of class \code{"contMap"} or \code{"densityMap"}.}
 	\item{tip}{name or names of species to be dropped or kept.}
 	\item{...}{optional arguments to be passed to \code{\link{drop.tip.simmap}}.}
 }

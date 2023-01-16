@@ -156,12 +156,12 @@ print.contMap<-function(x,digits=6,...){
 }
 
 ## drop tips from an object of class 'contMap'
-## written by Liam J. Revell 2014
-drop.tip.contMap<-function(x,tip,...){
-	if(!inherits(x,"contMap")) cat("x should be an object of class \"contMap\"\n")
+## written by Liam J. Revell 2014, 2023
+drop.tip.contMap<-function(phy,tip,...){
+	if(!inherits(phy,"contMap")) cat("phy should be an object of class \"contMap\"\n")
 	else {
-		x$tree<-drop.tip.simmap(x$tree,tip,...)
-		return(x)
+		phy$tree<-drop.tip.simmap(phy$tree,tip,...)
+		return(phy)
 	}
 }
 
@@ -209,7 +209,7 @@ errorbar.contMap<-function(obj,...){
 	}
 }
 
-keep.tip.contMap<-function(x,tip,...){
-	tips<-setdiff(x$tree$tip.label,tip)
-	drop.tip.contMap(x,tips,...)
+keep.tip.contMap<-function(phy,tip,...){
+	tips<-setdiff(phy$tree$tip.label,tip)
+	drop.tip.contMap(phy,tip=tips,...)
 }

@@ -1,96 +1,112 @@
 ## function drops tip or tips from an object of class "simmap"
-## written by Liam J. Revell 2012, 2015, 2018, 2021
+## written by Liam J. Revell 2012, 2015, 2018, 2021, 2023
 
-drop.tip.simmap<-function(tree,tip,...){
+drop.tip.simmap<-function(phy,tip,...){
 	if(hasArg(untangle)) untangle<-list(...)$untangle
 	else untangle<-FALSE
-	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
-	tip<-which(tree$tip.label%in%tip)
-	edges<-match(tip,tree$edge[,2])
-	z<-setdiff(1:nrow(tree$edge),edges)
-	tree$edge<-tree$edge[z,]
-	tree$edge.length<-tree$edge.length[z]
-	tree$maps<-tree$maps[z]
-	z<-setdiff(tree$edge[,2],tree$edge[,1])
-	z<-z[z>Ntip(tree)]
+	if(!inherits(phy,"phylo")) 
+		stop("phy should be object of class \"phylo\".")
+	tip<-which(phy$tip.label%in%tip)
+	edges<-match(tip,phy$edge[,2])
+	z<-setdiff(1:nrow(phy$edge),edges)
+	phy$edge<-phy$edge[z,]
+	phy$edge.length<-phy$edge.length[z]
+	phy$maps<-phy$maps[z]
+	z<-setdiff(phy$edge[,2],phy$edge[,1])
+	z<-z[z>Ntip(phy)]
 	while(length(z)>0){
-		edges<-match(z,tree$edge[,2])
-		y<-setdiff(1:nrow(tree$edge),edges)
-		tree$edge<-tree$edge[y,]
-		tree$edge.length<-tree$edge.length[y]
-		tree$maps<-tree$maps[y]
-		z<-setdiff(tree$edge[,2],tree$edge[,1])
-		z<-z[z>Ntip(tree)]
+		edges<-match(z,phy$edge[,2])
+		y<-setdiff(1:nrow(phy$edge),edges)
+		phy$edge<-phy$edge[y,]
+		phy$edge.length<-phy$edge.length[y]
+		phy$maps<-phy$maps[y]
+		z<-setdiff(phy$edge[,2],phy$edge[,1])
+		z<-z[z>Ntip(phy)]
 	}
-	z<-setdiff(tree$edge[,2],tree$edge[,1])
-	tree$tip.label<-tree$tip.label[z]
-	tree$edge[which(tree$edge[,2]%in%z),2]<-1:Ntip(tree)
-	while(sum(tree$edge[1,1]==tree$edge[,1])==1){
-		tree$edge<-tree$edge[2:nrow(tree$edge),]
-		tree$edge.length<-tree$edge.length[2:length(tree$edge.length)]
-		tree$maps<-tree$maps[2:length(tree$maps)]
+	z<-setdiff(phy$edge[,2],phy$edge[,1])
+	phy$tip.label<-phy$tip.label[z]
+	phy$edge[which(phy$edge[,2]%in%z),2]<-1:Ntip(phy)
+	while(sum(phy$edge[1,1]==phy$edge[,1])==1){
+		phy$edge<-phy$edge[2:nrow(phy$edge),]
+		phy$edge.length<-phy$edge.length[2:length(phy$edge.length)]
+		phy$maps<-phy$maps[2:length(phy$maps)]
 	}
 	i<-1
-	while(i<nrow(tree$edge)){
-		single<-sum(tree$edge[i,2]==tree$edge[,1])==1
+	while(i<nrow(phy$edge)){
+		single<-sum(phy$edge[i,2]==phy$edge[,1])==1
 		while(single){
-			z<-match(tree$edge[i,2],tree$edge[,1])
-			tree$edge[i,2]<-tree$edge[z,2]
-			tree$edge.length[i]<-tree$edge.length[i]+tree$edge.length[z]
-			if(names(tree$maps[[i]])[length(tree$maps[[i]])]!=names(tree$maps[[z]])[1]){
-				tree$maps[[i]]<-c(tree$maps[[i]],tree$maps[[z]])
+			z<-match(phy$edge[i,2],phy$edge[,1])
+			phy$edge[i,2]<-phy$edge[z,2]
+			phy$edge.length[i]<-phy$edge.length[i]+phy$edge.length[z]
+			if(names(phy$maps[[i]])[length(phy$maps[[i]])]!=names(phy$maps[[z]])[1]){
+				phy$maps[[i]]<-c(phy$maps[[i]],phy$maps[[z]])
 			} else {
-				tree$maps[[i]][length(tree$maps[[i]])]<-tree$maps[[i]][length(tree$maps[[i]])]+tree$maps[[z]][1]
-				if(length(tree$maps[[z]])>1) tree$maps[[i]]<-c(tree$maps[[i]],tree$maps[[z]][2:length(tree$maps[[z]])])
+				phy$maps[[i]][length(phy$maps[[i]])]<-
+					phy$maps[[i]][length(phy$maps[[i]])]+phy$maps[[z]][1]
+				if(length(phy$maps[[z]])>1) phy$maps[[i]]<-
+					c(phy$maps[[i]],phy$maps[[z]][2:length(phy$maps[[z]])])
 			}
-			y<-setdiff(1:nrow(tree$edge),z)
-			tree$edge<-tree$edge[y,]
-			tree$edge.length<-tree$edge.length[y]
-			tree$maps<-tree$maps[y]
-			single<-sum(tree$edge[i,2]==tree$edge[,1])==1
+			y<-setdiff(1:nrow(phy$edge),z)
+			phy$edge<-phy$edge[y,]
+			phy$edge.length<-phy$edge.length[y]
+			phy$maps<-phy$maps[y]
+			single<-sum(phy$edge[i,2]==phy$edge[,1])==1
 		}
 		i<-i+1
 	}
-	z<-unique(as.vector(tree$edge))
-	z<-z[z>Ntip(tree)]
-	y<-order(z)+Ntip(tree)
-	for(i in 1:nrow(tree$edge)) for(j in 1:2) if(tree$edge[i,j]%in%z) tree$edge[i,j]<-y[which(tree$edge[i,j]==z)]
-	tree$Nnode<-max(tree$edge)-Ntip(tree)
-	tree$node.states<-matrix(NA,nrow(tree$edge),2)
-	for(i in 1:nrow(tree$edge)) tree$node.states[i,]<-c(names(tree$maps[[i]])[1],names(tree$maps[[i]])[length(tree$maps[[i]])])
-	if(!is.null(tree$states)) tree$states<-tree$states[tree$tip.label]
+	z<-unique(as.vector(phy$edge))
+	z<-z[z>Ntip(phy)]
+	y<-order(z)+Ntip(phy)
+	for(i in 1:nrow(phy$edge)) 
+		for(j in 1:2) 
+			if(phy$edge[i,j]%in%z) phy$edge[i,j]<-y[which(phy$edge[i,j]==z)]
+	phy$Nnode<-max(phy$edge)-Ntip(phy)
+	phy$node.states<-matrix(NA,nrow(phy$edge),2)
+	for(i in 1:nrow(phy$edge)) phy$node.states[i,]<-
+		c(names(phy$maps[[i]])[1],names(phy$maps[[i]])[length(phy$maps[[i]])])
+	if(!is.null(phy$states)) phy$states<-phy$states[phy$tip.label]
 	allstates<-vector()
-	for(i in 1:nrow(tree$edge)) allstates<-c(allstates,names(tree$maps[[i]]))
+	for(i in 1:nrow(phy$edge)) allstates<-c(allstates,names(phy$maps[[i]]))
 	allstates<-unique(allstates)
-	tree$mapped.edge<-matrix(data=0,length(tree$edge.length),length(allstates),dimnames=list(edge=apply(tree$edge,1,function(x) paste(x,collapse=",")),state=allstates))
-	for(i in 1:length(tree$maps)) for(j in 1:length(tree$maps[[i]])) tree$mapped.edge[i,names(tree$maps[[i]])[j]]<-tree$mapped.edge[i,names(tree$maps[[i]])[j]]+tree$maps[[i]][j]
-	class(tree)<-c("simmap",setdiff(class(tree),"simmap"))
-	if(untangle) tree<-untangle(tree,"read.tree")
-	tree
+	phy$mapped.edge<-matrix(data=0,length(phy$edge.length),length(allstates),
+		dimnames=list(edge=apply(phy$edge,1,function(x) paste(x,collapse=",")),
+		state=allstates))
+	for(i in 1:length(phy$maps)) for(j in 1:length(phy$maps[[i]])) 
+		phy$mapped.edge[i,names(phy$maps[[i]])[j]]<-phy$mapped.edge[i,
+		names(phy$maps[[i]])[j]]+phy$maps[[i]][j]
+	class(phy)<-c("simmap",setdiff(class(phy),"simmap"))
+	if(untangle) phy<-untangle(phy,"read.tree")
+	phy
 }
 
 ## drop.tip.multiPhylo
 ## written by Liam J. Revell 2020, 2021
+## removed from phytools because 16-1-2023 because redundant with ape
 
-drop.tip.multiPhylo<-function(phy,tip,...){
-    if(!inherits(phy,"multiPhylo"))
-        stop("phy is not an object of class \"multiPhylo\".")
-    else {
-		if(!inherits(phy,"multiSimmap")){
-			if(hasArg(interactive)) interactive<-list(...)$interactive
-			else interactive<-FALSE
-			if(interactive) stop("interactive=TRUE does not work for drop.tip.multiPhylo.")
-			else {
-				trees<-lapply(phy,drop.tip,tip=tip,...)
-				class(trees)<-class(phy)
-			}
-		} else {
-			trees<-lapply(phy,drop.tip.simmap,tip=tip,...)
-			class(trees)<-class(phy)
-		}
-    }
-    trees
+# drop.tip.multiPhylo<-function(phy,tip,...){
+    # if(!inherits(phy,"multiPhylo"))
+        # stop("phy is not an object of class \"multiPhylo\".")
+    # else {
+		# if(!inherits(phy,"multiSimmap")){
+			# if(hasArg(interactive)) interactive<-list(...)$interactive
+			# else interactive<-FALSE
+			# if(interactive) stop("interactive=TRUE does not work for drop.tip.multiPhylo.")
+			# else {
+				# trees<-lapply(phy,drop.tip,tip=tip,...)
+				# class(trees)<-class(phy)
+			# }
+		# } else {
+			# trees<-lapply(phy,drop.tip.simmap,tip=tip,...)
+			# class(trees)<-class(phy)
+		# }
+    # }
+    # trees
+# }
+
+drop.tip.multiSimmap<-function(phy,tip,...){
+	if(!inherits(phy,"multiSimmap"))
+        stop("phy is not an object of class \"multiSimmap\".")
+	trees<-lapply(phy,drop.tip.simmap,tip=tip,...)
+	class(trees)<-class(phy)
+	trees
 }
-
-drop.tip.multiSimmap<-function(phy,tip,...) drop.tip.multiPhylo(phy,tip,...)
-

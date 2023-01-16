@@ -1,5 +1,6 @@
 ## some utility functions
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
+## 2018, 2019, 2020, 2021, 2022, 2023
 
 ## function forces a tree to be ultrametric using two different methods
 ## written by Liam J. Revell 2017, 2021, 2022
@@ -1273,32 +1274,34 @@ rescaleSimmap<-function(tree,...){
 }
 
 ## function to drop one or more tips from a tree but retain all ancestral nodes as singletons
-## written by Liam J. Revell 2014, 2015
-drop.tip.singleton<-function(tree,tip){
-	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
-	N<-Ntip(tree)
+## written by Liam J. Revell 2014, 2015, 2023
+drop.tip.singleton<-function(phy,tip,...){
+	if(!inherits(phy,"singleton")&&!inherits(phy,"phylo")) 
+		stop("phy should be an object of class \"singleton\".")
+	N<-Ntip(phy)
 	m<-length(tip)
-	ii<-sapply(tip,function(x,y) which(y==x),y=tree$tip.label)
-	tree$tip.label<-tree$tip.label[-ii]
-	ii<-sapply(ii,function(x,y) which(y==x),y=tree$edge[,2])
-	tree$edge<-tree$edge[-ii,]
-	tree$edge.length<-tree$edge.length[-ii]
-	tree$edge[tree$edge<=N]<-as.integer(rank(tree$edge[tree$edge<=N]))
-	tree$edge[tree$edge>N]<-tree$edge[tree$edge>N]-m
+	ii<-sapply(tip,function(x,y) which(y==x),y=phy$tip.label)
+	phy$tip.label<-phy$tip.label[-ii]
+	ii<-sapply(ii,function(x,y) which(y==x),y=phy$edge[,2])
+	phy$edge<-phy$edge[-ii,]
+	phy$edge.length<-phy$edge.length[-ii]
+	phy$edge[phy$edge<=N]<-as.integer(rank(phy$edge[phy$edge<=N]))
+	phy$edge[phy$edge>N]<-phy$edge[phy$edge>N]-m
 	N<-N-m
-	if(any(sapply(tree$edge[tree$edge[,2]>N,2],"%in%",tree$edge[,1])==FALSE)) internal<-TRUE
+	if(any(sapply(phy$edge[phy$edge[,2]>N,2],"%in%",phy$edge[,1])==FALSE)) internal<-TRUE
 	else internal<-FALSE
 	while(internal){
-		ii<-which(sapply(tree$edge[,2],"%in%",c(1:N,tree$edge[,1]))==FALSE)[1]
-		nn<-tree$edge[ii,2]
-		tree$edge<-tree$edge[-ii,]
-		tree$edge.length<-tree$edge.length[-ii]
-		tree$edge[tree$edge>nn]<-tree$edge[tree$edge>nn]-1
-		tree$Nnode<-tree$Nnode-length(ii)
-		if(any(sapply(tree$edge[tree$edge[,2]>N,2],"%in%",tree$edge[,1])==FALSE)) internal<-TRUE
+		ii<-which(sapply(phy$edge[,2],"%in%",c(1:N,phy$edge[,1]))==FALSE)[1]
+		nn<-phy$edge[ii,2]
+		phy$edge<-phy$edge[-ii,]
+		phy$edge.length<-phy$edge.length[-ii]
+		phy$edge[phy$edge>nn]<-phy$edge[phy$edge>nn]-1
+		phy$Nnode<-phy$Nnode-length(ii)
+		if(any(sapply(phy$edge[phy$edge[,2]>N,2],"%in%",phy$edge[,1])==FALSE)) internal<-TRUE
 		else internal<-FALSE
 	}
-	tree
+	class(phy)<-union("singleton",class(phy))
+	phy
 }
 
 ## S3 print method for object of class 'describe.simmap'

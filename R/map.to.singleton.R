@@ -38,7 +38,7 @@ map.to.singleton<-function(tree){
 	Nnode<--min(edge)
 	edge[edge<0]<-length(tip.label)-edge[edge<0]
 	tree<-list(edge=edge,Nnode=Nnode,tip.label=tip.label,edge.length=setNames(edge.length,xx))
-	class(tree)<-"phylo"
+	class(tree)<-c("singleton","phylo")
 	attr(tree,"order")<-"cladewise"
 	return(tree)
 }
