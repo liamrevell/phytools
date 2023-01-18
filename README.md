@@ -12,4 +12,4 @@ The development version of *phytools* can then in turn be installed using *remot
 remotes::install_github("liamrevell/phytools")
 ```
 
-Finally, although comments & pull requests are welcome, those not involving an actual software bug (which I always try to fix as promptly as I can) may not be addressed in a timely manner.
+Comments & pull requests are welcome; however, those not involving *actual software bugs* (which I always try to fix as promptly as I can) may not always be addressed in a timely manner.
