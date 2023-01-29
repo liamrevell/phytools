@@ -1,5 +1,46 @@
-## function plots a sigmoid phylogram or cladogram
-## written by Liam J. Revell 2022
+## function plots a sigmoid or spline phylogram or cladogram
+## written by Liam J. Revell 2022, 2023
+
+splinePhylogram<-function(tree,...){
+	if(hasArg(df)) df<-list(...)$df
+	else df<-50
+	if(hasArg(res)) res<-list(...)$res
+	else res<-4*df
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-par()$lwd
+	if(hasArg(color)) color<-list(...)$color
+	else color<-par()$fg
+	if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
+	h<-max(nodeHeights(tree))/res
+	tree<-make.era.map(tree,seq(0,max(nodeHeights(tree)),by=h))
+	tree<-map.to.singleton(tree)
+	args<-list(...)
+	args$tree<-tree
+	args$color<-"transparent"
+	dev.hold()
+	do.call(plotTree,args)
+	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+	phy<-list(edge=obj$edge,Nnode=obj$Nnode,
+		tip.label=1:obj$Ntip)
+	attr(phy,"class")<-"phylo"
+	for(i in 1:Ntip(phy)){
+		aa<-c(i,Ancestors(phy,i))
+		xx<-obj$xx[aa]
+		yy<-obj$yy[aa]
+		DF<-min(min(length(xx)-1,df),df)
+		tmp<-predict(smooth.spline(xx,yy,df=DF))
+		tmp$x<-c(xx[length(xx)],tmp$x)
+		tmp$y<-c(yy[length(yy)],tmp$y)
+		lines(tmp,lwd=lwd,col=color)
+	}
+	nulo<-dev.flush()
+	args$tree<-collapse.singles(tree)
+	args$add<-TRUE
+	ffg<-par()$fg
+	par(fg="transparent")
+	do.call(plotTree,args)
+	par(fg=ffg)
+}
 
 compute.brlen.simmap<-function(phy,method="Grafen",power=1,...){
 	if(inherits(phy,"simmap")){

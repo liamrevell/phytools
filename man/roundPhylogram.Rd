@@ -1,11 +1,13 @@
 \name{roundPhylogram}
 \alias{roundPhylogram}
 \alias{sigmoidPhylogram}
-\title{Plot a round or sigmoidal phylogram or cladogram}
+\alias{splinePhylogram}
+\title{Plot a round, sigmoidal, or spline phylogram or cladogram}
 \usage{
 roundPhylogram(tree, fsize=1.0, ftype="reg", lwd=2, mar=NULL, offset=NULL, 
    direction="rightwards", type="phylogram", xlim=NULL, ylim=NULL, ...)
 sigmoidPhylogram(tree, ...)
+splinePhylogram(tree, ...)
 }
 \arguments{
  	\item{tree}{an object of class "phylo" or "multiPhylo" containing one or multiple phylogenies.}
