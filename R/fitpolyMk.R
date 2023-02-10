@@ -1,6 +1,6 @@
 ## fitpolyMk 
 ## fits several polymorphic discrete character evolution models
-## written by Liam J. Revell 2019, 2020, 2022
+## written by Liam J. Revell 2019, 2020, 2022, 2023
 
 as.Qmatrix.fitpolyMk<-function(x,...){
 	class(x)<-"fitMk"
@@ -19,12 +19,22 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	if(is.matrix(x)) X<-strsplit(colnames(x),"+",fixed=TRUE)
 	else X<-strsplit(x,"+",fixed=TRUE)
 	ns<-sapply(X,length)
+	## get the states
+	states<-sort(unique(unlist(X)))
+	## check if ordered
 	if(ordered){
 		if(hasArg(max.poly)) max.poly<-list(...)$max.poly
 		else if(hasArg(max.states)){ 
 			max.states<-list(...)$max.states
 			max.poly<-max.states
-		} else max.poly<-max(ns)		
+		} else max.poly<-max(ns)
+		## get any user-supplied ordering
+		if(hasArg(order)) order<-list(...)$order
+		else order<-NULL
+		if(!is.null(order)){
+			if(setequal(order,states)) states<-order
+			else cat("order & states do not match. using alphabetical order.\n")
+		}
 	}
 	if(all(ns==1)){
 		cat("No polymorphic species found. Use fitMk.\n\n")
@@ -35,14 +45,12 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			Levs<-sapply(X,function(x) paste(sort(x),collapse="+"))
 			colnames(x)<-Levs
 		} else x<-sapply(X,function(x) paste(sort(x),collapse="+"))
-		## get the states
-		states<-sort(unique(unlist(X)))
 		if(ordered){
 			ss<-vector()
 			for(i in 1:(length(states)-1)){
 				ss<-c(ss,states[i])
 				for(j in (i+1):length(states)) 
-					if((j-i)<max.poly) ss<-c(ss,paste(states[i:j],collapse="+"))
+					if((j-i)<max.poly) ss<-c(ss,paste(sort(states[i:j]),collapse="+"))
 			}
 			ss<-c(ss,states[i+1])	
 			tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
