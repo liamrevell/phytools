@@ -240,6 +240,7 @@ S3method(drop.tip, contMap)
 S3method(drop.tip, densityMap)
 S3method(drop.tip, multiSimmap)
 S3method(keep.tip, contMap)
+S3method(anova, fitpolyMk)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)
