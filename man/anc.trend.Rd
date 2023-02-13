@@ -10,10 +10,12 @@ anc.trend(tree, x, maxit=2000)
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization.}
 }
 \description{
-	This function estimates the evolutionary parameters and ancestral states for Brownian evolution with directional trend.
+	This function estimates the evolutionary parameters and ancestral states for Brownian evolution with a directional trend.
 }
 \details{
-	Note that this will generally only work and produce sensible results for a phylogeny with some non-contemporary tips (i.e., a tree with some fossil species). The function uses \code{\link{optim}} with \code{method=} \code{"L-BFGS-B"}; however optimization is only constrained for the \code{sig2} which must be >0.
+	Note that this will generally only work and produce sensible results for a phylogeny with some non-contemporaneous tips (i.e., a tree with some fossil species).
+	
+	The function uses \code{\link{optim}} with \code{method=} \code{"L-BFGS-B"} internally; however, optimization is only constrained for the \code{sig2} which must be >0.
 }
 \value{
 	An object of class \code{"anc.trend"} with the following components:

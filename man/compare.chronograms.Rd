@@ -10,6 +10,9 @@ compare.chronograms(t1, t2, ...)
 	\item{...}{optional arguments.}
 }
 \description{
+	Creates a visual comparison of two chronograms that differ in edge lengths but not topology.
+}
+\details{
 	This function plots two trees, with semi-transparent colors by default, & uses arrows to highlight differences in depth of corresponding nodes between the trees.
 }
 \value{

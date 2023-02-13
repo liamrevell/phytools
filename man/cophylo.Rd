@@ -21,12 +21,14 @@ cotangleplot(tr1, tr2, type=c("cladogram","phylogram"),
 	\item{...}{optional arguments to be passed to \code{\link{tipRotate}}, or, in the case of \code{plot.cophylo}, to the internally used tree plotting function, \code{phylogram}. \code{phylogram} takes similar arguments to \code{\link{plotSimmap}}, such as \code{fsize}, \code{ftype}, \code{lwd}, and \code{pts}, though not all options from \code{plotSimmap} and \code{plotTree} are available. If \code{fsize} is supplied as a vector, different size fonts for the left & right facing trees may be used. In addition, the optional argument \code{scale.bar}, which should be a vector containing the lengths of the scale bars desired for the right & left trees, will add scale bars to the plot when supplied to \code{plot.cophylo}. If either tree contains polytomies, the \code{cophylo} argument \code{rotate.multi} should be set to \code{TRUE}. If curved linking lines are desired, the \code{plot.cophylo} argument \code{link.type} should be set to \code{"curved"}. Other arguments for the \code{plot} method include \code{link.col}, \code{link.lty}, and \code{link.lwd}, which can be supplied as a scalar or a vector in which the order of the elements corresponds to the order of the associations in \code{assoc}. Finally, \code{edge.col}, a list consisting of two vectors (\code{left} and \code{right}) can be used to specify the edge colors of the two left & right plotted trees. Note that the edge order is the same as in the \emph{rotated} trees, assuming that a rotation has been performed on \code{x}.}
 }
 \description{
-	This function creates an object of class \code{"cophylo"} or, in the case of \code{plot.cophylo}, plots that object. The function can (optionally) first attempt to rotate the nodes of both trees to optimize vertical matching of tips.
-	
-	\code{cotangleplot} creates a co-phylogenetic plot in which the edges of the matched trees are crossing.
+	Visualize co-phylogenetic trees by multiple methods.
 }
 \details{
+	\code{cophylo} an object of class \code{"cophylo"} or, in the case of \code{plot.cophylo}, plots that object. The function can (optionally) first attempt to rotate the nodes of both trees to optimize vertical matching of tips.
+	
 	If no matrix of associations, \code{assoc}, is provided, then \code{cophylo} will look for exact matches of tip labels between trees.
+	
+	\code{cotangleplot} creates a co-phylogenetic plot in which the edges of the matched trees are crossing and is designed to be used \emph{only} on phylogenies with matching tip labels.
 }
 \value{
 	An object of class \code{"cophylo"} which includes the following components or a pair of plotted facing phylogenies with links between tips as specified in \code{assoc}.

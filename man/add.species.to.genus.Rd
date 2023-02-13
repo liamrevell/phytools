@@ -18,7 +18,13 @@ genus.to.species.tree(tree, species)
 	\code{genus.to.species.tree} simulates pure-birth subtrees and then binds them at a random height along the terminal edge leading to each corresponding genus on a genus-level backbone tree.
 }
 \details{
-	For \code{add.species.to.genus}, if \code{genus} contains only one species and \code{where="root"}, then \code{species} will be attached midway along the branch leading to the one species. If \code{where="random"} then \code{species} will be added at a random position along the edge. If \code{genus} cannot be found in the tree, then the original tree is returned and a warning printed. If the tree is not ultrametric, then the resultant tree may not contain branch lengths and a warning will be printed. Note that for some cases in which a tree is read in from file, R may initially think it is ultrametric, but then later (as tips are added) decide that it is not due to rounding of the edge lengths when it was written to file. This can most likely be resolved by using \code{\link{force.ultrametric}} to coerce the tree to be exactly ultrametric (to the maximum numerical precision permitted by R) before adding tips to the tree. If \code{genus} is non-monophyletic then \code{species} will be attached to the most inclusive group containing members of \code{genus} and a warning will be printed.
+	For \code{add.species.to.genus}, if \code{genus} contains only one species and \code{where="root"}, then \code{species} will be attached midway along the branch leading to the one species. If \code{where="random"} then \code{species} will be added at a random position along the edge. 
+	
+	If \code{genus} cannot be found in the tree, then the original tree is returned and a warning printed. If the tree is not ultrametric, then the resultant tree may not contain branch lengths and a warning will be printed. 
+	
+	Note that for some cases in which a tree is read in from file, R may initially think it is ultrametric, but then later (as tips are added) decide that it is not due to rounding of the edge lengths when it was written to file. This can most likely be resolved by using \code{\link{force.ultrametric}} to coerce the tree to be exactly ultrametric (to the maximum numerical precision permitted by R) before adding tips to the tree.
+	
+	If \code{genus} is non-monophyletic then \code{species} will be attached to the most inclusive group containing members of \code{genus} and a warning will be printed.
 }
 \value{
 	An object of class \code{"phylo"}.

@@ -13,7 +13,7 @@ allFurcTrees(n, tip.label=NULL, to.plot=TRUE)
 	This function creates all possible unrooted bi- and multifurcating trees and returns a list of trees as an object of class \code{"multiPhylo"}.
 }
 \details{
-	This function should be used with caution for \code{n} greater than about 8, as in this case the number of possible trees is extremely large.
+	This function should be used with extreme caution for \code{n} greater than about 8, as in this case the number of possible trees is extremely large.
 }
 \value{
 	A list of trees as an object of class \code{"multiPhylo"}.

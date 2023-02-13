@@ -10,6 +10,9 @@ countSimmap(tree, states=NULL, message=TRUE)
 	\item{message}{optional logical argument indicating whether or not to return an informative message about the function output.}
 }
 \description{
+	Count the number of changes of different types on a stochastically mapped trees or set of trees (objects of class \code{"simmap"} or \code{"multiSimmap"}).
+}
+\details{
 	This function takes a tree or a set of trees with a mapped discrete character (that is, an object of class \code{"simmap"} or \code{"multiSimmap"}), and computes the total number of character changes as well as the number of character changes between all states.
 }
 \value{

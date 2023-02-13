@@ -15,9 +15,11 @@ bind.tip(tree, tip.label, edge.length=NULL, where=NULL, position=0,
 	\item{...}{arguments to be passed to \code{plotTree} (for \code{interactive=TRUE}.)}
 }
 \description{
-	Functions adds a new tip to the tree. If the tree is ultrametric and no branch length is specified, then \code{edge.length} is scaled so that the tree remains ultrametric after the new tip is added.
+	Functions adds a new tip to the tree.
 }
 \details{
+	 If the tree is ultrametric and no branch length is specified, then \code{edge.length} is scaled so that the tree remains ultrametric after the new tip is added.
+
 	Wrapper function for 'ape' \code{\link{bind.tree}}. Note that \code{interactive=TRUE} works only for right-facing phylograms.
 }
 \value{

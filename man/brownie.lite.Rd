@@ -14,13 +14,15 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function takes an object of class \code{"phylo"} or class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then fits the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This is also the basic model implemented in Brian O'Meara's \emph{Brownie} software.
+	Fits a multi-rate Brownian motion evolution model using maximum likelihood.
 }
 \details{
+	This function takes an object of class \code{"phylo"} or class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then fits the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}). This is also the basic model implemented in Brian O'Meara's \emph{Brownie} software.
+	
 	Sampling error in the estimation of species means can also be accounted for by assigning the vector \code{se} with the species specific sampling errors for \code{x}.
 }
 \value{
-	An object of class \code{"brownie.lite"} containing the following components:
+	An object of class \code{"brownie.lite"} containing the following elements:
 	\item{sig2.single}{is the rate, \eqn{\sigma^2}, for a single-rate model. This is usually the "null" model.}
 	\item{a.single}{is the estimated state at the root node for the single rate model.}
 	\item{var.single}{variance on the single rate estimator - obtained from the Hessian.}

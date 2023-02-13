@@ -15,7 +15,7 @@ ave.rates(tree, shift, tips, sig1, sig2, ave.shift, showTree=TRUE)
 
 }
 \description{
-	Primarily used internally by \code{\link{posterior.evolrate}}.
+	Internal function for \code{\link{posterior.evolrate}}.
 }
 \value{
 	A list of the rates.

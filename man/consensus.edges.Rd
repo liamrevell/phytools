@@ -10,7 +10,7 @@ consensus.edges(trees, method=c("mean.edge","least.squares"), ...)
 	\item{...}{optional arguments, the most popular of which is \code{consensus.tree} - a user supplied consensus tree. Another optional argument for \code{method="mean.edge"} is \code{if.absent} which tells the function how to include absent edges in the computation of average edge lengths. Possible values are \code{"zero"} (the default) or \code{"ignore"}.}
 }
 \description{
-	This function computes consensus edge lengths by different methods.
+	Computes consensus edge lengths from a set of input trees using multiple methods.
 }
 \value{
 	An object of class \code{"phylo"} with edge lengths.

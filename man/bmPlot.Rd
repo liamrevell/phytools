@@ -13,8 +13,9 @@ bmPlot(tree, type="BM", anc=0, sig2=1/1000, ngen=1000, ...)
 	\item{...}{arguments to be passed to different methods.}
 }
 \description{
-	This function conducts discrete-time Brownian motion simulation on an input tree, plots the outcome, and returns the tip and internal node states to the user as a named vector. 
-	
+	Conducts a discrete-time Brownian motion simulation on an input tree, plots the outcome, and returns the tip and internal node states to the user as a named vector. 
+}
+\details{
 	The function will first rescale and round the branch lengths to integer length, if they are not already in integer values. If integer branch lengths are provided, the user should also set \code{ngen} to be equal to the total height of the tree in generations (and thus avoid rescaling). 
 	
 	For \code{type="threshold"} the visualization is of the threshold model (Felsenstein 2012), in which the evolving character is liability and the segments of evolution are colored by their value for the threshold trait. If \code{type="threshold"} is used, the function requires at least one addition input: \code{thresholds}, a vector containing the ordered thresholds between states. The user can also provide the colors for plotting in \code{colors}. Note that one more color than threshold should be provided as one threshold implies two states; two thresholds, three states; etc. If no value for \code{colors} is provided, the function will recycle a set of four colors up to the number of times required by \code{thresholds}. Finally, the optional argument \code{return.tree=TRUE} will tell the function to return a list with the tip and note states and an object of class \code{"phylo"} with (for \code{type="threshold"}), the state for the threshold model through time mapped on the branches of the tree in discrete time.

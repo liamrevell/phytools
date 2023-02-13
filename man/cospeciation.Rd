@@ -21,9 +21,12 @@ cospeciation(t1, t2, distance=c("RF","SPR"),
 	\item{...}{optional arguments.}
 }
 \description{
+	Test for cospeciation based on tree distance.
+}
+\details{
 	This function conducts a test for cospeciation based on tree distance, applying a distance metric selected by the user.
 	
-	Note that this method should be prone to be quite liberal as the null hypothesis is no similarity between trees!
+	Note that this method should be prone to be quite liberal as the null hypothesis is \emph{no similarity whatsover} between the two trees!
 }
 \value{
 	An object of class \code{"cospeciation"}, which includes the test-statistic, the null distribution, and a p-value for the test of the null hypothesis of no topological similarity between the two trees.

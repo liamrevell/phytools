@@ -1,6 +1,6 @@
 \name{bind.tree.simmap}
 \alias{bind.tree.simmap}
-\title{Attaches a new tip to a tree}
+\title{Binds two trees of class \code{"simmap"}}
 \usage{
 bind.tree.simmap(x, y, where="root")
 }

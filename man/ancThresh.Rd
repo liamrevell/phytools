@@ -19,10 +19,16 @@ ancThresh(tree, x, ngen=100000, sequence=NULL, method="mcmc",
 	This function uses Bayesian MCMC to estimate ancestral states and thresholds for a discrete character under the threshold model from quantitative genetics (Felsenstein 2012).
 }
 \details{
+	According to the threshold model from evolutionary quantitative genetics, values for our observed discrete character are determined by an unseen continuous trait, normally referred to as liability. Every time the value for liability crosses a threshold, the observed discrete character changes in state.
+	
+	Felsenstein (2012) first had the insight that this model could be used to study the evolution of discrete character traits on a reconstructed phylogenetic tree.
+	
+	This function uses Bayesian MCMC to sample ancestral liabilities and thresholds for a discrete character evolution under the threshold model.
+	
 	\code{print} and \code{plot} S3 methods are now available for the object class \code{"ancThresh"}.
 }
 \value{
-	This function returns an object of class \code{"ancThresh"} containing the posterior sample from our analysis, although with other components.
+	This function returns an object of class \code{"ancThresh"} containing the posterior sample from our analysis, along with other components.
 }
 \references{
 	Felsenstein, J. (2012) A comparative method for both discrete and continuous characters using the threshold model. \emph{American Naturalist}, \bold{179}, 145-156.

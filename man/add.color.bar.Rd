@@ -17,7 +17,12 @@ add.color.bar(leg, cols, title=NULL, lims=c(0,1), digits=1, prompt=TRUE,
 	\item{...}{optional arguments including: \code{x} x-coordinate of the legend (if \code{prompt=FALSE}); \code{y} y-coordinate of the legend; \code{subtitle} optional legend subtitle; \code{direction} direction of the color bar (i.e., increase from left to right or from right to left); and \code{fsize}, font size for the legend text.}
 }
 \description{
-	This function adds a color bar to a plot created by \code{\link{plotBranchbyTrait}}. A color bar can be added by clicking on a location within the plot (when \code{prompt=TRUE}) or by setting \code{prompt=FALSE} and supplying x & y coordinates for the object. This function is also used internally by S3 methods \code{\link{plot.contMap}} and \code{\link{plot.densityMap}}, as well as by \code{\link{errorbar.contMap}}.
+	This function adds a color gradient legend to an existing plot.
+}
+\details{
+	This function was designed to add a color bar to a plot created by \code{\link{plotBranchbyTrait}}. A color bar can be added by clicking on a location within the plot (when \code{prompt=TRUE}) or by setting \code{prompt=FALSE} and supplying x & y coordinates for the object. 
+	
+	The function is also used internally by S3 methods \code{\link{plot.contMap}} and \code{\link{plot.densityMap}}, as well as by \code{\link{errorbar.contMap}}.
 }
 \references{
 	Revell, L. J. (2013) Two new graphical methods for mapping trait evolution on phylogenies. \emph{Methods in Ecology and Evolution}, \bold{4}, 754-759.

@@ -15,7 +15,10 @@ as.Qmatrix(x, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function extracts a \bold{Q}-matrix (in the form of an object of class \code{"Qmatrix"} from a fitted M\emph{k} model.
+	Extracts a \bold{Q}-matrix from a fitted M\emph{k} model.
+}
+\details{
+	This function extracts a \bold{Q}-matrix (in the form of an object of class \code{"Qmatrix"}) from a fitted M\emph{k} model.
 }
 \value{
 	An object of class \code{"Qmatrix"}.

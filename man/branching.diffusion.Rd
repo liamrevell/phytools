@@ -17,10 +17,13 @@ branching.diffusion(sig2=1, b=0.0023, time.stop=1000, ylim=NULL,
 	\item{...}{optional arguments.}
 }
 \description{
-	This function creates an animation of branching random diffusion (i.e., BM with speciation).
+	This function creates an animation of branching random diffusion (i.e., Brownian motion evolution with speciation).
+}
+\details{
+	 For animation to be recorded to file, the function requires the package \emph{animation} as well as a video renderer.
 }
 \value{
-	An animated plot and (optionally) a recorded video file. For animation to be recorded to file, the function requires the package \emph{animation} as well as a video renderer.
+	An animated plot and (optionally) a recorded video file.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

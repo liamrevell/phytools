@@ -28,7 +28,14 @@ errorbar.contMap(obj, ...)
 	\item{...}{optional arguments for \code{plot.contMap} which include all the arguments of \code{contMap} except for \code{tree}, \code{x}, \code{res}, and \code{lims}. Also \code{method}, \code{"fastAnc"}, \code{"anc.ML"}, or \code{"user"} (for user-supplied states) specifying which function to use for ancestral state estimation; \code{hold} specifies whether or not to hold output to graphical device before plotting (defaults to \code{hold=TRUE}); and \code{anc.states} a vector containing some or multiple ancestral user-supplied ancestral states at nodes. Some other plotting arguments, such as \code{xlim} and \code{ylim}, may also work. Optional arguments for \code{errorbar.contMap} include \code{x}, a vector containing the original trait values mapped onto the tree (otherwise these will be obtained from \code{obj}), \code{scale.by.ci}, a logical argument (defaulting to \code{TRUE}) that determines whether or not the length of the error bars will be scaled by the CI width, and \code{lwd}, which detemines the line width of the plotted error bars.}
 }
 \description{
-	Function plots a tree with a mapped continuous character. The mapping is accomplished by estimating states at internal nodes using ML with \code{\link{fastAnc}}, and then interpolating the states along each edge using equation [2] of Felsenstein (1985).
+	Projects the observed and reconstructed values of a continuous trait onto the edges of a tree using a color gradient.
+}
+\details{
+	Function plots a tree with a mapped continuous character.
+	
+	The mapping is accomplished by estimating states at internal nodes using ML with \code{\link{fastAnc}}, and then interpolating the states along each edge using equation [2] of Felsenstein (1985). This makes these interpolated values equal to the maximum likelihood estimates under a Brownian evolutionary process.
+	
+	The default color palette is \emph{not} recommended as it is not colorblind friendly and does not render well into gray scale; however, this can be updated using the helper function \code{\link{setMap}}.
 	
 	\code{errorbar.contMap} adds error bars to an existing plot.
 }

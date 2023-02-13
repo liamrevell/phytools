@@ -19,6 +19,9 @@ sim.multiCtt(tree, Q, anc=NULL, nmaps=100, nsim=100, ...)
 	\item{...}{optional arguments.}
 }
 \description{
+	Create a 'changes through time' plot from a \code{"multiSimmap"} object.
+}
+\details{
 	This function generates a 'changes through time' plot in the style of a lineage-through-time (LTT) plot. It shows the mean rate or the mean number of changes per unit time from a set of stochastic character map trees.
 }
 \value{

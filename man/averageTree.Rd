@@ -19,10 +19,22 @@ minTreeDist(tree, trees, method="quadratic.path.difference", ...)
 	\item{...}{other arguments to be passed internally.}
 }
 \description{
-	These functions compute average trees or consensus trees by various criteria.
+	Compute average trees or consensus trees by various criteria.
+}
+\details{
+	The function \code{averageTree} tries to find the (hypothetical) tree topology and branch lengths that has a minimum distance to all the trees in an input set, according to some user-specified tree distance measure.
+	
+	The function \code{ls.consensus} computes the least-squares consensus tree (Lapointe & Cucumel, 1997) from a set of input trees.
+	
+	Finally, the function \code{minTreeDist} finds the tree in the input set that is a minimum distance to all the other trees in the set. (This contrasts with \code{averageTree} which can return a tree not in the input set.)
 }
 \value{
 	An object of class \code{"phylo"} with edge lengths.
+}
+\references{
+	Lapointe, F.-J., G. Cucumel (1997) The average consensus procedure: Combination of weighted trees containing identical or overlapping sets of taxa. \emph{Systematic Biology}, \bold{46}, 306-312.
+
+	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
