@@ -9,9 +9,11 @@ drop.clade(tree, tip)
 	\item{tip}{set of tips in a clade.}
 }
 \description{
-	Mostly internal function for \code{\link{posterior.evolrate}}; function drops the clade containing the species in \code{tip}.
+	Internal function for \code{\link{posterior.evolrate}}.
 }
 \details{
+	Function drops the clade containing the species in \code{tip}.
+
 	Probably should not use unless you know what you're doing.
 }
 \value{

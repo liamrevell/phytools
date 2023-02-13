@@ -17,7 +17,7 @@ describe.simmap(tree, ...)
 	\item{...}{optional arguments which include: \code{plot}, a logical value indicating whether or not to plot the posterior probabilities at nodes (default is \code{plot=FALSE}); \code{check.equal}, a logical value indicating whether or not to check if all trees are equal using \code{\link{all.equal.phylo}} (default is \code{check.equal=FALSE}); and \code{message}, a logical indicating whether or not to print an informative message to the screen (default is \code{message=TRUE}).}
 }
 \description{
-	This function summarizes the result of one or more stochastic maps.
+	Summarizes the result of one or more stochastic maps.
 }
 \value{
 	An object of class \code{"describe.simmap"} with the following elements:

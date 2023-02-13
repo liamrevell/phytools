@@ -23,10 +23,13 @@
 	\item{...}{optional arguments: \code{tol}, length below which edges should be treated as having zero length; and \code{random}, specifying whether to resolve polytomies randomly (if \code{TRUE}) or in the order in which they are encountered.}
 }
 \description{
-	The method \code{di2multi} collapses branches of zero length (or, more specifically, branches with length shorter than \code{tol}) to create a polytomy in a tree or set of trees.
-	The method \code{multi2di} resolves polytomies by adding branches of zero length (while preserving the mappings) in a tree or set of trees.
+	Collapses or resolves polytomies in special types of phylogenetic trees. (See \code{\link{di2multi}} and \code{\link{multi2di}}.)
 }
 \details{
+	The method \code{di2multi} collapses branches of zero length (or, more specifically, branches with length shorter than \code{tol}) to create a polytomy in a tree or set of trees.
+	
+	The method \code{multi2di} resolves polytomies by adding branches of zero length (while preserving the mappings) in a tree or set of trees.
+
 	This methods should theoretically behave similarly to \code{\link{di2multi}} and \code{\link{multi2di}} from the \emph{ape} package.
 }
 \value{
