@@ -14,10 +14,15 @@ expand.clade(tree, node, factor=5)
 	\item{...}{optional arguments to be passed to \code{plotTree} or \code{plotSimmap}, depending on the class of \code{x$tree}.}
 }
 \description{
+	Modify the tip-spacing of a plotted tree.
+}
+\details{
 	The purpose of this function is to compute a custom tip-spacing for users who want to expand or contract the tip-spacing of the descendant taxa from a given node or nodes.
 }
 \value{
-	The function returns an object of class \code{"expand.clade"} which consists of the (possibly re-ordered) tree and a numerical vector with the calculated tip spacing based on the expansion factor specified by the user. This object can be plotted using the S3 \code{plot} method for the object class; or it can be plotted simplying by calling a standard plotting function on the tree & tip spacings.
+	The function returns an object of class \code{"expand.clade"} which consists of the (possibly re-ordered) tree and a numerical vector with the calculated tip spacing based on the expansion factor specified by the user.
+	
+	This object can be plotted using the S3 \code{plot} method for the object class; or it can be plotted simplying by calling a standard plotting function on the tree & tip spacings.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

@@ -12,13 +12,15 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 	\item{...}{optional arguments. The most important optional argument at this time is \code{error_vcv} which should contain a list of matrices of sampling \emph{variances} and covariances for (and between) the means of each species. The sampling variance for the mean is just the square of the sampling error. Sampling covariances will tend to be zero (or close to zero) if error for different traits is uncorrelated, for instance, because different specimens were used to estimate the means for different traits, and non-zero otherwise.}
 }
 \description{
-	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for an arbitrary number of continuously valued character. It then fits the multiple evolutionary variance-covariance matrix (rate matrix) model of Revell & Collar (2009; \emph{Evolution}).
+	Fits a multi-regime multivariate Brownian motion model following Revell & Collar (2009).
 }
 \details{
-	This function performs optimization by maximizing the likelihood with respect to the Cholesky matrices using \code{\link{optim}}.	Optimization is by \code{method="Nelder-Mead"}. Using box constraints does not make sense here as they would be applied to the Cholesky matrix rather than the target parameters. Users may have to increase \code{maxit} for large trees and/or more than two traits.
+	The function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for an arbitrary number of continuously valued character. It then fits the multiple evolutionary variance-covariance matrix (rate matrix) model of Revell & Collar (2009; \emph{Evolution}).
+	
+	\code{evol.vcv} performs optimization by maximizing the likelihood with respect to the Cholesky matrices using \code{\link{optim}}.	Optimization is by \code{method="Nelder-Mead"}. Using box constraints does not make sense here as they would be applied to the Cholesky matrix rather than the target parameters. Users may have to increase \code{maxit} for large trees and/or more than two traits.
 }
 \value{
-	An object of class \code{"evol.vcv"} with the following components:
+	An object of class \code{"evol.vcv"} with the following elements:
 	\item{R.single}{vcv matrix for the single rate matrix model.}
 	\item{vars.single}{optionally, a matrix containing the variances of the elements of \code{R.single}.}
 	\item{logL1}{log-likelihood for single matrix model.}

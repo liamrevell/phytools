@@ -10,7 +10,7 @@ export.as.xml(file, trees, X)
 	\item{X}{a matrix of class \code{"DNAbin"} or a matrix with discretely valued non-DNA character data.}
 }
 \description{
-	This function exports trees & character data in XML format.
+	Exports trees & character data in XML format.
 }
 \details{
 	Can be used to create input file for the program SIMMAP v1.5 (Bollback 2006).

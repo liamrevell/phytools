@@ -12,6 +12,9 @@ evolvcv.lite(tree, X, maxit=2000, tol=1e-10, ...)
 	\item{...}{other optional arguments. The most important optional argument is probably \code{models} which species the models to be fit. See \emph{Description} for more information. A second useful argument is \code{error_vcv} which should be supplied as a list of matrices of sampling \emph{variances} and covariances for (and between) the means of each species. The sampling variance for the mean is just the square of the sampling error. Sampling covariances will tend to be zero (or close to zero) if error for different traits is uncorrelated, for instance, because different specimens were used to estimate the means for different traits, and non-zero otherwise.}
 }
 \description{
+	Fits a multi-regime model for differences in the evolutionary variance-covariance structure or correlation between two continuous traits, following Revell & Collar (2009) and Revell et al. (2022).
+}
+\details{
 	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for two and only two continuously valued character. It then fits (by default) four different evolutionary models: common rates and correlation; different rates, common correlation; different correlations, common rates; no common structure.
 	
 	In addition to the four default models specified above, \code{evolvcv.lite} now fits an additional four additional models.
@@ -28,11 +31,11 @@ evolvcv.lite(tree, X, maxit=2000, tol=1e-10, ...)
 	A list with the results summarized for each model.
 }
 \references{
+	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+
 	Revell, L. J., and D. C. Collar (2009) Phylogenetic analysis of the evolutionary correlation using likelihood. \emph{Evolution}, \bold{63}, 1090-1100.
 	
-	Revell, L. J., K. S. Toyama, and D. L. Mahler (Submitted) A simple hierarchical model for heterogeneity in the evolutionary correlation on a phylogenetic tree.
-
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J., K. S. Toyama, and D. L. Mahler (2022) A simple hierarchical model for heterogeneity in the evolutionary correlation on a phylogenetic tree. \emph{PeerJ}, \bold{10}, e13910.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

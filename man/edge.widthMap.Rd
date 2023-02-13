@@ -14,7 +14,7 @@ edge.widthMap(tree, x, ...)
 	\item{...}{optional arguments - especially for the \code{plot} method. Perhaps the most important of these is \code{min.width}, which defaults to \code{0} but could probably be increased for many datasets and graphical devices. Other arguments are passed internally to \code{\link{plotTree}}.}
 }
 \description{
-	Function maps a discrete character onto the edges of the tree using variable edge widths.
+	Maps a discrete character onto the edges of the tree using variable edge widths.
 }
 \value{
 	\code{edge.widthMap} returns an object of class \code{"edge.widthMap"}.

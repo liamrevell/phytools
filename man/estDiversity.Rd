@@ -12,10 +12,16 @@ estDiversity(tree, x, method=c("asr","simulation"), model="ER", ...)
 	\item{...}{optional arguments. So far, this includes only \code{nsim}, the number of stochastic mappings to conduct using \code{\link{make.simmap}} for \code{method="simulation"}.}
 }
 \description{
-	This function estimates the lineage density at each node in the tree based on a biogeographic model (based on Mahler et al. 2010).
+	Estimates the lineage density at each node in the tree based on a biogeographic model (similar to Mahler et al. 2010).
 }
 \details{
-	Two different methods are implemented in the current version. For \code{method="asr"} the state at the current node, and at each position along each co-extant internal edge, is computed as the marginal (empirical Bayesian) ancestral state reconstruction using the re-rooting method of Yang (2006). The lineage density is then computed as the sum of the marginal reconstructions (posterior probabilities) times the summed marginal ancestral reconstructions across co-extant edges. In \code{method="simulation"}, stochastic character mapping is used to generate optional argument \code{nsim} stochastic maps of ancestral biogeography. Then the lineage density at each node is computed as the number of co-existing lineages with the same biogeography as the focal node, averaged acrossed stochastic maps. The importance of this distinction may depend on the degree to which reconstructions at internal nodes are independent, which relates to the distinction between marginal and joint reconstruction (e.g., see Yang 2006).
+	Two different methods are implemented in the current version.
+	
+	For \code{method="asr"} the state at the current node, and at each position along each co-extant internal edge, is computed as the marginal (empirical Bayesian) ancestral state reconstruction using the re-rooting method of Yang (2006). The lineage density is then computed as the sum of the marginal reconstructions (posterior probabilities) times the summed marginal ancestral reconstructions across co-extant edges. 
+	
+	For \code{method="simulation"}, stochastic character mapping is used to generate optional argument \code{nsim} stochastic maps of ancestral biogeography. Then the lineage density at each node is computed as the number of co-existing lineages with the same biogeography as the focal node, averaged acrossed stochastic maps.
+	
+	The importance of this distinction may depend on the degree to which reconstructions at internal nodes are independent, which relates to the distinction between marginal and joint reconstruction (e.g., see Yang 2006).
 }
 \value{
 	A vector containing the estimated lineage density at each node

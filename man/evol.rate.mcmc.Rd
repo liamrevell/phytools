@@ -21,10 +21,12 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 	\item{...}{other optional arguments.}
 }
 \description{
-	This function takes a phylogenetic tree and data for a single continuously valued character and uses a Bayesian MCMC approach to identify the phylogenetic location of a shift in the evolutionary rate through time.
+	Estimates the phylogenetic location of a \emph{single} rate shift on the tree using Bayesian MCMC (as described in Revell et al., 2012b).
 }
 \details{
-	Default values of \code{control} are given in Revell et al. (2012).
+	This function takes a phylogenetic tree and data for a single continuously valued character and uses a Bayesian MCMC approach to identify the phylogenetic location of a shift in the evolutionary rate through time.
+
+	Default values of \code{control} are given in Revell et al. (2012b).
 }
 \value{
 	An object of class \code{"evol.rate.mcmc"} consisting of at least the following elements:
@@ -32,9 +34,9 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 	\item{tips}{list of stips in rate \eqn{\sigma_1^2} for each sampled generation of MCMC (to polarize the rate shift).}
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2012a) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 
-	Revell, L. J., D. L. Mahler, P. Peres-Neto, and B. D. Redelings. (2012) A new method for identifying exceptional phenotypic diversification. \emph{Evolution}, \bold{66}, 135-146.
+	Revell, L. J., D. L. Mahler, P. Peres-Neto, and B. D. Redelings. (2012b) A new method for identifying exceptional phenotypic diversification. \emph{Evolution}, \bold{66}, 135-146.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

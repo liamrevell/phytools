@@ -11,7 +11,7 @@ Dtest(t1, t2, nsim=100, ...)
 	\item{...}{arguments to be passed internally to \code{make.simmap}. Note that (for now) these must be the same for both \code{t1} and \code{t2} (that is to say, we are not able to assume different trait evolution models for each tree).}
 }
 \description{
-	This function conducts the 'D-test' of Huelsenbeck et al. (2003).
+	Conducts the 'D-test' of Huelsenbeck et al. (2003).
 }
 \details{
 	Note that this function has been included without much testing, and so the user should be wary.
