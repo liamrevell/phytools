@@ -1,18 +1,22 @@
 \name{drop.tip.multiSimmap}
 \alias{drop.tip.multiSimmap}
-\title{Drop tip or tips from an object of class "multiSimmap"}
+\alias{keep.tip.multiSimmap}
+\title{Drop or keep tip or tips from an object of class "multiSimmap"}
 \usage{
 \method{drop.tip}{multiSimmap}(phy, tip, ...)
+\method{keep.tip}{multiSimmap}(phy, tip, ...)
 }
 \arguments{
-	\item{phy}{an object of class \code{"multiPhylo"} or \code{"multiSimmap"}.}
-	\item{tip}{name or names of species to be dropped.}
-	\item{...}{optional arguments to be passed to \code{\link{drop.tip}} or \code{\link{drop.tip.simmap}}. Most optional arguments work, with the exception of \code{interactive=TRUE} which will return an error.}
+	\item{phy}{an object of class \code{"multiSimmap"}.}
+	\item{tip}{name or names of species to be dropped, in a vector.}
+	\item{...}{optional arguments to be passed to \code{\link{drop.tip.simmap}}. Most optional arguments work, with the exception of \code{interactive=TRUE} which will return an error.}
 }
 \description{
-	This function drops one or multiple tips from all the trees of an object of class \code{"multiSimmap"}.	
+	This function drops or keeps one or multiple tips from all the trees of an object of class \code{"multiSimmap"}.	
 }
 \details{
+	Equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in \emph{ape}.
+
 	This function merely wraps \code{\link{drop.tip.simmap}}.
 }
 \value{

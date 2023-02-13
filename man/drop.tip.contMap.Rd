@@ -2,11 +2,13 @@
 \alias{drop.tip.contMap}
 \alias{drop.tip.densityMap}
 \alias{keep.tip.contMap}
+\alias{keep.tip.densityMap}
 \title{Drop tip or tips from an object of class "contMap" or "densityMap"}
 \usage{
 \method{drop.tip}{contMap}(phy, tip, ...)
 \method{drop.tip}{densityMap}(phy, tip, ...)
 \method{keep.tip}{contMap}(phy, tip, ...)
+\method{keep.tip}{densityMap}(phy, tip, ...)
 }
 \arguments{
 	\item{phy}{an object of class \code{"contMap"} or \code{"densityMap"}.}
@@ -14,9 +16,11 @@
 	\item{...}{optional arguments to be passed to \code{\link{drop.tip.simmap}}.}
 }
 \description{
-	This function drops one or multiple tips from an object of class \code{"contMap"} or \code{"densityMap"}. This function is equivalent to \code{\link{drop.tip}} but for an object of this class.
+	Drops one or multiple tips from an object of class \code{"contMap"} or \code{"densityMap"}.
 }
 \details{
+	These functions are equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in the \emph{ape} package, but for objects of class \code{"contMap"} and \code{"densityMap"}.
+
 	For more information about objects of class \code{"contMap"} or \code{"densityMap"}, please refer to the documentation pages for \code{\link{contMap}} or \code{\link{densityMap}}, respectively.
 }
 \value{

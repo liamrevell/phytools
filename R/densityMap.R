@@ -271,3 +271,8 @@ drop.tip.densityMap<-function(phy,tip,...){
 		return(phy)
 	} else cat("phy should be an object of class \"densityMap\"\n")
 }
+
+keep.tip.densityMap<-function(phy,tip,...){
+	tips<-setdiff(phy$tree$tip.label,tip)
+	drop.tip.densityMap(phy,tip=tips,...)
+}

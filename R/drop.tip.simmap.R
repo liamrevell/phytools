@@ -110,3 +110,14 @@ drop.tip.multiSimmap<-function(phy,tip,...){
 	class(trees)<-class(phy)
 	trees
 }
+
+keep.tip.simmap<-function(phy,tip,...){
+	tips<-setdiff(phy$tip.label,tip)
+	drop.tip.simmap(phy,tip=tips,...)
+}
+
+keep.tip.multiSimmap<-function(phy,tip,...){
+	trees<-lapply(phy,keep.tip.simmap,tip=tip,...)
+	class(trees)<-class(phy)
+	trees
+}
