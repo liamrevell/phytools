@@ -9,7 +9,12 @@ ladderize.simmap(tree, right=TRUE)
 	\item{right}{a logical specifying how the tree should be ladderized.}
 }
 \description{
-	This function 'ladderizes' an object of class \code{"phylo"} with a mapped discrete character. For more information see \code{\link{ladderize}}.
+	Ladderizes an object of class \code{"simmap"}.
+}
+\details{
+	This function 'ladderizes' an object of class \code{"simmap"} with a mapped discrete character.
+	
+	For more information see \code{\link{ladderize}}.
 }
 \value{
 	A ladderized object of class \code{"simmap"}.

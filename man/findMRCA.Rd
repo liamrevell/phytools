@@ -10,14 +10,16 @@ findMRCA(tree, tips=NULL, type=c("node","height"))
 	\item{type}{either \code{"node"} to return the node of the MRCA; or \code{"height"} to return the height above the root of the MRCA of \code{tips}.}
 }
 \description{
-	This function returns node number of the most recent common ancestor of a set of taxa. If \code{tips=NULL} the function is redundant with \code{\link{mrca}} (for \code{type="node"}) or \code{\link{vcv.phylo}}, but much slower (for \code{type="height"}).
+	Finds the most recent common ancestor (MRCA) of a set of tips.
 }
 \details{
+	This function returns node number of the most recent common ancestor of a set of taxa.
+	
 	If \code{tips==NULL} and \code{type="node"} (the default) it will return the result of a normal function call to \code{\link{mrca}}. 
 	
 	If \code{tips=NULL} and \code{type="height"} it will return a matrix equal to that produced by \code{\link{vcv.phylo}}.
 	
-	From \code{phytools 0.5-66} forward \code{findMRCA} uses \code{\link{getMRCA}} in the \emph{ape} package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package to ensure backward compatibility.
+	From \code{phytools 0.5-66} forward \code{findMRCA} uses \code{\link{getMRCA}} in the \emph{ape} package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package namespace to ensure backward compatibility.
 }
 \value{
   The node number of the MRCA, or a matrix of node numbers (if \code{tips==NULL}) - for \code{type="node"}; or the height of the MRCA, or a matrix of heights (if \code{tips==NULL}) - for \code{type="height"}.

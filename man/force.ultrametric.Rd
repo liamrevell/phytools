@@ -1,6 +1,6 @@
 \name{force.ultrametric}
 \alias{force.ultrametric}
-\title{Forces a phylogenetic tree to be ultrametric}
+\title{Coerces a phylogenetic tree to be ultrametric}
 \usage{
 force.ultrametric(tree, method=c("nnls","extend"), ...)
 }
@@ -10,7 +10,10 @@ force.ultrametric(tree, method=c("nnls","extend"), ...)
 	\item{...}{optional arguments: principally, \code{message}. This argument (if set to \code{FALSE}) can be used to suppress the default warning message that \code{force.ultrametric} \emph{should not} be used as a formal statistical method to ultrametricize a tree.}
 }
 \description{
-	This function coerces an object of class \code{"phylo"} to be ultrametric. 
+	Coerces an object of class \code{"phylo"} to be ultrametric. 
+}
+\details{
+	\code{force.ultrametric} coerces a non-ultrametric tree to be ultrametric.
 	
 	This is achieved either by using \code{\link{nnls.tree}} from the phangorn package to compute the set of edge lengths that result in a minimized sum-of-squares distance between the patristic distance of the output and input trees (\code{method="nnls"}); or by simply extending all the external edges of the tree to match the external edge with the greatest total height (\code{method="extend"}). 
 	

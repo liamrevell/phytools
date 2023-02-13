@@ -10,6 +10,9 @@ getSisters(tree, node, mode=c("number","label"))
 	\item{mode}{an optional string indicating whether to return the node or tip number(s) or the node or tip label(s), if applicable.}
 }
 \description{
+	Computes the sister taxon or node.
+}
+\details{
 	This function takes a tree and node or tip number of label and returns the number or label of the sister or sisters to that node or tip.
 }
 \value{

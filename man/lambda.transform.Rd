@@ -9,10 +9,13 @@ lambda.transform(lambda, C)
 	\item{C}{matrix probably returned by \code{\link{vcv.phylo}}.}
 }
 \description{
-	Function multiplies the off-diagonals of a square matrix by \eqn{\lambda}. Used internally in \code{\link{phyl.pca}} and other functions.
+	Internal function for \code{\link{phyl.pca}} and others.
+}
+\details{
+	Multiplies the off-diagonals of a square matrix by \code{lambda} and returns the result.
 }
 \value{
-	An among-species phylogenetic variance covariance matrix (e.g., \code{\link{vcv.phylo}}) in which the off-diagonal elements have been multiplied by \eqn{\lambda}.
+	Typically an among-species phylogenetic variance covariance matrix (e.g., \code{\link{vcv.phylo}}) in which the off-diagonal elements have been multiplied by \code{lambda}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

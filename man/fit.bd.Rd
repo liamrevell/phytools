@@ -22,6 +22,9 @@ lik.bd(theta, t, rho=1, N=NULL)
 	\item{...}{optional arguments.}
 }
 \description{
+	Fits a birth-death (\code{fit.bd}) or pure-birth (\code{fit.yule}) model to a reconstructed phylogenetic tree with branch lengths.
+}
+\details{
 	The function \code{fit.bd} fits a birth-death model to a phylogenetic tree with edge lengths and a (potentially) incomplete sampling fraction.
 	
 	The function \code{fit.yule} fits a pure-birth model with a (potentially) incomplete sampling fraction.

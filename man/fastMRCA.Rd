@@ -14,10 +14,14 @@ fastDist(tree, sp1, sp2)
 	\item{sp2}{species two name.}
 }
 \description{
-	This function returns the most recent common ancestor (node number) for a pair of taxa; or, in the case of \code{fastHeight}, the height above the root of the MRCA of a pair of taxa; or, in the case of \code{fastDist}, the patristic distance between a pair of taxa. 
+	Finds the most recent common ancestor (MRCA) for a pair of tip taxa.
 }
 \details{
-	This function is mostly redundant with \code{\link{findMRCA}} (or \code{findMRCA(...,type="height")} in the case of \code{fastHeight}) but for very large trees will be considerably faster. (Also see \code{\link{getMRCA}} in the ape package.)
+	Function (\code{fastMRCA}) returns the most recent common ancestor (node number) for a pair of taxa; or, in the case of \code{fastHeight}, the height above the root of the MRCA of a pair of taxa; or, in the case of \code{fastDist}, the patristic distance between a pair of taxa. 
+	
+	This function is mostly redundant with \code{\link{findMRCA}} (or \code{findMRCA(...,type="height")} in the case of \code{fastHeight}), but for very large trees will be considerably faster.
+	
+	(Also see \code{\link{getMRCA}} in the ape package.)
 }
 \value{
 	The node number of the MRCA, the height above the root (for \code{fastHeight}), or the patristic distance between two taxa (for \code{fastDist}).

@@ -13,7 +13,10 @@ genSeq(tree, l=1000, Q=NULL, rate=1, format="DNAbin", ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	Simulates DNA sequence on \code{tree} under the specified model. Uses \code{\link{sim.Mk}} internally.
+	Simulates DNA sequence on \code{tree} under the specified model.
+}
+\details{
+	Uses \code{\link{sim.Mk}} internally.
 }
 \value{
 	An object of class \code{"DNAbin"} or \code{"phyDat"}, or a matrix of nucleotides.

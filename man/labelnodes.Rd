@@ -13,7 +13,10 @@ labelnodes(text, node=NULL, interactive=TRUE, shape=c("circle","ellipse",
 	\item{...}{optional arguments.}
 }
 \description{
-	Function adds node labels to a plotted object of class \code{"phylo"}. The nodes to be labels can be selected interactively by the user (i.e., by clicking on the corresponding nodes of the plotted tree).
+	Adds node labels to a plotted object of class \code{"phylo"}.
+}
+\details{
+	The nodes to be labels can be selected interactively by the user (i.e., by clicking on the corresponding nodes of the plotted tree).
 }
 \value{
 	Invisibly returns a vector of the node indices for the labeled nodes.

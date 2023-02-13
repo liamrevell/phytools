@@ -17,7 +17,10 @@ fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 	\item{...}{optional arguments to be passed to \code{\link{fitMk}}, \code{\link{ace}}, or \code{fitDiscrete}. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.sub}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{lwd.by.rate}, a logical argument specifying whether or not to scale arrow line widths in proportion to the estimated rates.}
 }
 \description{
-	This function fit's Pagel's (1994) model for the correlated evolution of two binary characters.
+	Fits Pagel's (1994) model for the correlated evolution of two binary characters.
+}
+\details{
+	\code{fitPagel} fits both an independent evolution model, as well as Pagel's (1994) binary dependent model, and compares them with a likelihood-ratio test.
 	
 	\code{plot.fitPagel} plots the fitted models using arrows.
 }

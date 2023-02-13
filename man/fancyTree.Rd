@@ -18,7 +18,10 @@ phenogram95(tree, x=NULL, ...)
 	\item{x}{in \code{phenogram95}, a named vector with values for a continuously distributed trait.}
 }
 \description{
-	This function plots different types of phylogenetic trees.
+	Plots phylogenies (or phylogenetic trees and comparative data) in a variety of different styles.
+}
+\details{
+	This function plots a phylogeny or phylogenetic tree and comparative data in a variety of different styles, depending on the value of \code{type}. In some instances, \code{fancyTree} is now just a wrappe for other \emph{phytools} functions, such as \code{\link{contMap}} and \code{\link{densityMap}}.
 	
 	If \code{type="extinction"} (or any unambiguous abbreviation) the function will plot a tree in which branches preceding the MRCA of all extant taxa and branches leading only to extnct lineages are plotted with dashed red lines. 
 	
@@ -26,9 +29,9 @@ phenogram95(tree, x=NULL, ...)
 	
 	If \code{type="droptip"} the function will create a two panel figure in which the first panel is the tree with lineages to be pruned highlighted; and the second panel is the pruned tree. In this case, the additional argument \code{tip}, the tip name or vector of tip names to be dropped, must be supplied. 
 	
-	If \code{type="densitymap"}, a posterior probability density "heat-map" is created based on a set of trees in a \code{"multiPhylo"} object containing a binary [0,1] mapped character. (See \code{\link{densityMap}} for additional optional arguments if \code{type="densitymap"}.) This option just calls the function \code{\link{densityMap}} internally.
+	If \code{type="densitymap"}, a posterior probability density "heat-map" is created based on a set of trees in a \code{"multiSimmap"} object containing a binary [0,1] mapped character. (See \code{\link{densityMap}} for additional optional arguments if \code{type="densitymap"}.)
 	
-	If \code{type="contmap"}, reconstructed continuous trait evolution is mapped on the tree. Again, see \code{\link{contMap}} for additional arguments if \code{type="contmap"}. Much like \code{type="densitymap"}, this option just calls the function \code{\link{contMap}} internally.
+	If \code{type="contmap"}, reconstructed continuous trait evolution is mapped on the tree. Again, see \code{\link{contMap}} for additional arguments if \code{type="contmap"}.
 
 	If \code{type="phenogram95"} a 95-percent phenogram is plotted using transparency to visualize uncertainty at ancestral nodes and along branches. Most of the options of \code{\link{phenogram}} are available. 
 	

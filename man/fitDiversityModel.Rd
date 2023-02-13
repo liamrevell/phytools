@@ -18,10 +18,10 @@ fitDiversityModel(tree, x, d=NULL, showTree=TRUE, tol=1e-6)
 	\item{...}{optional arguments for \code{logLik} and \code{print} methods. Note that for the \code{logLik} method the number of fitted parameters (\code{"df"}) is assumed to be 3 for the diversity dependent model (that is, if \code{psi} is estimated) and 2 for the diversity independent model, unless otherwise specified (using the argument \code{df}).}
 }
 \description{
-	This function fits a diversity-dependent phenotypic evolution model (based on Mahler et al. 2010).
+	Fits a diversity-dependent phenotypic evolution model (similar to Mahler et al. 2010).
 }
 \value{
-	An object of class \code{"fitDiversityModel"} consisting of the following components:
+	An object of class \code{"fitDiversityModel"} consisting of the following elements:
 	\item{logL}{log-likelihood of the fitted model.}
 	\item{sig0}{estimated starting value for the rate at the root of the tree, \eqn{\sigma_0^2}.}
 	\item{psi}{the estimated rate of change in the rate associated with the addition of a lineage.}

@@ -10,7 +10,7 @@ likMlambda(lambda, X, C)
 	\item{C}{\emph{n} x \emph{n} matrix (for \emph{n} taxa) containing the height above the root for each pair of taxa in the tree (e.g., \code{\link{vcv.phylo}}).}
 }
 \description{
-	Computes the joint likelihood of Pagel's \eqn{\lambda} parameter.
+	Likelihood function for joint estimation of Pagel's \eqn{\lambda} parameter.
 }
 \details{
 	Generally intended to be used internally by other methods that do joint optimization of \eqn{\lambda} (e.g., \code{\link{phyl.pca}}).

@@ -13,6 +13,9 @@ geo.palette()
 	\item{...}{optional arguments.}
 }
 \description{
+	Adds a geological legend to a plotted tree.
+}
+\details{
 	The function \code{geo.legend} adds a geological (or other temporal) legend to a plotted tree.
 	
 	The function \code{geo.palette} returns a geological time color palette to the user.

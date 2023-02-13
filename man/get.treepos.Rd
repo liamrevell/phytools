@@ -11,14 +11,14 @@ getnode(...)
 	\item{...}{optional arguments.}
 }
 \description{
-	Both functions return the phylogenetic position of a mouse click on a plotted tree.
+	Return the phylogenetic position of a mouse click on a plotted tree.
+}
+\details{
+	Both \code{get.treepos} and \code{getnode} are primarily meant for internal use in other \emph{phytools} functions.
 	
 	\code{get.treepos} returns the index of the node at the end of the selected edge, along with the branch distance to that node.
 	
 	\code{getnode} simply returns the closest node to the user mouse click.
-}
-\details{
-	Both functions are primarily meant to be used internally by other \emph{phytools} functions.
 }
 \value{
 	A list for \code{get.treepos} and a node number for \code{getnode}.
