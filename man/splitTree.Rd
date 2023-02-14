@@ -13,8 +13,7 @@ splitTree(tree, split)
 }
 \details{
 	This function splits the tree at a given point, and returns the two subtrees as an object of class \code{"multiPhylo"}.
-}
-\details{
+
 	Probably do not use this unless you can figure out what you are doing.
 }
 \value{
