@@ -5,13 +5,14 @@
 \title{Rescale \code{"simmap"} object}
 \usage{
 rescale(x, ...)
-\method{rescale}{simmap}(x, ...)
+\method{rescale}{simmap}(x, model="depth", ...)
 rescaleSimmap(tree, ...)
 }
 \arguments{
 	\item{x}{object to be rescaled (possibly an object of class \code{"simmap"}).}
+	\item{model}{model to use to rescale the tree. Currently the only option is \code{"depth"}.}
+	\item{...}{parameter of the model to use in rescaling. Currently the only parameter is \code{depth} for \code{model="depth"}.}
 	\item{tree}{for \code{rescaleSimmap}, object of class \code{"simmap"} to be rescaled.}
-	\item{...}{other arguments, such as \code{depth}.}
 }
 \description{
 	Scales a tree with a mapped discrete character (\code{"simmap"} object) to an arbitrary total height, preserving the relative time spent in each state along each edge.

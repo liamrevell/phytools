@@ -13,7 +13,7 @@ rescale.default<-function(x, ...){
 		"if",class(x),"= \"phylo\" load geiger package to rescale.\n"))
 }
 
-rescale.simmap<-function(x,...) rescaleSimmap(x,...)
+rescale.simmap<-function(x, model="depth", ...) rescaleSimmap(x,...)
 
 rescaleSimmap<-function(tree,...){
 	if(inherits(tree,"multiPhylo")){
