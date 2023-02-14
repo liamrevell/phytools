@@ -11,9 +11,11 @@ resolveAllNodes(tree)
 	\item{node}{for \code{resolveNode}, the node with a polytomy to resolve.}
 }
 \description{
-	This functions resolves a single multifurcation or all multifurcations in a tree in all possible ways. If the input tree has edge lengths, then the resolutions will use internal edges of zero length.
+	Resolves a single multifurcation or all multifuctions in all possible ways.
 }
 \details{
+	This functions resolves a single multifurcation or all multifurcations in a tree in all possible ways. If the input tree has edge lengths, then the resolutions will use internal edges of zero length.
+
 	For \code{resolveNode} applied to a multifurcation with \emph{n} descendants, the number of resolved trees will be equal to the number of possible rooted trees of \emph{n} taxa. (For instance, three for a trifurcation, 15 for a quadrifurcation, and so on.)
 	
 	For \code{resolveAllNodes} the number of fully resolved trees will be equal to the product of numbers for \code{resolveNode} applied to each multifurcation separately. (For instance, 45 for a tree containing one trifurcation and one quadrifurcation.)

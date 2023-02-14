@@ -39,8 +39,7 @@ rescaled_anoletree<-rescale(anoletree,depth=50)
 plot(rescaled_anoletree,ftype="i",fsize=0.6,
 	mar=c(5.1,1.1,1.1,1.1))
 axis(1,at=seq(0,50,by=10))
-## reset margins
-par(mar=c(5.1,4.1,4.1,2.1))
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default
 }
 \keyword{phylogenetics}
 \keyword{utilities}

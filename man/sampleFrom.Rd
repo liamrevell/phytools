@@ -12,7 +12,7 @@ sampleFrom(xbar=0, xvar=1, n=1, randn=NULL, type="norm")
 	\item{type}{\code{"norm"} is the only distribution implemented so far.}
 }
 \description{
-	Function samples from a set of normal distributions with parameters given in \code{xbar} and \code{xvar}.
+	Samples from a set of normal distributions with parameters given in \code{xbar} and \code{xvar}.
 }
 \value{
 	A vector, with labels.

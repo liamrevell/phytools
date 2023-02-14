@@ -9,7 +9,11 @@ roundBranches(tree, digits)
 	\item{digits}{number of digits for rounding. Passed to \code{\link{round}}.}
 }
 \description{
-	This function rounds the branch lengths of a tree or trees and reconciles any mappings for objects of class \code{"simmap"} or \code{"multiSimmap"}.
+	Rounds the branch lengths of a phylogenetic tree.
+
+}
+\details{
+	This function rounds the branch lengths of a tree or trees to a precision indicated by \code{digits}, and reconciles any mappings for objects of class \code{"simmap"} or \code{"multiSimmap"}.
 }
 \value{
 	An object of class \code{"phylo"}, \code{"multiPhylo"}, \code{"simmap"}, or \code{"multiSimmap"}, with rounded edge lengths.

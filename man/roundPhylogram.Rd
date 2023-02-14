@@ -23,7 +23,7 @@ splinePhylogram(tree, ...)
 	\item{...}{optional arguments. In the case of \code{roundPhylogram}, these are mostly as in \code{\link{plotTree}} and \code{\link{plotSimmap}}.}
 }
 \description{
-	Function plots one or multiple round phylograms or a sigmoidal phylogram or cladogram.
+	Plots one or multiple round phylograms, a sigmoidal phylogram or cladogram, or a phylogram draw using cubic splines through the nodes.
 }
 \details{
 	The underscore character \code{"_"} is automatically swapped for a space in tip labels, as in \code{\link{plotSimmap}}.
@@ -39,10 +39,14 @@ splinePhylogram(tree, ...)
 	\code{\link{plotSimmap}}, \code{\link{plotTree}}
 }
 \examples{
+## load mammal.tree
 data(mammal.tree)
+## plot using roundPhylogram
 roundPhylogram(compute.brlen(mammal.tree),
     fsize=0.8,ftype="i")
+## load anoletree
 data(anoletree)
+## plot using sigmoidPhylogram
 sigmoidPhylogram(anoletree,fsize=0.6,
 	ftype="i",direction="upwards")
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default

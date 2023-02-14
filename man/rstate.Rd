@@ -8,7 +8,7 @@ rstate(y)
 	\item{y}{vector of probabilities. Must have names & should probably add to \code{1.0}.}
 }
 \description{
-	Primarily an internal function for \code{\link{make.simmap}}.
+	Internal function for \code{\link{make.simmap}}.
 }
 \details{
 	This function picks a random element in a vector according to the probability assigned that element.  It returns the name. Uses \code{\link{rmultinom}}.

@@ -17,7 +17,7 @@ setMap(x, ...)
 	\item{...}{arguments to be passed to \code{\link{colorRampPalette}}. Also, the argument \code{invert} which (if \code{invert=TRUE}) will just flip the current color ramp.}
 }
 \description{
-	Function to change the color map (ramp) in an object of class \code{"contMap"}, \code{"densityMap"}, \code{"phyloScattergram"}, or \code{"multirateBM_plot"}.
+	Changes the color map (ramp) in an object of class \code{"contMap"}, \code{"densityMap"}, \code{"phyloScattergram"}, or \code{"multirateBM_plot"}.
 }
 \value{
 	An object of class \code{"contMap"}, \code{"densityMap"}, \code{"phyloScattergram"}, or \code{"multirateBM_plot"}.

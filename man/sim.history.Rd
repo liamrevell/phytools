@@ -18,6 +18,9 @@ sim.multiMk(tree, Q, anc=NULL, nsim=1, ...)
 	\item{...}{other optional arguments. Currently only \code{message}, a logical value indicating whether or not to turn on informational messages (defaults to \code{message=TRUE}).}
 }
 \description{
+	Simulates discrete character evolution on a phylogenetic tree.
+}
+\details{
 	The function \code{sim.history} simulates a stochastic character history for a discretely valued character trait on the tree. The resultant tree is stored as a modified \code{"phylo"} object in stochastic character map (e.g., \code{\link{make.simmap}}) format.
 	
 	The function \code{sim.Mk} simulates the states for a discrete character at the tips of the tree only.

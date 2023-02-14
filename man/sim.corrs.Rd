@@ -11,7 +11,12 @@ sim.corrs(tree, vcv, anc=NULL, internal=FALSE)
 	\item{internal}{logical value indicating whether to return states at internal nodes.}
  }
 \description{
-	This function conducts BM simulation on a tree with multiple rates and/or multiple evolutionary correlations between characters. If \code{vcv} is a single matrix, instead of a list of matrices, \code{sim.corrs} will simulate multivariate BM with a single rate matrix.
+	Simulates multivariate Brownian motion evolution on a tree with multiple evolutionary correlation/covariance matrices.
+}
+\details{
+	This function conducts BM simulation on a tree with multiple rates and/or multiple evolutionary correlations between characters.
+	
+	If \code{vcv} is a single matrix, instead of a list of matrices, \code{sim.corrs} will simulate multivariate BM with a single rate matrix.
 }
 \value{
 	A matrix containing the multivariate tip states for the \code{n} species in the tree (and nodes if \code{internal=} \code{TRUE}).
