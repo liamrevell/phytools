@@ -1,21 +1,26 @@
-\name{rescaleSimmap}
+\name{rescale.simmap}
+\alias{rescale}
+\alias{rescale.simmap}
 \alias{rescaleSimmap}
-\title{Rescale SIMMAP style tree}
+\title{Rescale \code{"simmap"} object}
 \usage{
+rescale(x, ...)
+\method{rescale}{simmap}(x, ...)
 rescaleSimmap(tree, ...)
 }
 \arguments{
-	\item{tree}{a phylogenetic tree in modified \code{"phylo"} format with a discrete character mapping (e.g., see \code{\link{read.simmap}} or \code{\link{make.simmap}}).}
+	\item{x}{object to be rescaled (possibly an object of class \code{"simmap"}).}
+	\item{tree}{for \code{rescaleSimmap}, object of class \code{"simmap"} to be rescaled.}
 	\item{...}{other arguments, such as \code{depth}.}
 }
 \description{
-	This function scales a tree with a mapped discrete character to an arbitrary total height, preserving the relative time spent in each state along each edge.
+	Scales a tree with a mapped discrete character (\code{"simmap"} object) to an arbitrary total height, preserving the relative time spent in each state along each edge.
 }
 \details{
-	Replaces \code{rescaleTree} (now \code{rescale.phylo}) in the 'geiger' package for SIMMAP style trees.
+	Replaces \code{rescaleTree} (now \code{rescale.phylo}) in the 'geiger' package for the \code{"simmap"} object class. \code{rescaleSimmap} is now a redundant alias for the method \code{rescale.simmap}.
 }
 \value{
-	A phylogenetic tree in modified \code{"phylo"} format.
+	An object of class \code{"simmap"}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

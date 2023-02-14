@@ -2,6 +2,50 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023
 
+## function to rescale simmap style trees
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017, 2023
+
+rescale<-function(x,...) UseMethod("rescale")
+
+rescale.default<-function(x, ...){
+	warning(paste(
+		"rescale does not know how to handle objects of class ",class(x),".\n",
+		"if",class(x),"= \"phylo\" load geiger package to rescale.\n"))
+}
+
+rescale.simmap<-function(x,...) rescaleSimmap(x,...)
+
+rescaleSimmap<-function(tree,...){
+	if(inherits(tree,"multiPhylo")){
+		cls<-class(tree)
+		trees<-unclass(tree)
+		trees<-lapply(trees,rescaleSimmap,...)
+		class(trees)<-cls
+		return(trees)
+	} else if(inherits(tree,"phylo")){
+		if(hasArg(lambda)) lambda<-list(...)$lambda
+		else lambda<-1
+		if(hasArg(totalDepth)) depth<-totalDepth<-list(...)$totalDepth
+		else if(hasArg(depth)) depth<-totalDepth<-list(...)$depth
+		else depth<-totalDepth<-max(nodeHeights(tree))
+		if(lambda!=1){
+			e<-lambdaTree(tree,lambda)$edge.length/tree$edge.length
+			tree$edge.length<-tree$edge.length*e
+			tree$maps<-mapply(function(x,y) x*y,tree$maps,e)
+			tree$mapped.edge<-tree$mapped.edge*matrix(rep(e,ncol(tree$mapped.edge)),length(e),ncol(tree$mapped.edge))
+		}
+		if(depth!=max(nodeHeights(tree))){
+			h<-max(nodeHeights(tree))
+			s<-depth/h
+			tree$edge.length<-tree$edge.length*s
+			tree$maps<-lapply(tree$maps,"*",s)
+			tree$mapped.edge<-tree$mapped.edge*s
+		}
+		return(tree)
+	} else message("tree should be an object of class \"phylo\" or \"multiPhylo\"")
+}
+
+
 ## function forces a tree to be ultrametric using two different methods
 ## written by Liam J. Revell 2017, 2021, 2022
 
@@ -1239,38 +1283,6 @@ rep.multiPhylo<-function(x,...){
 	for(i in 1:times) obj<-if(i==1) x else if(i>=2) c(obj,x)
 	class(obj)<-"multiPhylo"
 	obj
-}
-
-## function to rescale simmap style trees
-## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017
-rescaleSimmap<-function(tree,...){
-	if(inherits(tree,"multiPhylo")){
-		cls<-class(tree)
-		trees<-unclass(tree)
-		trees<-lapply(trees,rescaleSimmap,...)
-		class(trees)<-cls
-		return(trees)
-	} else if(inherits(tree,"phylo")){
-		if(hasArg(lambda)) lambda<-list(...)$lambda
-		else lambda<-1
-		if(hasArg(totalDepth)) depth<-totalDepth<-list(...)$totalDepth
-		else if(hasArg(depth)) depth<-totalDepth<-list(...)$depth
-		else depth<-totalDepth<-max(nodeHeights(tree))
-		if(lambda!=1){
-			e<-lambdaTree(tree,lambda)$edge.length/tree$edge.length
-			tree$edge.length<-tree$edge.length*e
-			tree$maps<-mapply(function(x,y) x*y,tree$maps,e)
-			tree$mapped.edge<-tree$mapped.edge*matrix(rep(e,ncol(tree$mapped.edge)),length(e),ncol(tree$mapped.edge))
-		}
-		if(depth!=max(nodeHeights(tree))){
-			h<-max(nodeHeights(tree))
-			s<-depth/h
-			tree$edge.length<-tree$edge.length*s
-			tree$maps<-lapply(tree$maps,"*",s)
-			tree$mapped.edge<-tree$mapped.edge*s
-		}
-		return(tree)
-	} else message("tree should be an object of class \"phylo\" or \"multiPhylo\"")
 }
 
 ## function to drop one or more tips from a tree but retain all ancestral nodes as singletons
