@@ -19,12 +19,12 @@ multiOU(tree, alpha, sig2, theta=NULL, a0=NULL, nsim=1, internal=FALSE, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	The function \code{sim.rates} conducts BM simulation on a tree with multiple rates.
-	
-	The function \code{multiOU} conducts multi-regime OU simulations on the tree under a range of conditions.
+	Simulates multi-rate or multi-regime continuous trait evolution on a phylogeny.
 }
 \details{
-	\code{multiOU} uses a difference equation approximation of the OU process.
+	The function \code{sim.rates} conducts BM simulation on a tree with multiple rates.
+	
+	The function \code{multiOU} conducts multi-regime OU simulations on the tree under a range of conditions. \code{multiOU} uses a difference equation approximation of the OU process.
 }
 \value{
 	A vector (for \code{nsim=1}) or matrix containing the tip states for the \code{n} species in the tree.

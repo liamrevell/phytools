@@ -10,6 +10,9 @@ splitEdgeColor(tree,colors,lwd=2)
 	\item{lwd}{width of the plotted lines.}
 }
 \description{
+	Splits the vertical linking-line color on a plotted tree to match the daughter edges.
+}
+\details{
 	This function splits the vertical line colors to match the daughter edges when the daughters have different states. Mostly to be used with trees generated using \code{\link{paintBranches}} or \code{\link{paintSubTree}}. Also used internally by \code{\link{plotSimmap}}.
 }
 \references{

@@ -15,6 +15,9 @@ simBMphylo(n, t, sig2, plot=TRUE, ...)
 	\item{x}{in \code{plot} method, object of class \code{"simBMphylo"}.}
 }
 \description{
+	Simulates a discrete time phylogeny and Brownian motion trait, and generates a plot.
+}
+\details{
 	The function simulates a discrete-time pure-birth phylogeny (for fixed \emph{N} and \emph{t} using rejection sampling) and then discrete-time Brownian motion on that tree. It then proceeds to generating a plot of the results.
 }
 \value{

@@ -11,6 +11,9 @@ skewers(X, Y, nsim=100, method=NULL)
 	\item{method}{method to generate a null distribution of the random skewers correlation between matrices. If \code{method=NULL} then the correlation will be compared to the correlation between random vectors; however this test has type I error substantially above the nominal level for ostensibly random matrices. Other values of \code{method} will be passed as \code{covMethod} to \code{genPositiveDefMat} for a more robust hypothesis test (see below). Recommended values include \code{"unifcorrmat"}.}
 }
 \description{
+	Performs the random skewers matrix comparison method of Cheverud (1996).
+}
+\details{
 	This function performs the random skewers matrix comparison method of Cheverud (1996; also see Cheverud & Marroig 2007 for more details). In addition, it includes a more robust hypothesis test in which random covariance matrices are simulated under a variety of models, and then the mean correlation between response vectors to random skewers are computed.
 }
 \value{
