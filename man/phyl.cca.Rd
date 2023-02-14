@@ -12,13 +12,13 @@ phyl.cca(tree, X, Y, lambda=1.0, fixed=TRUE)
 	\item{fixed}{optionally, a logical value indicating whether or not to estimate \eqn{\lambda} using likelihood.}
 }
 \description{
-	This function performs phylogenetic canonical correlation analysis (e.g., Revell & Harrison 2008; \emph{Bioinformatics}).
+	Phylogenetic canonical correlation analysis, following Revell & Harrison (2008).
 }
 \details{
 	(Optional) joint optimization of \eqn{\lambda} is performed using \code{\link{optimize}} on the interval (0,1).
 }
 \value{
-	An object of class \code{"phyl.cca"} containing the following components:
+	An object of class \code{"phyl.cca"} containing the following elements:
 	\item{cor}{canonical correlations.}
 	\item{xcoef}{coefficients for the canonical variables for \code{X}.}
 	\item{ycoef}{coefficients for the canonical variables for \code{Y}.}

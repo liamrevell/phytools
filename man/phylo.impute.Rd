@@ -10,10 +10,14 @@ phylo.impute(tree, X, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function performs phylogenetic imputation using Maximum Likelihood.
+	This function performs phylogenetic multiple imputation using maximum likelihood.
 }
 \details{
-	This function performs phylogenetic imputation in which the evolution of the characters in \code{X} is assumed to have occured by correlation multivariate Brownian motion. Missing values are imputed by maximizing their likelihood jointly with the parameters of the Brownian model. The function \code{\link{evol.vcv}} is used internally to compute the likelihood. Note that the \emph{Rphylopars} package (\url{https://CRAN.R-project.org/package=Rphylopars}) also does phylogenetic imputation for multivariate trait data and it seems to be much faster.
+	This function performs phylogenetic imputation in which the evolution of the characters in \code{X} is assumed to have occured by correlation multivariate Brownian motion.
+	
+	Missing values are imputed by maximizing their likelihood jointly with the parameters of the Brownian model. The function \code{\link{evol.vcv}} is used internally to compute the likelihood.
+	
+	Note that the \emph{Rphylopars} package (\url{https://CRAN.R-project.org/package=Rphylopars}) also does phylogenetic imputation for multivariate trait data and it seems to be much faster.
 }
 \value{
 	An object of class \code{"phylo.impute"} consisting of a complete data frame with missing values imputed.

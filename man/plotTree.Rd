@@ -8,11 +8,14 @@ plotTree(tree, ...)
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format; or multiple trees as an object of class \code{"multiPhylo"}.}
 	\item{...}{optional arguments.}
 }
+\details{
+	Plots a rooted phylogram or cladogram.
+}
 \description{
-	This function plots a rooted phylogram. Arguments in \code{...} are passed to \code{\link{plotSimmap}}, with the exception of optional argument \code{color} which is used to determine the plotted color of the branch lengths of the tree.
+	Essentially a wrapper for \code{\link{plotSimmap}}. Arguments in \code{...} are passed to \code{\link{plotSimmap}}, with the exception of optional argument \code{color} which is used to determine the plotted color of the branch lengths of the tree.
 }
 \value{
-	This function plots a rooted phylogram.
+	This function plots a rooted phylogram or cladogram.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

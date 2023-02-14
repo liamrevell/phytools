@@ -16,9 +16,11 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 	\item{...}{optional arguments including \code{xlim}, \code{ylim}, \code{log}, \code{main}, \code{sub}, \code{xlab}, \code{ylab}, \code{asp}, \code{type}, \code{lty}, \code{lwd}, \code{offset}, and \code{digits} are as in \code{\link{plot.default}} or \code{\link{par}}. Note that \code{axes} overrides \code{xlim} and \code{ylim}. \code{spread.labels} is a logical value indicating whether or not to minimize tip label overlap (default is \code{TRUE}); \code{spread.cost} is a numeric vector indicating the relative penalty to be used for label overlap and deviance, respectively (if \code{spread.labels=TRUE}); \code{spread.range} is the range over which to (potentially) spread the labels - note that if labels do not overlap, not all of that range will be used; finally, \code{link} is a numeric value by which to offset the tip labels, linking them to the tips with a dashed line (default is \code{0}, if \code{spread.labels=FALSE}, or 10-percent of the total tree length otherwise). The optional argument \code{offsetFudge} "fudges" the computation of label offset in scaling \code{xlim}. It is 1.37, which is the correct fudge in the Windows R GUI, but this may need to be changed in other systems. \code{hold} indicates whether (or not) the output to the graphical device should be held using \code{\link{dev.hold}} before plotting (defaults to \code{hold=TRUE}). \code{quiet} suppresses some system messages if set to \code{quiet=TRUE}.}
 }
 \description{
-	Function plots a traitgram (Evans et al. 2009), that is, a projection of the phylogenetic tree in a space defined by phenotype (on the \emph{y} axis) and time (on the \emph{x}). If a discrete character is mapped on the tree this will also be plotted.
+	Plots a phylogenetic traitgram (Evans et al., 2009).
 }
 \details{
+	Function plots a traitgram (Evans et al. 2009), that is, a projection of the phylogenetic tree in a space defined by phenotype (on the \emph{y} axis) and time (on the \emph{x}). If a discrete character is mapped on the tree this will also be plotted.
+
 	For \code{spread.labels=TRUE} numerical optimization is performed to optimize the distribution of the labels vertically, where the solution depends on the vector \code{spread.cost} containing the cost of overlap (first) and the cost of deviation from the vertical position of the tip. Note that because this is done via numerical optimization, plotting may hang briefly while the best solution is found (especially for large trees).
 }
 \value{

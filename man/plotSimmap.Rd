@@ -46,9 +46,6 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 \description{
 	Function plots one or multiple stochastic character mapped trees.
 }
-\details{
-	The underscore character \code{"_"} is automatically swapped for a space in tip labels, as in \code{\link{plot.phylo}}.
-}
 \value{
 	Plots a tree.
 }

@@ -11,13 +11,17 @@ phyl.resid(tree, x, Y, method="BM")
 	\item{method}{method to obtain the correlation structure: can be \code{"BM"} or \code{"lambda"}.}
 }
 \description{
-	This function fits one or multiple phylogenetic regressions (depending on the number of columns in \code{Y}) and computes the residuals.  Designed for phylogenetic size correction using GLS regression (e.g., Revell 2009; \emph{Evolution}).
+	Computes the residuals from the phylogenetic regression of multiple \emph{y} variables (in a matrix) on a single \emph{x}.
 }
 \details{
-	Optionally fits \eqn{\lambda} for each regression model.  Likelihood optimization of \eqn{\lambda} is performed for \code{method=} \code{"lambda"} using \code{\link{optimize}} on the interval (0,1). This function is theoretically redundant with \code{residuals} applied to a \code{"gls"} object class in which the correlation structure is based on \code{corBrownian} or \code{corPagel}; however some users may find this method simpler, and it provides a good way to cross-check your results & make sure that you are using \code{gls} correctly.
+	This function fits one or multiple phylogenetic regressions (depending on the number of columns in \code{Y}) and computes the residuals.  Designed for phylogenetic size correction using GLS regression (e.g., Revell 2009).
+
+	Optionally fits \eqn{\lambda} for each regression model.  Likelihood optimization of \eqn{\lambda} is performed for \code{method=} \code{"lambda"} using \code{\link{optimize}} on the interval (0,1).
+	
+	This function is theoretically redundant with \code{residuals} applied to a \code{"gls"} object class in which the correlation structure is based on \code{corBrownian} or \code{corPagel}; however some users may find this method simpler, and it provides a good way to cross-check your results & make sure that you are using \code{gls} correctly.
 }
 \value{
-	A list with the following components:
+	A list with the following elements:
 	\item{beta}{a vector or matrix of regression coefficients.}
 	\item{resid}{a vector or matrix of residuals for species.}
 	\item{lambda}{a vector of \eqn{\lambda} values (\code{method="lambda"} only).}

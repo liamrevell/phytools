@@ -10,7 +10,7 @@ plotTree.datamatrix(tree, X, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	Function plots a phylogeny next to a matrix of discrete character data.
+	Plots a phylogeny next to a matrix of discrete character data.
 }
 \value{
 	Invisibly returns a list containing the font size, a list of the colors used for each column of the plotted data matrix, and the x-coordinate of the rightmost edge of the matrix.

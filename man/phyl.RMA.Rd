@@ -20,15 +20,17 @@ phyl.RMA(x, y, tree, method="BM", lambda=NULL, fixed=FALSE, h0=1.0)
 	\item{...}{optional arguments for S3 methods.}
 }
 \description{
-	This function performs phylogenetic RMA regression.
+	Phylogenetic reduced major axis (RMA) regression.
 }
 \details{
-	Optionally jointly estimates \eqn{\lambda} if \code{method="lambda"}. Likelihood optimization of \eqn{\lambda} is performed using \code{\link{optimize}} on the interval (0,1). Note that some statistician think there is \emph{never} a condition in which a reduced-major-axis regression should be used.
+	Optionally jointly estimates \eqn{\lambda} if \code{method="lambda"}. Likelihood optimization of \eqn{\lambda} is performed using \code{\link{optimize}} on the interval (0,1).
 	
 	The statistical hypothesis testing is based on Clarke (1980; reviewed in McArdle 1988), which differs from some other implementations of non-phylogenetic major axis regression in R.
+	
+	Note that some statistician think there is \emph{never} a condition in which a reduced-major-axis regression is appropriate.
 }
 \value{
-	An object of class \code{"phyl.RMA"} consisting of a list with the following components:
+	An object of class \code{"phyl.RMA"} consisting of a list with the following elements:
 	\item{RMA.beta}{a vector of RMA regression coefficients.}
 	\item{V}{a VCV matrix for the traits.}
 	\item{lambda}{fitted value of \eqn{\lambda} (\code{method="lambda"} only).}

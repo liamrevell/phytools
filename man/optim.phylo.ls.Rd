@@ -14,16 +14,18 @@ optim.phylo.ls(D, stree=NULL, set.neg.to.zero=TRUE, fixed=FALSE,
 	\item{collapse}{ a logical indicating whether to collapse branches with zero length.}
 }
 \description{
-	This function performs phylogeny inference using least-squares.
+	Phylogenetic inference using the method of least-squares (Cavalli-Sforza & Edwards, 1967).
 }
 \details{
-	Function uses \code{\link{nni}} from the \emph{phangorn} package (Schliep 2011) to conduct NNIs for topology estimation. Since topology optimization is performed using NNIs, convergence to the true least-squares topology is not guaranteed. It is consequently probably wise to start with a very good tree - such as a NJ tree.
+	Function uses \code{\link{nni}} from the \emph{phangorn} package (Schliep 2011) to conduct NNIs for topology estimation.
+	
+	Since topology optimization is performed using NNIs, convergence to the true least-squares topology is not guaranteed. It is consequently probably wise to start with a very good tree - such as a NJ tree.
 }
 \value{
 	An object of class \code{"phylo"} that (may be) the least-squares tree with branch lengths; also returns the sum of squares in \code{attr(tree,"Q-score")}.
 }
 \references{
-	Cavalli-Sforza, L. L., and A. W. F. Edwards. (1967) Phylogenetic analysis: Modesl and estimation procedures. \emph{American Journal of Human Genetics}, \bold{19}, 233-257.
+	Cavalli-Sforza, L. L., and A. W. F. Edwards. (1967) Phylogenetic analysis: Models and estimation procedures. \emph{American Journal of Human Genetics}, \bold{19}, 233-257.
 
 	Felsenstein, J. (2004) \emph{Inferring Phylogenies}. Sinauer.
 

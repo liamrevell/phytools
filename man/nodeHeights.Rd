@@ -15,7 +15,9 @@ nodeheight(tree, node, ...)
 	\code{nodeHeights} computes the height above the root for all nodes in the tree. \code{nodeheight} computes the height above the root for a single node.
 }
 \details{
-	The function \code{nodeHeights} also gives a handy way to get the total length of the tree from the root to the heighest tip which will be given by \code{max(nodeHeights(tree))}. Generally speaking, \code{nodeHeights} will be faster if the heights of all or a large proportion of nodes is needed, wherease \code{nodeheight} will be faster if the height of one or a small number of nodes are needed.
+	The function \code{nodeHeights} also gives a handy way to get the total length of the tree from the root to the heighest tip which will be given by \code{max(nodeHeights(tree))}.
+	
+	Generally speaking, \code{nodeHeights} will be faster if the heights of all or a large proportion of nodes is needed, wherease \code{nodeheight} will be faster if the height of one or a small number of nodes are needed.
 }
 \value{
 	Either a matrix of the same dimensions as \code{tree$edge} containing the height above the root of each node in \code{edge} (for \code{nodeHeights}); or a single positive number (for \code{nodeheight}).

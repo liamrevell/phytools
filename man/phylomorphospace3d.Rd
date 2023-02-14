@@ -15,7 +15,10 @@ phylomorphospace3d(tree, X, A=NULL, label=TRUE, control=list(),
 	\item{...}{optional arguments to be passed to \code{scatterplot3d}. Most options not available. \code{angle} is an important option that does work here.}
 }
 \description{
-	This function creates a phylomorphospace plot for three characters using the 3D visualization package, 'rgl'.
+	Creates a phylomorphospace plot in three dimensions.
+}
+\details{
+	This function creates a phylomorphospace plot for three characters using the 3D visualization package, 'rgl' (if available) or statically, by simulating 3D on a flat graphical device.
 }
 \value{
 	This function creates a three dimensional phylomorphospace plot. The function returns a function from \code{spin3d} (for \code{method="dynamic"}); or a series of functions from \code{\link{scatterplot3d}} (for \code{method="static"}).

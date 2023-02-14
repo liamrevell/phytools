@@ -15,7 +15,12 @@ paintBranches(tree, edge, state, anc.state="1")
 	\item{stem}{logical or numeric value indicating whether to use the derived state on the stem leading to \code{node} (or not, if \code{stem=FALSE}), or, alternatively, what fraction of the stem should be assigned to the derived clade. Note that for tip clades \code{stem=FALSE} is not allowed.}
 }
 \description{
-	This function maps or "paints" an arbitrary, i.e., user-specified, discrete character history on the tree. \code{paintSubTree} paints the clade downstream of \code{node} with a particular state; whereas \code{paintBranches} paints only a specified branch.
+	Paints regimes on a tree to create an object of class \code{"simmap"} with mapped regimes.
+}
+\details{
+	These functions map or "paint" arbitrary (i.e., user-specified) discrete character histories on the tree. 
+	
+	\code{paintSubTree} paints the clade downstream of \code{node} with a particular state; whereas \code{paintBranches} paints only a specified branch.
 }
 \value{
 	An object of class \code{"simmap"} that contains the specified paintings as a mapped discrete character.

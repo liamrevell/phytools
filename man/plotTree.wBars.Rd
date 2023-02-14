@@ -28,6 +28,9 @@ plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list(),
 	\item{...}{optional arguments to be passed to \code{\link{plotTree}} or \code{\link{plotSimmap}} in the case of \code{plotTree.wBars}. For \code{plotTree.barplot}, the only optional arguments are \code{add} and \code{ylim}. Generally \code{add} should not be used; however it can be employed to tell the function to draw the tree & barplot, respectively, in the next two open plotting devices - rather than creating a table of figures in the current plotting device. \code{ylim} (which is also an optional argument for \code{plotTree.boxplot} should be supplied here rather than using \code{args.plotTree} or \code{args.boxplot}\\code{args.barplot} because \emph{y} axis limits must match exactly between the two plots.}
 }
 \description{
+	Plots a phylogenetic tree with adjacent boxplot or barplot.
+}	
+\details{
 	\code{plotTree.wbars} plots a phylogeny in phylogram or fan style with bars at the tips representing the values for a phenotypic trait.
 	
 	\code{plotTree.barplot} creates a split plot in which a right-facing phylogram is on the left, and a bar plot is shown on the right.

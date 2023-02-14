@@ -1,6 +1,6 @@
 \name{phyl.pairedttest}
 \alias{phyl.pairedttest}
-\title{Phylogenetic paired t-test}
+\title{Phylogenetic paired \emph{t}-test}
 \usage{
 phyl.pairedttest(tree, x1, x2=NULL, se1=NULL, se2=NULL, lambda=1.0, h0=0.0,
    fixed=FALSE, ...)
@@ -17,13 +17,17 @@ phyl.pairedttest(tree, x1, x2=NULL, se1=NULL, se2=NULL, lambda=1.0, h0=0.0,
 	\item{...}{optional arguments.}
 }
 \description{
-	This function conducts a phylogenetic paired t-test, roughly following Lindenfors et al. (2010; \emph{J. Evol. Biol.}). This is not a phylogenetic ANOVA, in which we want to compare the means of different sets of species on the tree. Instead, we are interested in the difference between two characters, or two measures of a character within a species, and we want to know if this difference is significantly different from zero controlling for the phylogenetic non-independence of species. 
+	Phylogenetic paired \emph{t}-test following Lindenfors et al. (2010).
 }
 \details{
+	This function conducts a phylogenetic paired \emph{t}-test, roughly following Lindenfors et al. (2010). 
+	
+	This is \emph{not} a phylogenetic ANOVA, in which we want to compare the means of different sets of species on the tree. Instead, we are interested in the difference between two characters, or two measures of a character within a species, and we want to know if this difference is significantly different from zero controlling for the phylogenetic non-independence of species. 
+
 	Likelihood optimization is performed using \code{\link{optim}} with \code{method="L-BFGS-B"} with box constraints on \ifelse{html}{\out{&lambda;}}{\eqn{\lambda}{lambda}} (0,1).
 }
 \value{
-	An object of class \code{"phyl.pairedttest"} with the following components:
+	An object of class \code{"phyl.pairedttest"} with the following elements:
 	\item{dbar}{phylogenetic mean difference.}
 	\item{se}{standard error of \code{dbar}.}
 	\item{sig2}{estimated evolutionary variance (of the difference).}

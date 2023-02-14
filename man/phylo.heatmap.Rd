@@ -13,7 +13,7 @@ phylo.heatmap(tree, X, fsize=1, colors=NULL, standardize=FALSE, ...)
 	\item{...}{optional arguments. So far these include: \code{legend}, a logical value indicating whether or not to plot a figure legend (defaults to \code{legend=TRUE}); \code{labels}, a logical value indicating whether or not to plot trait labels (defaults to \code{labels=TRUE}); \code{split}, a numeric vector indicating the fraction of the horizontal dimension to use for the tree & heatmap, respectively (defaults to \code{split=c(0.5,0.5)}); \code{xlim}, \code{ylim}, & \code{mar}, defined as in \code{\link{par}}; and \code{ftype}, \code{lwd}, and \code{pts} as defined in \code{\link{plotSimmap}}.}
 }
 \description{
-	Functions creates a multivariate phylogenetic \code{\link{heatmap}}.
+	Multivariate phylogenetic \code{\link{heatmap}} plot.
 }
 \value{
 	Function creates a plot.

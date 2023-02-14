@@ -9,9 +9,11 @@ paste.tree(tr1, tr2)
 	\item{tr2}{donor clade.}
 }
 \description{
-	Primarily internal function for \code{\link{posterior.evolrate}}; can be used to graft a clade into a receptor tree, at the "sticky tip" labeled with \code{"NA"}.
+	Internal function for \code{\link{posterior.evolrate}}.
 }
 \details{
+	Primarily designed as an internal function for \code{\link{posterior.evolrate}}; however, can be used to graft a clade onto a receptor tree at the "sticky tip" labeled with \code{"NA"}.
+
 	The donor clade needs to have a root edge, even if it is zero length.
 }
 \value{

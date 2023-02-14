@@ -24,7 +24,7 @@ as.princomp(x, ...)
 	\item{...}{for S3 plotting method \code{biplot.phyl.pca}, other arguments to be passed to \code{\link{biplot}}.}
 }
 \description{
-	This function performs phylogenetic PCA (e.g., Revell 2009; \emph{Evolution}).
+	This function performs phylogenetic PCA following Revell (2009).
 }
 \details{
 	If \code{method="lambda"} then \eqn{\lambda} will be optimized on the interval (0,1) using \code{\link{optimize}}. Optimization method can be set using the option \code{opt} which can take values \code{"ML"}, \code{"REML"}, or \code{"fixed"}. If the last of these is selected than the user should also specify a value of \eqn{\lambda} to use via the argument \code{lambda}. 
@@ -34,7 +34,7 @@ as.princomp(x, ...)
 	S3 method \code{scores} extracts or computes (for a matrix of \code{newdata}) PC scores given an object of class \code{"phyl.pca"}.
 }
 \value{
-	An object of class \code{"phyl.pca"} consisting of a list with some or all of the following components:
+	An object of class \code{"phyl.pca"} consisting of a list with some or all of the following elements:
 	\item{Eval}{diagonal matrix of eigenvalues.}
 	\item{Evec}{matrix with eigenvectors in columns.}
 	\item{S}{matrix with scores.}

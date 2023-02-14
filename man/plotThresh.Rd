@@ -16,7 +16,12 @@ plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE,
 	\item{...}{other arguments to be passed to \code{\link{plot.phylo}} - \code{label.offset} should be >0 so that tip labels and species names do not overlap.}
 }
 \description{
-	This function uses the object returned by \code{\link{ancThresh}} to plot the posterior probabilities of ancestral states under the threshold model. It is also called internally by \code{\link{ancThresh}}.
+	Plots estimated posterior probabilities at nodes under the threshold model.
+}
+\details{
+	This function uses the object returned by \code{\link{ancThresh}} to plot the posterior probabilities of ancestral states under the threshold model.
+	
+	It is also called internally by \code{\link{ancThresh}}.
 }
 \value{
 	Plots a tree.
