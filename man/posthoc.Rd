@@ -9,13 +9,13 @@ posthoc(x, ...)
 	\item{...}{optional arguments to be passed to method.}
 }
 \description{
-	This function conducts posthoc test.
+	Conducts posthoc test.
 }
 \details{
 	So far is only implemented for object class \code{"ratebytree"}.
 }
 \value{
-	An object.
+	An object of the appropriate class containing the results of a posthoc test.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

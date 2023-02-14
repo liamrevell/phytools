@@ -13,6 +13,9 @@ ratebystate(tree, x, y, nsim=100, corr=c("pearson","spearman"), ...)
 	\item{...}{optional arguments which include \code{sim.method} (\code{"fastBM"} or \code{"sim.corrs"}; see \code{\link{fastBM}} and \code{\link{sim.corrs}}); \code{method} (\code{"by.node"} or \code{"by.branch"} indicating whether to assume the rate varies as a function of the node state or the mean branch state); \code{message} - a logical value indicating whether or not to return \code{corr} and \code{method}; finally \code{logarithm} - indicating whether or not to fit a model in which the variance of Brownian evolution in \code{y} changes as a multiplicative function of \code{x}. The default is \code{logarithm=FALSE}.}
 }
 \description{
+	Statistical test of whether the rate of a continuous character might be influenced by the state of another.
+}
+\details{
 	This function attempts to ask if the rate of a continuous character, \code{y}, depends on the state of a separate continuous trait, \code{x}. This is accomplished by regressing the squared contrasts in \code{y} on the branch or node ancestral estimates of \code{x}.
 }
 \value{

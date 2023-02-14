@@ -15,7 +15,10 @@ repPhylo(tree, times)
 	\item{...}{other arguments for \code{rep} (specifically, \code{times}).}
 }
 \description{
-	S3 method \code{rep} for object of class \code{"phylo"} or \code{"multiPhylo"}. \code{repPhylo} is just an alias for \code{rep.phylo} and \code{rep.multiPhylo}.
+	\code{\link{rep}} method for object of class \code{"phylo"} or \code{"multiPhylo"}.
+}
+\details{
+	\code{repPhylo} is just an alias for \code{rep.phylo} and \code{rep.multiPhylo}.
 }
 \value{
 	An object of class \code{"multiPhylo"}.

@@ -11,12 +11,12 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 	\item{...}{optional arguments. Presently the logical argument \code{tips}. If \code{tips=TRUE}, then the function will also compute the empirical Bayes posterior probabilities of the tips following Yang (2006). Note that \code{...} is passed internally to \code{fitMk}, but should be used in this way with caution because any arguments that conflict with the default arguments of the method will cause the function execution to fail. The most practical use of this would be to force a particular value of the transition matrix, \code{Q}, via the argument \code{fixedQ}.}
 }
 \description{
-	This function uses the re-rooting method of Yang et al. (1995) to get the marginal ancestral state estimates for each internal node of the tree using likelihood. This method get the conditional scaled likelihoods for the root node (which is the same as the marginal ancestral state reconstruction for that node) and successively moves the root to each node in the tree. The function can also return the posterior probabilities for the tip nodes of the tree.
+	Computes marginal ancestral states for a discrete character using the re-rooting method of Yang et al. (1995).
 }
 \details{
-	This function calls \code{\link{fitMk}} internally. \code{fitMk} uses some code adapted from \code{ace} in the ape package.
-	
-	\code{print} and \code{plot} methods are now available for the object class.
+	This function uses the re-rooting method of Yang et al. (1995) to get the marginal ancestral state estimates for each internal node of the tree using likelihood. This method get the conditional scaled likelihoods for the root node (which is the same as the marginal ancestral state reconstruction for that node) and successively moves the root to each node in the tree. The function can also return the posterior probabilities for the tip nodes of the tree.
+
+	\code{rerootingMethod} calls \code{\link{fitMk}} internally. \code{fitMk} uses some code adapted from \code{ace} in the ape package.
 }
 \value{
 	An object of class \code{"rerootingMethod"} containing at least the following elements:

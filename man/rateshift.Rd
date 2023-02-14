@@ -21,7 +21,12 @@ likSurface.rateshift(tree, x, nrates=2, shift.range=NULL,
 	\item{plot}{logical argument for \code{likSurface.rateshift}. If \code{plot=FALSE} then the surface is returned.}
 }
 \description{
-	Function finds the location of one or more rate shifts. \code{likSurface.rateshift} plots the likelihood surface (which is sometimes quite rugged).
+	Fits a model with one or more temporal rate shifts for a continuous trait on the tree.
+}
+\details{
+	\code{rateshift} attempts to find the location of one or more rate shifts. This model is quite easy to compute the likelihood for, but quite difficult to optimize as the likelihood surface is often rugged.
+
+	\code{likSurface.rateshift} plots the likelihood surface.
 }
 \value{
 	A fitted object of class \code{"rateshift"}, or, in the case of \code{likSurface.rateshift}, a likelihood surface for the shift points.

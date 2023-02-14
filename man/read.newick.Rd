@@ -13,17 +13,15 @@ readNexus(file="", format=c("standard","raxml"))
 	\item{...}{optional arguments to be passed to \code{\link{scan}}. Note that if the arguments \code{sep} or \code{what} are supplied this could generate an error. Useful optional arguments might include \code{skip} (number of lines to skip) and \code{nlines} (number of lines to read).}
 }
 \description{
-	The function \code{read.newick} reads a simple Newick style tree from file.
-	
-	The function \code{readNexus} reads a Nexus formatted tree, optionally with bootstrap values as node labels.
+	Reads a phylogenetic tree from file.
 }
 \details{
-	The function \code{read.newick} is almost completely redundant with \code{\link{read.tree}}. At the time of development, it was more 'robust' than \code{read.tree} in that it didn't fail if the tree contained so-called 'singles' (nodes with only one descendant); however, \code{read.tree} can now handle singleton nodes without difficulty.
+	The function \code{read.newick} reads a simple Newick style tree from file. This function is now almost completely redundant with \code{\link{read.tree}}. At the time of development, however, it was more 'robust' than \code{read.tree} in that it didn't fail if the tree contained so-called 'singles' (nodes with only one descendant); however, \code{read.tree} can now handle singleton nodes without difficulty.
 	
-	The function \code{readNexus} can read a Nexus formatted tree from file (like \code{\link{read.nexus}}); however, it can also parse the node labels as bootstrap values. This is the output format from the software \emph{RAxML}. For Nexus tree files with complex node labels (e.g., from the software \emph{MrBayes}) it will probably fail to parse node labels correctly, if at all.
+	The function \code{readNexus} reads a Nexus formatted tree, optionally with bootstrap values as node labels. This function can read a simple Nexus formatted tree from file (like \code{\link{read.nexus}}); however, it can also parse the node labels as bootstrap values. This is the output format from the software \emph{RAxML}. For Nexus tree files with complex node labels (e.g., from the software \emph{MrBayes}) it will probably fail to parse node labels correctly, if at all.
 }
 \value{
-	An object of class \code{"phylo"}, possibly containing singles (see \code{\link{collapse.singles}}); or an object of class \code{"multiPhylo"}.
+	An object of class \code{"phylo"}, possibly containing singletons (see \code{\link{collapse.singles}}); or an object of class \code{"multiPhylo"}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
