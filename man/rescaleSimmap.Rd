@@ -30,5 +30,17 @@ rescaleSimmap(tree, ...)
 \seealso{
 	\code{\link{make.simmap}}, \code{\link{read.simmap}}
 }
+\examples{
+## load anoletree
+data(anoletree)
+## rescale to have total depth of 50
+rescaled_anoletree<-rescale(anoletree,depth=50)
+## plot rescaled tree
+plot(rescaled_anoletree,ftype="i",fsize=0.6,
+	mar=c(5.1,1.1,1.1,1.1))
+axis(1,at=seq(0,50,by=10))
+## reset margins
+par(mar=c(5.1,4.1,4.1,2.1))
+}
 \keyword{phylogenetics}
 \keyword{utilities}
