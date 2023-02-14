@@ -10,7 +10,7 @@ make.era.map(tree, limits, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	This function creates a temporal map on the tree based on \code{limits} provided by the user.
+	Creates a temporal map on the tree based on \code{limits} provided by the user.
 }
 \value{
 	An object of class \code{"simmap"} with the specified eras mapped as different regimes.

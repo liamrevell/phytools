@@ -17,6 +17,9 @@ multirateBM(tree, x, method=c("ML","REML"),
 	\item{...}{optional arguments.}
 }
 \description{
+	Fits a flexible multi-rate Brownian motion evolution model using penalized likelihood.
+}
+\details{
 	This function fits a flexible Brownian multi-rate model using penalized likelihood.
 	
 	The model that is being fit is one in which the rate of Brownian motion evolution itself evolves from edge to edge in the tree under a process of geometric Brownian evolution (i.e., Brownian motion evolution on a log scale).
@@ -42,6 +45,8 @@ multirateBM(tree, x, method=c("ML","REML"),
 ## load data
 data(sunfish.tree)
 data(sunfish.data)
+## convert from "simmap" to "phylo"
+sunfish.tree<-as.phylo(sunfish.tree)
 ## extract character of interest
 gw<-setNames(sunfish.data$gape.width,
     rownames(sunfish.data))

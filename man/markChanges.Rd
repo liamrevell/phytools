@@ -12,7 +12,7 @@ markChanges(tree, colors=NULL, cex=1, lwd=2, plot=TRUE)
 	\item{plot}{logical value indicating whether the changes should be plotted or not.}
 }
 \description{
-	This function adds the reconstructed changes to a plotted tree with a stochastically mapped discrete character.
+	Adds the reconstructed changes to a plotted tree with a stochastically mapped discrete character.
 }
 \value{
 	This function returns (invisibly) a matrix containing the x & y coordinates of the marked changes on the plotted tree.

@@ -29,17 +29,19 @@ mccr(obj, rho=1, nsim=100, ...)
 	\item{...}{other arguments to be passed to plotting methods. See \code{\link{plot.default}}.}
 }
 \description{
+	Computes and visualizes a lineage through time (LTT) plot, and related measures.
+}
+\details{
 	The function \code{ltt} computes LTT plot with extant and extinct lineages, and optionally conducts \eqn{\gamma}-test of Pybus & Harvey (2000). The object returned by \code{ltt} can be plotted or re-plotted using \code{\link{plot}}.
 	
 	The function \code{gtt} computes the value of Pybus & Harvey's \eqn{\gamma} statistic through time by slicing the tree at various points - by default in even intervals from the time above the root at which \emph{N} = 3 to the present day.
 	
 	The function \code{mccr} performs the MCCR test of Pybus & Harvey (2000) which takes into account incomplete taxon sampling in computing a P-value of the \eqn{\gamma} statistic.
-}
-\details{
+
 	Although it is calculated here, it's unclear how to interpret the \eqn{\gamma}-statistic if not all the tips in the tree are contemporaneous.
 }
 \value{
-	\code{ltt} returns an object of class \code{"ltt"} which includes the following components:
+	\code{ltt} returns an object of class \code{"ltt"} which includes the following elements:
 	\item{times}{a vector of branching times.}
 	\item{ltt}{a vector of linages.}
 	\item{gamma}{optionally, a value for the \eqn{\gamma}-statistic.}

@@ -9,7 +9,10 @@ ls.tree(tree, D)
 	\item{D}{distance matrix.}
 }
 \description{
-	Computes the least squares branch lengths conditioned on a topology and distance matrix. Generally intended as a function to be used internally by \code{\link{optim.phylo.ls}}.
+	Computes the least squares branch lengths conditioned on a topology and distance matrix.
+}
+\details{
+	Generally intended as a function to be used internally by \code{\link{optim.phylo.ls}}.
 }
 \value{
 	A tree with branch lengths.

@@ -9,7 +9,12 @@ multiC(tree, internal=FALSE)
 	\item{internal}{logical value indicating whether or not internal nodes should be returned.}
 }
 \description{
+	Computes phylogenetic covariance matrices from a \code{"simmap"} object.
+}
+\details{
 	This function takes a modified \code{"phylo"} object as input and returns a set of so-called phylogenetic covariance matrices (e.g., see \code{\link{vcv.phylo}}) as a list: one for each mapped state.
+	
+	Used internally by multiple \emph{phytools} functions, such as \code{\link{brownie.lite}}.
 }
 \value{
 	A list of matrices.

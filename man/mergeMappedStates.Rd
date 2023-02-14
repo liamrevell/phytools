@@ -10,9 +10,10 @@ mergeMappedStates(tree, old.states, new.state)
 	\item{new.state}{name for new state.}
 }
 \description{
-	This function merges two or mapped states on the tree to get one new state.
-	
-	For instance, one could merge the states \code{"C"}, \code{"G"}, and \code{"T"} and define the new the state \code{"not-A"}.
+	Merges two or mapped states on the tree to get one new state.
+}
+\details{
+	\code{mergeMappedStates} can be used to merge two or more mapped states into a single, new state. For instance, one could merge the states \code{"C"}, \code{"G"}, and \code{"T"} and define the new the state \code{"not-A"}.
 }
 \value{
 	An object of class \code{"simmap"} or \code{"multiSimmap"}.

@@ -12,7 +12,7 @@ linklabels(text,tips,link.type=c("bent","curved","straight"),
 	\item{...}{optional arguments, including \code{cex}, \code{lty}, \code{lwd}, and \code{col}.}
 }
 \description{
-	Function adds tip labels to a plotted tree by drawing curved, bent, or straight linking lines.
+	Adds tip labels to a plotted tree by drawing curved, bent, or straight linking lines.
 }
 \details{
 	The idea underlying this function is that the user should first plot the tree without tip labels, but set the area of the plotting device to be sufficient to accommodate the tip labels once they have been added. The function then can be called to add tip labels connected by linking lines to the tips of the plotted tree.

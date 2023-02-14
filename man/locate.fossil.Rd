@@ -10,7 +10,7 @@ locate.fossil(tree, X, ...)
 	\item{...}{optional arguments including \code{time.constraint} which can be a scalar (positive height above the root of the fossil or negative time before present) or a vector (age range of fossil, either positive or negative); \code{edge.constraint}, which is equivalent to \code{constraint} in \code{\link{locate.yeti}}; \code{plot}, \code{rotate}, and \code{quiet}, which have the same interpretation (and defaults) as the equivalent arguments in \code{\link{locate.yeti}}.}
 }
 \description{
-	This function uses ML to place a fossil lineage into a tree using continuous traits.
+	Uses ML to place a fossil lineage into a tree using continuous traits following Revell et al. (2015).
 }
 \value{
 	Optimized tree as an object of class \code{"phylo"}.

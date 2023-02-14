@@ -14,7 +14,12 @@ Map.Overlap(tree1, tree2, tol=1e-06, standardize=TRUE, ...)
 	\item{...}{optional arguments, such as \code{check.equal}, a logical value indicating whether or not to check if \code{tree1} and \code{tree2} match in underlying topology and branch lengths (they should). This value is \code{TRUE} by default, but can be set to \code{FALSE} if \code{tree1} and \code{tree2} are known to be equal to speed up calculation.}
 }
 \description{
-	This function computes the fraction of a stochastic character mapping that is shared between two differently mapped trees. In \code{map.overlap} it will compute a single quantity giving the overall similarity of the maps, consequently this measure only makes sense of some or all of the states are shared between the two mapped tress. In \code{Map.Overlap} what is computed instead is a matrix in which the rows correspond to the states observed in \code{tree1} and the columns give the states for \code{tree2}, with the numerical values of the matrix showing the total overlap between each pair of mapped states on the two trees.
+	Calculates the fraction of a stochastic character mapping that is shared between two differently mapped trees.
+}
+\details{	
+	\code{map.overlap} computes a single quantity giving the overall similarity of the maps, consequently this measure only makes sense of some or all of the states are shared between the two mapped tress. 
+	
+	In \code{Map.Overlap} what is computed instead is a matrix in which the rows correspond to the states observed in \code{tree1} and the columns give the states for \code{tree2}, with the numerical values of the matrix showing the total overlap between each pair of mapped states on the two trees.
 }
 \value{
 	A numerical value on the interval (0, 1), for \code{map.overlap}; or a matrix whose elements should sum to 1.0 (\code{Map.Overlap}).

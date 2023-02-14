@@ -14,7 +14,8 @@ matchLabels(tr1, tr2)
 }
 \description{
 	This function returns a matrix in which the first column contains \emph{all} of the internal nodes of \code{tr1} and the second column contains the matching nodes from \code{tr2}, inasmuch as they can be identified. 
-	
+}
+\details{	
 	For \code{method="descendants"}, pairs of matching nodes are defined by sharing all descendant leaves in common. 
 	
 	For \code{method="distances"}, nodes are considered to matched if the share the same set of distances (or proportional distances, for optional argument \code{corr=TRUE}) to all tips. 

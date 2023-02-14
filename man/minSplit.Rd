@@ -14,7 +14,7 @@ minSplit(tree, split.list, method="sum", printD=FALSE)
 	This function takes a phylogenetic tree and a list of splits and identifies the split with the smallest summed or summed squared distances to all the other splits.	
 }
 \value{
-	A list with the following components:
+	A list with the following elements:
 	\item{node}{node for the minimum split.}
 	\item{bp}{location on the branch leading to \code{node} of the minimum split.}
 }

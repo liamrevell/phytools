@@ -10,7 +10,7 @@ locate.yeti(tree, X, ...)
 	\item{...}{optional arguments including: \code{method} (\code{"ML"} or \code{"REML"}, defaults to \code{"ML"}); \code{search} (\code{"heuristic"} or \code{"exhaustive"}, defaults to \code{"heuristic"}); \code{constraint}, a vector containing the daughter node numbers from \code{tree$edge} for each edge to try; \code{plot} a logical argument specifying whether or not to plot the likelihood profile on edges (defaults to \code{FALSE}); \code{rotate} a logical indicating whether or not to rotate the data based on the input tree; and \code{quiet}, which is logical and has an obvious interpretation.}
 }
 \description{
-	This function uses ML (or REML) to place a recently extinct, cryptic, or missing taxon on an ultrametric (i.e., time-calibrated) phylogeny.
+	Uses ML (or REML) to place a recently extinct, cryptic, or missing taxon on an ultrametric (i.e., time-calibrated) phylogeny following Revell et al. (2015).
 }
 \value{
 	Optimized tree as an object of class \code{"phylo"}.
