@@ -19,7 +19,7 @@ plotTree.splits(tree, splits=NULL, file=NULL, fn=NULL, ...)
 	\item{...}{other arguments to be passed to \code{\link{plotTree}}.}
 }
 \description{
-	Function plots a tree in two columns or windows.
+	Plots a tree in two columns or windows.
 }
 \value{
 	Plots a tree.

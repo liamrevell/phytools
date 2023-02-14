@@ -12,6 +12,9 @@ extract.strahlerNumber(tree, i, plot=TRUE)
 	\item{plot}{logical value indicating whether to plot the tree with Strahler numbers for node labels.}
 }
 \description{
+	Computes the Strahler number of all nodes and tips in a phylogenetic tree.
+}
+\details{
 	The function \code{strahlerNumber} computes the Strahler number of all nodes and tips in the tree. For more information about Strahler numbers see \url{https://en.wikipedia.org/wiki/Strahler_number}. The function \code{extract.strahlerNumber} extracts all of the most inclusive clades of Strahler number \code{i}.
 }
 \value{

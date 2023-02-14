@@ -13,12 +13,14 @@ threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 	\item{...}{other optional arguments. The argument \code{auto.tune} adjusts the proposal distribution to target an proposal acceptance rate (of 0.234, by default).}
 }
 \description{
-	This function uses Bayesian MCMC to fit the quantitative genetics threshold model (Felsenstein 2012) to data for two discrete characters or one discrete and one continuous character.
+	Fits the threshold model from quantitative genetics to data for two discrete characters or one discrete and one continuous trait, following Felsenstein (2012).
 }
 \value{
 	This function returns an object of class \code{"threshBayes"} consisting of a list with at least the following two elements: \code{par} a matrix containing the posterior sample for the model parameters (evolutionary rates, ancestral states, and correlation); \code{liab} a matrix containing the posterior sample of the liabilities. For continuous characters, the liabilities are treated as known and so the posterior samples are just the observed values.
 }
 \details{
+	This function uses Bayesian MCMC to fit the quantitative genetics threshold model (Felsenstein 2012) to data for two discrete characters or one discrete and one continuous character.
+
 	The \code{plot} method for the object class can be used to generate a three panel plot showing the likelihood profile, the mean acceptance rates (using a sliding window), and a profile plot for the correlation coefficient, \emph{r}.
 
 	The \code{density} method for the object can be used to plot a posterior density of the correlation coefficient, \emph{r}. This posterior density is of class \code{"density.threshBayes"} which can also be plotted using an \code{plot} method.

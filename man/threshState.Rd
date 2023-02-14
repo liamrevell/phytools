@@ -2,14 +2,17 @@
 \alias{threshState}
 \title{Computes value for a threshold character from a liability and thresholds}
 \usage{
-	threshState(x, thresholds)
+threshState(x, thresholds)
 }
 \arguments{
 	\item{x}{liability.}
 	\item{thresholds}{a named vector containing the thresholds.}
 }
 \description{
-	Primarily to be used internally by \code{\link{ancThresh}}; can also be used to simulate threshold traits.
+	Internal function for \code{\link{ancThresh}}.
+}
+\details{
+	\code{threshState} can also be used to simulate threshold traits.
 }
 \value{
 	A discrete character value.

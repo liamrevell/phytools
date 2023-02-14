@@ -9,7 +9,12 @@ to.matrix(x, seq)
 	\item{seq}{the sequence for the columns in the output matrix.}
 }
 \description{
-	This function takes a vector of characters and computes a binary matrix. Primarily to be used internally by \code{\link{make.simmap}} and \code{\link{rerootingMethod}}.
+	Creates a binary matrix, normally from a factor.
+}
+\details{
+	This function takes a vector of characters or a factor and computes a binary matrix.
+	
+	Primarily designed to be used internally by \code{\link{make.simmap}} and \code{\link{rerootingMethod}}.
 }
 \value{
 	A binary matrix of dimensions \code{length(x)} by \code{length(seq)}.

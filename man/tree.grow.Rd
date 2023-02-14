@@ -11,6 +11,9 @@ tree.grow(..., res=200, direction="rightwards", ladderize=TRUE)
 	\item{ladderize}{logical value indicating whether or not to 'ladderize' the plotted tree. (Defaults to \code{TRUE}.)}
 }
 \description{
+	Animates a birth-death tree simulation.
+}
+\details{
 	This function simulates a birth-death tree under user-defined conditions and then creates an animation of that tree growing from left-to-right in the plotting device, or upwards.
 }
 \value{

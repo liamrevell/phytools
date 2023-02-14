@@ -9,7 +9,7 @@ starTree(species, branch.lengths=NULL)
 	\item{branch.lengths}{an optional list of branch lengths in the same order as \code{species}.}
 }
 \description{
-	This function creates a star phylogeny.
+	Creates a star phylogeny.
 }
 \details{
 	Creates a star phylogeny with (optionally) user specified branch lengths.

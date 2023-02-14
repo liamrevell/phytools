@@ -13,6 +13,9 @@ threshDIC(tree, x, mcmc, burnin=NULL, sequence=NULL, method="pD")
 	\item{method}{method for computing the effective number of parameters (options are \code{"pD"} and \code{"pV"}).}
 }
 \description{
+	Computes Deviance Information Criterion from the MCMC object returned by \code{\link{ancThresh}}.
+}
+\details{
 	This function computes the Deviance Information Criterion from the MCMC object returned by \code{\link{ancThresh}}.
 }
 \value{
