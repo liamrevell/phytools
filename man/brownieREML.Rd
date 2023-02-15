@@ -36,6 +36,18 @@ brownieREML(tree, x, maxit=2000, ...)
 \seealso{
 	\code{\link{brownie.lite}}, \code{\link{evol.vcv}}, \code{\link{evol.rate.mcmc}}, \code{\link{ratebytree}}
 }
+\examples{
+## load data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## extract character of interest
+gape.width<-setNames(sunfish.data$gape.width,
+	rownames(sunfish.data))
+## fit model
+multiBM.reml<-brownieREML(sunfish.tree,
+	gape.width)
+print(multiBM.reml)
+}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{continuous character}

@@ -8,7 +8,7 @@ bd(x)
 	\item{x}{object of class \code{"birthdeath"}.}
 }
 \description{
-	Converts an object of class \code{"birthdeath"} to a vector with the ML birth & death rates.
+	Converts an object of class \code{"birthdeath"} (from \code{\link{birthdeath}}) to a vector with the ML birth & death rates.
 }
 \details{
 	This is now somewhat obsolete as \pkg{phytools} now contains functions to fit birth-death and pure-birth diversification models from trees (\code{\link{fit.bd}} and \code{\link{fit.yule}}) that also take into account incomplete sampling fraction.

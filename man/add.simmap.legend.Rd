@@ -12,7 +12,10 @@ add.simmap.legend(leg=NULL, colors, prompt=TRUE, vertical=TRUE, ...)
 	\item{...}{optional arguments including: \code{x} x-coordinate of the legend (if \code{prompt=FALSE}); \code{y} y-coordinate of the legend; and \code{shape} which can be \code{shape="square"}, the default, or \code{shape="circle"}.}
 }
 \description{
-	This function adds a legend (by default, interactively) to a plotted stochastic character mapped tree.
+	Adds a legend (by default, interactively) to a plotted stochastic character mapped tree.
+}
+\details{
+	Redundant with \code{\link{legend}}, which is much more powerful but somewhat more complicated to use.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
