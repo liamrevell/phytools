@@ -17,7 +17,7 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 \details{
 	Because this function relies on a high dimensional numerical optimization of the likelihood function, \code{\link{fastAnc}} should probably be preferred for most purposes. If using \code{\link{anc.ML}}, users should be cautious to ensure convergence. 
 	
-	This issue has been ameliorated in \emph{phytools} >= 0.2-48 by seeding the ML optimization with the result from \code{\link{fastAnc}}.
+	This issue has been ameliorated in \pkg{phytools} >= 0.2-48 by seeding the ML optimization with the result from \code{\link{fastAnc}}.
 	
 	For \code{model="EB"} this should also not be a problem as the numerical optimization is performed for only \code{sig2} and \code{r}, while the ML values of the ancestral states are obtained during every iteration of the optimization algorithmically using the re-rooting method.
 }

@@ -13,7 +13,7 @@
 \details{
 	\code{density.multiSimmap} \code{method="changes"} (the default) results in a posterior distribution of the number & types of changes on the tree.
 	
-	If the package \emph{coda} has been installed, then the function \code{HPD.interval} is used to compute a 95-percent high probability density interval for the number of changes of each type on the tree. Otherwise, the central 95-percent of the posterior sample is returned as an estimate of the 95-percent HPD interval for each change type. 
+	If the package \pkg{coda} has been installed, then the function \code{HPD.interval} is used to compute a 95\% high probability density interval for the number of changes of each type on the tree. Otherwise, the central 95\% of the posterior sample is returned as an estimate of the 95\% HPD interval for each change type. 
 	
 	The method also computes the full posterior density for each change type using a bandwidth specified by the user. 
 	

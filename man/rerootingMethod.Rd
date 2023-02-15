@@ -16,7 +16,7 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 \details{
 	This function uses the re-rooting method of Yang et al. (1995) to get the marginal ancestral state estimates for each internal node of the tree using likelihood. This method get the conditional scaled likelihoods for the root node (which is the same as the marginal ancestral state reconstruction for that node) and successively moves the root to each node in the tree. The function can also return the posterior probabilities for the tip nodes of the tree.
 
-	\code{rerootingMethod} calls \code{\link{fitMk}} internally. \code{fitMk} uses some code adapted from \code{ace} in the ape package.
+	\code{rerootingMethod} calls \code{\link{fitMk}} internally. \code{fitMk} uses some code adapted from \code{ace} in the \pkg{ape} package.
 }
 \value{
 	An object of class \code{"rerootingMethod"} containing at least the following elements:

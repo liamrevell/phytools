@@ -21,7 +21,7 @@ phenogram95(tree, x=NULL, ...)
 	Plots phylogenies (or phylogenetic trees and comparative data) in a variety of different styles.
 }
 \details{
-	This function plots a phylogeny or phylogenetic tree and comparative data in a variety of different styles, depending on the value of \code{type}. In some instances, \code{fancyTree} is now just a wrappe for other \emph{phytools} functions, such as \code{\link{contMap}} and \code{\link{densityMap}}.
+	This function plots a phylogeny or phylogenetic tree and comparative data in a variety of different styles, depending on the value of \code{type}. In some instances, \code{fancyTree} is now just a wrappe for other \pkg{phytools} functions, such as \code{\link{contMap}} and \code{\link{densityMap}}.
 	
 	If \code{type="extinction"} (or any unambiguous abbreviation) the function will plot a tree in which branches preceding the MRCA of all extant taxa and branches leading only to extnct lineages are plotted with dashed red lines. 
 	

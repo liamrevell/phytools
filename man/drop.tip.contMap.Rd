@@ -19,7 +19,7 @@
 	Drops one or multiple tips from an object of class \code{"contMap"} or \code{"densityMap"}.
 }
 \details{
-	These functions are equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in the \emph{ape} package, but for objects of class \code{"contMap"} and \code{"densityMap"}.
+	These functions are equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in the \pkg{ape} package, but for objects of class \code{"contMap"} and \code{"densityMap"}.
 
 	For more information about objects of class \code{"contMap"} or \code{"densityMap"}, please refer to the documentation pages for \code{\link{contMap}} or \code{\link{densityMap}}, respectively.
 }

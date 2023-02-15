@@ -13,7 +13,7 @@ exhaustiveMP(data, tree=NULL, method="branch.and.bound")
 	This function does exhaustive and branch & bound MP searches.
 }
 \details{
-	Should probably not be used for more than about 8 species (and definitely not more than 10 species).  Performs parsimony calculations using \code{\link{parsimony}} in the \code{phangorn} package (Schliep, 2011).
+	Should probably not be used for more than about 8 species (and definitely not more than 10 species).  Performs parsimony calculations using \code{\link{parsimony}} in the \pkg{phangorn} package (Schliep, 2011).
 }
 \value{
 	A \code{"phylo"} or \code{"multiPhylo"} object that is the MP tree or set of MP trees. It also returns the parsimony scores in \code{attr(trees,"pscore")} or \code{attr(trees[[i]],"pscore")} for the ith tree.

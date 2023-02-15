@@ -10,7 +10,7 @@ fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{a vector of phenotypic values for a binary trait for the species in \code{tree}; or a matrix in which the rows of \code{x} give the probability of being in each column state. (The latter option is only supported for \code{method="fitMk"}.) For S3 \code{plot} method, an object of class \code{"fitPagel"}.}
 	\item{y}{a second binary character for the species in \code{tree}; or a matrix in which the rows give the probability of being in each column state.}
-	\item{method}{function to use for optimization (defaults to \code{method="fitMk"}). Other options are \code{"ace"} to use the \code{\link{ace}} function in ape for optimization, or to \code{"fitDiscrete"} (if the geiger package is installed) to use geiger's \code{fitDiscrete} for optimization.}
+	\item{method}{function to use for optimization (defaults to \code{method="fitMk"}). Other options are \code{"ace"} to use the \code{\link{ace}} function in \pkg{ape} for optimization, or to \code{"fitDiscrete"} (if the \pkg{geiger} package is installed) to use \pkg{geiger}'s \code{fitDiscrete} for optimization.}
 	\item{model}{model of evolution for the individual characters. Can be \code{model="ER"}, \code{"SYM"} (equivalent to \code{"ER"} in this case),
 	and \code{"ARD"}.}
 	\item{dep.var}{dependent variable. If \code{dep.var="xy"} than the rate of subsitution in \code{x} depends on \code{y} & vice versa. If \code{dep.var="x"} than the substitution rate in \code{x} depends on \code{y}, but not the converse. Finally, if \code{dep.var="y"} than the rate of substitution in \code{y} depends on \code{x}, but not the converse.}

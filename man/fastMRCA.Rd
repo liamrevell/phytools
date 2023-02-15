@@ -21,7 +21,7 @@ fastDist(tree, sp1, sp2)
 	
 	This function is mostly redundant with \code{\link{findMRCA}} (or \code{findMRCA(...,type="height")} in the case of \code{fastHeight}), but for very large trees will be considerably faster.
 	
-	(Also see \code{\link{getMRCA}} in the ape package.)
+	(Also see \code{\link{getMRCA}} in the \pkg{ape} package.)
 }
 \value{
 	The node number of the MRCA, the height above the root (for \code{fastHeight}), or the patristic distance between two taxa (for \code{fastDist}).

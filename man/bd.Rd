@@ -11,7 +11,7 @@ bd(x)
 	Converts an object of class \code{"birthdeath"} to a vector with the ML birth & death rates.
 }
 \details{
-	This is now somewhat obsolete as \emph{phytools} now contains functions to fit birth-death and pure-birth diversification models from trees (\code{\link{fit.bd}} and \code{\link{fit.yule}}) that also take into account incomplete sampling fraction.
+	This is now somewhat obsolete as \pkg{phytools} now contains functions to fit birth-death and pure-birth diversification models from trees (\code{\link{fit.bd}} and \code{\link{fit.yule}}) that also take into account incomplete sampling fraction.
 }
 \value{
 	A vector.

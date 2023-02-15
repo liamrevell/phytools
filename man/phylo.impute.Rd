@@ -17,7 +17,7 @@ phylo.impute(tree, X, ...)
 	
 	Missing values are imputed by maximizing their likelihood jointly with the parameters of the Brownian model. The function \code{\link{evol.vcv}} is used internally to compute the likelihood.
 	
-	Note that the \emph{Rphylopars} package (\url{https://CRAN.R-project.org/package=Rphylopars}) also does phylogenetic imputation for multivariate trait data and it seems to be much faster.
+	Note that the \pkg{Rphylopars} package (\url{https://CRAN.R-project.org/package=Rphylopars}) also does phylogenetic imputation for multivariate trait data and it seems to be much faster.
 }
 \value{
 	An object of class \code{"phylo.impute"} consisting of a complete data frame with missing values imputed.

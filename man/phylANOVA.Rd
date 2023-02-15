@@ -18,7 +18,7 @@ phylANOVA(tree, x, y, nsim=1000, posthoc=TRUE, p.adj="holm")
 \details{
 	This function performs the simulation-based phylogenetic ANOVA of Garland et al. (1993) and (optionally) conducts all posthoc comparisons of means among groups (also obtaining the P-values by phylogenetic simulation).
 
-	This function uses a little bit of code from both \code{phy.anova} in the \emph{geiger} package and \code{\link{pairwise.t.test}}.
+	This function uses a little bit of code from both \code{phy.anova} in the \pkg{geiger} package and \code{\link{pairwise.t.test}}.
 }
 \value{
 	An object of class \code{"phylANOVA"} containing the following elements:

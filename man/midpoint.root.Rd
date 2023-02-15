@@ -13,7 +13,7 @@ midpoint.root(tree)
 \details{
 	Midpoint rooting involves locating the midpoint of the longest path between any two tips and putting the root in that location. 
 	
-	This function performs the same operation as \code{\link{midpoint}} in the \emph{phangorn} package, but uses no \emph{phangorn} code internally.
+	This function performs the same operation as \code{\link{midpoint}} in the \pkg{phangorn} package, but uses no \pkg{phangorn} code internally.
 }
 \value{
 	An object of class \code{"phylo"} containing a rooted phylogenetic tree.

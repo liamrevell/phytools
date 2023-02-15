@@ -8,7 +8,7 @@ compute.mr(trees, type=c("phyDat","matrix"))
 }
 \arguments{
 	\item{trees}{an object of class \code{"multiPhylo"}  that consists of a list of phylogenetic trees.}
-	\item{method}{an argument specifying whether to optimize the tree using the \emph{phangorn} parsimony optimizer \code{\link{pratchet}} or \code{\link{optim.parsimony}}.}
+	\item{method}{an argument specifying whether to optimize the tree using the \pkg{phangorn} parsimony optimizer \code{\link{pratchet}} or \code{\link{optim.parsimony}}.}
 	\item{type}{for \code{compute.mr}, the type of object to return (e.g., \code{"phyDat"} or \code{"matrix"}).}
 	\item{...}{optional arguments - mostly to be passed to \code{\link{pratchet}} or \code{\link{optim.parsimony}}.}
 }
@@ -16,7 +16,7 @@ compute.mr(trees, type=c("phyDat","matrix"))
 	This function estimates the MRP (matrix representation parsimony) supertree from a set of input trees (Baum 1992; Ragan 1992).
 }
 \details{
-	\code{mrp.supertree} uses \code{\link{pratchet}} or \code{\link{optim.parsimony}} from the \emph{phangorn} package (Schliep, 2011) for optimization, and \code{\link{prop.part}} from \emph{ape} package (Paradis et al. 2004). 
+	\code{mrp.supertree} uses \code{\link{pratchet}} or \code{\link{optim.parsimony}} from the \pkg{phangorn} package (Schliep, 2011) for optimization, and \code{\link{prop.part}} from \pkg{ape} package (Paradis et al. 2004). 
 	
 	See \code{\link{pratchet}} or \code{\link{optim.parsimony}} for optional arguments, which vary slightly depending on the method. All optional arguments of these methods are available to the user with one exception. The argument \code{tree} in \code{\link{optim.parsimony}} is supplied instead as \code{start}. In addition to being an object of class \code{"phylo"}, \code{start} can also be assigned the string values of \code{"NJ"} or \code{"random"}, in which case either a neighbor-joining or random tree will be used as the starting tree for optimization.
 

@@ -30,7 +30,7 @@
 	
 	The method \code{multi2di} resolves polytomies by adding branches of zero length (while preserving the mappings) in a tree or set of trees.
 
-	This methods should theoretically behave similarly to \code{\link{di2multi}} and \code{\link{multi2di}} from the \emph{ape} package.
+	This methods should theoretically behave similarly to \code{\link{di2multi}} and \code{\link{multi2di}} from the \pkg{ape} package.
 }
 \value{
 	An object of class \code{"simmap"}, \code{"multiSimmap"}, \code{"contMap"}, or \code{"densityMap"}, depending on the class of \code{phy}.

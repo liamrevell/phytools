@@ -11,14 +11,14 @@ phylomorphospace3d(tree, X, A=NULL, label=TRUE, control=list(),
 	\item{A}{an optional \code{m} x 3 matrix (for \code{m} nodes) of values for two taits at internal nodes in the tree - if not supplied, these values will be estimated using \code{\link{anc.ML}}.}
 	\item{label}{logical value indicating whether to print tip labels next to terminal nodes in the plot (presently doesn't do anything, but labels can be dropped using \code{control}).}
 	\item{control}{a list containing the following optional control parameters: \code{spin}: a logical value indicating whether to animate the plot when created; \code{axes}: a logical indicating whether to plot the axes; \code{box}: a logical value indicating whether to plot in box; \code{simple.axes}: logical value indicating whether to replace \code{box} and \code{axes} with simpler axes; \code{lwd}: line widths; \code{ftype}: font type ("off" turns off labels altogether); \code{col.edge} a vector of colors of length \code{nrow(tree$edge)}.}
-	\item{method}{a string either \code{"dynamic"} for a dynamic (animated) plot created using \code{rgl}; or \code{"static"} for a flat 3D plot created using \code{scatterplot3d} and base graphics. The latter has the advantage of being very easy to export in standard format.}
+	\item{method}{a string either \code{"dynamic"} for a dynamic (animated) plot created using \pkg{rgl}; or \code{"static"} for a flat 3D plot created using \code{scatterplot3d} and base graphics. The latter has the advantage of being very easy to export in standard format.}
 	\item{...}{optional arguments to be passed to \code{scatterplot3d}. Most options not available. \code{angle} is an important option that does work here.}
 }
 \description{
 	Creates a phylomorphospace plot in three dimensions.
 }
 \details{
-	This function creates a phylomorphospace plot for three characters using the 3D visualization package, 'rgl' (if available) or statically, by simulating 3D on a flat graphical device.
+	This function creates a phylomorphospace plot for three characters using the 3D visualization package, \pkg{rgl} (if available) or statically, by simulating 3D on a flat graphical device.
 }
 \value{
 	This function creates a three dimensional phylomorphospace plot. The function returns a function from \code{spin3d} (for \code{method="dynamic"}); or a series of functions from \code{\link{scatterplot3d}} (for \code{method="static"}).

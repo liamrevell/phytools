@@ -14,7 +14,7 @@ multiC(tree, internal=FALSE)
 \details{
 	This function takes a modified \code{"phylo"} object as input and returns a set of so-called phylogenetic covariance matrices (e.g., see \code{\link{vcv.phylo}}) as a list: one for each mapped state.
 	
-	Used internally by multiple \emph{phytools} functions, such as \code{\link{brownie.lite}}.
+	Used internally by multiple \pkg{phytools} functions, such as \code{\link{brownie.lite}}.
 }
 \value{
 	A list of matrices.

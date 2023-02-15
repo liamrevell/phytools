@@ -18,7 +18,7 @@ rescaleSimmap(tree, ...)
 	Scales a tree with a mapped discrete character (\code{"simmap"} object) to an arbitrary total height, preserving the relative time spent in each state along each edge.
 }
 \details{
-	Replaces \code{rescaleTree} (now \code{rescale.phylo}) in the 'geiger' package for the \code{"simmap"} object class. \code{rescaleSimmap} is now a redundant alias for the method \code{rescale.simmap}.
+	Replaces \code{rescaleTree} (now \code{rescale.phylo}) in the \pkg{geiger} package for the \code{"simmap"} object class. \code{rescaleSimmap} is now a redundant alias for the method \code{rescale.simmap}.
 }
 \value{
 	An object of class \code{"simmap"}.

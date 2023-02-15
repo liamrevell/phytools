@@ -9,7 +9,7 @@ readNexus(file="", format=c("standard","raxml"))
 \arguments{
 	\item{file}{name of text file with single Newick style tree or multiple trees, one per line. For \code{readNexus} this should be a Nexus format tree.}
 	\item{text}{character string containing tree.}
-	\item{format}{file format (source) for \code{readNexus}. In the case of \code{format="standard"}, \code{\link{read.nexus}} from \emph{ape} will be used internally. For \code{format="raxml"}, the parser assumes that bootstrap values have been stored as node labels in the format \code{[&label=bootstrap]}.}
+	\item{format}{file format (source) for \code{readNexus}. In the case of \code{format="standard"}, \code{\link{read.nexus}} from \pkg{ape} will be used internally. For \code{format="raxml"}, the parser assumes that bootstrap values have been stored as node labels in the format \code{[&label=bootstrap]}.}
 	\item{...}{optional arguments to be passed to \code{\link{scan}}. Note that if the arguments \code{sep} or \code{what} are supplied this could generate an error. Useful optional arguments might include \code{skip} (number of lines to skip) and \code{nlines} (number of lines to read).}
 }
 \description{

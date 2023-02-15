@@ -15,7 +15,7 @@ tipRotate(tree, x, ...)
 	Rotates all the nodes of the tree to try and minimize the different between the order of the tips and the rank-order of a numeric vector \code{x} or (in the case of \code{tipRotate}) the actual integer vector, \code{x}.
 }
 \details{
-	Both \code{minRotate} and \code{tipRotate} are designed primarily to be used internally by other \emph{phytools} functions and particularly by \code{\link{phylo.to.map}} (in the case of \code{minRotate}) and by \code{\link{cophylo}} (in the case of \code{tipRotate}).
+	Both \code{minRotate} and \code{tipRotate} are designed primarily to be used internally by other \pkg{phytools} functions and particularly by \code{\link{phylo.to.map}} (in the case of \code{minRotate}) and by \code{\link{cophylo}} (in the case of \code{tipRotate}).
 }
 \value{
 	A node-rotated object of class \code{"phylo"}.

@@ -15,7 +15,7 @@
 	This function drops or keeps one or multiple tips from all the trees of an object of class \code{"multiSimmap"}.	
 }
 \details{
-	Equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in \emph{ape}.
+	Equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in \pkg{ape}.
 
 	This function merely wraps \code{\link{drop.tip.simmap}}.
 }

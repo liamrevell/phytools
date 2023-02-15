@@ -15,7 +15,7 @@ treeSlice(tree, slice, trivial=FALSE, prompt=FALSE, ...)
 	Cut (or slice) a phylogenetic tree at a particular time point.
 }
 \details{
-	This function slices a tree at a particular height above the root and returns all subtrees or all non-trivial subtrees (i.e., subtrees with more than 1 taxon). Uses \code{\link{extract.clade}} in the "ape" package.
+	This function slices a tree at a particular height above the root and returns all subtrees or all non-trivial subtrees (i.e., subtrees with more than 1 taxon). Uses \code{\link{extract.clade}} in the \pkg{ape} package.
 	
 	\code{treeSlice} can also be used to crop the terminal fraction of a tree for \code{orientation="rootwards"}.
 }
