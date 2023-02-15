@@ -10,7 +10,12 @@ vcvPhylo(tree, anc.nodes=TRUE, ...)
 	\item{...}{optional arguments including \code{internal} (synonym of \code{anc.nodes}) and \code{model} (can be \code{"BM"}, \code{"OU"}, or \code{"lambda"}.}
 }
 \description{
-	This function returns a so-called \emph{phylogenetic variance covariance matrix} (e.g., see \code{\link{vcv.phylo}}), but (optionally) including ancestral nodes and under different evolutionary models.
+	Computes a phylogenetic variance-covariance matrix.
+}
+\details{
+	This function returns a so-called \emph{phylogenetic variance covariance matrix} (e.g., see \code{\link{vcv.phylo}}), but (optionally) including ancestral nodes, as well as under multiple evolutionary models.
+	
+	\code{vcvPhylo} is designed primarily for internal use by other \emph{phytools} functions.
 }
 \value{
 	A matrix.

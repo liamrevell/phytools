@@ -9,7 +9,9 @@ writeNexus(tree, file="")
 	\item{file}{file name for output.}
 }
 \description{
-	This function writes one or multiple phylogenetic trees to file in NEXUS format. Redundant with \code{ape::\link{write.nexus}}.
+	Writes one or multiple phylogenetic trees to file in NEXUS format. 
+	
+	Somewhat redundant with \code{\link{write.nexus}}.
 }
 \value{
 	Trees written to file.

@@ -12,9 +12,12 @@ treeSlice(tree, slice, trivial=FALSE, prompt=FALSE, ...)
 	\item{...}{for \code{prompt=TRUE}, other arguments to be passed to \code{\link{plotTree}}. In addition, the argument \code{orientation} can be used to specify whether the \code{"tipwards"} subtrees or the \code{"rootwards"} phylogeny are/is to be returned by the function call (using those two argument values, respectively).}
 }
 \description{
+	Cut (or slice) a phylogenetic tree at a particular time point.
+}
+\details{
 	This function slices a tree at a particular height above the root and returns all subtrees or all non-trivial subtrees (i.e., subtrees with more than 1 taxon). Uses \code{\link{extract.clade}} in the "ape" package.
 	
-	It can also be used to crop the terminal fraction of a tree for \code{orientation="rootwards"}.
+	\code{treeSlice} can also be used to crop the terminal fraction of a tree for \code{orientation="rootwards"}.
 }
 \value{
 	An object of class \code{"phylo"} or \code{"multiPhylo"}.

@@ -15,7 +15,7 @@ reroot(tree, node.number, position=NULL, interactive=FALSE, ...)
 	Re-roots a phylogenetic tree at an arbitrary position along an edge.
 }
 \details{
-	This function had an error for rootings along edges descended from the root node for phytools<=0.2-47. This should be fixed in the present version. Now uses \code{\link{paste.tree}}, \code{\link{root}}, and \code{\link{splitTree}} internally. Earlier versions also had an error related to node labels. This should be fixed in phytools>=0.4-47.
+	This function had an error for rootings along edges descended from the root node for \emph{phytools}<=0.2-47. This should be fixed in the present version. Now uses \code{\link{paste.tree}}, \code{\link{root}}, and \code{\link{splitTree}} internally. Earlier versions also had an error related to node labels. This should be fixed in \emph{phytools}>=0.4-47.
 }
 \value{
 	A phylogenetic tree in \code{"phylo"} format.

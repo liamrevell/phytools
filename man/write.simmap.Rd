@@ -15,7 +15,7 @@ write.simmap(tree, file=NULL, append=FALSE, map.order=NULL, quiet=FALSE,
 	\item{version}{version of SIMMAP. Note that the options are \code{1.0} and \code{1.5}. \code{version=1.5} is generally recommended because in this format the tree can also be parsed by typical tree readers, but absent its mapped trait.}
 }
 \description{
-	This function writes stochastic character mapped trees to file in multiple SIMMAP formats (Bollback 2006).
+	Writes one or multiple stochastic character mapped trees to file in several formats (following Bollback, 2006).
 }
 \value{
 	A file.

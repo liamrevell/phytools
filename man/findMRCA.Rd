@@ -19,7 +19,7 @@ findMRCA(tree, tips=NULL, type=c("node","height"))
 	
 	If \code{tips=NULL} and \code{type="height"} it will return a matrix equal to that produced by \code{\link{vcv.phylo}}.
 	
-	From \code{phytools 0.5-66} forward \code{findMRCA} uses \code{\link{getMRCA}} in the \emph{ape} package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package namespace to ensure backward compatibility.
+	From \emph{phytools} 0.5-66 forward, \code{findMRCA} uses \code{\link{getMRCA}} in the \emph{ape} package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package namespace to ensure backward compatibility.
 }
 \value{
   The node number of the MRCA, or a matrix of node numbers (if \code{tips==NULL}) - for \code{type="node"}; or the height of the MRCA, or a matrix of heights (if \code{tips==NULL}) - for \code{type="height"}.
