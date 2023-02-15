@@ -9,7 +9,7 @@ plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE,
 	\item{tree}{phylogenetic tree.}
 	\item{x}{a named vector containing discrete character states; or a matrix containing the tip species, in rows, and probabilities of being in each state, in columns.}
 	\item{mcmc}{list object returned by \code{\link{ancThresh}}.}
-	\item{burnin}{number of generations (not samples) to exclude as burn in; if \code{NULL} then 20 percent of generations are excluded as burn-in.}
+	\item{burnin}{number of generations (not samples) to exclude as burn in; if \code{NULL} then 20\% of generations are excluded as burn-in.}
 	\item{piecol}{a named vector containing the colors for the posterior probabilities plotted as pie charts at internal nodes.}
 	\item{tipcol}{a string indicating  whether the tip colors should be based on the input data (\code{"input"}) or sampled tip liabilities (\code{"estimated"}). These will only differ if there is uncertainty in the tip states.}
 	\item{legend}{logical value or text to be plotted in the legend.}
