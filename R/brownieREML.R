@@ -60,19 +60,28 @@ scaleByMap<-function(mtree,sig2){
 
 ## S3 print method for "brownieREML"
 ## S3 print method for object of class "brownie.lite"
-## written by Liam J. Revell 2013
+## written by Liam J. Revell 2013, 2022
+
 print.brownieREML<-function(x, ...){
 	if(hasArg(digits)) digits<-list(...)$digits
-	else digits<-4
+	else digits<-getOption("digits")
 	x<-lapply(x,function(a,b) if(is.numeric(a)) round(a,b) else a,b=digits)
 	cat("REML single-rate model:\n")
-	cat("\ts^2\tse\tk\tlogL\n")
-	cat(paste("value",x$sig2.single,round(sqrt(x$var.single),digits),x$k1,x$logL1,"\n\n",sep="\t"))
-	cat("REML multi-rate model:\n")
-	cat(paste(c("",paste("s^2(",names(x$sig2.multiple),")","\tse(",names(x$sig2.multiple),")",sep=""),
-		"k","logL","\n"),collapse="\t"))
-	cat(paste(paste(c("value",paste(x$sig2.multiple,round(sqrt(diag(x$vcv.multiple)),digits),sep="\t"),x$k2,
-		x$logL.multiple),collapse="\t"),"\n\n",sep=""))
-	if(x$convergence[1]=="Optimization has converged.") cat("R thinks it has found the REML solution.\n\n")
+	obj<-matrix(c(x$sig2.single,sqrt(x$var.single),x$k1,x$logL1),1,4,
+		dimnames=list("value",c("s^2","se","k","logL")))
+	print(obj,digits=digits)
+	cat("\nREML multi-rate model:\n")
+	nn<-c(unlist(strsplit(paste("s^2(",names(x$sig2.multiple),")__",
+		"se(",names(x$sig2.multiple),")",sep=""),"__")),"k",
+		"logL")
+	obj<-matrix(c(as.vector(rbind(x$sig2.multiple,sqrt(diag(x$vcv.multiple)))),
+		x$k2,x$logL.multiple),1,2*length(x$sig2.multiple)+2,
+		dimnames=list("value",nn))
+	print(obj,digits=digits)
+	if(!is.null(x$P.chisq)) cat(paste("\nP-value (based on X^2):",x$P.chisq,"\n\n"))
+	else if(!is.null(x$P.sim)) cat(paste("\nP-value (based on simulation):",
+		x$P.sim,"\n\n"))
+	if(x$convergence[1]=="Optimization has converged.") 
+		cat("R thinks it has found the ML solution.\n\n")
 	else cat("Optimization may not have converged.\n\n")
 }

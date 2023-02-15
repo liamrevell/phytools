@@ -103,7 +103,7 @@ print.brownie.lite<-function(x, ...){
 		dimnames=list("value",c("s^2","se","a","k","logL")))
 	print(obj,digits=digits)
 	cat("\nML multi-rate model:\n")
-	nn<-c(unlist(strsplit(paste("s^2(",names(x$sig2.multipl),")__",
+	nn<-c(unlist(strsplit(paste("s^2(",names(x$sig2.multiple),")__",
 		"se(",names(x$sig2.multiple),")",sep=""),"__")),"a","k",
 		"logL")
 	obj<-matrix(c(as.vector(rbind(x$sig2.multiple,sqrt(diag(x$vcv.multiple)))),
