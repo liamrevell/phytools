@@ -61,8 +61,7 @@ sunfish.dmap<-densityMap(smap.trees,plot=FALSE,
 	res=50) ## res should be higher
 ## plot density map
 plot(sunfish.dmap,lwd=5,outline=TRUE)
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
-}
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

@@ -73,8 +73,7 @@ par(mar=c(5.1,4.1,4.1,2.1))
 ## plot posterior density on the number of changes
 plot(density(smap.trees),bty="l")
 title(main="Posterior distribution of changes of each type",
-    font.main=3)
-}
+    font.main=3)}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

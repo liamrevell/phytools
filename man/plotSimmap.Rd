@@ -68,7 +68,7 @@ cols<-setNames(c("green","#E4D96F","darkgreen",
     "brown","black","darkgrey"),
     c("CG","GB","TC","TG","Tr","Tw"))
 plot(anoletree,cols,fsize=0.5,ftype="i",outline=TRUE,
-	lwd=3,ylim=c(0,Ntip(anoletree)),
+    lwd=3,ylim=c(0,Ntip(anoletree)),
     mar=c(0.1,0.1,1.1,0.1))
 add.simmap.legend(colors=cols,prompt=FALSE,x=0,y=-0.5,
     vertical=FALSE)

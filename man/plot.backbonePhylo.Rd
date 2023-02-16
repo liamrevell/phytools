@@ -36,9 +36,8 @@ depth<-sapply(tip.label,function(x,y)
     which(y$tip.label==x))],y=tree)
 trans<-data.frame(tip.label,clade.label,N,depth)
 rownames(trans)<-NULL
-rm(tip.label,clade.label,N,depth)
 ## here's what trans looks like
-trans
+print(trans)
 ## convert
 obj<-phylo.toBackbone(tree,trans)
 ## plot
