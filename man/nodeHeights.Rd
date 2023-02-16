@@ -30,8 +30,13 @@ nodeheight(tree, node, ...)
 	\code{\link{vcvPhylo}}
 }
 \examples{
-tree<-rtree(10)
-X<-nodeHeights(tree)
+## load tree
+data(vertebrate.tree)
+## compute height of all nodes
+H<-nodeHeights(vertebrate.tree)
+H
+## compute total tree depth
+max(H)
 }
 \keyword{phylogenetics}
 \keyword{utilities}

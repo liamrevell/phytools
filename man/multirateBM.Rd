@@ -3,8 +3,8 @@
 \title{Function to fit a multi-rate Brownian evolution model}
 \usage{
 multirateBM(tree, x, method=c("ML","REML"), 
-	optim=c("L-BFGS-B","Nelder-Mead","BFGS","CG"),
-	maxit=NULL, n.iter=1, lambda=1, ...)
+    optim=c("L-BFGS-B","Nelder-Mead","BFGS","CG"),
+    maxit=NULL, n.iter=1, lambda=1, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
@@ -53,11 +53,13 @@ gw<-setNames(sunfish.data$gape.width,
 ## run penalized-likelihood optimization
 ## lambda=0.1 is arbitrary
 fitBM<-multirateBM(sunfish.tree,gw,
-	lambda=0.01)
+    lambda=0.01)
 ## print and plot the results
 print(fitBM)
 plot(fitBM,ftype="i",fsize=0.8,lwd=6,
-	outline=TRUE)}
+    outline=TRUE)
+## reset par
+par(mar=c(5.1,4.1,4.1,2.1))}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

@@ -42,7 +42,7 @@ data(sunfish.tree)
 data(sunfish.data)
 ## extract character of interest
 gape.width<-setNames(sunfish.data$gape.width,
-	rownames(sunfish.data))
+    rownames(sunfish.data))
 ## fit model
 multiBM.reml<-brownieREML(sunfish.tree,
 	gape.width)

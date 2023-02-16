@@ -52,19 +52,19 @@ phenogram95(tree, x=NULL, ...)
 	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link{drop.tip}}, \code{\link{phenogram}}, \code{\link{phylomorphospace3d}}, \code{\link{plot.phylo}}, \code{\link{plotSimmap}}
 }
 \examples{
-# plot tree with extinction
+## plot tree with extinction
 set.seed(10)
 tree<-pbtree(b=1,d=0.4,t=4)
 fancyTree(tree,type="extinction")
 
 \dontrun{
-# plot 3D traitgram
+## plot 3D traitgram
 tree<-pbtree(n=50,scale=10)
 Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),2,2))
 fancyTree(tree,type="traitgram3d",X=Y,
     control=list(spin=FALSE))
 	
-# plot with internal nodes from simulation
+## plot with internal nodes from simulation
 Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),
     2,2),internal=TRUE)
 B<-Y[length(tree$tip)+1:tree$Nnode,]
@@ -72,20 +72,19 @@ Y<-Y[1:length(tree$tip),]
 fancyTree(tree,type="traitgram3d",X=Y,A=B,
     control=list(simple.axes=TRUE,spin=FALSE))}
 	
-# plot with dropped tips
+## plot with dropped tips
 tree<-pbtree(n=30)
 tips<-sample(tree$tip.label)[1:10]
 pruned<-fancyTree(tree,type="droptip",tip=tips)
+par(mfrow=c(1,1)) ## reset mfrow to default
 
 \dontrun{
-# plot 95-percent CI phenogram
+## plot 95-percent CI phenogram
 tree<-pbtree(n=30)
 x<-fastBM(tree)
 fancyTree(tree,type="phenogram95",x=x)}
 
-## reset par to defaults
-par(mar=c(5.1,4.1,4.1,2.1))
-par(mfrow=c(1,1))
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset mar to defaults
 }
 \keyword{phylogenetics}
 \keyword{plotting}

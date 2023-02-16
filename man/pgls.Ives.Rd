@@ -4,9 +4,9 @@
 \title{Phylogenetic regression with intraspecific sampling error}
 \usage{
 pgls.Ives(tree, X, y, Vx=NULL, Vy=NULL, Cxy=NULL, lower=c(1e-8,1e-8),
-	fixed.b1=NULL)
+    fixed.b1=NULL)
 pgls.SEy(model, data, corClass=corBrownian, tree,
-   se=NULL, method=c("REML","ML"), interval=c(0,1000), ...)
+    se=NULL, method=c("REML","ML"), interval=c(0,1000), ...)
 }
 \arguments{
 	\item{tree}{a phylogeny as an object of class \code{"phylo"}.}

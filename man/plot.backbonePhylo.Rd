@@ -32,8 +32,8 @@ clade.label<-LETTERS[1:8]
 N<-ceiling(runif(n=8,min=1,max=20))
 ## set crown node depth to 1/2 the maximum depth
 depth<-sapply(tip.label,function(x,y) 
-	0.5*y$edge.length[which(tree$edge[,2]==
-	which(y$tip.label==x))],y=tree)
+    0.5*y$edge.length[which(tree$edge[,2]==
+    which(y$tip.label==x))],y=tree)
 trans<-data.frame(tip.label,clade.label,N,depth)
 rownames(trans)<-NULL
 rm(tip.label,clade.label,N,depth)
@@ -43,6 +43,7 @@ trans
 obj<-phylo.toBackbone(tree,trans)
 ## plot
 plot(obj)
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset par
 }
 \keyword{phylogenetics}
 \keyword{plotting}

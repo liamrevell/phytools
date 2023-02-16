@@ -5,12 +5,12 @@
 \title{Plot a tree with bars at the tips}
 \usage{
 plotTree.wBars(tree, x, scale=NULL, width=NULL, type="phylogram", 
-   method="plotTree", tip.labels=FALSE, col="grey", border=NULL, 
-   ...)
+    method="plotTree", tip.labels=FALSE, col="grey", border=NULL, 
+    ...)
 plotTree.barplot(tree, x, args.plotTree=list(), args.barplot=list(), 
-	...)
+    ...)
 plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list(),
-	...)
+    ...)
 }
 \arguments{
  	\item{tree}{an object of class \code{"phylo"}.}
@@ -65,18 +65,20 @@ plotTree.barplot(anoletree,exp(svl),
 data(vertebrate.tree)
 data(vertebrate.data)
 ## plotTree.barplot
-options(scipen=3) ## change sci-notation
+options(scipen=4) ## change sci-notation
+par(cex.axis=0.8)
 plotTree.barplot(vertebrate.tree,
-	setNames(vertebrate.data$Mass,
-	rownames(vertebrate.data)),
-	args.barplot=list(log="x",
-	xlab="mass (kg)",
-	xlim=c(0.01,500000),
-	col=palette()[4]))
+    setNames(vertebrate.data$Mass,
+    rownames(vertebrate.data)),
+    args.barplot=list(
+    log="x",
+    xlab="mass (kg)",
+    xlim=c(0.01,500000),
+    col=palette()[4]))
 options(scipen=0)
 
 ## reset par to defaults
-par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1),cex.axis=1)
 }
 \keyword{phylogenetics}
 \keyword{plotting}

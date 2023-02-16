@@ -38,6 +38,26 @@ fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 \seealso{
 	\code{\link{ace}}, \code{\link{fitMk}}, \code{\link{make.simmap}}
 }
+\examples{
+## load data
+data(bonyfish.tree)
+data(bonyfish.data)
+## extract discrete characters
+spawning_mode<-setNames(bonyfish.data$spawning_mode,
+    rownames(bonyfish.data))
+paternal_care<-setNames(bonyfish.data$paternal_care,
+    rownames(bonyfish.data))
+## fit correlational model
+bonyfish.pagel<-fitPagel(bonyfish.tree,paternal_care,
+    spawning_mode)
+## test for a difference between models
+anova(bonyfish.pagel)
+## plot fitted models
+plot(bonyfish.pagel,lwd.by.rate=TRUE)
+## reset par
+par(mar=c(5.1,4.1,4.1,2.1),
+    mfrow=c(1,1))
+}
 \keyword{phylogenetics}
 \keyword{comparative method}
 \keyword{discrete character}

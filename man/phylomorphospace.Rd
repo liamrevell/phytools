@@ -4,9 +4,9 @@
 \title{Creates phylomorphospace plot}
 \usage{
 phylomorphospace(tree, X, A=NULL, label=c("radial","horizontal","off"),
-   control=list(), ...)
+    control=list(), ...)
 project.phylomorphospace(tree, X, nsteps=200, sleep=0,
-	direction=c("to","from","both"), ...)
+    direction=c("to","from","both"), ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree in \code{"phylo"} format, or a modified \code{"phylo"} object with a mapped discrete character.}

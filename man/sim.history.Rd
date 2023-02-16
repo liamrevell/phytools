@@ -4,8 +4,8 @@
 \alias{sim.multiMk}
 \title{Simulate character history or a discrete character at the tips of the tree under some model}
 \usage{
-sim.history(tree, Q, anc=NULL, nsim=1, direction=c("column_to_row",
-	"row_to_column"), ...)
+sim.history(tree, Q, anc=NULL, nsim=1, 
+    direction=c("column_to_row","row_to_column"), ...)
 sim.Mk(tree, Q, anc=NULL, nsim=1, ...)
 sim.multiMk(tree, Q, anc=NULL, nsim=1, ...)
 }

@@ -39,9 +39,10 @@ pbtree(b=1, d=0, n=NULL, t=NULL, scale=NULL, nsim=1, type=c("continuous",
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
-# simulate a pure-birth tree with 400 tips, scaled to a length of 1.0
+## simulate a pure-birth tree with 400 tips
+## scaled to a length of 1.0
 tree<-pbtree(n=400,scale=1)
-# simulate a pure-birth tree conditioning on n & t
+## simulate a pure-birth tree conditioning on n & t
 tt<-log(50)-log(2)
 tree<-pbtree(n=50,t=tt)
 }

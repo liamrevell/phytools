@@ -86,7 +86,7 @@ data(sunfish.tree)
 data(sunfish.data)
 ## extract discrete character (feeding mode)
 fmode<-setNames(sunfish.data$feeding.mode,
-     rownames(sunfish.data))
+    rownames(sunfish.data))
 ## fit "ER" model
 fit.ER<-fitMk(sunfish.tree,fmode,model="ER")
 print(fit.ER)
@@ -101,12 +101,12 @@ data(flatworm.data)
 data(flatworm.tree)
 ## extract discrete character (habitat)
 habitat<-setNames(flatworm.data$Habitat,
-	rownames(flatworm.data))
+    rownames(flatworm.data))
 ## fit polymorphic models "ER" and "transient"
 fitpoly.ER<-fitpolyMk(flatworm.tree,habitat,
-	model="ER")
+    model="ER")
 fitpoly.transient<-fitpolyMk(flatworm.tree,habitat,
-	model="transient")
+    model="transient")
 ## print fitted models
 print(fitpoly.ER)
 print(fitpoly.transient)
@@ -118,7 +118,7 @@ plot(fitpoly.ER)
 mtext("a) ER polymorphic model",adj=0,line=1)
 plot(fitpoly.transient)
 mtext("b) Transient polymorphic model",adj=0,
-	line=1)
+     line=1)
 par(mfrow=c(1,1))
 }
 \keyword{phylogenetics}
