@@ -39,6 +39,7 @@ fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 	\code{\link{ace}}, \code{\link{fitMk}}, \code{\link{make.simmap}}
 }
 \examples{
+\dontrun{
 ## load data
 data(bonyfish.tree)
 data(bonyfish.data)
@@ -56,7 +57,7 @@ anova(bonyfish.pagel)
 plot(bonyfish.pagel,lwd.by.rate=TRUE)
 ## reset par
 par(mar=c(5.1,4.1,4.1,2.1),
-    mfrow=c(1,1))
+    mfrow=c(1,1))}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}
