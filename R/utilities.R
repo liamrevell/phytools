@@ -15,14 +15,16 @@ rescale.default<-function(x, ...){
 
 rescale.simmap<-function(x, model="depth", ...) rescaleSimmap(x,...)
 
+rescale.multiSimmap<-function(x, model="depth", ...) rescaleSimmap(x,...)
+
 rescaleSimmap<-function(tree,...){
-	if(inherits(tree,"multiPhylo")){
+	if(inherits(tree,"multiSimmap")){
 		cls<-class(tree)
 		trees<-unclass(tree)
 		trees<-lapply(trees,rescaleSimmap,...)
 		class(trees)<-cls
 		return(trees)
-	} else if(inherits(tree,"phylo")){
+	} else if(inherits(tree,"simmap")){
 		if(hasArg(lambda)) lambda<-list(...)$lambda
 		else lambda<-1
 		if(hasArg(totalDepth)) depth<-totalDepth<-list(...)$totalDepth
@@ -42,7 +44,7 @@ rescaleSimmap<-function(tree,...){
 			tree$mapped.edge<-tree$mapped.edge*s
 		}
 		return(tree)
-	} else message("tree should be an object of class \"phylo\" or \"multiPhylo\"")
+	} else message("tree should be an object of class \"simmap\" or \"multiSimmap\"")
 }
 
 
