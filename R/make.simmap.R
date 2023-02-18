@@ -37,7 +37,13 @@ simmap.anova.fitMk<-function(object,...){
 		mods<-sample(best,size=nsim,replace=TRUE)
 	}
 	fits<-attr(object,"models")[mods]
-	tt<-lapply(fits,simmap,nsim=1,...)
+	foo<-function(obj,args){
+		args$object<-obj
+		do.call(simmap,args)
+	}
+	args<-list(...)
+	args$nsim<-1
+	tt<-lapply(fits,foo,args=args)
 	class(tt)<-c("multiSimmap","multiPhylo")
 	return(tt)
 }
