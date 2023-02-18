@@ -1,6 +1,6 @@
 ## optimizing, graphing, and analyzing extended Mk model for discrete
 ## character evolution
-## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022)
+## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022, 2023)
 ## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
 
 anova.fitMk<-function(object,...){
@@ -19,6 +19,9 @@ anova.fitMk<-function(object,...){
 	result<-data.frame(logL,df,AICvals,unclass(ww))
 	rownames(result)<-nm
 	colnames(result)<-c("log(L)","d.f.","AIC","weight")
+	models<-c(list(object),fits)
+	attr(result,"models")<-models
+	class(result)<-c(class(result),"anova.fitMk")
 	print(result)
 	invisible(result)
 }
@@ -200,6 +203,9 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		}
 		lik.f<-function(q) -lik(q,output.liks=FALSE,
 			pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+		obj$data<-list(
+			tree=tree,
+			x=x)
 		obj$lik<-lik.f
 		class(obj)<-"fitMk"
 	}

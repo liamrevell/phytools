@@ -1,8 +1,10 @@
 \name{make.simmap}
 \alias{make.simmap}
+\alias{simmap}
 \title{Simulate stochastic character maps on a phylogenetic tree or trees}
 \usage{
 make.simmap(tree, x, model="SYM", nsim=1, ...)
+simmap(object, ...)
 }
 \arguments{
 	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"}, or a list of trees as an object of class \code{"multiPhylo"}.}
@@ -10,6 +12,7 @@ make.simmap(tree, x, model="SYM", nsim=1, ...)
 	\item{model}{a character string containing the model or a transition model specified in the form of a matrix. See \code{\link{ace}} for more details.}
 	\item{nsim}{number of simulations. If \code{tree} is an object of class \code{"multiPhylo"}, then \code{nsim} simulations will be conducted \emph{per} input tree.}
 	\item{...}{optional arguments. So far, \code{pi} gives the prior distribution on the root node of the tree. Acceptable values for \code{pi} are \code{"equal"}, \code{"estimated"}, or a vector with the frequencies. If \code{pi="estimated"} then the stationary distribution is estimated by numerically solving \code{pi*Q=0} for \code{pi}, and this is used as a prior on the root. If \code{pi="fitzjohn"}, then the Fitzjohn et al. (2009) root prior is used. Finally, if \code{pi} is a numeric vector then the root state will be sampled from this vector. The function defaults to \code{pi="equal"} which results in the root node being sampled from the conditional scaled likelihood distribution at the root. \code{message} tells whether or not to print a message containing the rate matrix, \emph{Q} and state frequencies. \code{message} defaults to \code{TRUE}. For optional argument \code{Q="mcmc"} (see below) the mean value of \code{Q} from the posterior sample is printed. \code{tol} gives the tolerance for zero elements in \code{Q}. (Elements less then \code{tol} will be reset to \code{tol}). Optional argument \code{Q} can be a string (\code{"empirical"} or \code{"mcmc"}), or a fixed value of the transition matrix, \emph{Q}. If \code{"empirical"} than a single value of \emph{Q}, the most likely value, is used for all simulations. If \code{"mcmc"}, then \code{nsim} values of \emph{Q} are first obtained from the posterior distribution for \emph{Q} using Bayesian MCMC, then a simulated stochastic character map is generated for each sampled value of \emph{Q}. Optional argument \code{vQ} can consist of a single numeric value or a vector containing the variances of the (normal) proposal distributions for the MCMC. The order of \code{vQ} is assumed to be in the order of the \code{index.matrix} in \code{\link{ace}} for the chosen model. \code{prior} is a list containing \code{alpha} and \code{beta} parameters for the \eqn{\Gamma} prior distribution on the transition rates in \emph{Q}. Note that \code{alpha} and \code{beta} can be single values or vectors, if different priors are desired for each value in the transition matrix \emph{Q}. As for \code{vQ}, the order of \code{prior} is assumed to correspond with the order of \code{index.matrix} as in \code{\link{ace}}. \code{prior} can also be given the optional logical value \code{use.empirical} which tells the function whether or not to give the prior distribution the empirical mean for \emph{Q}. If \code{TRUE} then only \code{prior$beta} is used and \code{prior$alpha} is set equal to \code{prior$beta} times the empirical mean of \emph{Q}. \code{burnin} and \code{samplefreq} are burn-in and sample frequency for the MCMC, respectively.}
+	\item{object}{for generic \code{simmap} method, object of various classes: for instance, an object of class \code{"fitMk"} from \code{\link{fitMk}}.}
 }
 \description{
 	Performs stochastic character mapping (Huelsenbeck et al., 2003) using several different alternative methods.

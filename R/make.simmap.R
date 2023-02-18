@@ -1,5 +1,46 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
-## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022
+## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
+
+simmap<-function(object,...) UseMethod("simmap")
+
+simmap.default<-function(object,...){
+	warning(paste(
+		"simmap does not know how to handle objects of class ",
+		class(object),".\n"))
+}
+
+simmap.fitMk<-function(object,...){
+	args<-list(...)
+	args$tree<-object$data$tree
+	args$x<-object$data$x
+	args$Q<-as.Qmatrix(object)
+	args$pi<-if(object$root.prior=="fitzjohn") 
+		"fitzjohn" else object$pi
+	if(is.null(args$nsim)) args$nsim<-100
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-0
+	if(trace>0) args$message<-TRUE
+	else args$message<-FALSE
+	do.call(make.simmap,args)
+}
+
+simmap.anova.fitMk<-function(object,...){
+	if(hasArg(weighted)) weighted<-list(...)$weighted
+	else weighted<-TRUE
+	if(hasArg(nsim)) nsim<-list(...)$nsim
+	else nsim<-100
+	if(weighted){
+		w<-object$weight
+		mods<-sample(1:length(w),size=nsim,replace=TRUE,prob=w)
+	} else {
+		best<-which(object$AIC==min(object$AIC))
+		mods<-sample(best,size=nsim,replace=TRUE)
+	}
+	fits<-attr(object,"models")[mods]
+	tt<-lapply(fits,simmap,nsim=1,...)
+	class(tt)<-c("multiSimmap","multiPhylo")
+	return(tt)
+}
 
 make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 	if(inherits(tree,"multiPhylo")){
@@ -8,8 +49,10 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 			if(nsim>1) class(zz)<-NULL
 			return(zz)
 		}	
-		if(nsim>1) mtrees<-unlist(sapply(tree,ff,x,model,nsim,...,simplify=FALSE),recursive=FALSE)
-		else mtrees<-sapply(tree,ff,x,model,nsim,...,simplify=FALSE)
+		if(nsim>1){
+			mtrees<-unlist(sapply(tree,ff,x,model,nsim,...,simplify=FALSE),
+				recursive=FALSE)
+		} else mtrees<-sapply(tree,ff,x,model,nsim,...,simplify=FALSE)
 		class(mtrees)<-c("multiSimmap","multiPhylo")
 	} else {
 		## get optional arguments

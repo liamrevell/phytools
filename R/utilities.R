@@ -7,7 +7,7 @@
 
 rescale<-function(x,...) UseMethod("rescale")
 
-rescale.default<-function(x, ...){
+rescale.default<-function(x,...){
 	warning(paste(
 		"rescale does not know how to handle objects of class ",class(x),".\n",
 		"if",class(x),"= \"phylo\" load geiger package to rescale.\n"))
