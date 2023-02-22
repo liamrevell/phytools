@@ -7,4 +7,5 @@ bibentry(bibtype = "Article",
 	pages = "217-223",
 	doi = "10.1111/j.2041-210X.2011.00169.x",
 	header = "To cite phytools in a publication please use:",
+	textVersion = "Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3, 217-223.",
 	footer = "As phytools is continually evolving you may also want to cite its version number (found with 'library(help = phytools)' or 'packageVersion(\"phytools\")').")

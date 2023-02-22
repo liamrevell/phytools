@@ -110,7 +110,6 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	object$model<-model
 	object$ordered<-ordered
 	if(ordered) attr(object$ordered,"max.poly")<-max.poly
-	object$data<-X
 	class(object)<-"fitpolyMk"
 	object
 }

@@ -9,10 +9,12 @@ simmap.default<-function(object,...){
 		class(object),".\n"))
 }
 
+simmap.fitpolyMk<-function(object,...) simmap.fitMk(object,...)
+
 simmap.fitMk<-function(object,...){
 	args<-list(...)
-	args$tree<-object$data$tree
-	args$x<-object$data$x
+	args$tree<-object$tree
+	args$x<-object$x
 	args$Q<-as.Qmatrix(object)
 	args$pi<-if(object$root.prior=="fitzjohn") 
 		"fitzjohn" else object$pi

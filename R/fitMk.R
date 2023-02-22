@@ -203,9 +203,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		}
 		lik.f<-function(q) -lik(q,output.liks=FALSE,
 			pi=if(root.prior=="nuisance") "fitzjohn" else pi)
-		obj$data<-list(
-			tree=tree,
-			x=x)
+		obj$data<-x
+		obj$tree<-tree
 		obj$lik<-lik.f
 		class(obj)<-"fitMk"
 	}
