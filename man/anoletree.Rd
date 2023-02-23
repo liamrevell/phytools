@@ -3,23 +3,27 @@
 \alias{anoletree}
 \alias{bonyfish.data}
 \alias{bonyfish.tree}
-\alias{flatworm.tree}
+\alias{butterfly.data}
+\alias{butterfly.tree}
 \alias{flatworm.data}
-\alias{mammal.tree}
+\alias{flatworm.tree}
 \alias{mammal.data}
+\alias{mammal.tree}
 \alias{salamanders}
-\alias{sunfish.tree}
 \alias{sunfish.data}
-\alias{vertebrate.tree}
+\alias{sunfish.tree}
 \alias{vertebrate.data}
-\alias{wasp.trees}
+\alias{vertebrate.tree}
 \alias{wasp.data}
+\alias{wasp.trees}
 \title{Phylogenetic datasets}
 \description{
 	Various phylogenetic datasets for comparative analysis.
 }
 \details{
 	\code{anoletree} is a phylogeny of Greater Antillean anole species with a mapped discrete character - \emph{ecomorph class}. \code{anole.data} is a data frame of morphological characters. Data and tree are from Mahler et al. (2010).
+	
+	\code{butterfly.tree} and \code{butterfly.data} are a phylogeny and dataset of habitat use in Mycalesina butterflies from Halali et al. (2020).
 	
 	\code{bonyfish.tree} and \code{bonyfish.data} are a phylogeny and dataset of spawning mode and parental care in bony fishes from Benun Sutton and Wilson (2019).
 	
@@ -38,20 +42,28 @@
 \usage{
 data(anole.data)
 data(anoletree)
-data(flatworm.tree)
+data(bonyfish.data)
+data(bonyfish.tree)
+data(butterfly.data)
+data(butterfly.tree)
 data(flatworm.data)
+data(flatworm.tree)
 data(mammal.data)
 data(mammal.tree)
 data(salamanders)
 data(sunfish.data)
 data(sunfish.tree)
-data(vertebrate.tree)
 data(vertebrate.data)
+data(vertebrate.tree)
 data(wasp.data)
 data(wasp.trees)
 }
 \format{
 	\code{anoletree} is an object of class \code{"simmap"}. \code{anole.data} is a data frame.
+	
+	\code{bonyfish.tree} is an object of class \code{"phylo"}. \code{bonyfish.data} is a data frame.
+	
+	\code{butterfly.tree} is an object of class \code{"phylo"}. \code{butterfly.data} is a data frame.
 	
 	\code{flatworm.tree} is an object of class \code{"phylo"}. \code{flatworm.data} is a data frame.
 	
@@ -71,6 +83,8 @@ data(wasp.trees)
 	Benun Sutton, F., and A. B. Wilson (2019) Where are all the moms? External fertilization predicts the rise of male parental care in bony fishes. \emph{Evolution}, \bold{73}, 2451-2460.
 
 	Garland, T., Jr., P. H. Harvey, and A. R. Ives (1992) Procedures for the analysis of comparative data using phylogenetically independent contrasts. \emph{Systematic Biology}, \bold{41}, 18-32.
+	
+	Halali, S., E. van Bergen, C. J. Breuker, P. M. Brakefield, and O. Brattstrom (2020) Seasonal environments drive convergent evolution of a faster pace-of-life in tropical butterflies. \emph{Ecology Letters}, \bold{24}, 102-112.
 	
 	Hedges, S. B., J. Dudley, and S. Kumar (2006) TimeTree: A public knowledgebase of divergence times among organisms. \emph{Bioinformatics}, \bold{22}, 2971-2972.
 
