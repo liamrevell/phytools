@@ -469,6 +469,10 @@ plot.changesMap<-function(x,...){
 	else bty<-"l"
 	if(hasArg(alpha)) alpha<-list(...)$alpha
 	else alpha<-0.3
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-NULL
 	if(hasArg(colors)){ 
 		colors<-list(...)$colors
 		nn<-names(colors)
@@ -494,9 +498,10 @@ plot.changesMap<-function(x,...){
 	hpd<-x$hpd
 	bw<-x$bw
 	if(length(x$trans)==2&&is.null(transition)){
-		plot(p[[1]]$mids,p[[1]]$density,xlim=c(min(x$mins)-1,
-			max(x$maxs)+1),ylim=c(0,1.2*max(c(p[[1]]$density,
-			p[[2]]$density))),
+		plot(p[[1]]$mids,p[[1]]$density,xlim=if(is.null(xlim)) 
+			c(min(x$mins)-1,max(x$maxs)+1) else xlim,
+			ylim=if(is.null(ylim)) c(0,1.2*max(c(p[[1]]$density,
+			p[[2]]$density))) else ylim,
 			type="n",xlab="number of changes",
 			ylab="relative frequency across stochastic maps",
 			bty=bty)
@@ -554,8 +559,9 @@ plot.changesMap<-function(x,...){
 				else {
 					CHARS<-strsplit(x$trans[ii],"->")[[1]]
 					MAIN<-bquote(.(CHARS[1])%->%.(CHARS[2]))
-					plot(p[[ii]]$mids,p[[ii]]$density,xlim=c(min(x$mins)-1,
-						max(x$maxs)+1),ylim=c(0,1.2*max.d),
+					plot(p[[ii]]$mids,p[[ii]]$density,xlim=if(is.null(xlim)) 
+						c(min(x$mins)-1,max(x$maxs)+1) else xlim,
+						ylim=if(is.null(ylim)) c(0,1.2*max.d) else ylim,
 						type="n",xlab="number of changes",
 						ylab="relative frequency",main=MAIN,font.main=1,
 						bty=bty)
