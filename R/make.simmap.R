@@ -14,7 +14,7 @@ simmap.fitpolyMk<-function(object,...) simmap.fitMk(object,...)
 simmap.fitMk<-function(object,...){
 	args<-list(...)
 	args$tree<-object$tree
-	args$x<-object$x
+	args$x<-object$data
 	args$Q<-as.Qmatrix(object)
 	args$pi<-if(object$root.prior=="fitzjohn") 
 		"fitzjohn" else object$pi
@@ -23,6 +23,7 @@ simmap.fitMk<-function(object,...){
 	else trace<-0
 	if(trace>0) args$message<-TRUE
 	else args$message<-FALSE
+	print(args)
 	do.call(make.simmap,args)
 }
 
