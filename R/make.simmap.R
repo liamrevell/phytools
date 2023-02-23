@@ -23,7 +23,6 @@ simmap.fitMk<-function(object,...){
 	else trace<-0
 	if(trace>0) args$message<-TRUE
 	else args$message<-FALSE
-	print(args)
 	do.call(make.simmap,args)
 }
 
