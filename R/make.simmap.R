@@ -473,8 +473,11 @@ plot.changesMap<-function(x,...){
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
+<<<<<<< HEAD
 	if(hasArg(main)) main<-list(...)$main
 	else main<-NULL
+=======
+>>>>>>> f7ad6338a6fd783884fce5a98f66528ada93144b
 	if(hasArg(colors)){ 
 		colors<-list(...)$colors
 		nn<-names(colors)
@@ -560,8 +563,12 @@ plot.changesMap<-function(x,...){
 				if(i==j&&is.null(transition)) plot.new()
 				else {
 					CHARS<-strsplit(x$trans[ii],"->")[[1]]
+<<<<<<< HEAD
 					MAIN<-if(is.null(main)) bquote(.(CHARS[1])%->%.(CHARS[2])) else
 						main
+=======
+					MAIN<-bquote(.(CHARS[1])%->%.(CHARS[2]))
+>>>>>>> f7ad6338a6fd783884fce5a98f66528ada93144b
 					plot(p[[ii]]$mids,p[[ii]]$density,xlim=if(is.null(xlim)) 
 						c(min(x$mins)-1,max(x$maxs)+1) else xlim,
 						ylim=if(is.null(ylim)) c(0,1.2*max.d) else ylim,
