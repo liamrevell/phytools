@@ -201,14 +201,14 @@ plot.fitpolyMk<-function(x,...){
 							text(mean(c(s[1],e[1]))+1.5*shift.x,
 								mean(c(s[2],e[2]))+1.5*shift.y,
 								round(Q[i,j],signif),cex=cex.rates,
-								srt=atan(dy/dx)*180/pi)
+								srt=atan(asp*dy/dx)*180/pi)
 						else
 							text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
 								1.5*shift.x,
 								mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
 								1.5*shift.y,
 								round(Q[i,j],signif),cex=cex.rates,
-								srt=atan(dy/dx)*180/pi)
+								srt=atan(asp*dy/dx)*180/pi)
 						arrows(s[1],s[2],e[1],e[2],length=0.05,
 							code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
 					}
@@ -246,7 +246,7 @@ plot.fitpolyMk<-function(x,...){
 						text(mean(c(s[1],e[1]))+1.5*shift.x,
 							mean(c(s[2],e[2]))+1.5*shift.y,
 							round(Q[i,j],signif),cex=cex.rates,
-							srt=atan(dy/dx)*180/pi)
+							srt=atan(asp*dy/dx)*180/pi)
 						arrows(s[1],s[2],e[1],e[2],length=0.05,
 							code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
 					}
@@ -284,14 +284,14 @@ plot.fitpolyMk<-function(x,...){
 						text(mean(c(s[1],e[1]))+1.5*shift.x,
 						mean(c(s[2],e[2]))+1.5*shift.y,
 						round(Q[i,j],signif),cex=cex.rates,
-						srt=atan(dy/dx)*180/pi)
+						srt=atan(asp*dy/dx)*180/pi)
 				else
 					text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
 						1.5*shift.x,
 						mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
 						1.5*shift.y,
 						round(Q[i,j],signif),cex=cex.rates,
-						srt=atan(dy/dx)*180/pi)
+						srt=atan(asp*dy/dx)*180/pi)
 				arrows(s[1],s[2],e[1],e[2],length=0.05,
 					code=if(isSymmetric(Q)) 3 else 2,lwd=lwd)
 			}
