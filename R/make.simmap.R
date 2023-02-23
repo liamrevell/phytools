@@ -1,6 +1,8 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
 ## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
 
+## S3 method for Mk models of various classes
+
 simmap<-function(object,...) UseMethod("simmap")
 
 simmap.default<-function(object,...){
