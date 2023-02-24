@@ -1,6 +1,6 @@
 ## function for computing phylogenetic signal by the lambda (Pagel 1999)
 ## or K (Blomberg et al. 2003) methods
-## written by Liam J. Revell 2011/2012, 2019, 2020, 2021
+## written by Liam J. Revell 2011/2012, 2019, 2020, 2021, 2023
 
 phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
 	se=NULL,start=NULL,control=list()){
@@ -239,11 +239,14 @@ plot.phylosig<-function(x,...){
 	else cex.axis<-par()$cex.axis
 	if(hasArg(bty)) bty<-list(...)$bty
 	else bty<-par()$bty
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-NULL
 	if(attr(x,"method")=="lambda"){
 		lambda<-seq(0,max(c(1,x$lambda)),length.out=res)
 		logL<-sapply(lambda,x$lik)
 		plot(lambda,logL,xlab=expression(lambda),ylab="log(L)",
-			type="l",bty=bty,las=las,cex.lab=cex.lab,cex.axis=cex.axis)
+			type="l",bty=bty,las=las,cex.lab=cex.lab,cex.axis=cex.axis,
+			xlim=xlim)
 		lines(rep(x$lambda,2),c(par()$usr[3],x$logL),lty="dotted")
 		text(x=x$lambda+0.01*diff(par()$usr[1:2]),
 			par()$usr[3]+0.5*diff(par()$usr[3:4]),
@@ -282,7 +285,7 @@ plot.phylosig<-function(x,...){
 				logL<-sapply(sig2,x$lik)
 				plot(sig2,logL,xlab=expression(sigma^2),ylab="log(L)",
 					type="l",bty=bty,las=las,cex.lab=cex.lab,
-					cex.axis=cex.axis)
+					cex.axis=cex.axis,xlim=xlim)
 				lines(rep(x$sig2,2),c(par()$usr[3],x$logL),lty="dotted")
 				text(x=x$sig2+0.01*diff(par()$usr[1:2]),
 					par()$usr[3]+0.5*diff(par()$usr[3:4]),
