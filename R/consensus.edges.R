@@ -11,7 +11,8 @@ consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
 	else if.absent<-"zero"
 	N<-length(trees)
 	if(method[1]=="mean.edge"){
-		M<-lapply(trees,function(x,y) rbind(matchLabels(y,x),matchNodes(y,x)),y=tree)
+		M<-lapply(trees,function(x,y) rbind(matchLabels(y,x),
+			matchNodes(y,x)),y=tree)
 		nodes<-M[[1]][,1]
 		edge.length<-vector(mode="numeric",length=length(nodes))
 		for(i in 1:length(nodes)){
@@ -23,15 +24,17 @@ consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
 					else 0
 				if(is.na(M[[j]][i,2])) n.absent<-n.absent+1
 			}
-			if(if.absent=="ignore") edge.length[ii]<-edge.length[ii]*N/(N-n.absent)
+			if(if.absent=="ignore") 
+				edge.length[ii]<-edge.length[ii]*N/(N-n.absent)
 		}
 		tree$edge.length<-edge.length
 	} else if(method[1]=="least.squares"){
-		D<-Reduce('+',lapply(trees,function(x,t) cophenetic(x)[t,t],t=tree$tip.label))/N
-		if(rooted)
-			method<-if(all(sapply(trees,is.ultrametric))) "ultrametric" else "tipdated"
-		else method<-"unrooted"
-		tree<-nnls.tree(D,tree=tree,rooted=rooted,method=method)
+		D<-Reduce('+',lapply(trees,function(x,t) 
+			cophenetic(x)[t,t],t=tree$tip.label))/N
+		if(rooted){
+			method<-if(all(sapply(trees,is.ultrametric))) "ultrametric" else "unrooted"
+		} else method<-"unrooted"
+		tree<-nnls.tree(D,tree=tree,method=method)
 	}
 	tree
 }
