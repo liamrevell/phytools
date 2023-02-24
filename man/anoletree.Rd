@@ -12,6 +12,8 @@
 \alias{salamanders}
 \alias{sunfish.data}
 \alias{sunfish.tree}
+\alias{tropidurid.data}
+\alias{tropidurid.tree}
 \alias{vertebrate.data}
 \alias{vertebrate.tree}
 \alias{wasp.data}
@@ -34,6 +36,8 @@
 	\code{salamanders} is a phylogeny of \emph{Plethodon} salamanders from Highton and Larson (1979). According to Wikipedia, the genus \emph{Plethodon} contains 55 species in total.
 	
 	\code{sunfish.tree} and \code{sunfish.data} are the phylogeny and dataset for Centrarchidae and buccal morphology (respectively) from Revell and Collar (2009).
+
+	\code{tropidurid.tree} and \code{tropidurid.data} are the phylogeny and bivariate quantitative trait dataset of tropidurid lizards from Revell et al. (2022).
 	
 	\code{vertebrate.tree} is a time-calibrated phylogeny of vertebrates and \code{vertebrate.data} is a dataset of phenotypic traits. The phylogeny is from \url{http://www.timetree.org/} (Hedges et al. 2006).
 	
@@ -53,6 +57,8 @@ data(mammal.tree)
 data(salamanders)
 data(sunfish.data)
 data(sunfish.tree)
+data(tropidurid.data)
+data(tropidurid.tree)
 data(vertebrate.data)
 data(vertebrate.tree)
 data(wasp.data)
@@ -72,6 +78,8 @@ data(wasp.trees)
 	\code{salamanders} is an object of class \code{"phylo"}.
 	
 	\code{sunfish.tree} is an object of class \code{"simmap"}. \code{sunfish.data} is a data frame.
+	
+	\code{tropidurid.tree} is an object of class \code{"simmap"}. \code{tropidurid.data} is a data frame.
 	
 	\code{vertebrate.tree} is an object of class \code{"phylo"}. \code{vertebrate.data} is a data frame.
 	
@@ -95,5 +103,7 @@ data(wasp.trees)
 	Mahler, D. L, L. J. Revell, R. E. Glor, and J. B. Losos (2010) Ecological opportunity and the rate of morphological evolution in the diversification of Greater Antillean anoles. \emph{Evolution}, \bold{64}, 2731-2745.
 	
 	Revell, L. J., and D. C. Collar (2009) Phylogenetic analysis of the evolutionary correlation using likelihood. \emph{Evolution}, \bold{63}, 1090-1100.
+
+	Revell, L. J., K. S. Toyama, and D. L. Mahler (2022) A simple hierarchical model for heterogeneity in the evolutionary correlation a phylogenetic tree. \emph{PeerJ}, \bold{10}, e13910.
 }
 \keyword{datasets}
