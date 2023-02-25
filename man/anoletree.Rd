@@ -5,10 +5,14 @@
 \alias{bonyfish.tree}
 \alias{butterfly.data}
 \alias{butterfly.tree}
+\alias{cordylid.data}
+\alias{cordylid.tree}
 \alias{flatworm.data}
 \alias{flatworm.tree}
 \alias{mammal.data}
 \alias{mammal.tree}
+\alias{primate.data}
+\alias{primate.tree}
 \alias{salamanders}
 \alias{sunfish.data}
 \alias{sunfish.tree}
@@ -29,10 +33,14 @@
 	
 	\code{bonyfish.tree} and \code{bonyfish.data} are a phylogeny and dataset of spawning mode and parental care in bony fishes from Benun Sutton and Wilson (2019).
 	
+	\code{cordylid.tree} and \code{cordylid.data} are a phylogeny and dataset of morphological traits for three different principal components axes from Broeckhoven et al. (2016).
+
 	\code{flatworm.tree} and \code{flatworm.data} are a phylogeny and dataset of habitat preferences for flatworms from Benitez-Alvarez et al. (2020). \code{flatworm.tree} has been made ultrametric using penalized likelihood.
 	
 	\code{mammal.tree} and \code{mammal.data} are the phylogeny and dataset for mammal body size and home range size from Garland et al. (1992).
 	
+	\code{primate.tree} and \code{primate.data} are a phylogeny and phenotypic trait dataset from Kirk and Kay (2004).
+
 	\code{salamanders} is a phylogeny of \emph{Plethodon} salamanders from Highton and Larson (1979). According to Wikipedia, the genus \emph{Plethodon} contains 55 species in total.
 	
 	\code{sunfish.tree} and \code{sunfish.data} are the phylogeny and dataset for Centrarchidae and buccal morphology (respectively) from Revell and Collar (2009).
@@ -50,10 +58,14 @@ data(bonyfish.data)
 data(bonyfish.tree)
 data(butterfly.data)
 data(butterfly.tree)
+data(cordylid.data)
+data(cordylid.tree)
 data(flatworm.data)
 data(flatworm.tree)
 data(mammal.data)
 data(mammal.tree)
+data(primate.data)
+data(primate.tree)
 data(salamanders)
 data(sunfish.data)
 data(sunfish.tree)
@@ -71,10 +83,14 @@ data(wasp.trees)
 	
 	\code{butterfly.tree} is an object of class \code{"phylo"}. \code{butterfly.data} is a data frame.
 	
+	\code{cordylid.tree} is an object of class \code{"phylo"}. \code{cordylid.data} is a data frame.
+	
 	\code{flatworm.tree} is an object of class \code{"phylo"}. \code{flatworm.data} is a data frame.
 	
 	\code{mammal.tree} is an object of class \code{"phylo"}. \code{mammal.data} is a data frame.
 	
+	\code{primate.tree} is an object of class \code{"phylo"}. \code{primate.data} is a data frame.
+
 	\code{salamanders} is an object of class \code{"phylo"}.
 	
 	\code{sunfish.tree} is an object of class \code{"simmap"}. \code{sunfish.data} is a data frame.
@@ -90,7 +106,11 @@ data(wasp.trees)
 	
 	Benun Sutton, F., and A. B. Wilson (2019) Where are all the moms? External fertilization predicts the rise of male parental care in bony fishes. \emph{Evolution}, \bold{73}, 2451-2460.
 
+	Broeckhoven, C., G. Diedericks, C. Hui, B. G. Makhubo, P. le Fras N. Mouton (2016) Enemy at the gates: Rapid defensive trait diversification in an adaptive radiation of lizards. \emph{Evolution}, \bold{70}, 2647-2656.
+	
 	Garland, T., Jr., P. H. Harvey, and A. R. Ives (1992) Procedures for the analysis of comparative data using phylogenetically independent contrasts. \emph{Systematic Biology}, \bold{41}, 18-32.
+	
+	Kirk, E. C., and R. F. Kay (2004) The evolution of high visual acuity in the Anthropoidea. In: Ross, C. F., Kay R. F. (Eds). \emph{Anthropoid Origins. Developments in Primatology: Progress and Prospects}. 539–602. Springer, Boston, MA.
 	
 	Halali, S., E. van Bergen, C. J. Breuker, P. M. Brakefield, and O. Brattstrom (2020) Seasonal environments drive convergent evolution of a faster pace-of-life in tropical butterflies. \emph{Ecology Letters}, \bold{24}, 102-112.
 	
