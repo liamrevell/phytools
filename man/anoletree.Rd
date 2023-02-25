@@ -9,6 +9,7 @@
 \alias{cordylid.tree}
 \alias{flatworm.data}
 \alias{flatworm.tree}
+\alias{liolaemid.tree}
 \alias{mammal.data}
 \alias{mammal.tree}
 \alias{primate.data}
@@ -37,6 +38,8 @@
 
 	\code{flatworm.tree} and \code{flatworm.data} are a phylogeny and dataset of habitat preferences for flatworms from Benitez-Alvarez et al. (2020). \code{flatworm.tree} has been made ultrametric using penalized likelihood.
 	
+	\code{liolaemid.tree} is a phylogenetic tree of lizards from the family Liolaemidae from Esquerre et al. (2019).
+	
 	\code{mammal.tree} and \code{mammal.data} are the phylogeny and dataset for mammal body size and home range size from Garland et al. (1992).
 	
 	\code{primate.tree} and \code{primate.data} are a phylogeny and phenotypic trait dataset from Kirk and Kay (2004).
@@ -62,6 +65,7 @@ data(cordylid.data)
 data(cordylid.tree)
 data(flatworm.data)
 data(flatworm.tree)
+data(liolaemid.tree)
 data(mammal.data)
 data(mammal.tree)
 data(primate.data)
@@ -87,6 +91,8 @@ data(wasp.trees)
 	
 	\code{flatworm.tree} is an object of class \code{"phylo"}. \code{flatworm.data} is a data frame.
 	
+	\code{liolaemid.tree} is an object of class \code{"phylo"}.
+	
 	\code{mammal.tree} is an object of class \code{"phylo"}. \code{mammal.data} is a data frame.
 	
 	\code{primate.tree} is an object of class \code{"phylo"}. \code{primate.data} is a data frame.
@@ -107,6 +113,8 @@ data(wasp.trees)
 	Benun Sutton, F., and A. B. Wilson (2019) Where are all the moms? External fertilization predicts the rise of male parental care in bony fishes. \emph{Evolution}, \bold{73}, 2451-2460.
 
 	Broeckhoven, C., G. Diedericks, C. Hui, B. G. Makhubo, P. le Fras N. Mouton (2016) Enemy at the gates: Rapid defensive trait diversification in an adaptive radiation of lizards. \emph{Evolution}, \bold{70}, 2647-2656.
+	
+	Esquerre, D., D. Ramirez-Alvarez, C. J. Pavon-Vazquez, J. Troncoso-Palacios, C. F. Garin, J. S. Keogh, and A. D. Leache (2019) Speciation across mountains: Phylogenomics, species delimitation and taxonomy of the \emph{Liolaemus leopardinus} clade (Squamata, Liolaemidae). \emph{Molecular Phylogenetics and Evolution}, \bold{139}, 106524.
 	
 	Garland, T., Jr., P. H. Harvey, and A. R. Ives (1992) Procedures for the analysis of comparative data using phylogenetically independent contrasts. \emph{Systematic Biology}, \bold{41}, 18-32.
 	
