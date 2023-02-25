@@ -3,7 +3,7 @@
 ## that is ultrametric.  Optionally, the function can remove extinct
 ## species from the phylogeny. If the input tree is an object of class 
 ## "multiPhylo" then the function will simultaneously plot all ltts.
-## written by Liam J. Revell 2010-2015, 2022
+## written by Liam J. Revell 2010-2015, 2022, 2023
 
 ## ltt method (added 2022)
 
@@ -388,10 +388,13 @@ print.multiLtt<-function(x,...){
 }
 
 ## S3 plot method for object of class "ltt"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2023
 
 plot.ltt<-function(x,...){
 	args<-list(...)
+	if(hasArg(show.tree_mode)) show.tree_mode<-list(...)$show.tree_mode
+	else show.tree_mode<-"classic"
+	args$show.tree_mode<-NULL
 	args$x<-x$time
 	if(!is.null(args$log.lineages)){ 
 		logl<-args$log.lineages
@@ -417,10 +420,25 @@ plot.ltt<-function(x,...){
 	if(!add) do.call(plot,args)
 	else do.call(lines,args)
 	if(show.tree){
-		tips<-if(par()$ylog) setNames(exp(1:Ntip(x$tree)),x$tree$tip.label) 
-			else setNames(1:Ntip(x$tree),x$tree$tip.label)
-		plotTree(x$tree,color=rgb(0,0,1,transparency),
-			ftype="off",add=TRUE,mar=par()$mar,tips=tips)
+		tips<-if(par()$ylog) exp(setNames(seq(log(min(args$y)),log(max(args$y)),
+			length.out=Ntip(x$tree)),x$tree$tip.label)) else setNames(1:Ntip(x$tree),
+			x$tree$tip.label)
+		if(show.tree_mode=="classic"){
+			plotTree(x$tree,color=rgb(0,0,1,transparency),
+				ftype="off",add=TRUE,mar=par()$mar,tips=tips)
+		} else if(show.tree_mode=="next generation"){
+			## this doesn't really work yet
+			plotTree(x$tree,color=rgb(0,0,1,transparency),
+				ftype="off",add=TRUE,mar=par()$mar,tips=tips,
+				plot=FALSE)
+			pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+			max_yy<-max(pp$yy)
+			max_y<-max(args$y)
+			hh<-c(tips,(pp$yy[1:x$tree$Nnode+Ntip(x$tree)]/max_yy)*
+				args$y[as.character(1:x$tree$Nnode+Ntip(x$tree))]+1)
+			for(i in 1:nrow(x$tree$edge)) lines(pp$xx[x$tree$edge[i,]],
+				hh[x$tree$edge[i,]],col=rgb(0,0,1,transparency),lwd=2)
+		}
 	}
 }
 
