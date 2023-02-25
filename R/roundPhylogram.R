@@ -58,6 +58,18 @@ compute.brlen.simmap<-function(phy,method="Grafen",power=1,...){
 }		
 
 sigmoidPhylogram<-function(tree,...){
+	if(hasArg(outline)) outline<-list(...)$outline
+	else outline<-FALSE
+	if(hasArg(lwd)) lwd<-list(...)$lwd
+	else lwd<-2
+	if(outline){
+		args<-list(...)
+		args$tree<-as.phylo(tree)
+		args$lwd<-lwd+2
+		args$colors<-par()$fg
+		args$outline<-FALSE
+		do.call(sigmoidPhylogram,args)
+	}
 	## b=5,m1=0.01,m2=0.5,v=1
 	b<-if(hasArg(b)) list(...)$b else 5
 	m1<-if(hasArg(m1)) list(...)$m1 else 0.01
@@ -92,8 +104,6 @@ sigmoidPhylogram<-function(tree,...){
 		else power<-1
 		tree<-compute.brlen.simmap(tree,power=power)
 	}
-	if(hasArg(lwd)) lwd<-list(...)$lwd
-	else lwd<-2
 	h<-max(nodeHeights(tree))
 	args<-list(...)
 	args$power<-NULL
@@ -106,6 +116,8 @@ sigmoidPhylogram<-function(tree,...){
 	args$tree<-tree
 	args$color<-if(show.hidden) make.transparent("red",0.25) else
 		"transparent"
+	if(outline) args$add<-TRUE
+	args$outline<-FALSE
 	dev.hold()
 	par_fg<-par()$fg
 	par(fg="transparent")
