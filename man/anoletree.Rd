@@ -110,7 +110,7 @@ data(wasp.trees)
 	
 	Garland, T., Jr., P. H. Harvey, and A. R. Ives (1992) Procedures for the analysis of comparative data using phylogenetically independent contrasts. \emph{Systematic Biology}, \bold{41}, 18-32.
 	
-	Kirk, E. C., and R. F. Kay (2004) The evolution of high visual acuity in the Anthropoidea. In: Ross, C. F., Kay R. F. (Eds). \emph{Anthropoid Origins. Developments in Primatology: Progress and Prospects}. 539–602. Springer, Boston, MA.
+	Kirk, E. C., and R. F. Kay (2004) The evolution of high visual acuity in the Anthropoidea. In: Ross, C. F., Kay R. F. (Eds), \emph{Anthropoid Origins. Developments in Primatology: Progress and Prospects}, 539-602. Springer, Boston, MA.
 	
 	Halali, S., E. van Bergen, C. J. Breuker, P. M. Brakefield, and O. Brattstrom (2020) Seasonal environments drive convergent evolution of a faster pace-of-life in tropical butterflies. \emph{Ecology Letters}, \bold{24}, 102-112.
 	

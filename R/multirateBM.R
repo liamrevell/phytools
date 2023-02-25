@@ -1,5 +1,5 @@
 ## function
-## by Liam J. Revell 2021, 2022
+## by Liam J. Revell 2021, 2022, 2023
 
 VCV<-function(tree){
 	H<-nodeHeights(tree)
@@ -65,6 +65,8 @@ log_relik<-function(lnsig2,tree,x,trace=0){
 multirateBM<-function(tree,x,method=c("ML","REML"),
 	optim=c("L-BFGS-B","Nelder-Mead","BFGS","CG"),
 	maxit=NULL,n.iter=1,lambda=1,...){
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
 	if(hasArg(parallel)) parallel<-list(...)$parallel
 	else parallel<-FALSE
 	if(parallel){
@@ -106,18 +108,18 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 	fit$par<-rep(init,Ntip(tree)+tree$Nnode)
 	class(fit)<-"try-error"
 	ii<-1
-	cat("Beginning optimization....\n")
-	if(parallel) {
+	if(!quiet) cat("Beginning optimization....\n")
+	if(parallel){
 		## create cluster
 		cl<-makeCluster(ncores)
 		tmp<-capture.output(print(cl))
-		cat(paste("Using ",tmp,".\n",sep=""))
+		if(!quiet) cat(paste("Using ",tmp,".\n",sep=""))
 	}
 	while(inherits(fit,"try-error")||fit$convergence!=0||ii<=n.iter){
 		if(length(optim.method)==1) OPTIM<-optim.method[1]
 		else OPTIM<-optim.method[if(ii!=length(optim.method)) 
 			ii%%length(optim.method) else length(optim.method)]
-		cat(paste("Optimization iteration ",ii,". Using \"",
+		if(!quiet) cat(paste("Optimization iteration ",ii,". Using \"",
 			OPTIM,"\"",if(parallel) " (parallel) " else " ",
 			"optimization method.\n",sep=""))
 		if(OPTIM=="L-BFGS-B"){
@@ -146,9 +148,9 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 			fit$convergence<-99
 			fit$par<-cur.vals
 			class(fit)<-"try-error"
-			cat("Caught error without failing. Trying again....\n")
+			if(!quiet) cat("Caught error without failing. Trying again....\n")
 		} else {
-			cat(paste("Best (penalized) log-likelihood so far:",
+			if(!quiet) cat(paste("Best (penalized) log-likelihood so far:",
 				signif(-fit$value,6),"\n"))
 		}
 		ii<-ii+1
@@ -158,7 +160,7 @@ multirateBM<-function(tree,x,method=c("ML","REML"),
 		## setDefaultCluster(cl=NULL)
 		stopCluster(cl)
 	}
-	cat("Done optimization.\n")
+	if(!quiet) cat("Done optimization.\n")
 	LIK<-function(sig2) -lik(log(sig2),tree=tree,x=x,
 		lambda=0)
 	object<-list(
