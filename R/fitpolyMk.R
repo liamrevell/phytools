@@ -403,7 +403,7 @@ graph.polyMk<-function(k=2,model="SYM",ordered=FALSE,...){
 		}
 	}
 	if(plot){
-		spacer<-0.1
+		spacer<-if(hasArg(spacer)) list(...)$spacer else 0.1
 		plot.new()
 		par(mar=mar)
 		plot.window(xlim=xlim,ylim=ylim,asp=asp)
