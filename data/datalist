@@ -1,5 +1,8 @@
 anole.data
 anoletree
+bat.tree
+bat_virus.data
+betaCoV.tree
 butterfly.data
 butterfly.tree
 bonyfish.data
@@ -10,6 +13,7 @@ flatworm.data
 flatworm.tree
 liolaemid.tree
 mammal.data
+mammal.geog
 mammal.tree
 primate.data
 primate.tree

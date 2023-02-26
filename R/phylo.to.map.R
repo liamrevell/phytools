@@ -1,5 +1,5 @@
 ## function depends on phytools (& dependencies) and maps (& dependencies)
-## written by Liam J. Revell 2013, 2017, 2019, 2022
+## written by Liam J. Revell 2013, 2017, 2019, 2022, 2023
 
 phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -14,6 +14,8 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	else xlim<-c(-180,180)
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-c(-90,90)
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
 	# create a map
 	map<-map(database,regions,xlim=xlim,ylim=ylim,plot=FALSE,fill=TRUE,resolution=0)
 	# if rotate
@@ -23,7 +25,7 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 	if(rotate&&type=="phylogram"){
 		cc<-aggregate(coords,by=list(rownames(coords)),mean)
 		cc<-matrix(as.matrix(cc[,2:3]),nrow(cc),2,dimnames=list(cc[,1],colnames(cc)[2:3]))
-		tree<-minRotate(tree,cc[,if(direction=="rightwards") 1 else 2])
+		tree<-minRotate(tree,cc[,if(direction=="rightwards") 1 else 2],print=!quiet)
 	} else direction<-"unoptimized"
 	x<-list(tree=tree,map=map,coords=coords,direction=direction)
 	class(x)<-"phylo.to.map"

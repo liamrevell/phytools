@@ -1,6 +1,9 @@
 \name{anoletree}
 \alias{anole.data}
 \alias{anoletree}
+\alias{bat.tree}
+\alias{bat_virus.data}
+\alias{betaCoV.tree}
 \alias{bonyfish.data}
 \alias{bonyfish.tree}
 \alias{butterfly.data}
@@ -11,6 +14,7 @@
 \alias{flatworm.tree}
 \alias{liolaemid.tree}
 \alias{mammal.data}
+\alias{mammal.geog}
 \alias{mammal.tree}
 \alias{primate.data}
 \alias{primate.tree}
@@ -30,6 +34,8 @@
 \details{
 	\code{anoletree} is a phylogeny of Greater Antillean anole species with a mapped discrete character - \emph{ecomorph class}. \code{anole.data} is a data frame of morphological characters. Data and tree are from Mahler et al. (2010).
 	
+	\code{bat.tree} is a ML phylogeny of bats from the families Mormoopidae, Molossidae, and Phyllostomidae, based on GenBank accession numbers reported in Caraballo (2022) and estimated using \pkg{phangorn}. \code{betaCoV.tree} is a ML phylogenetic tree of betacoronaviruses based on GenBank accession numbers reported in Caraballo (2022) and estimated using \pkg{phangorn}. \code{bat_virus.data} is an association table of host and virus from Caraballo (2022).
+	
 	\code{butterfly.tree} and \code{butterfly.data} are a phylogeny and dataset of habitat use in Mycalesina butterflies from Halali et al. (2020).
 	
 	\code{bonyfish.tree} and \code{bonyfish.data} are a phylogeny and dataset of spawning mode and parental care in bony fishes from Benun Sutton and Wilson (2019).
@@ -40,7 +46,7 @@
 	
 	\code{liolaemid.tree} is a phylogenetic tree of lizards from the family Liolaemidae from Esquerre et al. (2019).
 	
-	\code{mammal.tree} and \code{mammal.data} are the phylogeny and dataset for mammal body size and home range size from Garland et al. (1992).
+	\code{mammal.tree} and \code{mammal.data} are the phylogeny and dataset for mammal body size and home range size from Garland et al. (1992). \code{mammal.geog} is a matrix containing geographic coordinates for various of the species in \code{mammal.tree} pulled from citizen science observations registered on the \emph{iNaturalist} web platform.
 	
 	\code{primate.tree} and \code{primate.data} are a phylogeny and phenotypic trait dataset from Kirk and Kay (2004).
 
@@ -57,6 +63,9 @@
 \usage{
 data(anole.data)
 data(anoletree)
+data(bat.tree)
+data(bat_virus.data)
+data(betaCoV.tree)
 data(bonyfish.data)
 data(bonyfish.tree)
 data(butterfly.data)
@@ -67,6 +76,7 @@ data(flatworm.data)
 data(flatworm.tree)
 data(liolaemid.tree)
 data(mammal.data)
+data(mammal.geog)
 data(mammal.tree)
 data(primate.data)
 data(primate.tree)
@@ -83,6 +93,8 @@ data(wasp.trees)
 \format{
 	\code{anoletree} is an object of class \code{"simmap"}. \code{anole.data} is a data frame.
 	
+	\code{bat.tree} and \code{betaCoV.tree} are objects of class \code{"phylo"}. \code{bat_virus.data} is a data frame.
+	
 	\code{bonyfish.tree} is an object of class \code{"phylo"}. \code{bonyfish.data} is a data frame.
 	
 	\code{butterfly.tree} is an object of class \code{"phylo"}. \code{butterfly.data} is a data frame.
@@ -93,7 +105,7 @@ data(wasp.trees)
 	
 	\code{liolaemid.tree} is an object of class \code{"phylo"}.
 	
-	\code{mammal.tree} is an object of class \code{"phylo"}. \code{mammal.data} is a data frame.
+	\code{mammal.tree} is an object of class \code{"phylo"}. \code{mammal.data} is a data frame. \code{mammal.geog} is a numerical matrix.
 	
 	\code{primate.tree} is an object of class \code{"phylo"}. \code{primate.data} is a data frame.
 
@@ -113,6 +125,8 @@ data(wasp.trees)
 	Benun Sutton, F., and A. B. Wilson (2019) Where are all the moms? External fertilization predicts the rise of male parental care in bony fishes. \emph{Evolution}, \bold{73}, 2451-2460.
 
 	Broeckhoven, C., G. Diedericks, C. Hui, B. G. Makhubo, P. le Fras N. Mouton (2016) Enemy at the gates: Rapid defensive trait diversification in an adaptive radiation of lizards. \emph{Evolution}, \bold{70}, 2647-2656.
+	
+	Caraballo, D. A. (2022) Cross-species transmission of bat coronaviruses in the Americas: Contrasting patterns between alphacoronavirus and betacoronavirus. \emph{Microbiology Spectrum}, \bold{10}, e01411-22.
 	
 	Esquerre, D., D. Ramirez-Alvarez, C. J. Pavon-Vazquez, J. Troncoso-Palacios, C. F. Garin, J. S. Keogh, and A. D. Leache (2019) Speciation across mountains: Phylogenomics, species delimitation and taxonomy of the \emph{Liolaemus leopardinus} clade (Squamata, Liolaemidae). \emph{Molecular Phylogenetics and Evolution}, \bold{139}, 106524.
 	
