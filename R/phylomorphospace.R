@@ -1,5 +1,6 @@
-## this funciton creates a phylomorphospace plot (Sidlauskas 2006)
-## written by Liam J. Revell 2010-13, 2015, 2018, 2020
+## this function creates a phylomorphospace plot (Sidlauskas 2006)
+## badly in need of update!
+## written by Liam J. Revell 2010-13, 2015, 2018, 2020, 2023
 
 phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),control=list(),...){
 	# some minor error checking
@@ -61,6 +62,8 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	else bty<-"o"
 	if(hasArg(las)) las<-list(...)$las
 	else las<-par()$las
+	if(hasArg(log)) log<-list(...)$log
+	else log<-NULL
 	# deprecate to logical label argument
 	label<-label[1]
 	if(label==TRUE||label==FALSE) 
@@ -73,8 +76,24 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 	XX<-matrix(aa[as.character(tree$edge)],nrow(tree$edge),2)
 	YY<-matrix(bb[as.character(tree$edge)],nrow(tree$edge),2)
 	# plot projection
-	if(!add) plot(x=A[1,1],y=A[1,2],xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,pch=16,cex=0.1,
-		col="white",axes=axes,frame.plot=TRUE,bty=bty,las=las)
+	if(!add){
+		args<-list()
+		args$x<-A[1,1]
+		args$y<-A[1,2]
+		args$xlim<-xlim
+		args$ylim<-ylim
+		args$xlab<-xlab
+		args$ylab<-ylab
+		args$pch<-16
+		args$cex<-0.1
+		args$col<-"white"
+		args$axes<-axes
+		args$frame.plot<-TRUE
+		args$bty<-bty
+		args$las<-las
+		if(!is.null(log)) args$log<-log
+		do.call(plot,args)
+	}
 	if(is.null(tree$maps)){
 		for(i in 1:nrow(XX)) lines(XX[i,],YY[i,],col=con$col.edge[as.character(tree$edge[i,2])],
 			lwd=lwd)
@@ -114,6 +133,7 @@ phylomorphospace<-function(tree,X,A=NULL,label=c("radial","horizontal","off"),co
 			adj<-if(XX[ii,2]<XX[ii,1]) c(1,0.25) else c(0,0.25)
 			tt<-if(XX[ii,2]<XX[ii,1]) paste(tree$tip.label[i],"  ",sep="") else 
 				paste("  ",tree$tip.label[i],sep="")
+			tt<-gsub("_"," ",tt)
 			if(label=="radial") text(XX[ii,2],YY[ii,2],tt,cex=fsize,srt=aa,adj=adj,font=ftype)
 			else if(label=="horizontal") text(XX[ii,2],YY[ii,2],tt,cex=fsize,adj=adj,font=ftype)
 		}
