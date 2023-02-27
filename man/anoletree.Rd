@@ -10,6 +10,8 @@
 \alias{butterfly.tree}
 \alias{cordylid.data}
 \alias{cordylid.tree}
+\alias{eel.data}
+\alias{eel.tree}
 \alias{flatworm.data}
 \alias{flatworm.tree}
 \alias{liolaemid.tree}
@@ -42,6 +44,8 @@
 	
 	\code{cordylid.tree} and \code{cordylid.data} are a phylogeny and dataset of morphological traits for three different principal components axes from Broeckhoven et al. (2016).
 
+	\code{eel.tree} and \code{eel.data} are a phylogeny and dataset of feeding mode and maximum total length from 61 species of elopomorph eels from Collar et al. (2014).
+
 	\code{flatworm.tree} and \code{flatworm.data} are a phylogeny and dataset of habitat preferences for flatworms from Benitez-Alvarez et al. (2020). \code{flatworm.tree} has been made ultrametric using penalized likelihood.
 	
 	\code{liolaemid.tree} is a phylogenetic tree of lizards from the family Liolaemidae from Esquerre et al. (2019).
@@ -72,6 +76,8 @@ data(butterfly.data)
 data(butterfly.tree)
 data(cordylid.data)
 data(cordylid.tree)
+data(eel.data)
+data(eel.tree)
 data(flatworm.data)
 data(flatworm.tree)
 data(liolaemid.tree)
@@ -101,6 +107,8 @@ data(wasp.trees)
 	
 	\code{cordylid.tree} is an object of class \code{"phylo"}. \code{cordylid.data} is a data frame.
 	
+	\code{eel.tree} is an object of class \code{"phylo"}. \code{eel.data} is a data frame.
+	
 	\code{flatworm.tree} is an object of class \code{"phylo"}. \code{flatworm.data} is a data frame.
 	
 	\code{liolaemid.tree} is an object of class \code{"phylo"}.
@@ -127,6 +135,8 @@ data(wasp.trees)
 	Broeckhoven, C., G. Diedericks, C. Hui, B. G. Makhubo, P. le Fras N. Mouton (2016) Enemy at the gates: Rapid defensive trait diversification in an adaptive radiation of lizards. \emph{Evolution}, \bold{70}, 2647-2656.
 	
 	Caraballo, D. A. (2022) Cross-species transmission of bat coronaviruses in the Americas: Contrasting patterns between alphacoronavirus and betacoronavirus. \emph{Microbiology Spectrum}, \bold{10}, e01411-22.
+	
+	Collar, D. C., P. C. Wainwright, M. E. Alfaro, L. J. Revell, and R. S. Mehta (2014) Biting disrupts integration to spur skull evolution in eels. \emph{Nature Communications}, \bold{5}, 5505.
 	
 	Esquerre, D., D. Ramirez-Alvarez, C. J. Pavon-Vazquez, J. Troncoso-Palacios, C. F. Garin, J. S. Keogh, and A. D. Leache (2019) Speciation across mountains: Phylogenomics, species delimitation and taxonomy of the \emph{Liolaemus leopardinus} clade (Squamata, Liolaemidae). \emph{Molecular Phylogenetics and Evolution}, \bold{139}, 106524.
 	
