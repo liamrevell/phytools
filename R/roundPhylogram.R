@@ -135,7 +135,12 @@ sigmoidPhylogram<-function(tree,...){
 		args$ylim<-pp$y.lim
 		args$direction<-"rightwards"
 	}
+	if(outline){
+		par_fg<-par()$fg
+		par(fg="transparent")
+	}
 	do.call(plotTree,args)
+	if(outline) par(fg=par_fg)
 	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	xx<-if(direction%in%c("rightwards","leftwards")) pp$xx else pp$yy
 	yy<-if(direction%in%c("rightwards","leftwards")) pp$yy else pp$xx
