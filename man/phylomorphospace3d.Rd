@@ -1,6 +1,6 @@
 \name{phylomorphospace3d}
 \alias{phylomorphospace3d}
-\title{Creates tree-dimensional phylomorphospace plot}
+\title{Creates three-dimensional phylomorphospace plot}
 \usage{
 phylomorphospace3d(tree, X, A=NULL, label=TRUE, control=list(), 
    method=c("dynamic","static"), ...)
