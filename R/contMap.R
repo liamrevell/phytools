@@ -107,16 +107,12 @@ plot.contMap<-function(x,...){
 	# get & set optional arguments
 	if(hasArg(legend)) legend<-list(...)$legend
 	else legend<-NULL
+	if(hasArg(sig)) sig<-list(...)$sig
+	else sig<-3
 	if(hasArg(fsize)) fsize<-list(...)$fsize
 	else fsize<-NULL
 	if(hasArg(ftype)) ftype<-list(...)$ftype
 	else ftype<-NULL
-	if(hasArg(outline)) outline<-list(...)$outline
-	else outline<-TRUE
-	if(hasArg(lwd)) lwd<-list(...)$lwd
-	else lwd<-4
-	if(hasArg(sig)) sig<-list(...)$sig
-	else sig<-3
 	if(hasArg(type)) type<-list(...)$type
 	else type<-"phylogram"
 	if(hasArg(mar)) mar<-list(...)$mar
@@ -129,22 +125,113 @@ plot.contMap<-function(x,...){
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-NULL
-	if(hasArg(hold)) hold<-list(...)$hold
-	else hold<-TRUE
+	if(hasArg(leg.txt)) leg.txt<-list(...)$leg.txt
+	else leg.txt<-"trait value"
+	if(hasArg(underscore)) underscore<-list(...)$underscore
+	else underscore<-FALSE
+	if(hasArg(outline)) outline<-list(...)$outline
+	else outline<-TRUE
+	if(hasArg(nodes_only)) nodes_only<-list(...)$nodes_only
+	else nodes_only<-FALSE
 	if(is.null(legend)) legend<-0.5*max(H)
 	if(is.null(fsize)) fsize<-c(1,1)
 	if(length(fsize)==1) fsize<-rep(fsize,2)
 	if(is.null(ftype)) ftype<-c("i","reg")
 	if(length(ftype)==1) ftype<-c(ftype,"reg")
-	if(hasArg(leg.txt)) leg.txt<-list(...)$leg.txt
-	else leg.txt<-"trait value"
-	if(hasArg(underscore)) underscore<-list(...)$underscore
-	else underscore<-FALSE
-	# done optional arguments
-	leg.txt<-c(round(lims[1],sig),leg.txt,round(lims[2],sig))
-	plot(x,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,leg.txt=leg.txt,
-		type=type,mar=mar,direction=direction,offset=offset,xlim=xlim,ylim=ylim,hold=hold,
-		underscore=underscore)
+	if(nodes_only){
+		if(hasArg(cex)) cex<-list(...)$cex
+		else cex<-c(1.5,1)
+		if(hasArg(lwd)) lwd<-list(...)$lwd
+		else lwd<-c(1,4)
+		obj<-x$tree
+		N<-Ntip(obj)
+		node.cols<-setNames(x$cols[
+			c(names(obj$maps[[which(obj$edge[1,]==(N+1))]][1]),
+			sapply(obj$maps,function(x) names(x[length(x)])))],
+			c(N+1,obj$edge[,2]))
+		node.cols<-node.cols[as.character(1:(N+obj$Nnode))]
+		if(legend&&is.null(ylim)&&type%in%c("phylogram","cladogram")){
+			if(direction%in%c("rightwards","leftwards")) ylim<-c(1-0.12*(N-1),N)
+			else if(direction%in%c("upwards","downwards")) {
+				pp<-par("pin")[2]
+				sw<-(fsize*(max(strwidth(obj$tip.label,units="inches")))+
+					1.37*fsize*strwidth("W",units="inches"))[1]
+				alp<-optimize(function(a,H,sw,pp) (a*1.2*max(H)+sw-pp)^2,H=H,sw=sw,pp=pp,
+					interval=c(0,1e6))$minimum
+				ylim<-if(direction=="downwards") c(min(H)-sw/alp-0.16*max(H),max(H)) else 
+					c(min(H)-0.16*max(H),max(H)+sw/alp)
+			}
+		} else if(is.null(ylim)) ylim<-NULL
+		if(is.null(offset)) {
+			if(type%in%c("cladogram","phylogram")) offset<-0.2*lwd[1]/3+0.2/3
+			else if(type=="fan") offset<-1
+		}
+		args<-list(...)
+		args$ylim<-ylim
+		args$tree<-as.phylo(obj)
+		args$offset<-offset
+		args$fsize<-fsize[1]
+		args$lwd<-lwd[1]
+		do.call(plotTree,args)
+		pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		xx<-pp$xx
+		yy<-pp$yy
+		if(type%in%c("phylogram","cladogram")){
+			if(direction=="rightwards")
+				xx[1:N]<-xx[1:N]+strwidth(paste(obj$tip.label,"__",sep=""),cex=fsize[1])+offset
+		}
+		points(xx,yy,pch=if(outline) 21 else 16,
+			col=if(outline) par()$fg else node.cols,
+			bg=if(outline) node.cols else NULL,
+			cex=c(rep(cex[2],N),rep(cex[1],obj$Nnode)))
+		if(legend){
+			if(is.logical(legend)) legend<-0.5*max(H)
+			if(length(leg.txt)==1) 
+				leg.txt<-c(round(lims[1],sig),leg.txt,round(lims[2],sig))
+			if(type%in%c("phylogram","cladogram")){
+				if(direction%in%c("rightwards","leftwards")){
+					add.color.bar(legend,x$cols,title=leg.txt[2],
+						as.numeric(leg.txt[c(1,3)]),
+						digits=sig,prompt=FALSE,
+						x=if(direction=="leftwards") max(H)-legend else 0,
+						y=1-0.08*(N-1),lwd=lwd[2],
+						fsize=fsize[2],outline=outline,
+						direction=if(!is.null(xlim)) 
+						if(xlim[2]<xlim[1]) "leftwards" else 
+						"rightwards" else "rightwards")
+				} else if(direction%in%c("upwards","downwards")){
+					add.color.bar(legend,x$cols,title=leg.txt[2],
+						as.numeric(leg.txt[c(1,3)]),
+						digits=sig,prompt=FALSE,x=1,
+						y=ylim[1]+0.04*max(nodeHeights(x$tree)),
+						lwd=lwd[2],outline=outline,
+						fsize=fsize[2],direction="rightwards",
+						subtitle=paste("length=",round(legend,3),
+						sep=""))
+				}
+			} else if(type=="fan"){
+				add.color.bar(legend,x$cols,
+					title=leg.txt[2],
+					as.numeric(leg.txt[c(1,3)]),
+					digits=sig,prompt=FALSE,
+					outline=outline,
+					x=0.9*par()$usr[1],
+					y=0.9*par()$usr[3],
+					lwd=lwd[2],
+					fsize=fsize[2])
+			}
+		}
+	} else {
+		if(hasArg(lwd)) lwd<-list(...)$lwd
+		else lwd<-4
+		if(hasArg(hold)) hold<-list(...)$hold
+		else hold<-TRUE
+		# done optional arguments
+		leg.txt<-c(round(lims[1],sig),leg.txt,round(lims[2],sig))
+		plot(x,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,leg.txt=leg.txt,
+			type=type,mar=mar,direction=direction,offset=offset,xlim=xlim,ylim=ylim,hold=hold,
+			underscore=underscore)
+	}
 }
 
 ## S3 print method for object of class 'contMap'
