@@ -44,6 +44,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		else output.liks<-FALSE
 		if(hasArg(q.init)) q.init<-list(...)$q.init
 		else q.init<-length(unique(x))/sum(tree$edge.length)
+		if(hasArg(rand_start)) rand_start<-list(...)$rand_start
+		else rand_start<-FALSE
 		if(hasArg(min.q)) min.q<-list(...)$min.q
 		else min.q<-1e-12
 		if(hasArg(max.q)) max.q<-list(...)$max.q
@@ -158,6 +160,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		}
 		if(is.null(fixedQ)){
 			if(length(q.init)!=k) q.init<-rep(q.init[1],k)
+			if(rand_start) q.init<-q.init*rexp(length(q.init),1)
 			q.init<-if(logscale) log(q.init) else q.init
 			if(opt.method=="optim"){
 				fit<-if(logscale) 
