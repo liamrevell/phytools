@@ -73,6 +73,8 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 	object$pi<-temp$pi
 	object$method<-"optimParallel"
 	object$root.prior<-temp$root.prior
+	object$data<-x
+	object$tree<-tree
 	object$lik<-temp$lik
 	class(object)<-"fitMk"
 	object
