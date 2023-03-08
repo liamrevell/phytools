@@ -426,20 +426,21 @@ density.multiSimmap<-function(x,...){
 		ab<-lapply(ab,function(x){
 			class(x)<-"mcmc"
 			x })
-		if(.check.pkg("coda")){
-			hpd.ab<-lapply(ab,HPDinterval)
-		} else {
-			cat("  HPDinterval requires package coda.\n")
-			cat("  Computing 95% interval from samples only.\n\n")
-			hpd95<-function(x){
-				obj<-setNames(c(sort(x)[round(0.025*length(x))],
-					sort(x)[round(0.975*length(x))]),
-					c("lower","upper"))
-				attr(obj,"Probability")<-0.95
-				obj
-			}
-			hpd.ab<-lapply(ab,hpd95)
-		}
+		## if(.check.pkg("coda")){
+			## hpd.ab<-lapply(ab,HPDinterval)
+		## } else {
+			## cat("  HPDinterval requires package coda.\n")
+			## cat("  Computing 95% interval from samples only.\n\n")
+			## hpd95<-function(x){
+				## obj<-setNames(c(sort(x)[round(0.025*length(x))],
+					## sort(x)[round(0.975*length(x))]),
+					## c("lower","upper"))
+				## attr(obj,"Probability")<-0.95
+				## obj
+			## }
+			## hpd.ab<-lapply(ab,hpd95)
+		## }
+		hpd.ab<-lapply(ab,HPDinterval)
 		minmax<-range(unlist(ab))
 		pcalc<-function(x,mm)
 			hist(x,breaks=seq(mm[1]-1.5,mm[2]+1.5,bw),plot=FALSE)
