@@ -96,7 +96,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			}
 		}
 		if(!quiet){
-			cat("\nThis is the design matrix of the fitted model. Does it make sense?\n\n")
+			cat("\nThis is the design matrix of the fitted model.\nDoes it make sense?\n\n")
 			print(tmodel)
 			cat("\n")
 			flush.console()
