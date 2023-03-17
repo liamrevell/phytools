@@ -284,7 +284,7 @@ plot.fitPagel<-function(x,...){
 		text(x=1.75,y=0.5,round(x$independent.Q[1,2],signif),cex=cex.rates,srt=90)
 		text(x=1.60,y=0.5,round(x$independent.Q[2,1],signif),cex=cex.rates,srt=90)
 	}
-	if(show%in%c("both","dependent"){
+	if(show%in%c("both","dependent")){
 		## DEPENDENT MODEL
 		collapse<-
 			if(any(sapply(strsplit(rownames(x$dependent.Q),""),length)>6)) 
