@@ -243,7 +243,7 @@ plot.fitPagel<-function(x,...){
 		LWD.dep[LWD.dep>max.lwd]<-max.lwd
 	} else LWD.ind<-LWD.dep<-matrix(lwd,nrow(x$dependent.Q),
 		ncol(x$dependent.Q))
-	if(show=="both") par(mfrow=c(2,1)) else par(mfrow=c(1,1))
+	if(show=="both") par(mfrow=c(2,1))
 	if(show%in%c("both","independent")){
 		## INDEPENDENT MODEL
 		plot.new()
