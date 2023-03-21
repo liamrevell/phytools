@@ -1,6 +1,6 @@
 ## function fits Pagel '94 model of correlated evolution of two binary characters
 ## uses fitMk, ape::ace, or geiger::fitDiscrete internally
-## written by Liam J. Revell 2014, 2015, 2016, 2020, 2022
+## written by Liam J. Revell 2014, 2015, 2016, 2020, 2022, 2023
 
 anova.fitPagel<-function(object,...){
 	fits<-list(...)
@@ -214,6 +214,8 @@ make.sym<-function(X){
 ## S3 plot method for objects of class "fitPagel
 ## written by Liam J. Revell 2016, 2023
 plot.fitPagel<-function(x,...){
+	if(hasArg(mar)) mar<-list(...)$mar
+	else mar<-c(1.1,2.1,3.1,2.1)
 	if(hasArg(show)) show<-list(...)$show
 	else show<-"both"
 	if(hasArg(signif)) signif<-list(...)$signif
@@ -247,7 +249,7 @@ plot.fitPagel<-function(x,...){
 	if(show%in%c("both","independent")){
 		## INDEPENDENT MODEL
 		plot.new()
-		par(mar=c(1.1,2.1,3.1,2.1))
+		par(mar=mar)
 		plot.window(xlim=c(0,2),ylim=c(0,1),asp=1)
 		mtext(if(!is.null(main)) main[1] else "a) Independent model",
 			side=3,adj=0,line=1.2,cex=cex.main)
@@ -290,7 +292,7 @@ plot.fitPagel<-function(x,...){
 			if(any(sapply(strsplit(rownames(x$dependent.Q),""),length)>6)) 
 			",\n" else ", "
 		plot.new()
-		par(mar=c(1.1,2.1,3.1,2.1))
+		par(mar=mar)
 		plot.window(xlim=c(0,2),ylim=c(0,1),asp=1)
 		mtext(if(!is.null(main)) main[2] else "b) Dependent model",
 			side=3,adj=0,line=1.2,cex=cex.main)
