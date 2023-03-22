@@ -5,6 +5,16 @@
 ## function to rescale simmap style trees
 ## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017, 2023
 
+## S3 Ntip etc. methods for "contMap" object class
+Ntip.contMap<-function(phy) Ntip(phy$tree)
+Nnode.contMap<-function(phy,...) Nnode(phy$tree)
+Nedge.contMap<-function(phy) Nedge(phy$tree)
+
+## S3 Ntip etc. methods for "densityMap" object class
+Ntip.densityMap<-function(phy) Ntip(phy$tree)
+Nnode.densityMap<-function(phy,...) Nnode(phy$tree)
+Nedge.densityMap<-function(phy) Nedge(phy$tree)
+
 rescale<-function(x,...) UseMethod("rescale")
 
 rescale.default<-function(x,...){
