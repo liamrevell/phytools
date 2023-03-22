@@ -256,6 +256,7 @@ S3method(Nedge, contMap)
 S3method(Ntip, densityMap)
 S3method(Nnode, densityMap)
 S3method(Nedge, densityMap)
+S3method(simmap, simmap)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)

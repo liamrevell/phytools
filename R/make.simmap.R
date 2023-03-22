@@ -1,7 +1,7 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
 ## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
 
-## S3 method for Mk models of various classes
+## S3 method for Mk models & objects of various classes
 
 simmap<-function(object,...) UseMethod("simmap")
 
@@ -9,6 +9,26 @@ simmap.default<-function(object,...){
 	warning(paste(
 		"simmap does not know how to handle objects of class ",
 		class(object),".\n"))
+}
+
+simmap.simmap<-function(object,...){
+	args<-list(...)
+	args$tree<-as.phylo(object)
+	args$x<-getStates(object,"tips")
+	if(hasArg(Q)) Q<-list(...)$Q
+	else {
+		args$Q<-if(!is.null(object$Q)) object$Q
+	}
+	args$pi<-if(hasArg(pi)) list(...)$pi else "fitzjohn"
+	if(hasArg(nsim)){
+		nsim<-list(...)$nsim
+		args$nsim<-nsim
+	} else args$nsim<-100
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-0
+	if(trace>0) args$message<-TRUE
+	else args$message<-FALSE
+	do.call(make.simmap,args)
 }
 
 simmap.fitpolyMk<-function(object,...) simmap.fitMk(object,...)
