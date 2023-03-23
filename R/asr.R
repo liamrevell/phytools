@@ -66,8 +66,9 @@ pruning<-function(q,tree,x,model=NULL,...){
 	Q<-matrix(0,k,k)
 	Q[]<-c(0,q)[model+1]
 	diag(Q)<--rowSums(Q)
-	L<-rbind(x,matrix(0,tree$Nnode,k,
-	dimnames=list(1:tree$Nnode+Ntip(tree))))
+	L<-rbind(x[pw$tip.label,],
+		matrix(0,tree$Nnode,k,
+		dimnames=list(1:tree$Nnode+Ntip(tree))))
 	nn<-unique(pw$edge[,1])
 	for(i in 1:length(nn)){
 		ee<-which(pw$edge[,1]==nn[i])
