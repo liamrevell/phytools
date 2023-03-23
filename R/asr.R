@@ -70,7 +70,8 @@ pruning<-function(q,tree,x,model=NULL,...){
 		}
 		L[nn[i],]<-apply(PP,2,prod)
 	}
-	prob<-log(sum(pi*L[nn[i],]))
+	L[nn[i],]<-pi*L[nn[i],]
+	prob<-log(sum(L[nn[i],]))
 	if(return=="likelihood") prob
 	else if(return=="conditional") L
 }
