@@ -1,33 +1,39 @@
 ## functions to do the pruning algorithm and reconstruct ancestral states
 
-anceb<-function(object,...) UseMethod("anceb")
+ancr<-function(object,...) UseMethod("ancr")
 
-anceb.default<-function(object,...){
+ancr.default<-function(object,...){
 	warning(paste(
-		"anceb does not know how to handle objects of class ",
+		"ancr does not know how to handle objects of class ",
 		class(object),".\n"))
 }
 
-logLik.anceb<-function(object,...){
+logLik.ancr<-function(object,...){
 	lik<-object$logLik
 	attr(lik,"df")<-attr(object$logLik,"df")
 	lik
 }
 
-print.anceb<-function(x,digits=6,printlen=6,...){
-	cat("Marginal ancestral character estimates:\n")
+print.ancr<-function(x,digits=6,printlen=6,...){
+	cat("Marginal ancestral state estimates:\n")
 	if (is.null(printlen)) 
 		print(round(x$ace,digits))
 	else {
 		print(round(x$ace[1:printlen,],digits))
 		cat("...\n")
 	}
-	cat(paste("\nLog-likelihood =",round(x$logLik,digits), 
-		"\n\n"))
+	cat(paste("\nLog-likelihood =",round(logLik(x),
+		digits),"\n\n"))
 }
 
-## object expected to be of class "fitMk"
-anceb.fitMk<-function(object,...){
+## marginal states for "fitHRM" object
+ancr.fitHRM<-function(object,...) ancr.fitMk(object,...)
+
+## marginal states for "fitpolyMk" object
+ancr.fitpolyMk<-function(object,...) ancr.fitMk(object,...)
+
+## marginal states for "fitMk" object
+ancr.fitMk<-function(object,...){
 	x<-object$data
 	tree<-object$tree
 	q<-object$rates
@@ -36,11 +42,13 @@ anceb.fitMk<-function(object,...){
 	pi=object$pi
 	plik<-pruning(q,tree,x,model=model,pi=pi,
 		return="conditional")
-	ace<-marginal_asr(q,tree,plik,model=model)
+	if(hasArg(tips)) tips<-list(...)$tips
+	else tips<-FALSE
+	ace<-marginal_asr(q,tree,plik,model,tips)
 	result<-list(ace=ace,
 		logLik=pruning(q,tree,x,model=model,pi=pi))
 	attr(result$logLik,"df")<-max(model)
-	class(result)<-"anceb"
+	class(result)<-"ancr"
 	result
 }
 
@@ -76,7 +84,7 @@ pruning<-function(q,tree,x,model=NULL,...){
 	else if(return=="conditional") L
 }
 
-marginal_asr<-function(q,tree,L,model=NULL){
+marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
 	pw<-reorder(tree,"postorder")
 	k<-ncol(L)
 	if(is.null(model)){
@@ -98,5 +106,5 @@ marginal_asr<-function(q,tree,L,model=NULL){
 		}
 	}
 	anc<-L/rep(rowSums(L),k)
-	anc[1:Nnode(tree)+Ntip(tree),]
+	if(tips) anc else anc[1:Nnode(tree)+Ntip(tree),]
 }
