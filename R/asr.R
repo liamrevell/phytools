@@ -26,13 +26,50 @@ print.ancr<-function(x,digits=6,printlen=6,...){
 		digits),"\n\n"))
 }
 
-## marginal states for "fitHRM" object
+## marginal ancestral states for "anova.fitMk" object
+ancr.anova.fitMk<-function(object,...){
+	if(hasArg(weighted)) weighted<-list(...)$weighted
+	else weighted<-TRUE
+	if(weighted){
+		w<-object$weight
+		fits<-attr(object,"models")
+		anc<-lapply(fits,function(x) ancr(x)$ace)
+		anc<-mapply("*",anc,w,SIMPLIFY=FALSE)
+		anc<-Reduce("+",anc)
+		foo<-function(obj){
+			Q<-matrix(NA,length(obj$states),length(obj$states),
+				dimnames=list(obj$states,obj$states))
+			Q[]<-obj$rates[obj$index.matrix]
+			diag(Q)<--rowSums(Q,na.rm=TRUE)
+			Q
+		}
+		Q<-lapply(fits,foo)
+		Q<-mapply("*",Q,w,SIMPLIFY=FALSE)
+		Q<-Reduce("+",Q)
+		model<-matrix(0,nrow(Q),ncol(Q))
+		k<-nrow(Q)*(nrow(Q)-1)
+		model[col(model)!=row(model)]<-1:k
+		q<-sapply(1:k,function(i,Q,model) Q[which(model==i)],
+			Q=Q,model=model)
+		log_lik<-pruning(q,fits[[1]]$tree,fits[[1]]$data,
+			model=model)
+		attr(log_lik,"df")<-max(model)
+		obj<-list(ace=anc,logLik=log_lik)
+		class(obj)<-"ancr"
+		return(obj)
+	} else {
+		best<-which(object$AIC==min(object$AIC))
+		return(ancr(object$fits[[best]]))
+	}
+}
+
+## marginal ancestral states for "fitHRM" object
 ancr.fitHRM<-function(object,...) ancr.fitMk(object,...)
 
-## marginal states for "fitpolyMk" object
+## marginal ancestral states for "fitpolyMk" object
 ancr.fitpolyMk<-function(object,...) ancr.fitMk(object,...)
 
-## marginal states for "fitMk" object
+## marginal ancestral states for "fitMk" object
 ancr.fitMk<-function(object,...){
 	x<-object$data
 	tree<-object$tree
