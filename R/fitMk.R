@@ -305,6 +305,8 @@ RANGE<-function(x,...) range(x[is.finite(x)],...)
 ## S3 method for "Qmatrix" object class
 plot.Qmatrix<-function(x,...){
 	Q<-unclass(x)
+	if(hasArg(asp)) asp<-list(...)$asp
+	else asp<-1
 	if(hasArg(signif)) signif<-list(...)$signif
 	else signif<-3
 	if(hasArg(main)) main<-list(...)$main
@@ -363,7 +365,7 @@ plot.Qmatrix<-function(x,...){
 			ylim<-c(-1.2,1.2)
 		}
 	}
-	plot.window(xlim=xlim,ylim=ylim,asp=1)
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-nrow(Q)
 	if(is.null(rotate)){

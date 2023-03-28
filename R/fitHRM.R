@@ -1,6 +1,9 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
 ## written by Liam J. Revell 2020, 2021, 2023
 
+## have to put this here for some reason.
+anova.fitHRM<-function(object,...) anova.fitMk(object,...)
+
 fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-0

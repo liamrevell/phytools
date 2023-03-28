@@ -2,7 +2,7 @@
 ## fits several polymorphic discrete character evolution models
 ## written by Liam J. Revell 2019, 2020, 2022, 2023
 
-anova.fitpolyMk<-anova.fitMk
+anova.fitpolyMk<-function(object,...) anova.fitMk(object,...)
 
 as.Qmatrix.fitpolyMk<-function(x,...){
 	class(x)<-"fitMk"

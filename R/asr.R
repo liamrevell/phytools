@@ -33,17 +33,28 @@ ancr.anova.fitMk<-function(object,...){
 	if(weighted){
 		w<-object$weight
 		fits<-attr(object,"models")
-		anc<-lapply(fits,function(x) ancr(x)$ace)
+		anc<-lapply(fits,function(x,...) ancr(x,...)$ace,...)
+		ss<-sort(unique(unlist(lapply(anc,colnames))))
+		if(any(sapply(attr(object,"models"),class)=="fitHRM")){
+				for(i in 1:length(anc)){
+						tmp<-anc[[i]]
+						anc[[i]]<-matrix(0,nrow(tmp),length(ss),
+							dimnames=list(rownames(tmp),ss))
+						anc[[i]][rownames(tmp),colnames(tmp)]<-tmp
+				}
+		}
 		anc<-mapply("*",anc,w,SIMPLIFY=FALSE)
 		anc<-Reduce("+",anc)
-		foo<-function(obj){
-			Q<-matrix(NA,length(obj$states),length(obj$states),
-				dimnames=list(obj$states,obj$states))
-			Q[]<-obj$rates[obj$index.matrix]
-			diag(Q)<--rowSums(Q,na.rm=TRUE)
-			Q
-		}
+		foo<-function(obj) unclass(as.Qmatrix(obj))
 		Q<-lapply(fits,foo)
+		if(any(sapply(attr(object,"models"),class)=="fitHRM")){
+			for(i in 1:length(Q)){
+				tmp<-Q[[i]]
+				Q[[i]]<-matrix(0,length(ss),length(ss),
+					dimnames=list(ss,ss))
+				Q[[i]][rownames(tmp),colnames(tmp)]<-tmp
+			}
+		}
 		Q<-mapply("*",Q,w,SIMPLIFY=FALSE)
 		Q<-Reduce("+",Q)
 		model<-matrix(0,nrow(Q),ncol(Q))
@@ -51,15 +62,27 @@ ancr.anova.fitMk<-function(object,...){
 		model[col(model)!=row(model)]<-1:k
 		q<-sapply(1:k,function(i,Q,model) Q[which(model==i)],
 			Q=Q,model=model)
-		log_lik<-pruning(q,fits[[1]]$tree,fits[[1]]$data,
-			model=model)
+		TREE<-fits[[1]]$tree
+		DATA<-fits[[2]]$data
+		if(any(sapply(attr(object,"models"),class)=="fitHRM")){
+			levs<-unique(gsub("*","",ss,fixed=TRUE))
+			tmp<-DATA[,levs]
+			DATA<-matrix(0,nrow(tmp),length(ss),
+				dimnames=list(rownames(tmp),ss))
+			for(i in 1:nrow(tmp)){
+				for(j in 1:length(levs)){
+					DATA[i,grep(levs[j],ss)]<-tmp[i,levs[j]]
+				}
+			}
+		}
+		log_lik<-pruning(q,TREE,DATA,model=model)
 		attr(log_lik,"df")<-max(model)
 		obj<-list(ace=anc,logLik=log_lik)
 		class(obj)<-"ancr"
 		return(obj)
 	} else {
 		best<-which(object$AIC==min(object$AIC))
-		return(ancr(object$fits[[best]]))
+		return(ancr(object$fits[[best]],...))
 	}
 }
 
@@ -68,6 +91,26 @@ ancr.fitHRM<-function(object,...) ancr.fitMk(object,...)
 
 ## marginal ancestral states for "fitpolyMk" object
 ancr.fitpolyMk<-function(object,...) ancr.fitMk(object,...)
+
+## marginal ancestral states for "fitMk" object
+ancr.fitMk<-function(object,...){
+	x<-object$data
+	tree<-object$tree
+	q<-object$rates
+	model<-object$index.matrix
+	model[is.na(model)]<-0
+	pi=object$pi
+	plik<-pruning(q,tree,x,model=model,pi=pi,
+		return="conditional")
+	if(hasArg(tips)) tips<-list(...)$tips
+	else tips<-FALSE
+	ace<-marginal_asr(q,tree,plik,model,tips)
+	result<-list(ace=ace,
+		logLik=pruning(q,tree,x,model=model,pi=pi))
+	attr(result$logLik,"df")<-max(model)
+	class(result)<-"ancr"
+	result
+}
 
 ## marginal ancestral states for "fitMk" object
 ancr.fitMk<-function(object,...){

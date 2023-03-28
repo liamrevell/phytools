@@ -263,6 +263,7 @@ S3method(print, ancr)
 S3method(ancr, fitpolyMk)
 S3method(ancr, fitHRM)
 S3method(ancr, anova.fitMk)
+S3method(anova, fitHRM)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)
