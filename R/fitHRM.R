@@ -160,8 +160,13 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		for(i in 1:niter){
 			args$logscale<-logscale[i]
 			args$opt.method<-opt.method[i]
-			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
-			fits[[i]]<-do.call(fitMk,args)
+			
+			fits[[i]]<-NA
+			class(fits[[i]])<-"try-error"
+			while(inherits(fits[[i]],"try-error")){ 
+				args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
+				try(fits[[i]]<-do.call(fitMk,args))
+			}
 			if(trace>0) print(fits[[i]])
 			logL<-sapply(fits,logLik)
 			if(!quiet){
@@ -187,7 +192,13 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 			args$logscale<-logscale[i]
 			args$opt.method<-opt.method[i]
 			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
-			do.call(phytools::fitMk,args)
+			result<-NA
+			class(result)<-"try-error"
+			while(inherits(result,"try-error")){ 
+				args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
+				result<-try(do.call(phytools::fitMk,args))
+			}
+			result
 		}
 		logL<-sapply(fits,logLik)
 		stopCluster(cl=mc)

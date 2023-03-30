@@ -29,6 +29,8 @@ anova.fitMk<-function(object,...){
 fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
 	else opt.method<-"nlminb"
+	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+	else lik.func<-"lik"
 	if(opt.method=="optimParallel"){ 
 		if(hasArg(ncores)) ncores<-list(...)$ncores
 		else ncores<-detectCores()
@@ -116,11 +118,16 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			Q<-fixedQ
 		}
 		index.matrix<-rate
+		if(lik.func=="pruning"){
+			MODEL<-rate
+			MODEL[is.na(MODEL)]<-0
+			diag(MODEL)<-0
+		}
 		tmp<-cbind(1:m,1:m)
 		rate[tmp]<-0
 		rate[rate==0]<-k+1
 		liks<-rbind(x,matrix(0,M,m,dimnames=list(1:M+N,states)))
-		pw<-reorder(tree,"pruningwise")
+		pw<-reorder(tree,"postorder")
 		lik<-function(Q,output.liks=FALSE,pi,...){
 			if(hasArg(output.pi)) output.pi<-list(...)$output.pi
 			else output.pi<-FALSE
@@ -146,7 +153,6 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 						vv<-D*D/sum(D)
 					}
 				} else vv<-Reduce('*',v)[,1]
-				## vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
 				comp[anc]<-sum(vv)
 				liks[anc,]<-vv/comp[anc]
 			}
@@ -163,20 +169,39 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			if(rand_start) q.init<-q.init*rexp(length(q.init),1)
 			q.init<-if(logscale) log(q.init) else q.init
 			if(opt.method=="optim"){
-				fit<-if(logscale) 
-					optim(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
-						method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
-					optim(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
-						method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+				if(lik.func=="lik"){
+					fit<-if(logscale) 
+						optim(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
+							method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+						optim(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
+							method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+				} else if(lik.func=="pruning") {
+					fit<-if(logscale)
+						optim(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,pi=pi),
+							method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+						optim(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,pi=pi),
+							method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+				}
 			} else if(opt.method=="none"){
-				fit<-list(objective=lik(makeQ(m,q.init,index.matrix),pi=pi),
-					par=q.init)
+				if(lik.func=="lik")
+					fit<-list(objective=lik(makeQ(m,q.init,index.matrix),pi=pi),
+						par=q.init)
+				else if(lik.func=="pruning")
+					fit<-list(objective=-pruning(q.init,pw,x,MODEL,pi=pi),par=q.init)
 			} else {
-				fit<-if(logscale)
-					nlminb(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
-						lower=rep(log(min.q),k),upper=rep(log(max.q),k))
-					else nlminb(q.init,function(p) lik(makeQ(m,p,index.matrix),
-						pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+				if(lik.func=="lik"){
+					fit<-if(logscale)
+						nlminb(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
+							lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else 
+						nlminb(q.init,function(p) lik(makeQ(m,p,index.matrix),
+							pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+				} else if(lik.func=="pruning"){
+					fit<-if(logscale)
+						nlminb(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,
+							pi=pi),lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+						nlminb(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,
+							pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+				}
 			}
 			if(logscale) fit$par<-exp(fit$par)
 			if(pi[1]=="fitzjohn") pi<-setNames(
@@ -204,8 +229,17 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 				pi=pi)
 		}
-		lik.f<-function(q) -lik(q,output.liks=FALSE,
-			pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+		if(lik.func=="lik")
+			lik.f<-function(q) -lik(q,output.liks=FALSE,
+				pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+		else if(lik.func=="pruning") {
+			lik.f<-function(q){
+				q<-sapply(1:max(MODEL), function(ind,q,MODEL) q[which(MODEL==ind)],
+					q=q,MODEL=MODEL)
+				pruning(q,tree=pw,x=x,model=MODEL,
+					pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+			}
+		}
 		obj$data<-x
 		obj$tree<-tree
 		obj$lik<-lik.f

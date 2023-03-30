@@ -28,13 +28,21 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 		pi<-pi[ss]
 	} 
 	## create object of class "fitMk"
-	unfitted<-fitMk(tree,x,model=model,pi=pi,opt.method="none")
+	args<-list(...)
+	args$tree<-tree
+	args$x<-x
+	args$model<-model
+	args$pi<-pi
+	args$opt.method="none"
+	unfitted<-do.call(fitMk,args)
+	## unfitted<-fitMk(tree,x,model=model,pi=pi,opt.method="none")
 	## get initial values for optimization
 	if(hasArg(q.init)) { 
 		q.init<-list(...)$q.init
 		if(length(q.init)!=max(unfitted$index.matrix,na.rm=TRUE)) {
 			q.init<-rep(q.init,max(unfitted$index.matrix,
-			na.rm=TRUE))[1:max(unfitted$index.matrix,na.rm=TRUE)]
+				na.rm=TRUE))[1:max(unfitted$index.matrix,
+				na.rm=TRUE)]
 		}
 	} else q.init<-rep(m/sum(tree$edge.length),
 		max(unfitted$index.matrix,na.rm=TRUE))

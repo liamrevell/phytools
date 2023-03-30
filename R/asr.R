@@ -135,7 +135,9 @@ ancr.fitMk<-function(object,...){
 pruning<-function(q,tree,x,model=NULL,...){
 	if(hasArg(return)) return<-list(...)$return
 	else return<-"likelihood"
-	pw<-reorder(tree,"postorder")
+	pw<-if(!is.null(attr(tree,"order"))&&
+		attr(tree,"order")=="postorder") tree else 
+		reorder(tree,"postorder")
 	k<-ncol(x)
 	if(is.null(model)){
 		model<-matrix(1,k,k)
@@ -159,10 +161,14 @@ pruning<-function(q,tree,x,model=NULL,...){
 		}
 		L[nn[i],]<-apply(PP,2,prod)
 	}
+	if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
 	L[nn[i],]<-pi*L[nn[i],]
 	prob<-log(sum(L[nn[i],]))
-	if(return=="likelihood") prob
+	if(return=="likelihood") 
+		if(is.na(prob)||is.nan(prob)) 
+			return(-Inf) else return(prob)
 	else if(return=="conditional") L
+	else if(return=="pi") pi
 }
 
 marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
