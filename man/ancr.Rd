@@ -12,7 +12,7 @@ ancr(object, ...)
 	Computes marginal ancestral states, also known as empirical Bayes posterior probabilities, conditioning on the fitted (or set) model of \code{object}.
 }
 \details{
-	If the optional argument `tips=TRUE`, then the matrix returned contains empirical Bayes posterior probabilities (marginal scaled likelihoods) for both tips \emph{and} internal nodes. Otherwise (the default) only node marginal states are returned.
+	If the optional argument \code{tips=TRUE}, then the matrix returned contains empirical Bayes posterior probabilities (marginal scaled likelihoods) for both tips \emph{and} internal nodes. Otherwise (the default) only node marginal states are returned.
 }
 \value{
 	An object of class \code{"ancr"}, which includes a matrix of marginal (empirical Bayes) probabilities and a likelihood.
