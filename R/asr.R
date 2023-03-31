@@ -89,6 +89,26 @@ ancr.anova.fitMk<-function(object,...){
 ## marginal ancestral states for "fitHRM" object
 ancr.fitHRM<-function(object,...) ancr.fitMk(object,...)
 
+hide.hidden<-function(object,...) UseMethod("hide.hidden")
+
+hide.hidden.default<-function(object,...){
+	warning(paste(
+		"hide.hidden does not know how to handle objects of class ",
+		class(object),".\n"))
+}
+
+hide.hidden.ancr<-function(object,...){
+	ss<-colnames(object$ace)
+	ss<-ss[-grep("*",ss,fixed=TRUE)]
+	anc<-matrix(0,nrow(object$ace),length(ss),
+		dimnames=list(rownames(object$ace),ss))
+	for(i in 1:length(ss)){
+		anc[,ss[i]]<-rowSums(object$ace[,grep(ss[i],
+			colnames(object$ace))])
+	}
+	anc
+}
+
 ## marginal ancestral states for "fitpolyMk" object
 ancr.fitpolyMk<-function(object,...) ancr.fitMk(object,...)
 

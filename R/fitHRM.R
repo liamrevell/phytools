@@ -1,7 +1,6 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
 ## written by Liam J. Revell 2020, 2021, 2023
 
-## have to put this here for some reason.
 anova.fitHRM<-function(object,...) anova.fitMk(object,...)
 
 fitHRM<-function(tree,x,model="ARD",ncat=2,...){
@@ -165,7 +164,7 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 			class(fits[[i]])<-"try-error"
 			while(inherits(fits[[i]],"try-error")){ 
 				args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
-				try(fits[[i]]<-do.call(fitMk,args))
+				fits[[i]]<-try(do.call(fitMk,args))
 			}
 			if(trace>0) print(fits[[i]])
 			logL<-sapply(fits,logLik)

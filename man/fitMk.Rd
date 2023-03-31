@@ -11,6 +11,7 @@
 \alias{density.mcmcMk}
 \alias{plot.density.mcmcMk}
 \alias{fitHRM}
+\alias{hide.hidden}
 \alias{plot.fitHRM}
 \alias{fitMk.parallel}
 \title{Fits extended M\emph{k} model for discrete character evolution}
@@ -27,6 +28,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 \method{density}{mcmcMk}(x, ...)
 \method{plot}{density.mcmcMk}(x, ...)
 fitHRM(tree, x, model="ARD", ncat=2, ...)
+hide.hidden(object, ...)
 \method{plot}{fitHRM}(x, ...)
 fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 }
@@ -39,6 +41,7 @@ fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 	\item{k}{For \code{graph.polyMk}, the number of monomorphic states for the discrete trait.}
 	\item{ngen}{number of generations of MCMC for \code{mcmcMk}.}
 	\item{ncat}{number of rate categories (per level of the discrete trait) in the hidden-rate model.}
+	\item{object}{object of class \code{"ancr"}, for \code{hide.hidden}.}
 	\item{ncores}{number of cores for \code{fitMk.parallel}.}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of Fitzjohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, both \code{order} (an evolutionary sequence for the monomorphic condition) and \code{max.poly} can be set for the \code{ordered=TRUE} model. If not set, \code{order} defaults to alphanumeric order, and \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
@@ -59,6 +62,8 @@ fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 	The method \code{plot.mcmcMk} plots a log-likelihood trace and a trace of the rate parameters from the MCMC. (This the same graph that is created by setting \code{plot=TRUE} in \code{mcmcMk}.) The method \code{density.mcmcMk} computes a posterior density on the transition rates in the model from the posterior sample obtained in the MCMC, will import the package \pkg{coda} if it is available, and returns an object of class \code{"density.mcmcMk"}. Finally, the method \code{plot.density.mcmcMk} creates a plot of the posterior density (or a set of plots) for the transition rates between states.
 	
 	Finally, the function \code{fitHRM} fits a hidden-rate M\emph{k} model following Beaulieu et al. (2013). For the hidden-rate model we need to specify a number of rate categories for each level of the trait - and this can be a vector of different values for each trait. We can also choose a model (\code{"ER"}, \code{"SYM"}, or \code{"ARD"}), as well as whether or not to treat the character as a 'threshold' trait (\code{umbral=TRUE}, defaults to \code{FALSE}). This latter model is basically one that allows absorbing conditions for some hidden states. Since this can be a difficult optimization problem, the optional argument \code{niter} sets the number of optimization iterations to be run. \code{niter} defaults to \code{niter=10}.
+	
+	The function \code{hide.hidden} "hides" unobserved levels of a character for ancestral character estimates from a hidden-rates model estimated using \code{fitHRM} and takes an object of class \code{"ancr"} from \code{\link{ancr}} as input.
 
 	Note that both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \pkg{ape} package for computing the likelihood. \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
 }

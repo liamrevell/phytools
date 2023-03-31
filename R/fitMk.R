@@ -2,6 +2,7 @@
 ## character evolution
 ## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022, 2023)
 ## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
+## lik.func="pruning" uses phytools::pruning to compute likelihood
 
 anova.fitMk<-function(object,...){
 	fits<-list(...)
