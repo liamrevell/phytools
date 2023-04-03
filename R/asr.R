@@ -172,6 +172,8 @@ pruning<-function(q,tree,x,model=NULL,...){
 		matrix(0,tree$Nnode,k,
 		dimnames=list(1:tree$Nnode+Ntip(tree))))
 	nn<-unique(pw$edge[,1])
+	pp<-vector(mode="numeric",length=length(nn))
+	root<-min(nn)
 	for(i in 1:length(nn)){
 		ee<-which(pw$edge[,1]==nn[i])
 		PP<-matrix(NA,length(ee),k)
@@ -180,10 +182,14 @@ pruning<-function(q,tree,x,model=NULL,...){
 			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
 		}
 		L[nn[i],]<-apply(PP,2,prod)
+		if(nn[i]==root){
+			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			L[nn[i],]<-pi*L[nn[i],]
+		}
+		pp[i]<-sum(L[nn[i],])
+		L[nn[i],]<-L[nn[i],]/pp[i]
 	}
-	if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
-	L[nn[i],]<-pi*L[nn[i],]
-	prob<-log(sum(L[nn[i],]))
+	prob<-sum(log(pp))
 	if(return=="likelihood") 
 		if(is.na(prob)||is.nan(prob)) 
 			return(-Inf) else return(prob)
