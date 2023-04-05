@@ -159,11 +159,10 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		for(i in 1:niter){
 			args$logscale<-logscale[i]
 			args$opt.method<-opt.method[i]
-			
+			args$rand_start<-TRUE
 			fits[[i]]<-NA
 			class(fits[[i]])<-"try-error"
 			while(inherits(fits[[i]],"try-error")){ 
-				args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
 				fits[[i]]<-try(do.call(fitMk,args))
 			}
 			if(trace>0) print(fits[[i]])
@@ -190,11 +189,10 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		fits<-foreach(i=1:niter)%dopar%{
 			args$logscale<-logscale[i]
 			args$opt.method<-opt.method[i]
-			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
+			args$rand_start<-TRUE
 			result<-NA
 			class(result)<-"try-error"
 			while(inherits(result,"try-error")){ 
-				args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
 				result<-try(do.call(phytools::fitMk,args))
 			}
 			result
