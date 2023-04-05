@@ -2,7 +2,7 @@
 ## character evolution
 ## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022, 2023)
 ## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
-## lik.func="pruning" uses phytools::pruning to compute likelihood
+## lik.func="pruning" uses phytools::pruning to compute likelihood instead
 
 anova.fitMk<-function(object,...){
 	fits<-list(...)
@@ -45,6 +45,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	} else {
 		if(hasArg(output.liks)) output.liks<-list(...)$output.liks
 		else output.liks<-FALSE
+		if(hasArg(smart_start)) smart_start<-list(...)$smart_start
+		else smart_start<-FALSE
 		if(hasArg(q.init)) q.init<-list(...)$q.init
 		else q.init<-length(unique(x))/sum(tree$edge.length)
 		if(hasArg(rand_start)) rand_start<-list(...)$rand_start
@@ -166,8 +168,15 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			}
 		}
 		if(is.null(fixedQ)){
+			if(smart_start&&max(index.matrix,na.rm=TRUE)>1){
+				MM<-index.matrix
+				MM[is.na(MM)]<-0
+				MM[MM>0]<-1
+				q.init<-fitMk(pw,x,model=MM,pi=pi,opt.method="nlminb")$rates
+			}
 			if(length(q.init)!=k) q.init<-rep(q.init[1],k)
 			if(rand_start) q.init<-q.init*rexp(length(q.init),1)
+			print(q.init)
 			q.init<-if(logscale) log(q.init) else q.init
 			if(opt.method=="optim"){
 				if(lik.func=="lik"){
@@ -498,19 +507,19 @@ plot.Qmatrix<-function(x,...){
 		if(dq>tol){
 			h<-1.5
 			LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
-			lines(x=rep(-1.3+LWD*15/2,2),y=c(-h/2,h/2))
+			lines(x=rep(0.93*xlim[1]+LWD*15/2,2),y=c(-h/2,h/2))
 			nticks<-6
 			Y<-cbind(seq(-h/2,h/2,length.out=nticks),
 				seq(-h/2,h/2,length.out=nticks))
-			X<-cbind(rep(-1.3+LWD*15/2,nticks),
-				rep(-1.3+LWD*15/2+0.02*h,nticks))
+			X<-cbind(rep(0.93*xlim[1]+LWD*15/2,nticks),
+				rep(0.93*xlim[1]+LWD*15/2+0.02*h,nticks))
 			for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
 			add.color.bar(h,sapply(seq(0,1,length.out=100),col_pal),
 				title="evolutionary rate (q)",
 				lims=NULL,digits=3,
 				direction="upwards",
 				subtitle="",lwd=15,
-				x=-1.3,y=-h/2,prompt=FALSE)
+				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
 			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
@@ -519,19 +528,19 @@ plot.Qmatrix<-function(x,...){
 			BLUE<-function(...) palette[1]
 			h<-1.5
 			LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
-			lines(x=rep(-1.3+LWD*15/2,2),y=c(-h/2,h/2))
+			lines(x=rep(0.93*xlim[1]+LWD*15/2,2),y=c(-h/2,h/2))
 			nticks<-6
 			Y<-cbind(seq(-h/2,h/2,length.out=nticks),
 				seq(-h/2,h/2,length.out=nticks))[nticks,,drop=FALSE]
-			X<-cbind(rep(-1.3+LWD*15/2,nticks),
-				rep(-1.3+LWD*15/2+0.02*h,nticks))[nticks,,drop=FALSE]
+			X<-cbind(rep(0.93*xlim[1]+LWD*15/2,nticks),
+				rep(0.93*xlim[1]+LWD*15/2+0.02*h,nticks))[nticks,,drop=FALSE]
 			for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
 			add.color.bar(h,sapply(seq(0,1,length.out=100),BLUE),
 				title="evolutionary rate (q)",
 				lims=NULL,digits=3,
 				direction="upwards",
 				subtitle="",lwd=15,
-				x=-1.3,y=-h/2,prompt=FALSE)
+				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
 			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
