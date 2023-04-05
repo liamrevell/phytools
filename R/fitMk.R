@@ -176,7 +176,6 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			}
 			if(length(q.init)!=k) q.init<-rep(q.init[1],k)
 			if(rand_start) q.init<-q.init*rexp(length(q.init),1)
-			print(q.init)
 			q.init<-if(logscale) log(q.init) else q.init
 			if(opt.method=="optim"){
 				if(lik.func=="lik"){
