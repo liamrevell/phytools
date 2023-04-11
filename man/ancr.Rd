@@ -1,15 +1,19 @@
 \name{ancr}
 \alias{ancr}
+\alias{hide.hidden}
 \title{Compute marginal ancestral states}
 \usage{
 ancr(object, ...)
+hide.hidden(object, ...)
 }
 \arguments{
-	\item{object}{fitted M\emph{k} model (presently object of class \code{"fitMk"}, \code{"fitpolyMk"}, and \code{"fitHRM"}).}
+	\item{object}{fitted M\emph{k} model (presently object of class \code{"fitMk"}, \code{"fitpolyMk"}, and \code{"fitHRM"}). For \code{hide.hidden}, object of class \code{"ancr"}.}
 	\item{...}{optional arguments.}
 }
 \description{
 	Computes marginal ancestral states, also known as empirical Bayes posterior probabilities, conditioning on the fitted (or set) model of \code{object}.
+	
+	\code{hide.hidden} merges hidden states (if any).
 }
 \details{
 	If the optional argument \code{tips=TRUE}, then the matrix returned contains empirical Bayes posterior probabilities (marginal scaled likelihoods) for both tips \emph{and} internal nodes. Otherwise (the default) only node marginal states are returned.

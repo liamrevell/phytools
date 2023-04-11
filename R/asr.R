@@ -99,12 +99,13 @@ hide.hidden.default<-function(object,...){
 
 hide.hidden.ancr<-function(object,...){
 	ss<-colnames(object$ace)
-	ss<-ss[-grep("*",ss,fixed=TRUE)]
+	ii<-grep("*",ss,fixed=TRUE)
+	if(length(ii)>0) ss<-ss[-ii]
 	anc<-matrix(0,nrow(object$ace),length(ss),
 		dimnames=list(rownames(object$ace),ss))
 	for(i in 1:length(ss)){
 		anc[,ss[i]]<-rowSums(object$ace[,grep(ss[i],
-			colnames(object$ace))])
+			colnames(object$ace)),drop=FALSE])
 	}
 	anc
 }
