@@ -41,7 +41,7 @@ export(plot.phylo.to.map, plot.Qmatrix, plot.simBMphylo, plotBranchbyTrait, plot
 export(plotSimmap, plotThresh, plotTree, plotTree.barplot, plotTree.boxplot)
 export(plotTree.datamatrix, plotTree.errorbars, plotTree.singletons, plotTree.splits)
 export(plotTree.wBars, posterior.evolrate, posthoc, posthoc.ratebytree, print.Qmatrix)
-export(project.phylomorphospace)
+export(project.phylomorphospace, pscore)
 export(ratebystate, ratebytree, rateshift, read.newick, read.simmap, readNexus)
 export(reorder.backbonePhylo, reorderSimmap, rep.multiPhylo, rep.phylo, repPhylo, reroot)
 export(rerootingMethod, rescale, rescale.multiSimmap, rescale.simmap, rescaleSimmap, resolveAllNodes)

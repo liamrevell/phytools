@@ -590,7 +590,7 @@ sim.multiMk<-function(tree,Q,anc=NULL,nsim=1,...){
 }
 
 ## constant-rate Mk model simulator
-## written by Liam J. Revell 2018
+## written by Liam J. Revell 2018, 2023
 sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
 	if(hasArg(as.list)) as.list<-list(...)$as.list
 	else as.list<-FALSE
@@ -602,7 +602,9 @@ sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
 	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
 		data.frame(row.names=tt$tip.label)
 	for(i in 1:nsim){
-		a<-if(is.null(anc)) sample(ss,1) else anc
+		if(is.null(anc)) a<-sample(ss,1)
+		else if(is.numeric(anc)) a<-sample(names(anc),1,prob=anc)
+		else a<-anc
 		STATES<-matrix(NA,nrow(tt$edge),2)
 		root<-Ntip(tt)+1
 		STATES[which(tt$edge[,1]==root),1]<-a
