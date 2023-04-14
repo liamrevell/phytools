@@ -1,6 +1,6 @@
 export(add.arrow, add.color.bar, add.everywhere, add.random, add.simmap.legend)
 export(add.species.to.genus, aic.w, allFurcTrees, allRotations, anc.Bayes, anc.ML)
-export(anc.trend, ancr, ancThresh, applyBranchLengths, arc.cladelabels, as.multiPhylo)
+export(anc.trend, ancr, ancThresh, ansi_phylo, applyBranchLengths, arc.cladelabels, as.multiPhylo)
 export(as.princomp, as.princomp.phyl.pca, as.Qmatrix, ave.rates, averageTree)
 export(backbone.toPhylo, bd, bmPlot, bind.tip, bind.tree.simmap, biplot.phyl.pca)
 export(branching.diffusion, brownie.lite, brownieREML)
