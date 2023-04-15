@@ -21,8 +21,10 @@ ansi_phylo<-function(tree,vertical=c("|","-"),...){
 	args$tree<-tree
 	do.call(plotTree,args)
 	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	family<-par()$family
-	par(family="mono")
+	if(hasArg(family)) family<-list(...)$family
+	else family<-"mono"
+	old_family<-par()$family
+	par(family=family)
 	w<-x_spacer*strwidth(horizontal)
 	if(vertical!="-") h<-y_spacer*strheight(vertical)
 	else h<-x_spacer*strwidth("-")*Asp()
@@ -72,5 +74,5 @@ ansi_phylo<-function(tree,vertical=c("|","-"),...){
 	else fsize<-1
 	for(i in 1:Ntip(tree)) text(pp$xx[i],pp$yy[i],
 		tree$tip.label[i],pos=4,cex=fsize)
-	par(family=family)
+	par(family=old_family)
 }
