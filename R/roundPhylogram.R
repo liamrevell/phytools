@@ -24,6 +24,7 @@ splinePhylogram<-function(tree,...){
 	args$tree<-tree
 	args$color<-"transparent"
 	args$direction<-"rightwards"
+	args$add<-TRUE
 	dev.hold()
 	do.call(plotTree,args)
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
@@ -47,7 +48,6 @@ splinePhylogram<-function(tree,...){
 	par(fg="transparent")
 	do.call(plotTree,args)
 	par(fg=ffg)
-	obj$edge<-tree$edge
 	assign("last_plot.phylo",pp,envir=.PlotPhyloEnv)
 }
 
