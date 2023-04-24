@@ -190,7 +190,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0,
 		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 		direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-		edge=cw$edge,xx=d*sapply(1:(Ntip(cw)+cw$Nnode),
+		edge=tree$edge,xx=d*sapply(1:(Ntip(cw)+cw$Nnode),
 		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	## return rightmost or leftmost edge of tip labels
@@ -264,7 +264,7 @@ cladogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=0,
 		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 		direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-		edge=cw$edge,xx=d*sapply(1:(Ntip(cw)+cw$Nnode),
+		edge=tree$edge,xx=d*sapply(1:(Ntip(cw)+cw$Nnode),
 		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	## return rightmost or leftmost edge of tip labels
