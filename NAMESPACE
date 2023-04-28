@@ -35,7 +35,7 @@ export(paintBranches, paintSubTree, paste.tree, pbtree, pgls.Ives, pgls.SEy, phe
 export(phenogram95, phyl.cca, phyl.pairedttest, phyl.pca, phyl.resid, phyl.RMA)
 export(phyl.vcv, phylo.heatmap, phylo.impute, phylo.toBackbone, phylo.to.map, phylANOVA)
 export(phyloDesign, phylomorphospace, phylomorphospace3d, phyloScattergram, phylosig)
-export(plot.anc.Bayes, plot.changesMap, plot.contMap, plot.cophylo, plot.densityMap)
+export(plot.anc.Bayes, plot.ancr, plot.changesMap, plot.contMap, plot.cophylo, plot.densityMap)
 export(plot.edge.widthMap, plot.fitMk, plot.fitPagel, plot.gfit, plot.phyl.RMA)
 export(plot.phylo.to.map, plot.Qmatrix, plot.simBMphylo, plotBranchbyTrait, plot.phylosig)
 export(plotSimmap, plotThresh, plotTree, plotTree.barplot, plotTree.boxplot)
