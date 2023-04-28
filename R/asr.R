@@ -1,5 +1,90 @@
 ## functions to do the pruning algorithm and reconstruct ancestral states
 
+## plot method for "ancr" object class
+plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
+	TREE<-attr(x,"tree")
+	args.plotTree$tree<-TREE
+	if(is.null(args.plotTree$type))
+		args.plotTree$type<-"phylogram"
+	if(is.null(args.plotTree$direction)) args.plotTree$direction<-"rightwards"
+	if(is.null(args.plotTree$fsize)){
+		if(args.plotTree$type%in%c("phylogram","cladogram")){
+			if(args.plotTree$direction%in%c("rightwards","leftwards"))
+				args.plotTree$fsize<-min(c(6*par()$pin[2]/Ntip(TREE),1))
+			else
+				args.plotTree$fsize<-min(c(6*par()$pin[1]/Ntip(TREE),1))
+		} else {
+			args.plotTree$fsize<-min(c(min(par()$pin)/sqrt(Ntip(TREE)),1))
+		}
+	}
+	if(is.null(args.plotTree$ftype))
+		args.plotTree$ftype<-"i"
+	if(is.null(args.plotTree$lwd))
+		args.plotTree$lwd<-1
+	if(is.null(args.plotTree$offset)){
+		if(args.plotTree$type%in%c("phylogram","cladogram")){
+			if(args.plotTree$direction%in%c("rightwards","leftwards"))
+				args.plotTree$offset<-0.4
+			else args.plotTree$offset<-1
+		}  else args.plotTree$offset<-2
+	}
+	do.call(plotTree,args.plotTree)
+	if(nrow(x$ace)==Nnode(TREE)){
+		args.nodelabels$pie<-x$ace
+		data<-attr(x,"data")
+	} else if(nrow(x$ace)==(Ntip(TREE)+Nnode(TREE))){
+		args.nodelabels$pie<-x$ace[1:Nnode(TREE)+Ntip(TREE),,drop=FALSE]
+		data<-x$ace[1:Ntip(TREE),,drop=FALSE]
+	} else cat("Warning: wrong number of rows in input object.\n\n")
+	if(is.null(args.nodelabels$cex)){
+		if(args.plotTree$type%in%c("phylogram","cladogram")){
+			if(args.plotTree$direction%in%c("rightwards","leftwards"))
+				args.nodelabels$cex<-min(c(6*par()$pin[2]/Ntip(TREE),0.5))
+			else
+				args.nodelabels$cex<-min(c(6*par()$pin[1]/Ntip(TREE),0.5))
+		} else {
+			args.nodelabels$cex<-min(c(0.5*min(par()$pin)/sqrt(Ntip(TREE)),0.5))
+		}
+	}
+	k<-ncol(x$ace)
+	if(is.null(args.nodelabels$piecol)){
+		args.nodelabels$piecol<-if(k<8) palette()[1:k] else
+			randomcoloR::distinctColorPalette(k)
+	}
+	old_fg<-par()$fg
+	par(fg="transparent")
+	do.call(nodelabels,args.nodelabels)
+	if(hasArg(args.tiplabels)) args.tiplabels<-list(...)$args.tiplabels
+	else args.tiplabels<-list(...)
+	args.tiplabels$piecol<-args.nodelabels$piecol
+	args.tiplabels$pie<-data[TREE$tip.label,,drop=FALSE]
+	if(is.null(args.tiplabels$cex)){
+		if(args.plotTree$type%in%c("phylogram","cladogram")){
+			if(args.plotTree$direction%in%c("rightwards","leftwards"))
+				args.tiplabels$cex<-min(c(2*par()$pin[2]/Ntip(TREE),0.2))
+			else
+				args.tiplabels$cex<-min(c(2*par()$pin[1]/Ntip(TREE),0.2))
+		} else
+			args.tiplabels$cex<-min(c(0.25*min(par()$pin)/sqrt(Ntip(TREE)),0.25))
+	}
+	do.call(tiplabels,args.tiplabels)
+	par(fg=old_fg)
+	if(hasArg(legend)) legend<-list(...)$legend
+	else legend<-"bottomleft"
+	if(legend!=FALSE){
+		legend(x=legend,legend=colnames(x$ace),
+			pch=16,col=args.nodelabels$piecol,
+			pt.cex=1.2,cex=0.8)
+	}
+	object<-list(
+		fsize=args.plotTree$fsize,
+		piecol=args.nodelabels$piecol,
+		node_cex=args.nodelabels$cex,
+		tip_cex=args.nodelabels$cex,
+		legend=legend)
+	invisible(object)
+}
+
 ancr<-function(object,...) UseMethod("ancr")
 
 ancr.default<-function(object,...){
@@ -63,7 +148,7 @@ ancr.anova.fitMk<-function(object,...){
 		q<-sapply(1:k,function(i,Q,model) Q[which(model==i)],
 			Q=Q,model=model)
 		TREE<-fits[[1]]$tree
-		DATA<-fits[[2]]$data
+		DATA<-fits[[1]]$data
 		if(any(sapply(attr(object,"models"),class)=="fitHRM")){
 			levs<-unique(gsub("*","",ss,fixed=TRUE))
 			tmp<-DATA[,levs]
@@ -78,6 +163,8 @@ ancr.anova.fitMk<-function(object,...){
 		log_lik<-pruning(q,TREE,DATA,model=model)
 		attr(log_lik,"df")<-max(model)
 		obj<-list(ace=anc,logLik=log_lik)
+		attr(obj,"tree")<-TREE
+		attr(obj,"data")<-DATA
 		class(obj)<-"ancr"
 		return(obj)
 	} else {
@@ -120,7 +207,7 @@ ancr.fitMk<-function(object,...){
 	q<-object$rates
 	model<-object$index.matrix
 	model[is.na(model)]<-0
-	pi=object$pi
+	pi<-object$pi
 	plik<-pruning(q,tree,x,model=model,pi=pi,
 		return="conditional")
 	if(hasArg(tips)) tips<-list(...)$tips
@@ -129,26 +216,8 @@ ancr.fitMk<-function(object,...){
 	result<-list(ace=ace,
 		logLik=pruning(q,tree,x,model=model,pi=pi))
 	attr(result$logLik,"df")<-max(model)
-	class(result)<-"ancr"
-	result
-}
-
-## marginal ancestral states for "fitMk" object
-ancr.fitMk<-function(object,...){
-	x<-object$data
-	tree<-object$tree
-	q<-object$rates
-	model<-object$index.matrix
-	model[is.na(model)]<-0
-	pi=object$pi
-	plik<-pruning(q,tree,x,model=model,pi=pi,
-		return="conditional")
-	if(hasArg(tips)) tips<-list(...)$tips
-	else tips<-FALSE
-	ace<-marginal_asr(q,tree,plik,model,tips)
-	result<-list(ace=ace,
-		logLik=pruning(q,tree,x,model=model,pi=pi))
-	attr(result$logLik,"df")<-max(model)
+	attr(result,"tree")<-tree
+	attr(result,"data")<-x
 	class(result)<-"ancr"
 	result
 }

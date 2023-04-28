@@ -1,14 +1,19 @@
 \name{ancr}
 \alias{ancr}
 \alias{hide.hidden}
+\alias{plot.ancr}
 \title{Compute marginal ancestral states}
 \usage{
 ancr(object, ...)
 hide.hidden(object, ...)
+\method{plot}{ancr}(x, args.plotTree=list(...), args.nodelabels=list(...), ...)
 }
 \arguments{
 	\item{object}{fitted M\emph{k} model (presently object of class \code{"fitMk"}, \code{"fitpolyMk"}, and \code{"fitHRM"}). For \code{hide.hidden}, object of class \code{"ancr"}.}
 	\item{...}{optional arguments.}
+	\item{x}{in the case of \code{plot.ancr}, an object of class \code{"ancr"}.}
+	\item{args.plotTree}{arguments to be passed to \code{\link{plotTree}}, in a list.}
+	\item{args.nodelabels}{arguments to be passed to \code{\link{nodelabels}}, in a list.}
 }
 \description{
 	Computes marginal ancestral states, also known as empirical Bayes posterior probabilities, conditioning on the fitted (or set) model of \code{object}.
