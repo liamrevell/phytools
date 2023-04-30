@@ -55,7 +55,7 @@ reml_phyl.pca<-function(tree,X,method="BM",mode="cov",...){
 		lambda<-reml_fit$maximum
 		tree<-lambdaTree(tree,lambda)
 	} else {
-		logL.lambda<-lik(1,tree,X)
+		logL.lambda<-lik(1,tree,as.data.frame(X))
 		lambda<-1
 	}
 	pX<-apply(X,2,pic,phy=tree)
