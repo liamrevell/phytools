@@ -286,7 +286,7 @@ importFrom(graphics, strwidth, par, segments, locator, lines, text, strheight, s
 importFrom(graphics, plot, layout, plot.new, title, axis, points, plot.window, polygon) 
 importFrom(graphics, rect, curve, image, mtext, arrows, barplot, boxplot, contour, hist)
 importFrom(graphics, abline, legend, grid)
-importFrom(grDevices, palette, colors, dev.hold, dev.flush, rainbow, heat.colors, gray)
+importFrom(grDevices, palette, palette.colors, colors, dev.hold, dev.flush, rainbow, heat.colors, gray)
 importFrom(grDevices, colorRamp, colorRampPalette, dev.new, rgb, pdf, dev.off, col2rgb, dev.size)
 importFrom(maps, map)
 importFrom(MASS, ginv)
