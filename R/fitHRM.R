@@ -70,8 +70,12 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	} else {
 		if(hasArg(ordered)) ordered<-list(...)$ordered
 		else ordered<-TRUE
-		order<-if(ordered) setNames(1:length(levels(x)),levels(x)) else 
-			setNames(rep(1,length(levels(x))),levels(x))
+		if(ordered){
+			if(hasArg(order)){ 
+				order<-list(...)$order
+				order<-setNames(1:length(levels(x)),order)
+			} else order<-setNames(1:length(levels(x)),levels(x))
+		} else order<-setNames(rep(1,length(levels(x))),levels(x))
 		ii<-1
 		for(i in 1:length(nn)){
 			FROM<-strsplit(nn[i],"_")[[1]]
