@@ -14,7 +14,7 @@ plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
 			else
 				args.plotTree$fsize<-min(c(6*par()$pin[1]/Ntip(TREE),1))
 		} else {
-			args.plotTree$fsize<-min(c(min(par()$pin)/sqrt(Ntip(TREE)),1))
+			args.plotTree$fsize<-min(c(0.6*min(par()$pin)/sqrt(Ntip(TREE)),1))
 		}
 	}
 	if(is.null(args.plotTree$ftype))
@@ -48,8 +48,9 @@ plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
 	}
 	k<-ncol(x$ace)
 	if(is.null(args.nodelabels$piecol)){
-		args.nodelabels$piecol<-if(k<8) palette()[1:k] else
-			randomcoloR::distinctColorPalette(k)
+		args.nodelabels$piecol<-palette.colors(k,"Polychrome 36",recycle=TRUE)
+		if(k>36) 
+			cat("Warning: maximum number of colors reached. Some colors are recycled.\n\n")
 	}
 	old_fg<-par()$fg
 	par(fg="transparent")
