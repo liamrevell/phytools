@@ -2,6 +2,74 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023
 
+## function to add an arrow pointing to a tip or node in the tree
+## written by Liam J. Revell 2014, 2017, 2020, 2023
+
+add.arrow<-function(tree=NULL,tip,...){
+	if(length(tip)>1){ 
+		object<-sapply(tip,add.arrow,tree=tree,...)
+		invisible(object)
+	} else {
+		lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		asp<-if(lastPP$type=="fan") 1 else (par()$usr[4]-par()$usr[3])/(par()$usr[2]-
+			par()$usr[1])
+		if(!is.null(tree)){
+			if(inherits(tree,"contMap")) tree<-tree$tree
+			else if(inherits(tree,"densityMap")) tree<-tree$tree
+		}
+		if(is.numeric(tip)){
+			ii<-tip
+			if(!is.null(tree)&&ii<=Ntip(tree)) tip<-tree$tip.label[ii]
+			else tip<-""
+		} else if(is.character(tip)&&!is.null(tree)) ii<-which(tree$tip.label==tip)
+		if(hasArg(offset)) offset<-list(...)$offset
+		else offset<-lastPP$label.offset
+		strw<-lastPP$cex*(strwidth(tip)+offset*mean(strwidth(c(LETTERS,letters))))
+		if(lastPP$direction%in%c("upwards","downwards")) 
+			strw<-strw*asp*par()$pin[1]/par()$pin[2]
+		if(hasArg(arrl)) arrl<-list(...)$arrl
+		else { 
+			if(lastPP$type=="fan") arrl<-0.3*max(lastPP$xx)
+			else if(lastPP$type=="phylogram") arrl<-0.15*max(lastPP$xx)
+		}
+		if(hasArg(hedl)) hedl<-list(...)$hedl
+		else hedl<-arrl/3
+		if(hasArg(angle)) angle<-list(...)$angle
+		else angle<-45
+		arra<-angle*pi/180
+		if(hasArg(col)) col<-list(...)$col
+		else col<-"black"
+		if(hasArg(lwd)) lwd<-list(...)$lwd	
+		else lwd<-2
+		if(lastPP$type=="fan") theta<-atan2(lastPP$yy[ii],lastPP$xx[ii])
+		else if(lastPP$type=="phylogram"){
+			if(lastPP$direction=="rightwards") theta<-0
+			else if(lastPP$direction=="upwards") theta<-pi/2 
+			else if(lastPP$direction=="leftwards") theta<-pi
+			else if(lastPP$direction=="downwards") theta<-3*pi/2
+		}
+		segments(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
+			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw,
+			col=col,lwd=lwd,lend="round")
+		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta+arra/2)*hedl,
+			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta+arra/2)*hedl*asp,
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw,
+			col=col,lwd=lwd,lend="round")
+		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta-arra/2)*hedl,
+			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta-arra/2)*hedl*asp,
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw,
+			col=col,lwd=lwd,lend="round")
+		invisible(list(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
+			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw))
+	}
+}
+
 ## function to rescale simmap style trees
 ## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017, 2023
 
@@ -66,11 +134,11 @@ force.ultrametric<-function(tree,method=c("nnls","extend"),...){
 	else message<-TRUE
 	if(message){
 		cat("***************************************************************\n")
-		cat("*                          Note:                              *\n")
-		cat("*    force.ultrametric does not include a formal method to    *\n")
-		cat("*    ultrametricize a tree & should only be used to coerce    *\n")
-		cat("*   a phylogeny that fails is.ultramtric due to rounding --   *\n")
-		cat("*    not as a substitute for formal rate-smoothing methods.   *\n")
+		cat("*													Note:															*\n")
+		cat("*		force.ultrametric does not include a formal method to		*\n")
+		cat("*		ultrametricize a tree & should only be used to coerce		*\n")
+		cat("*	 a phylogeny that fails is.ultramtric due to rounding --	 *\n")
+		cat("*		not as a substitute for formal rate-smoothing methods.	 *\n")
 		cat("***************************************************************\n")
 	}
 	method<-method[1]
@@ -253,8 +321,8 @@ expand.clade<-function(tree,node,factor=5){
 	cw<-reorder(tree)
 	tips<-setNames(rep(1,Ntip(tree)),cw$tip.label)
 	get.tips<-function(node,tree){
-    		dd<-getDescendants(tree,node)
-    		tree$tip.label[dd[dd<=Ntip(tree)]]
+				dd<-getDescendants(tree,node)
+				tree$tip.label[dd[dd<=Ntip(tree)]]
 	}
 	desc<-unlist(lapply(node,get.tips,tree=cw))
 	for(i in 2:Ntip(cw)){
@@ -274,7 +342,7 @@ expand.clade<-function(tree,node,factor=5){
 print.expand.clade<-function(x,...){
 	cat("An object of class \"expand.clade\" consisting of:\n")
 	cat(paste("(1) A phylogenetic tree (x$tree) with",Ntip(x$tree),
-		"tips and\n   ",x$tree$Nnode,"internal nodes.\n"))
+		"tips and\n	 ",x$tree$Nnode,"internal nodes.\n"))
 	cat("(2) A vector (x$tips) containing the desired tip-spacing.\n\n")
 }
 
@@ -670,7 +738,7 @@ print.aic.w<-function(x,...){
 }
 
 ## function to compute all paths towards the tips from a node
-## written by  Liam J. Revell
+## written by	Liam J. Revell
 node.paths<-function(tree,node){
 	d<-Descendants(tree,node,"children")
 	paths<-as.list(d)
@@ -1116,7 +1184,7 @@ drop.clade<-function(tree,tip){
 	chk<-tree$tip.label[desc[desc<=Ntip(tree)]]
 	if(!setequal(tip,chk)){
 		cat("Caution: Species in tip do not form a monophyletic clade.\n")
-		cat("         Pruning all tips descended from ancestor.\n\n")
+		cat("				 Pruning all tips descended from ancestor.\n\n")
 		tip<-chk
 	}
 	## step 2, find all edges in the clade & set them to zero length
@@ -1151,7 +1219,7 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 		else position<-tree$edge.length[which(tree$edge[,2]==node.number)]
 	} else {
 		if(node.number==(Ntip(tree)+1))
-			cat("      A value of position != 0 has been reset to zero.\n")
+			cat("			A value of position != 0 has been reset to zero.\n")
 	}
 	if(hasArg(edgelabel)) edgelabel<-list(...)$edgelabel
 	else edgelabel<-FALSE
@@ -1172,67 +1240,6 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	} else obj<-tree
 	if(interactive) plotTree(obj,...)
 	obj
-}
-
-## function to add an arrow pointing to a tip or node in the tree
-## written by Liam J. Revell 2014, 2017, 2020
-
-add.arrow<-function(tree=NULL,tip,...){
-	if(length(tip)>1){ 
-		object<-sapply(tip,add.arrow,tree=tree,...)
-		invisible(object)
-	} else {
-		lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-		if(!is.null(tree)){
-			if(inherits(tree,"contMap")) tree<-tree$tree
-			else if(inherits(tree,"densityMap")) tree<-tree$tree
-		}
-		if(is.numeric(tip)){
-			ii<-tip
-			if(!is.null(tree)&&ii<=Ntip(tree)) tip<-tree$tip.label[ii]
-			else tip<-""
-		} else if(is.character(tip)&&!is.null(tree)) ii<-which(tree$tip.label==tip)
-		if(hasArg(offset)) offset<-list(...)$offset
-		else offset<-1
-		strw<-lastPP$cex*(strwidth(tip)+offset*mean(strwidth(c(LETTERS,letters))))
-		if(hasArg(arrl)) arrl<-list(...)$arrl
-		else { 
-			if(lastPP$type=="fan") arrl<-0.3*max(lastPP$xx)
-			else if(lastPP$type=="phylogram") arrl<-0.15*max(lastPP$xx)
-		}
-		if(hasArg(hedl)) hedl<-list(...)$hedl
-		else hedl<-arrl/3
-		if(hasArg(angle)) angle<-list(...)$angle
-		else angle<-45
-		arra<-angle*pi/180
-		asp<-if(lastPP$type=="fan") 1 else (par()$usr[4]-par()$usr[3])/(par()$usr[2]-
-			par()$usr[1])
-		if(hasArg(col)) col<-list(...)$col
-		else col<-"black"
-		if(hasArg(lwd)) lwd<-list(...)$lwd	
-		else lwd<-2
-		if(lastPP$type=="fan") theta<-atan2(lastPP$yy[ii],lastPP$xx[ii])
-		else if(lastPP$type=="phylogram") theta<-0	
-		segments(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
-			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw,
-			col=col,lwd=lwd,lend="round")
-		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta+arra/2)*hedl,
-			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta+arra/2)*hedl*asp,
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw,
-			col=col,lwd=lwd,lend="round")
-		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta-arra/2)*hedl,
-			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta-arra/2)*hedl*asp,
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw,
-			col=col,lwd=lwd,lend="round")
-		invisible(list(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
-			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw))
-		}
 }
 
 ## function to ladderize phylogeny with mapped discrete character
@@ -1530,7 +1537,7 @@ lambdaTree<-function(tree,lambda){
 	H1<-nodeHeights(tree)
 	tree$edge.length[ii]<-lambda*tree$edge.length[ii]
 	H2<-nodeHeights(tree)
-	tree$edge.length[-ii]<-tree$edge.length[-ii]+     H1[-ii,2]-H2[-ii,2]
+	tree$edge.length[-ii]<-tree$edge.length[-ii]+		 H1[-ii,2]-H2[-ii,2]
 	tree
 }
 
@@ -1579,20 +1586,20 @@ di2multi.simmap<-function(phy,...){
 # written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
 # modified by Klaus Schliep 2017
 nodeHeights<-function(tree,...){
-    if(hasArg(root.edge)) root.edge<-list(...)$root.edge
-    else root.edge<-FALSE
-    if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
-    else ROOT<-0 
-    nHeight <- function(tree){
-        tree <- reorder(tree)
-        edge <- tree$edge
-        el <- tree$edge.length
-        res <- numeric(max(tree$edge))
-        for(i in seq_len(nrow(edge))) res[edge[i,2]] <- res[edge[i,1]] + el[i] 
-        res
-    }
-    nh <- nHeight(tree)
-    return(matrix(nh[tree$edge], ncol=2L)+ROOT)
+		if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+		else root.edge<-FALSE
+		if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+		else ROOT<-0 
+		nHeight <- function(tree){
+				tree <- reorder(tree)
+				edge <- tree$edge
+				el <- tree$edge.length
+				res <- numeric(max(tree$edge))
+				for(i in seq_len(nrow(edge))) res[edge[i,2]] <- res[edge[i,1]] + el[i] 
+				res
+		}
+		nh <- nHeight(tree)
+		return(matrix(nh[tree$edge], ncol=2L)+ROOT)
 }
 
 ## function drops all the leaves from the tree & collapses singleton nodes
@@ -1738,8 +1745,8 @@ sampleFrom<-function(xbar=0,xvar=1,n=1,randn=NULL,type="norm"){
 
 	for(i in 1:length(xbar)){
 		y<-rnorm(n=n[i],mean=xbar[i],sd=sqrt(xvar[i]))
-   		names(y)<-rep(names(xbar)[i],length(y))
-   		x<-c(x,y)
+	 		names(y)<-rep(names(xbar)[i],length(y))
+	 		x<-c(x,y)
 	}
 	return(x)
 }
@@ -1826,7 +1833,7 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 			X<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
 		}
 		return(X)
-    } else {
+		} else {
 		node<-getMRCA(tree,tips)
 		if (type == "node") return(node)
 		else if(type=="height") return(nodeheight(tree,node))

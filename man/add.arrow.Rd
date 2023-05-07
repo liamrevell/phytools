@@ -13,7 +13,7 @@ add.arrow(tree=NULL, tip, ...)
 	Adds an arrow or a set of arrows to a plotted tree.
 }
 \details{
-	This function presently works for radial (\code{type="fan"}) and right facing square phylograms (\code{type=} \code{"phylogram"}). Trees can be plotted using \pkg{phytools} function \code{plotTree}, \code{plotSimmap}, \code{contMap}, \code{densityMap}, and \pkg{ape} S3 method \code{plot.phylo}.
+	Trees can be plotted using \pkg{phytools} function \code{plotTree}, \code{plotSimmap}, \code{contMap}, \code{densityMap}, and \pkg{ape} S3 method \code{plot.phylo}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
