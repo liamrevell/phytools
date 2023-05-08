@@ -3,9 +3,9 @@
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
-	type="phylogram",setEnv=TRUE,part=1.0,xlim=NULL,ylim=NULL,nodes="intermediate",
-	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA,outline=FALSE,
-	plot=TRUE,underscore=FALSE){
+	type="phylogram",setEnv=TRUE,part=if(type=="arc") 0.5 else 1.0,xlim=NULL,ylim=NULL,
+	nodes="intermediate",tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA,
+	outline=FALSE,plot=TRUE,underscore=FALSE,arc_height=2){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,
@@ -76,6 +76,18 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 			}
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add=if(outline) TRUE else add,part,
 				setEnv,xlim,ylim,tips,maxY,lend,plot,offset)
+		} else if(type=="arc"){
+			if(outline){
+				fg<-par()$fg
+				par(fg="transparent")
+				black<-colors
+				black[]<-fg
+				arcPhylogram(tree,colors=black,fsize,ftype,lwd=lwd+2,mar,add,part,setEnv,
+					xlim,ylim,tips,maxY,lend,plot,offset,arc_height)
+				par(fg=fg)
+			}
+			arcPhylogram(tree,colors,fsize,ftype,lwd,mar,add=if(outline) TRUE else add,part,
+				setEnv,xlim,ylim,tips,maxY,lend,plot,offset,arc_height)
 		} else if(type=="cladogram"){
 			if(outline){
 				fg<-par()$fg
@@ -91,6 +103,26 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 		}
 		if(hold) null<-dev.flush()
 	}
+}
+
+## this is a wrapper of plotFan
+## written by Liam J. Revell 2023
+arcPhylogram<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,
+	plot,offset,arc_height){
+	tree<-reorder(tree,"cladewise")
+	edge<-tree$edge
+	edge[edge>Ntip(tree)]<-edge[edge>Ntip(tree)]+1
+	edge<-rbind(Ntip(tree)+c(1,2),edge)
+	Nnode<-Nnode(tree)+1
+	edge.length<-c(arc_height*max(nodeHeights(tree)),tree$edge.length)
+	maps<-c(vector(length=1,mode="numeric"),tree$maps)
+	maps[[1]]<-setNames(edge.length[1],"NULO")
+	colors<-c(setNames("transparent","NULO"),colors)
+	object<-list(edge=edge,Nnode=Nnode,tip.label=tree$tip.label,
+		edge.length=edge.length,maps=maps)
+	class(object)<-class(tree)
+	attr(object,"map.order")<-attr(object,"map.order")
+	plotFan(object,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot,offset)
 }
 
 ## function to plot simmap tree in type "phylogram"
@@ -603,7 +635,7 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 }
 
 # function plots a tree; in the new version this is just a wrapper for plotSimmap
-# written by Liam Revell 2012-2017
+# written by Liam Revell 2012-2017, 2023
 plotTree<-function(tree,...){
 	if(hasArg(color)) color<-list(...)$color
 	else color<-NULL
@@ -630,7 +662,7 @@ plotTree<-function(tree,...){
 	if(hasArg(setEnv)) setEnv<-list(...)$setEnv
 	else setEnv<-TRUE
 	if(hasArg(part)) part<-list(...)$part
-	else part<-1.0
+	else part<-if(type=="arc") 0.5 else 1
 	if(hasArg(xlim)) xlim<-list(...)$xlim
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
@@ -650,7 +682,9 @@ plotTree<-function(tree,...){
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
 	if(hasArg(underscore)) underscore<-list(...)$underscore
-	else underscore=FALSE
+	else underscore<-FALSE
+	if(hasArg(arc_height)) arc_height<-list(...)$arc_height
+	else arc_height<-2
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		if(!is.null(color)) names(color)<-"1"
@@ -658,7 +692,7 @@ plotTree<-function(tree,...){
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar=mar,add=add,offset=offset,
 			direction=direction,type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,
 			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend,asp=asp,plot=plot,
-			underscore=underscore)
+			underscore=underscore,arc_height=arc_height)
 	} else {
 		if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 		tree$maps<-as.list(tree$edge.length)
@@ -667,7 +701,7 @@ plotTree<-function(tree,...){
 		plotSimmap(tree,colors=color,fsize=fsize,ftype=ftype,lwd=lwd,pts=pts,
 			node.numbers=node.numbers,mar=mar,add=add,offset=offset,direction=direction,
 			type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,nodes=nodes,tips=tips,maxY=maxY,
-			hold=hold,lend=lend,asp=asp,plot=plot,underscore=underscore)
+			hold=hold,lend=lend,asp=asp,plot=plot,underscore=underscore,arc_height=arc_height)
 	}
 }
 

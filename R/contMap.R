@@ -133,7 +133,9 @@ plot.contMap<-function(x,...){
 	else outline<-TRUE
 	if(hasArg(nodes_only)) nodes_only<-list(...)$nodes_only
 	else nodes_only<-FALSE
-	if(is.null(legend)) legend<-0.5*max(H)
+	if(hasArg(arc_height)) arc_height<-list(...)$arc_height
+	else arc_height<-2
+	if(is.null(legend)) legend<-if(type=="arc") max(H) else 0.5*max(H)
 	if(is.null(fsize)) fsize<-c(1,1)
 	if(length(fsize)==1) fsize<-rep(fsize,2)
 	if(is.null(ftype)) ftype<-c("i","reg")
@@ -164,7 +166,7 @@ plot.contMap<-function(x,...){
 		} else if(is.null(ylim)) ylim<-NULL
 		if(is.null(offset)) {
 			if(type%in%c("cladogram","phylogram")) offset<-0.2*lwd[1]/3+0.2/3
-			else if(type=="fan") offset<-1
+			else if(type%in%c("fan","arc")) offset<-1
 		}
 		args<-list(...)
 		args$ylim<-ylim
@@ -172,6 +174,7 @@ plot.contMap<-function(x,...){
 		args$offset<-offset
 		args$fsize<-fsize[1]
 		args$lwd<-lwd[1]
+		args$arc_height<-arc_height
 		do.call(plotTree,args)
 		pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 		xx<-pp$xx
@@ -180,10 +183,11 @@ plot.contMap<-function(x,...){
 			if(direction=="rightwards")
 				xx[1:N]<-xx[1:N]+strwidth(paste(obj$tip.label,"__",sep=""),cex=fsize[1])+offset
 		}
-		points(xx,yy,pch=if(outline) 21 else 16,
-			col=if(outline) par()$fg else node.cols,
-			bg=if(outline) node.cols else NULL,
-			cex=c(rep(cex[2],N),rep(cex[1],obj$Nnode)))
+		DROP<-if(type=="arc") DROP<-Ntip(x$tree)+1 else DROP<-NULL
+		points(xx[-DROP],yy[-DROP],pch=if(outline) 21 else 16,
+			col=if(outline) par()$fg else node.cols[-DROP],
+			bg=if(outline) node.cols[-DROP] else NULL,
+			cex=c(rep(cex[2],N),rep(cex[1],obj$Nnode-length(DROP))))
 		if(legend){
 			if(is.logical(legend)) legend<-0.5*max(H)
 			if(length(leg.txt)==1) 
@@ -209,6 +213,16 @@ plot.contMap<-function(x,...){
 						subtitle=paste("length=",round(legend,3),
 						sep=""))
 				}
+			} else if(type=="arc"){
+				add.color.bar(legend,x$cols,
+					title=leg.txt[2],
+					as.numeric(leg.txt[c(1,3)]),
+					digits=sig,prompt=FALSE,
+					outline=outline,
+					x=mean(par()$usr[1:2])-0.5*legend,
+					y=par()$usr[3]+0.1*diff(par()$usr[3:4]),
+					lwd=lwd[2],
+					fsize=fsize[2])
 			} else if(type=="fan"){
 				add.color.bar(legend,x$cols,
 					title=leg.txt[2],
@@ -230,7 +244,7 @@ plot.contMap<-function(x,...){
 		leg.txt<-c(round(lims[1],sig),leg.txt,round(lims[2],sig))
 		plot(x,fsize=fsize,ftype=ftype,lwd=lwd,legend=legend,outline=outline,leg.txt=leg.txt,
 			type=type,mar=mar,direction=direction,offset=offset,xlim=xlim,ylim=ylim,hold=hold,
-			underscore=underscore)
+			underscore=underscore,arc_height=arc_height)
 	}
 }
 
