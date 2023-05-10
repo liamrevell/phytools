@@ -2,6 +2,15 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023
 
+# function works like extract.clade in ape but will preserve a discrete character mapping
+# written by Liam J. Revell 2013, 2023
+extract.clade.simmap<-function(tree,node){
+	if(!inherits(tree,"simmap")) stop("tree should be an object of class \"simmap\".")
+	x<-getDescendants(tree,node)
+	x<-x[x<=Ntip(tree)]
+	drop.tip.simmap(tree,tree$tip.label[-x])
+}
+
 ## function to add an arrow pointing to a tip or node in the tree
 ## written by Liam J. Revell 2014, 2017, 2020, 2023
 

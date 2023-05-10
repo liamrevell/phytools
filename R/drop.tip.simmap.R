@@ -1,11 +1,12 @@
-## function drops tip or tips from an object of class "simmap"
+## functions drop or keep tips for multiple phylogenetic object types
 ## written by Liam J. Revell 2012, 2015, 2018, 2021, 2023
 
 drop.tip.simmap<-function(phy,tip,...){
 	if(hasArg(untangle)) untangle<-list(...)$untangle
 	else untangle<-FALSE
-	if(!inherits(phy,"phylo")) 
-		stop("phy should be object of class \"phylo\".")
+	phy<-reorder(phy)
+	if(!inherits(phy,"simmap")) 
+		stop("phy should be object of class \"simmap\".")
 	tip<-which(phy$tip.label%in%tip)
 	edges<-match(tip,phy$edge[,2])
 	z<-setdiff(1:nrow(phy$edge),edges)
@@ -78,30 +79,6 @@ drop.tip.simmap<-function(phy,tip,...){
 	if(untangle) phy<-untangle(phy,"read.tree")
 	phy
 }
-
-## drop.tip.multiPhylo
-## written by Liam J. Revell 2020, 2021
-## removed from phytools because 16-1-2023 because redundant with ape
-
-# drop.tip.multiPhylo<-function(phy,tip,...){
-    # if(!inherits(phy,"multiPhylo"))
-        # stop("phy is not an object of class \"multiPhylo\".")
-    # else {
-		# if(!inherits(phy,"multiSimmap")){
-			# if(hasArg(interactive)) interactive<-list(...)$interactive
-			# else interactive<-FALSE
-			# if(interactive) stop("interactive=TRUE does not work for drop.tip.multiPhylo.")
-			# else {
-				# trees<-lapply(phy,drop.tip,tip=tip,...)
-				# class(trees)<-class(phy)
-			# }
-		# } else {
-			# trees<-lapply(phy,drop.tip.simmap,tip=tip,...)
-			# class(trees)<-class(phy)
-		# }
-    # }
-    # trees
-# }
 
 drop.tip.multiSimmap<-function(phy,tip,...){
 	if(!inherits(phy,"multiSimmap"))
