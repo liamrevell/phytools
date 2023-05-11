@@ -318,6 +318,7 @@ plot.cophylo<-function(x,...){
 	plot.new()
 	if(hasArg(type)) type<-list(...)$type
 	else type<-"phylogram"
+	if(length(type)==1) type<-rep(type,2)
 	if(hasArg(mar)) mar<-list(...)$mar
 	else mar<-c(0.1,0.1,0.1,0.1)
 	if(hasArg(xlim)) xlim<-list(...)$xlim
@@ -352,8 +353,9 @@ plot.cophylo<-function(x,...){
 			sb.fsize<- if(length(obj$fsize)>2) obj$fsize[3] else 1
 		} else sb.fsize<-1
 	} else sb.fsize<-1
-	plotter<-if(type=="cladogram") "cladogram" else "phylogram"
+	plotter<-if(type[1]=="cladogram") "cladogram" else "phylogram"
 	x1<-do.call(plotter,c(list(tree=x$trees[[1]]),leftArgs))
+	plotter<-if(type[2]=="cladogram") "cladogram" else "phylogram"
 	left<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	x2<-do.call(plotter,c(list(tree=x$trees[[2]],direction="leftwards"),
 		rightArgs))
