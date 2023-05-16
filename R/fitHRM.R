@@ -181,7 +181,7 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		}
 	} else if(parallel){
 		if(hasArg(ncores)) ncores<-list(...)$ncores
-		else ncores<-detectCores()-1
+		else ncores<-min(c(detectCores()-1,niter))
 		mc<-makeCluster(ncores,type="PSOCK")
 		registerDoParallel(cl=mc)
 		if(!quiet){
