@@ -1,5 +1,5 @@
 ## find the temporal position of a rate shift using ML
-## written by Liam J. Revell 2013, 2014, 2015, 2020
+## written by Liam J. Revell 2013, 2014, 2015, 2020, 2023
 
 rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -17,17 +17,20 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	else fixed.shift<-FALSE
 	if(hasArg(compute.se)) compute.se<-list(...)$compute.se
 	else compute.se<-TRUE
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE
+	if(niter==1) parallel<-FALSE
 	fn<-if(method=="ML") brownie.lite else brownieREML
 	if(!fixed.shift[1]){
 		if(print){
-			cat("Optimization progress:\n\n")
-			if(nrates>1) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
-			else cat("iter\ts^2(1)\tlogL\n")
+			if(!parallel) cat("Optimization progress:\n\n")
+			if(nrates>1&&!parallel) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
+			else if(!parallel) cat("iter\ts^2(1)\tlogL\n")
 		} else if(niter==1) {
 			if(!quiet) cat("Optimizing. Please wait.\n\n")
 			flush.console()
 		} else { 
-			if(!quiet) cat("Optimization progress:\n|")
+			if(!quiet&&!parallel) cat("Optimization progress:\n|")
 			flush.console()
 		}
 	} else {
@@ -59,19 +62,57 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	x<-x[tree$tip.label]
 	if(!fixed.shift[1]){
 		fit<-list()
-		for(i in 1:niter){
-			if(nrates>1) par<-sort(runif(n=nrates-1)*h)
-			if(nrates==1){ 
-				fit[[i]]<-fn(make.era.map(tree,setNames(0,1)),x)
-				fit[[i]]$convergence<-if(fit[[i]]$convergence=="Optimization has converged.") 0 else 1
-			} else suppressWarnings(fit[[i]]<-optim(par,lik,tree=tree,y=x,nrates=nrates,print=print,plot=plot,
-				iter=i,Tol=tol,maxh=h,minL=minL))
-			if(!print&&niter>1){ 
-				if(!quiet) cat(".")
+		if(!parallel){
+			for(i in 1:niter){
+				if(nrates==1){ 
+					fit[[i]]<-fn(make.era.map(tree,setNames(0,1)),x)
+					fit[[i]]$convergence<-if(fit[[i]]$convergence==
+						"Optimization has converged.") 0 else 1
+				} else {
+					fit[[i]]<-list()
+					class(fit[[i]])<-"try-error"
+					while(inherits(fit[[i]],"try-error")){
+						par<-sort(runif(n=nrates-1)*h)
+						try(suppressWarnings(fit[[i]]<-optim(par,lik,tree=tree,
+							y=x,nrates=nrates,print=print,plot=plot,iter=i,
+							Tol=tol,maxh=h,minL=minL)))
+					}
+				}
+				if(!print&&niter>1){ 
+					if(!quiet) cat(".")
+					flush.console()
+				}
+			} 
+		} else {
+			if(hasArg(ncores)) ncores<-list(...)$ncores
+			else ncores<-min(c(detectCores()-1,niter))
+			mc<-makeCluster(ncores,type="PSOCK")
+			registerDoParallel(cl=mc)
+			if(!quiet){
+				cat(paste("Opened cluster with",ncores,"cores.\n"))
+				cat("Running optimization iterations in parallel.\n")
+				cat("Please wait....\n")
 				flush.console()
 			}
+			fit<-foreach(i=1:niter)%dopar%{
+				if(nrates>1) par<-sort(runif(n=nrates-1)*h)
+				if(nrates==1){ 
+					obj<-fn(make.era.map(tree,setNames(0,1)),x)
+					obj$convergence<-if(obj$convergence=="Optimization has converged.") 0 else 1
+				} else {
+					obj<-list()
+					class(obj)<-"try-error"
+					while(inherits(obj,"try-error")){
+						par<-sort(runif(n=nrates-1)*h)
+						try(suppressWarnings(obj<-optim(par,lik,tree=tree,y=x,nrates=nrates,
+							print=FALSE,plot=FALSE,iter=i,Tol=tol,maxh=h,minL=minL)))
+					}
+				}
+				obj
+			}
+			stopCluster(cl=mc)
 		}
-		if(!print&&niter>1) if(!quiet) cat("|\nDone.\n\n")
+		if(!print&&niter>1) if(!quiet) if(!parallel) cat("|\nDone.\n\n") else cat("Done.\n\n")
 		ll<-sapply(fit,function(x) if(nrates>1) x$value else -x$logL1)
 		fit<-fit[[which(ll==min(ll))[1]]]
 		frequency.best<-mean(ll<=(min(ll)+1e-4))
