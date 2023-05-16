@@ -73,7 +73,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 					class(fit[[i]])<-"try-error"
 					while(inherits(fit[[i]],"try-error")){
 						par<-sort(runif(n=nrates-1)*h)
-						try(suppressWarnings(fit[[i]]<-optim(par,lik,tree=tree,
+						suppressWarnings(fit[[i]]<-try(optim(par,lik,tree=tree,
 							y=x,nrates=nrates,print=print,plot=plot,iter=i,
 							Tol=tol,maxh=h,minL=minL)))
 					}
@@ -104,7 +104,7 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 					class(obj)<-"try-error"
 					while(inherits(obj,"try-error")){
 						par<-sort(runif(n=nrates-1)*h)
-						try(suppressWarnings(obj<-optim(par,lik,tree=tree,y=x,nrates=nrates,
+						suppressWarnings(obj<-try(optim(par,lik,tree=tree,y=x,nrates=nrates,
 							print=FALSE,plot=FALSE,iter=i,Tol=tol,maxh=h,minL=minL)))
 					}
 				}
