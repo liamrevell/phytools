@@ -267,6 +267,8 @@ S3method(ancr, anova.fitMk)
 S3method(anova, fitHRM)
 S3method(hide.hidden, ancr)
 S3method(plot, ancr)
+S3method(c, simmap)
+S3method(c, multiSimmap)
 
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)

@@ -1,10 +1,12 @@
 ## this function fits two or more evolutionary rates for a continuous trait on the tree
 ## based on O'Meara et al. (2006)
-## written by Liam J. Revell 2011/2012, 2019, 2022
+## written by Liam J. Revell 2011/2012, 2019, 2022, 2023
 
 brownie.lite<-function(tree,x,maxit=2000,test="chisq",nsim=100,se=NULL,...){
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-8
 	# some minor error checking
 	if(!inherits(tree,"phylo")) 
 		stop("tree should be an object of class \"phylo\".")
@@ -43,7 +45,7 @@ brownie.lite<-function(tree,x,maxit=2000,test="chisq",nsim=100,se=NULL,...){
 		control=list(maxit=maxit),hessian=TRUE,
 		method="L-BFGS-B",lower=l)	
 	logL2<--model2$value
-	while(logL2<logL1){
+	while(logL1>=(logL2+tol)){
 		if(!quiet){ 
 			message("False convergence on first try; trying again with new starting values.")
 		} 

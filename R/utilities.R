@@ -2,6 +2,72 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023
 
+## c "combine" method for "simmap" and "multiSimmap" object classes
+
+## adapted from c.phylo in ape (Paradis & Schliep 2019)
+c.simmap<-function(...,recursive=TRUE){
+	obj<-list(...)
+	classes<-lapply(obj,class)
+	isphylo<-sapply(classes,function(x) "simmap" %in% x)
+	if(all(isphylo)){
+		class(obj)<-c("multiSimmap","multiPhylo")
+		return(obj)
+	}
+	if(!recursive) return(obj)
+	ismulti<-sapply(classes, function(x) "multiSimmap" %in% x)
+	if(all(isphylo|ismulti)){
+		result<-list()
+		j<-1
+		for(i in 1:length(isphylo)){
+			if(isphylo[i]){ 
+				result[[j]]<-obj[[i]]
+				j<-j+1
+			} else {
+				n<-length(obj[[i]])
+				result[0:(n-1)+j]<-.uncompressTipLabel(obj[[i]])
+				j<-j+n
+			}
+		}
+		class(result)<-c("multiSimmap","multiPhylo")
+		obj<-result
+	} else {
+		msg<-paste("some objects not of class \"simmap\" or",
+			"\"multiSimmap\": argument recursive=TRUE ignored")
+		warning(msg)
+	}
+	return(obj)
+}
+
+## adapted from c.multiPhylo in ape (Paradis & Schliep 2019)
+c.multiSimmap<-function(...,recursive=TRUE){
+	obj<-list(...)
+	if(!recursive) return(obj)
+	classes<-lapply(obj,class)
+	isphylo<-sapply(classes,function(x) "simmap" %in% x)
+	ismulti<-sapply(classes, function(x) "multiSimmap" %in% x)
+	if(all(isphylo|ismulti)){
+		result<-list()
+		j<-1
+		for(i in 1:length(isphylo)){
+			if(isphylo[i]){ 
+				result[[j]]<-obj[[i]]
+				j<-j+1
+			} else {
+				n<-length(obj[[i]])
+				result[0:(n-1)+j]<-.uncompressTipLabel(obj[[i]])
+				j<-j+n
+			}
+		}
+		class(result)<-c("multiSimmap","multiPhylo")
+		obj<-result
+	} else {
+		msg<-paste("some objects not of class \"simmap\" or",
+			"\"multiSimmap\": argument recursive=TRUE ignored")
+		warning(msg)
+	}
+	return(obj)
+}
+
 ## function to summarize the results of stochastic mapping
 ## written by Liam J. Revell 2013, 2014, 2015, 2021, 2022, 2023
 
