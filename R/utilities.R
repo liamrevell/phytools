@@ -2,6 +2,35 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023
 
+## function forces a tree to be ultrametric using two different methods
+## written by Liam J. Revell 2017, 2021, 2022, 2023
+
+force.ultrametric<-function(tree,method=c("nnls","extend"),...){
+	if(hasArg(message)) message<-list(...)$message
+	else message<-TRUE
+	if(message){
+		cat("***************************************************************\n")
+		cat("*                          Note:                              *\n")
+		cat("*    force.ultrametric does not include a formal method to    *\n")
+		cat("*    ultrametricize a tree & should only be used to coerce    *\n")
+		cat("*   a phylogeny that fails is.ultramtric due to rounding --   *\n")
+		cat("*    not as a substitute for formal rate-smoothing methods.   *\n")
+		cat("***************************************************************\n")
+	}
+	method<-method[1]
+	if(method=="nnls") tree<-nnls.tree(cophenetic(tree),tree,
+		method="ultrametric",rooted=is.rooted(tree),trace=0)
+	else if(method=="extend"){
+		h<-diag(vcv(tree))
+		d<-max(h)-h
+		ii<-sapply(1:Ntip(tree),function(x,y) which(y==x),
+			y=tree$edge[,2])
+		tree$edge.length[ii]<-tree$edge.length[ii]+d
+	} else 
+		cat("method not recognized: returning input tree\n\n")
+	tree
+}
+
 ## c "combine" method for "simmap" and "multiSimmap" object classes
 
 ## adapted from c.phylo in ape (Paradis & Schliep 2019)
@@ -271,36 +300,6 @@ rescaleSimmap<-function(tree,...){
 		}
 		return(tree)
 	} else message("tree should be an object of class \"simmap\" or \"multiSimmap\"")
-}
-
-
-## function forces a tree to be ultrametric using two different methods
-## written by Liam J. Revell 2017, 2021, 2022
-
-force.ultrametric<-function(tree,method=c("nnls","extend"),...){
-	if(hasArg(message)) message<-list(...)$message
-	else message<-TRUE
-	if(message){
-		cat("***************************************************************\n")
-		cat("*													Note:															*\n")
-		cat("*		force.ultrametric does not include a formal method to		*\n")
-		cat("*		ultrametricize a tree & should only be used to coerce		*\n")
-		cat("*	 a phylogeny that fails is.ultramtric due to rounding --	 *\n")
-		cat("*		not as a substitute for formal rate-smoothing methods.	 *\n")
-		cat("***************************************************************\n")
-	}
-	method<-method[1]
-	if(method=="nnls") tree<-nnls.tree(cophenetic(tree),tree,
-		method="ultrametric",rooted=is.rooted(tree),trace=0)
-	else if(method=="extend"){
-		h<-diag(vcv(tree))
-		d<-max(h)-h
-		ii<-sapply(1:Ntip(tree),function(x,y) which(y==x),
-			y=tree$edge[,2])
-		tree$edge.length[ii]<-tree$edge.length[ii]+d
-	} else 
-		cat("method not recognized: returning input tree\n\n")
-	tree
 }
 
 ## function to get states at internal nodes from simmap style trees
