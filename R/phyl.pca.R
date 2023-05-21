@@ -265,6 +265,8 @@ scores.default<-function(object,...){
 scores.phyl.pca<-function(object,...){
 	if(hasArg(newdata))newdata<-list(...)$newdata
 	else newdata<-NULL
+	if(hasArg(dim)) dim<-list(...)$dim
+	else dim<-NULL
 	if(!is.null(newdata)){
 		if(!is.matrix(newdata)) newdata<-as.matrix(newdata)
 		if(ncol(newdata)!=nrow(object$Evec))
@@ -277,8 +279,9 @@ scores.phyl.pca<-function(object,...){
 			Y<-newdata/matrix(rep(sqrt(diag(V)),n),n,m,byrow=TRUE)-A
 		} else Y<-newdata-A 
 		Scores<-Y%*%object$Evec
+		if(!is.null(dim)) Scores<-Scores[,dim,drop=FALSE]
 	} else { 
-		Scores<-object$S
+		Scores<-if(!is.null(dim)) object$S[,dim,drop=FALSE] else object$S
 	}
 	Scores
 }
