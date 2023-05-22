@@ -12,6 +12,7 @@
 \alias{cordylid.tree}
 \alias{eel.data}
 \alias{eel.tree}
+\alias{elapidae.tree}
 \alias{flatworm.data}
 \alias{flatworm.tree}
 \alias{liolaemid.tree}
@@ -45,6 +46,8 @@
 	\code{cordylid.tree} and \code{cordylid.data} are a phylogeny and dataset of morphological traits for three different principal components axes from Broeckhoven et al. (2016).
 
 	\code{eel.tree} and \code{eel.data} are a phylogeny and dataset of feeding mode and maximum total length from 61 species of elopomorph eels from Collar et al. (2014).
+	
+	\code{elapidae.tree} is a reconstructed phylogeny containing 175 species of snakes of the family Elapidae from Lee et al. (2016).
 
 	\code{flatworm.tree} and \code{flatworm.data} are a phylogeny and dataset of habitat preferences for flatworms from Benitez-Alvarez et al. (2020). \code{flatworm.tree} has been made ultrametric using penalized likelihood.
 	
@@ -78,6 +81,7 @@ data(cordylid.data)
 data(cordylid.tree)
 data(eel.data)
 data(eel.tree)
+data(elapidae.tree)
 data(flatworm.data)
 data(flatworm.tree)
 data(liolaemid.tree)
@@ -108,6 +112,8 @@ data(wasp.trees)
 	\code{cordylid.tree} is an object of class \code{"phylo"}. \code{cordylid.data} is a data frame.
 	
 	\code{eel.tree} is an object of class \code{"phylo"}. \code{eel.data} is a data frame.
+	
+	\code{elapidae.tree} is an object of class \code{"phylo"}.
 	
 	\code{flatworm.tree} is an object of class \code{"phylo"}. \code{flatworm.data} is a data frame.
 	
@@ -149,6 +155,8 @@ data(wasp.trees)
 	Hedges, S. B., J. Dudley, and S. Kumar (2006) TimeTree: A public knowledgebase of divergence times among organisms. \emph{Bioinformatics}, \bold{22}, 2971-2972.
 
 	Highton, R., and A. Larson (1979) The genetic relationships of the salamanders of the genus \emph{Plethodon}. \emph{Systematic Zoology}, \bold{28}, 579-599.
+	
+	Lee, M. S. Y., K. L. Saunders, B. King, and A. Palci (2016) Diversification rates and phenotypic evolution in venomous snakes (Elapidae). \emph{Royal Society Open Science}, \bold{3}, 150277.
 	
 	Lopez-Vaamonde, C., J. Y. Rasplus, G. D. Weiblen, and J. M. Cook (2001) Molecular phylogenies of fig wasps: Partial cocladogenesis of pollinators and parasites. \emph{Molecular Phylogenetics and Evolution}, \bold{21}, 55-71.
 
