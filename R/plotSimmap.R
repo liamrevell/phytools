@@ -107,8 +107,8 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 
 ## this is a wrapper of plotFan
 ## written by Liam J. Revell 2023
-arcPhylogram<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,
-	plot,offset,arc_height){
+arcPhylogram<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,
+	xlim,ylim,tips,maxY,lend,plot,offset,arc_height){
 	tree<-reorder(tree,"cladewise")
 	edge<-tree$edge
 	edge[edge>Ntip(tree)]<-edge[edge>Ntip(tree)]+1
@@ -122,7 +122,18 @@ arcPhylogram<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim
 		edge.length=edge.length,maps=maps)
 	class(object)<-class(tree)
 	attr(object,"map.order")<-attr(object,"map.order")
-	plotFan(object,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips,maxY,lend,plot,offset)
+	plotFan(object,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,
+		ylim,tips,maxY,lend,plot,offset)
+	if(setEnv){
+		PP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		ROOT<-PP$Ntip+1
+		PP$Nnode<-PP$Nnode-1
+		PP$edge<-PP$edge[2:nrow(PP$edge),]
+		PP$edge[PP$edge>PP$Ntip]<-PP$edge[PP$edge>PP$Ntip]-1
+		PP$xx<-PP$xx[-ROOT]
+		PP$yy<-PP$yy[-ROOT]
+		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
+	}
 }
 
 ## function to plot simmap tree in type "phylogram"
