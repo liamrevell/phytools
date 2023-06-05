@@ -608,8 +608,10 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 
 
 ## adds legend to an open stochastic map style plot
-## written by Liam J. Revell 2013, 2016, 2017
+## written by Liam J. Revell 2013, 2016, 2017, 2023
 add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
+	if(hasArg(border)) border<-list(...)$border
+	else border<-par()$fg
 	if(hasArg(shape)) shape<-list(...)$shape
 	else shape<-"square"
 	if(prompt){
@@ -639,9 +641,10 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 		y<-rep(y+w/2,length(x))
 		text(x,y,leg,pos=4,cex=fsize/par()$cex)
 	}
-	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE)
+	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE,
+		fg=border)
 	else if(shape=="circle") nulo<-mapply(draw.circle,x=x,y=y,col=colors,
-		MoreArgs=list(nv=200,radius=w/2))
+		MoreArgs=list(nv=200,radius=w/2,border=border))
 	else stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
 }
 
