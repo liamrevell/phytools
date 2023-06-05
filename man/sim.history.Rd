@@ -15,7 +15,7 @@ sim.multiMk(tree, Q, anc=NULL, nsim=1, ...)
 	\item{anc}{an optional value for the state at the root node; if \code{NULL}, a random state will be assigned. \code{anc} can be a vector of states, in which one of the states will be chosen randomly for each simulation. For \code{sim.history} \code{anc} can be a vector of probabilities with names, in which case a state will be chosen in proportion to the given probabilities.}
 	\item{nsim}{number of simulations.}
 	\item{direction}{row/column direction of the input transition matrix, \code{Q}. \code{direction="column_to_row"} indicates that the transition rate from \code{i -> j} should be given by \code{Q[j,i]}, while \code{direction="row_to_column"} indicates the converse.}
-	\item{...}{other optional arguments. Currently only \code{message}, a logical value indicating whether or not to turn on informational messages (defaults to \code{message=TRUE}).}
+	\item{...}{other optional arguments. Currently only \code{internal}, a logical value indicating whether or not to return internal node states (defaults to \code{internal=FALSE}; and \code{message}, a logical indicating whether or not to turn on informational messages (defaults to \code{message=TRUE}).}
 }
 \description{
 	Simulates discrete character evolution on a phylogenetic tree.

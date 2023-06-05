@@ -4,6 +4,87 @@
 ## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
 ## lik.func="pruning" uses phytools::pruning to compute likelihood instead
 
+## function to simulate multiple-rate Mk multiMk
+## written by Liam J. Revell 2018
+sim.multiMk<-function(tree,Q,anc=NULL,nsim=1,...){
+	if(hasArg(as.list)) as.list<-list(...)$as.list
+	else as.list<-FALSE
+	if(hasArg(internal)) internal<-list(...)$internal
+	else internal<-FALSE
+	ss<-rownames(Q[[1]])
+	tt<-map.to.singleton(reorder(tree))
+	P<-vector(mode="list",length=nrow(tt$edge))
+	for(i in 1:nrow(tt$edge))
+		P[[i]]<-expm(Q[[names(tt$edge.length)[i]]]*tt$edge.length[i])
+	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
+		data.frame(row.names=tt$tip.label)
+	for(i in 1:nsim){
+		a<-if(is.null(anc)) sample(ss,1) else anc
+		STATES<-matrix(NA,nrow(tt$edge),2)
+		root<-Ntip(tt)+1
+		STATES[which(tt$edge[,1]==root),1]<-a
+		for(j in 1:nrow(tt$edge)){
+			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
+			STATES[j,2]<-new
+			ii<-which(tt$edge[,1]==tt$edge[j,2])
+			if(length(ii)>0) STATES[ii,1]<-new
+		}
+		if(internal){
+			x<-as.factor(setNames(sapply(1:(Ntip(tt)+tt$Nnode),
+				function(n,S,E) S[which(E==n)[1]],S=STATES,E=tt$edge),
+				c(tt$tip.label,1:tt$Nnode+Ntip(tt))))
+		} else{
+			x<-as.factor(
+				setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
+				S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
+		}
+		if(nsim>1) X[,i]<-x else X<-x
+	}
+	X
+}
+
+## constant-rate Mk model simulator
+## written by Liam J. Revell 2018, 2023
+
+sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
+	if(hasArg(as.list)) as.list<-list(...)$as.list
+	else as.list<-FALSE
+	if(hasArg(internal)) internal<-list(...)$internal
+	else internal<-FALSE
+	ss<-rownames(Q)
+	tt<-reorder(tree)
+	P<-vector(mode="list",length=nrow(tt$edge))
+	for(i in 1:nrow(tt$edge))
+		P[[i]]<-expm(Q*tt$edge.length[i])
+	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
+		data.frame(row.names=tt$tip.label)
+	for(i in 1:nsim){
+		if(is.null(anc)) a<-sample(ss,1)
+		else if(is.numeric(anc)) a<-sample(names(anc),1,prob=anc)
+		else a<-anc
+		STATES<-matrix(NA,nrow(tt$edge),2)
+		root<-Ntip(tt)+1
+		STATES[which(tt$edge[,1]==root),1]<-a
+		for(j in 1:nrow(tt$edge)){
+			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
+			STATES[j,2]<-new
+			ii<-which(tt$edge[,1]==tt$edge[j,2])
+			if(length(ii)>0) STATES[ii,1]<-new
+		}
+		if(internal){
+			x<-as.factor(setNames(sapply(1:(Ntip(tt)+tt$Nnode),
+				function(n,S,E) S[which(E==n)[1]],S=STATES,E=tt$edge),
+				c(tt$tip.label,1:tt$Nnode+Ntip(tt))))
+		} else{
+			x<-as.factor(
+				setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
+				S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
+		}
+		if(nsim>1) X[[i]]<-x else X<-x
+	}
+	X
+}
+
 anova.fitMk<-function(object,...){
 	fits<-list(...)
 	nm<-c(
@@ -556,70 +637,6 @@ EXPM<-function(x,...){
 	e_x<-if(isSymmetric(x)) matexpo(x) else expm(x,...)
 	dimnames(e_x)<-dimnames(x)
 	e_x
-}
-
-## function to simulate multiple-rate Mk multiMk
-## written by Liam J. Revell 2018
-sim.multiMk<-function(tree,Q,anc=NULL,nsim=1,...){
-	if(hasArg(as.list)) as.list<-list(...)$as.list
-	else as.list<-FALSE
-	ss<-rownames(Q[[1]])
-	tt<-map.to.singleton(reorder(tree))
-	P<-vector(mode="list",length=nrow(tt$edge))
-	for(i in 1:nrow(tt$edge))
-		P[[i]]<-expm(Q[[names(tt$edge.length)[i]]]*tt$edge.length[i])
-	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
-		data.frame(row.names=tt$tip.label)
-	for(i in 1:nsim){
-		a<-if(is.null(anc)) sample(ss,1) else anc
-		STATES<-matrix(NA,nrow(tt$edge),2)
-		root<-Ntip(tt)+1
-		STATES[which(tt$edge[,1]==root),1]<-a
-		for(j in 1:nrow(tt$edge)){
-			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
-			STATES[j,2]<-new
-			ii<-which(tt$edge[,1]==tt$edge[j,2])
-			if(length(ii)>0) STATES[ii,1]<-new
-		}
-		x<-as.factor(
-			setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
-			S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
-		if(nsim>1) X[,i]<-x else X<-x
-	}
-	X
-}
-
-## constant-rate Mk model simulator
-## written by Liam J. Revell 2018, 2023
-sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
-	if(hasArg(as.list)) as.list<-list(...)$as.list
-	else as.list<-FALSE
-	ss<-rownames(Q)
-	tt<-reorder(tree)
-	P<-vector(mode="list",length=nrow(tt$edge))
-	for(i in 1:nrow(tt$edge))
-		P[[i]]<-expm(Q*tt$edge.length[i])
-	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
-		data.frame(row.names=tt$tip.label)
-	for(i in 1:nsim){
-		if(is.null(anc)) a<-sample(ss,1)
-		else if(is.numeric(anc)) a<-sample(names(anc),1,prob=anc)
-		else a<-anc
-		STATES<-matrix(NA,nrow(tt$edge),2)
-		root<-Ntip(tt)+1
-		STATES[which(tt$edge[,1]==root),1]<-a
-		for(j in 1:nrow(tt$edge)){
-			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
-			STATES[j,2]<-new
-			ii<-which(tt$edge[,1]==tt$edge[j,2])
-			if(length(ii)>0) STATES[ii,1]<-new
-		}
-		x<-as.factor(
-			setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
-			S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
-		if(nsim>1) X[[i]]<-x else X<-x
-	}
-	X
 }
 
 ## as.Qmatrix method
