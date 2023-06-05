@@ -1,9 +1,6 @@
 ## functions to do the pruning algorithm and reconstruct ancestral states
 
 joint_asr<-function(q,tree,X,pi,model=NULL,tips=FALSE,tol=1e-12){
-	cat("Note:\n")
-		cat("	 this option is new & I recommend cross-checking\n")
-		cat("	 your reconstruction with corHMM::ancRECON.\n")
 	tol<-tol*max(nodeHeights(tree))
 	tipn<-1:Ntip(tree)
 	tt<-tree
@@ -212,6 +209,13 @@ print.ancr<-function(x,digits=6,printlen=6,...){
 ancr.anova.fitMk<-function(object,...){
 	if(hasArg(weighted)) weighted<-list(...)$weighted
 	else weighted<-TRUE
+	if(hasArg(type)) type<-list(...)$type
+	else type<-"marginal"
+	if(type!="marginal"){
+		cat("\nOnly type=\"marginal\" supported for objects of class \"anova.fitMk\".\n")
+		cat("Updating type.\n\n")
+		type<-"marginal"
+	}
 	if(weighted){
 		w<-object$weight
 		fits<-attr(object,"models")
@@ -262,6 +266,7 @@ ancr.anova.fitMk<-function(object,...){
 		obj<-list(ace=anc,logLik=log_lik)
 		attr(obj,"tree")<-TREE
 		attr(obj,"data")<-DATA
+		attr(obj,"type")<-"marginal"
 		class(obj)<-"ancr"
 		return(obj)
 	} else {
