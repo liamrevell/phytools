@@ -132,9 +132,6 @@ plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
 		if(k>36) 
 			cat("Warning: maximum number of colors reached. Some colors are recycled.\n\n")
 	}
-	if(args.plotTree$type=="arc"){
-		args.nodelabels$node<-Ntip(TREE)+1:Nnode(TREE)+1
-	}
 	old_fg<-par()$fg
 	par(fg="transparent")
 	do.call(nodelabels,args.nodelabels)
