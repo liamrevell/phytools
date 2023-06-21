@@ -302,7 +302,7 @@ as.princomp.phyl.pca<-function(x,...){
 	obj$sdev<-setNames(sqrt(diag(x$Eval)),nn)
 	obj$loadings<-x$L
 	colnames(obj$loadings)<-nn
-	obj$center<-setNames(x$a[1,],rownames(x$Evec))
+	obj$center<-setNames(as.vector(x$a),rownames(x$Evec))
 	obj$scale<-setNames(rep(1,length(obj$center)),names(obj$center))
 	obj$scores<-x$S
 	colnames(obj$scores)<-nn
