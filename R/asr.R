@@ -181,12 +181,17 @@ logLik.ancr<-function(object,...){
 }
 
 print.ancr<-function(x,digits=6,printlen=6,...){
+	Nnode<-Nnode(attr(x,"tree"))
+	if(!is.null(printlen)) if(printlen>Nnode) printlen<-Nnode
 	if(attr(x,"type")=="marginal"){
 		cat("Marginal ancestral state estimates:\n")
 		if (is.null(printlen)) 
 			print(round(x$ace,digits))
 		else {
-			print(round(x$ace[1:printlen,],digits))
+			ii<-if(nrow(x$ace)>Nnode) 
+				1:printlen+Ntip(attr(x,"tree")) else 
+				1:printlen
+			print(round(x$ace[ii,],digits))
 			cat("...\n")
 		}
 	} else if(attr(x,"type")=="joint"){
@@ -194,7 +199,10 @@ print.ancr<-function(x,digits=6,printlen=6,...){
 		tmp<-data.frame(state=x$ace)
 		if(is.null(printlen)) print(tmp)
 		else {
-			print(tmp[1:printlen,,drop=FALSE])
+			ii<-if(nrow(tmp)>Nnode) 
+				1:printlen+Ntip(attr(x,"tree")) else 
+				1:printlen
+			print(tmp[ii,,drop=FALSE])
 			cat("...\n")
 		}
 	}
