@@ -1542,7 +1542,8 @@ getAncestors<-function(tree,node,type=c("all","parent")){
 
 ## function for midpoint rooting
 ## written by Liam J. Revell 2014
-midpoint.root<-function(tree){
+## (being deprecated out in 2023)
+midpoint_root<-function(tree){
 	D<-cophenetic(tree)
 	dd<-max(D)
 	ii<-which(D==dd)[1]
@@ -1559,6 +1560,9 @@ midpoint.root<-function(tree){
 	tree<-reroot(tree,as.numeric(names(D)[i]),D[i+1]-dd/2)
 	tree
 }
+
+midpoint.root<-function(tree,node.labels="support",...) 
+	phangorn::midpoint(tree,node.labels="support",...)
 
 # function computes phylogenetic variance-covariance matrix, including for internal nodes
 # written by Liam J. Revell 2011, 2013, 2014, 2015
