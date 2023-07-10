@@ -84,6 +84,7 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 	object$data<-x
 	object$tree<-tree
 	object$lik<-temp$lik
+	object$opt_results<-fit.parallel[c("counts","convergence","message","loginfo")]
 	class(object)<-"fitMk"
 	object
 }

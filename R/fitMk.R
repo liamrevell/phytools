@@ -305,6 +305,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				pi=pi,
 				method=opt.method,
 				root.prior=root.prior)
+			if(opt.method=="nlminb")
+				obj$opt_results<-fit[c("convergence","iterations","evaluations","message")]
+			else if(opt.method=="optim")
+				obj$opt_results<-fit[c("counts","convergence","message")]
 			if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 				pi=pi)
 		} else {
@@ -363,6 +367,9 @@ print.fitMk<-function(x,digits=6,...){
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",
 		sep=""))
+	if(x$opt_results$convergence==0) 
+		cat("R thinks it has found the ML solution.\n\n")
+	else cat("R thinks optimization may not have converged.\n\n")
 }
 
 ## summary method for objects of class "fitMk"

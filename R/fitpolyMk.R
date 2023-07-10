@@ -137,6 +137,9 @@ print.fitpolyMk<-function(x,digits=6,...){
 	print(round(x$pi,digits))
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",sep=""))
+	if(x$opt_results$convergence==0) 
+		cat("R thinks it has found the ML solution.\n\n")
+	else cat("R thinks optimization may not have converged.\n\n")
 }
 
 ## logLik method for objects of class "fitpolyMk"
