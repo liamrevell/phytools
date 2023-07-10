@@ -59,18 +59,12 @@ fancyTree(tree,type="extinction")
 
 \dontrun{
 ## plot 3D traitgram
-tree<-pbtree(n=50,scale=10)
-Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),2,2))
-fancyTree(tree,type="traitgram3d",X=Y,
-    control=list(spin=FALSE))
-	
-## plot with internal nodes from simulation
-Y<-sim.corrs(tree,vcv=matrix(c(1,0.75,0.75,1),
-    2,2),internal=TRUE)
-B<-Y[length(tree$tip)+1:tree$Nnode,]
-Y<-Y[1:length(tree$tip),]
-fancyTree(tree,type="traitgram3d",X=Y,A=B,
-    control=list(simple.axes=TRUE,spin=FALSE))}
+## load data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+fancyTree(sunfish.tree,type="traitgram3d",
+  X=sunfish.data[,2:3],
+  control=list(spin=FALSE))}
 	
 ## plot with dropped tips
 tree<-pbtree(n=30)
@@ -80,9 +74,12 @@ par(mfrow=c(1,1)) ## reset mfrow to default
 
 \dontrun{
 ## plot 95-percent CI phenogram
-tree<-pbtree(n=30)
-x<-fastBM(tree)
-fancyTree(tree,type="phenogram95",x=x)}
+data(mammal.tree)
+data(mammal.data)
+bodyMass<-setNames(mammal.data$bodyMass,
+  rownames(mammal.data))
+fancyTree(mammal.tree,type="phenogram95",x=bodyMass,
+  fsize=0.7,ftype="i")}
 
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset mar to defaults
 }

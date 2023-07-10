@@ -12,7 +12,7 @@ collapseTree(tree, ...)
 	Function creates an interactive visualization of collapsing & expanding clades on the tree.
 }
 \details{
-	Function first plots a fan style tree, and then the user collapses node on the tree by clicking on them. Collapsed nodes are collapsed to the common ancestor of the clade. Nodes that have been collapsed can also be expanded by clicking. Right-click to end.
+	Function first plots a fan style tree, and then the user collapses node on the tree by clicking on them. Collapsed nodes are collapsed to the common ancestor of the clade. Nodes that have been collapsed can also be expanded by clicking. Right-click (or select Finish button in \pkg{RStudio}) to end.
 }
 \value{
 	Returns the final plotted tree.

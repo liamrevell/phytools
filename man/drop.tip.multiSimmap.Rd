@@ -1,7 +1,7 @@
 \name{drop.tip.multiSimmap}
 \alias{drop.tip.multiSimmap}
 \alias{keep.tip.multiSimmap}
-\title{Drop or keep tip or tips from an object of class "multiSimmap"}
+\title{Drop or keep tip or tips from an object of class \code{"multiSimmap"}}
 \usage{
 \method{drop.tip}{multiSimmap}(phy, tip, ...)
 \method{keep.tip}{multiSimmap}(phy, tip, ...)

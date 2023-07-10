@@ -25,6 +25,7 @@ ansi_phylo(tree, vertical=c("|","-"), ...)
 \examples{
 data(salamanders)
 ansi_phylo(salamanders)
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}
