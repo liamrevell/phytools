@@ -40,6 +40,7 @@ sunfish_smap<-simmap(er_model,nsim=1)
 cols<-setNames(c("blue","red"),levels(fmode))
 plot(sunfish_smap,cols,ftype="i")
 markChanges(sunfish_smap,colors=cols,lwd=6)
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{ancestral states}
 \keyword{bayesian}

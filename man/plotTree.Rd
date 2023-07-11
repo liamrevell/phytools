@@ -27,8 +27,7 @@ plotTree(tree, ...)
 \examples{
 data(vertebrate.tree)
 plotTree(vertebrate.tree,fsize=1.2,ftype="i")
-## reset margins
-par(mar=c(5.1,4.1,4.1,2.1))
+par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
 }
 \keyword{phylogenetics}
 \keyword{plotting}

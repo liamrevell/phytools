@@ -29,13 +29,13 @@ data(anole.data)
 ## compute phylogenetic residuals
 anole.data<-as.matrix(anole.data)
 anole.resids<-cbind(anole.data[,1],
-    phyl.resid(anoletree,anole.data[,1,drop=FALSE],
+  phyl.resid(anoletree,anole.data[,1,drop=FALSE],
     anole.data[,2:ncol(anole.data)])$resid)
 colnames(anole.resids)[1]<-"SVL"
 ## plot phylogenetic heatmap
 phylo.heatmap(anoletree,anole.resids,
-    split=c(0.7,0.3),fsize=c(0.4,0.8,0.8),
-    standardize=TRUE)
+  split=c(0.7,0.3),fsize=c(0.4,0.8,0.8),
+  standardize=TRUE,pts=FALSE)
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
 }
 \keyword{phylogenetics}

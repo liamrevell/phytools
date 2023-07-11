@@ -11,7 +11,7 @@ resolveAllNodes(tree)
 	\item{node}{for \code{resolveNode}, the node with a polytomy to resolve.}
 }
 \description{
-	Resolves a single multifurcation or all multifuctions in all possible ways.
+	Resolves a single multifurcation or all multifurcations in all possible ways.
 }
 \details{
 	This functions resolves a single multifurcation or all multifurcations in a tree in all possible ways. If the input tree has edge lengths, then the resolutions will use internal edges of zero length.

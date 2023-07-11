@@ -37,6 +37,7 @@ plotTree(anoletree,ylim=c(-0.16,1)*Ntip(anoletree),
   ftype="i",lwd=1,fsize=0.5)
 ## add geological color legend
 obj<-geo.legend()
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
