@@ -10,6 +10,7 @@
 \alias{butterfly.tree}
 \alias{cordylid.data}
 \alias{cordylid.tree}
+\alias{darter.tree}
 \alias{eel.data}
 \alias{eel.tree}
 \alias{elapidae.tree}
@@ -45,6 +46,8 @@
 	\code{bonyfish.tree} and \code{bonyfish.data} are a phylogeny and dataset of spawning mode and parental care in bony fishes from Benun Sutton and Wilson (2019).
 	
 	\code{cordylid.tree} and \code{cordylid.data} are a phylogeny and dataset of morphological traits for three different principal components axes from Broeckhoven et al. (2016).
+	
+	\code{darter.tree} is a phylogeny of 201 species of darter fish (Etheostomatinae) from Near et al. (2011).
 
 	\code{eel.tree} and \code{eel.data} are a phylogeny and dataset of feeding mode and maximum total length from 61 species of elopomorph eels from Collar et al. (2014).
 	
@@ -80,6 +83,7 @@ data(butterfly.data)
 data(butterfly.tree)
 data(cordylid.data)
 data(cordylid.tree)
+data(darter.tree)
 data(eel.data)
 data(eel.tree)
 data(elapidae.tree)
@@ -111,6 +115,8 @@ data(wasp.trees)
 	\code{butterfly.tree} is an object of class \code{"phylo"}. \code{butterfly.data} is a data frame.
 	
 	\code{cordylid.tree} is an object of class \code{"phylo"}. \code{cordylid.data} is a data frame.
+	
+	\code{darter.tree} is an object of class \code{"phylo"}.
 	
 	\code{eel.tree} is an object of class \code{"phylo"}. \code{eel.data} is a data frame.
 	
@@ -162,6 +168,8 @@ data(wasp.trees)
 	Lopez-Vaamonde, C., J. Y. Rasplus, G. D. Weiblen, and J. M. Cook (2001) Molecular phylogenies of fig wasps: Partial cocladogenesis of pollinators and parasites. \emph{Molecular Phylogenetics and Evolution}, \bold{21}, 55-71.
 
 	Mahler, D. L, L. J. Revell, R. E. Glor, and J. B. Losos (2010) Ecological opportunity and the rate of morphological evolution in the diversification of Greater Antillean anoles. \emph{Evolution}, \bold{64}, 2731-2745.
+	
+	Near, T. J., C. M. Bossu, G. S. Bradburd, R. L. Carlson, R. C. Harrington, P. R. Hollingsworth Jr., B. P. Keck, and D. A. Etnier. (2011) Phylogeny and temporal diversification of darters (Percidae: Etheostomatinae). \emph{Systematic Biology}, \bold{60}, 565-595.
 	
 	Revell, L. J., and D. C. Collar (2009) Phylogenetic analysis of the evolutionary correlation using likelihood. \emph{Evolution}, \bold{63}, 1090-1100.
 
