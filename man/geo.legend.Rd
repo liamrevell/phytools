@@ -28,6 +28,16 @@ geo.palette()
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 }
+\examples{
+data(anoletree)
+## rescale tree to 50 ma total depth
+anoletree<-rescale(anoletree,model="depth",depth=50)
+## plot phylogeny
+plotTree(anoletree,ylim=c(-0.16,1)*Ntip(anoletree),
+  ftype="i",lwd=1,fsize=0.5)
+## add geological color legend
+obj<-geo.legend()
+}
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{plotting}
