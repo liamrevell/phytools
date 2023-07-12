@@ -10,7 +10,7 @@ sigmoidPhylogram(tree, ...)
 splinePhylogram(tree, ...)
 }
 \arguments{
- 	\item{tree}{an object of class "phylo" or "multiPhylo" containing one or multiple phylogenies.}
+ 	\item{tree}{an object of class \code{"phylo"} or \code{"multiPhylo"} containing one or multiple phylogenies.}
  	\item{fsize}{relative font size for tip labels.}
 	\item{ftype}{font type - options are \code{"reg"}, \code{"i"} (italics), \code{"b"} (bold), or \code{"bi"} (bold-italics).}
 	\item{lwd}{line width for plotting.}

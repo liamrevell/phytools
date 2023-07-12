@@ -6,7 +6,7 @@ rescale(x, ...)
 }
 \arguments{
 	\item{x}{phylogenetic tree object to be rescaled: e.g., object of class \code{"phylo"} or \code{"simmap"}.}
-	\item{...}{other arguments to be used in rescaling, dependending on the object class. (E.g., see \code{\link[geiger]{rescale.phylo}} in \pkg{geiger} and \code{\link{rescale.simmap}}.)}
+	\item{...}{other arguments to be used in rescaling, depending on the object class. (E.g., see \code{\link[geiger]{rescale.phylo}} in \pkg{geiger} and \code{\link{rescale.simmap}}.)}
 }
 \description{
 	Generic method for rescaling different types of phylogenetic trees.

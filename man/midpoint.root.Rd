@@ -19,7 +19,7 @@ midpoint_root(tree)
 	
 	The function \code{midpoint_root} performs the same operation as \code{\link{midpoint}} in the \pkg{phangorn} package, but uses no \pkg{phangorn} (Schliep, 2011) code internally.
 	
-	The function \code{midpoint.root} is a psuedo S3 method for the object class \code{"root"} that exists because when \code{\link{midpoint}} was created in \pkg{phangorn} it was not defined as a generic method. This function merely points to \code{\link{midpoint}} and is being deprecated out.
+	The function \code{midpoint.root} is a pseudo S3 method for the object class \code{"root"} that exists because when \code{\link{midpoint}} was created in \pkg{phangorn} it was not defined as a generic method. This function merely points to \code{\link{midpoint}} and is being deprecated out.
 }
 \value{
 	An object of class \code{"phylo"} containing a rooted phylogenetic tree.

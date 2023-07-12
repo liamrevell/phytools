@@ -1,6 +1,6 @@
 \name{reorderSimmap}
 \alias{reorderSimmap}
-\title{Reorder edges of a simmap tree}
+\title{Reorder edges of a \code{"simmap"} tree}
 \usage{
 reorderSimmap(tree, order="cladewise", index.only=FALSE, ...)
 }

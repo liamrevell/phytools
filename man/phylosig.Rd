@@ -16,7 +16,7 @@ phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
 	\item{se}{named vector containing the standard errors for each species.}
 	\item{start}{vector of starting values for optimization of (respectively) \eqn{\sigma^2} and \eqn{\lambda}. Only used in \code{method="lambda"} and \code{se!=NULL}.}
 	\item{control}{list of control parameters for multidimensional optimization, implemented in \code{\link{optim}}. Only used in \code{method="lambda"} and \code{se!=NULL}.}
-	\item{niter}{number of interations for likelihood optimization of \eqn{\lambda} (if \code{se!=NULL}), or the number of \emph{intervals} between 0 and the maximum possible value of \eqn{\lambda} for univariate optimization of \eqn{\lambda} (if \code{se==NULL}).}
+	\item{niter}{number of iterations for likelihood optimization of \eqn{\lambda} (if \code{se!=NULL}), or the number of \emph{intervals} between 0 and the maximum possible value of \eqn{\lambda} for univariate optimization of \eqn{\lambda} (if \code{se==NULL}).}
 	\item{...}{optional arguments for \code{plot} method.}
 }
 \description{

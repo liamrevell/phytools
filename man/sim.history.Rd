@@ -28,7 +28,7 @@ sim.multiMk(tree, Q, anc=NULL, nsim=1, ...)
 	Finally, the function \code{sim.multiMk} is the same as \code{sim.Mk} except that it permits the user to simulate under different values of \code{Q} in different parts of the tree.
 }
 \value{
-	\code{sim.history} returns an object of class \code{"simmap"} (a tree with a mapped discrete character) or \code{"multiSimmap"} for <code>nsim</code> greater than one.
+	\code{sim.history} returns an object of class \code{"simmap"} (a tree with a mapped discrete character) or \code{"multiSimmap"} for \code{nsim} greater than one.
 	
 	\code{sim.Mk} and \code{sim.multiMk} return a factor with the states of our discrete character at the tips of the tree only.
 }

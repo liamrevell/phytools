@@ -1,6 +1,6 @@
 \name{bd}
 \alias{bd}
-\title{Convert object of class "birthdeath" to raw birth & death rates}
+\title{Convert object of class \code{"birthdeath"} to raw birth & death rates}
 \usage{
 bd(x)
 }

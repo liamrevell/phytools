@@ -1,6 +1,6 @@
 \name{countSimmap}
 \alias{countSimmap}
-\title{Counts the number of character changes on a object of class "simmap" or "multiSimmap"}
+\title{Counts the number of character changes on a object of class \code{"simmap"} or \code{"multiSimmap"}}
 \usage{
 countSimmap(tree, states=NULL, message=TRUE)
 }

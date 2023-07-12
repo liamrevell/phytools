@@ -8,7 +8,7 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names.}
 	\item{maxit}{an optional integer value indicating the maximum number of iterations for optimization.}
-	\item{model}{model of continuous character evolution ont he tree. It's possible that only \code{model="BM"} & \code{model="EB"} work in the present version as \code{model="OU"} has not be thoroughly tested & some bugs were reported for an earlier version.}
+	\item{model}{model of continuous character evolution on the tree. It's possible that only \code{model="BM"} & \code{model="EB"} work in the present version as \code{model="OU"} has not be thoroughly tested & some bugs were reported for an earlier version.}
 	\item{...}{optional arguments.}
 }
 \description{

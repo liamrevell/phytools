@@ -15,7 +15,7 @@ brownieREML(tree, x, maxit=2000, ...)
 	Fits a multi-rate Brownian motion evolution model using REML. (See \code{\link{brownie.lite}} for more details.)
 }
 \details{
-	This function takes an object of class \code{"phylo"} or an object of class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then uses restricted maximum likelihood (REML) to fit the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This function is similar to \code{\link{brownie.lite}} but uses REML (which is faster and unbiased) instead of ML.  REML optimization takes advantage of Felsenstein's (1985) contrasts algorithm.
+	This function takes an object of class \code{"phylo"} or an object of class \code{"simmap"} with a mapped binary or multi-state trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then uses restricted maximum likelihood (REML) to fit the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}).  This function is similar to \code{\link{brownie.lite}} but uses REML (which is faster and unbiased) instead of ML.  REML optimization takes advantage of Felsenstein's (1985) contrasts algorithm.
 }
 \value{
 	An object of class \code{"brownieREML"} containing the following components:

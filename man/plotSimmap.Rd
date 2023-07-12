@@ -15,7 +15,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 \method{plot}{multiSimmap}(x, ...)
 }
 \arguments{
- 	\item{tree}{a modified object of class "phylo" or "multiPhylo" containing a stochastic mapping or set of mappings (e.g., see \code{\link{read.simmap}} & \code{\link{make.simmap}}).}
+ 	\item{tree}{an object of class \code{"simmap"} or \code{"multiSimmap"} containing a stochastic mapping or set of mappings (e.g., see \code{\link{read.simmap}} & \code{\link{make.simmap}}).}
  	\item{colors}{a vector with names translating the mapped states to colors - see \code{Examples}.}
  	\item{fsize}{relative font size for tip labels.}
 	\item{ftype}{font type - options are \code{"reg"}, \code{"i"} (italics), \code{"b"} (bold), or \code{"bi"} (bold-italics).}

@@ -17,7 +17,7 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 	Fits a multi-rate Brownian motion evolution model using maximum likelihood.
 }
 \details{
-	This function takes an object of class \code{"phylo"} or class \code{"simmap"} with a mapped binary or multistate trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then fits the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}). This is also the basic model implemented in Brian O'Meara's \emph{Brownie} software.
+	This function takes an object of class \code{"phylo"} or class \code{"simmap"} with a mapped binary or multi-state trait (see \code{\link{read.simmap}}) and data for a single continuously valued character.  It then fits the Brownian rate variation ("noncensored") model of O'Meara et al. (2006; \emph{Evolution}). This is also the basic model implemented in Brian O'Meara's \emph{Brownie} software.
 	
 	Sampling error in the estimation of species means can also be accounted for by assigning the vector \code{se} with the species specific sampling errors for \code{x}.
 }
@@ -34,7 +34,7 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 	\item{logL.multiple}{log-likelihood of the multi-rate model.}
 	\item{k2}{number of parameters in the multi-rate model (\emph{p}+1).}
 	\item{P.chisq}{P-value for a likelihood ratio test against the \eqn{\chi^2} distribution; or}
-	\item{P.sim}{P-value for a likelihood ratio test agains a simulated null distribution.}
+	\item{P.sim}{P-value for a likelihood ratio test against a simulated null distribution.}
 	\item{convergence}{logical value indicating if the likelihood optimization converged.}
 }
 \references{

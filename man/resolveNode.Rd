@@ -21,7 +21,7 @@ resolveAllNodes(tree)
 	For \code{resolveAllNodes} the number of fully resolved trees will be equal to the product of numbers for \code{resolveNode} applied to each multifurcation separately. (For instance, 45 for a tree containing one trifurcation and one quadrifurcation.)
 }
 \value{
-	An object of class \code{"multiPhylo"} - or, if the input tree is already fully resolved, an object of class \code{"phylo"} indentical to \code{tree}.
+	An object of class \code{"multiPhylo"} - or, if the input tree is already fully resolved, an object of class \code{"phylo"} identical to \code{tree}.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

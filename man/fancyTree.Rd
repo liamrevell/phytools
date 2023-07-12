@@ -23,7 +23,7 @@ phenogram95(tree, x=NULL, ...)
 \details{
 	This function plots a phylogeny or phylogenetic tree and comparative data in a variety of different styles, depending on the value of \code{type}. In some instances, \code{fancyTree} is now just a wrappe for other \pkg{phytools} functions, such as \code{\link{contMap}} and \code{\link{densityMap}}.
 	
-	If \code{type="extinction"} (or any unambiguous abbreviation) the function will plot a tree in which branches preceding the MRCA of all extant taxa and branches leading only to extnct lineages are plotted with dashed red lines. 
+	If \code{type="extinction"} (or any unambiguous abbreviation) the function will plot a tree in which branches preceding the MRCA of all extant taxa and branches leading only to extinct lineages are plotted with dashed red lines. 
 	
 	If \code{type="traitgram3d"} the function will plot a three dimensional traitgram (that is, a projection of the tree into three dimensional morphospace where two dimensions are the phenotypic trait and the third axis is time since the root). In this case, the additional argument \code{X}, a matrix containing the tip values of all species (with species IDs as row names) should be supplied. Optionally, the user can also supply the matrix \code{A}, which contains the ancestral states in the tree with rows labeled by node number. 
 	
@@ -33,7 +33,7 @@ phenogram95(tree, x=NULL, ...)
 	
 	If \code{type="contmap"}, reconstructed continuous trait evolution is mapped on the tree. Again, see \code{\link{contMap}} for additional arguments if \code{type="contmap"}.
 
-	If \code{type="phenogram95"} a 95\% phenogram is plotted using transparency to visualize uncertainty at ancestral nodes and along branches. Most of the options of \code{\link{phenogram}} are available. 
+	If \code{type="phenogram95"} a 95\% traitgram (aka. "phenogram") is plotted using transparency to visualize uncertainty at ancestral nodes and along branches. Most of the options of \code{\link{phenogram}} are available. 
 	
 	Finally, if \code{type="scattergram"} a phylogenetic scatter plot matrix containing \code{\link{contMap}} style trees on the diagonal and \code{\link{phylomorphospace}} plots in non-diagonal panels is produced. For this type a trait matrix \code{X} must also be supplied. The only additional arguments available for this type are \code{ftype}, \code{fsize}, \code{colors}, and \code{label}. (See \code{\link{phylomorphospace}} for details on how these arguments should be used.) This function calls \code{\link{phyloScattergram}} (which is also now exported to the name space) internally. In addition to creating a plot, \code{phyloScattergram} also returns an object of class \code{"phyloScattergram"} which can be replotted using different options if desired.
 

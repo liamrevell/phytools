@@ -608,9 +608,9 @@ get.asp<-function(){
 	asp
 }
 
-round.polygon<-function(x,y,col="transparent"){
+# round.polygon<-function(x,y,col="transparent"){
 	## just space holding for now	
-}
+# }
 
 ## draw a box around a clade
 ## written by Liam J. Revell 2017

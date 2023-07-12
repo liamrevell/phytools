@@ -31,7 +31,7 @@ ratebytree(trees, x, ...)
 
 	At present it is not possible to specify different models to fit for the different trees - although if (for instance) character evolution on tree 1 proceeded by a strong \emph{OU} process while character evolution on tree 2 was by \emph{BM}, we would probably reject a constant-process model and tree 2 should show a very low value of \code{alpha}.
 	
-	To compute the standard errors for each fitted paramater value, the function computes the negative inverse of the Hessian matrix at the MLEs; however, if this matrix is computationally singular the generalized inverse (\code{\link{ginv}}) will be used instead without warning.
+	To compute the standard errors for each fitted parameter value, the function computes the negative inverse of the Hessian matrix at the MLEs; however, if this matrix is computationally singular the generalized inverse (\code{\link{ginv}}) will be used instead without warning.
 
 	The function also conducts a likelihood-ratio test to compare the two models.
 	
@@ -57,7 +57,7 @@ ratebytree(trees, x, ...)
 	
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 	
-	Revell, L. J. (2018) Comparing the rates of speciation and extinction between phylogenetic trees. emph{Ecology and Evolution}, \bold{8}, 5303-5312.
+	Revell, L. J. (2018) Comparing the rates of speciation and extinction between phylogenetic trees. \emph{Ecology and Evolution}, \bold{8}, 5303-5312.
 	
 	Revell, L. J., Gonzalez-Valenzuela, L. E., Alfonso, A., Castellanos-Garcia, L. A., Guarnizo, C. E., and Crawford, A. J. (2018) Comparing evolutionary rates between trees, clades, & traits. \emph{Methods Ecol. Evol.}, \bold{9}, 994-1005.
 }

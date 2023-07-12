@@ -7,7 +7,7 @@ splitplotTree(tree, fsize=1.0, ftype="reg", lwd=2, split=NULL, new.window=FALSE)
 plotTree.splits(tree, splits=NULL, file=NULL, fn=NULL, ...)
 }
 \arguments{
- 	\item{tree}{an object of class "phylo".}
+ 	\item{tree}{an object of class \code{"phylo"}.}
  	\item{fsize}{relative font size for tip labels.}
 	\item{ftype}{font type - options are \code{"reg"}, \code{"i"} (italics), \code{"b"} (bold), or \code{"bi"} (bold-italics).}
 	\item{lwd}{line width for plotting.}

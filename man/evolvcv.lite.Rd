@@ -15,7 +15,7 @@ evolvcv.lite(tree, X, maxit=2000, tol=1e-10, ...)
 	Fits a multi-regime model for differences in the evolutionary variance-covariance structure or correlation between two continuous traits, following Revell & Collar (2009) and Revell et al. (2022).
 }
 \details{
-	This function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for two and only two continuously valued character. It then fits (by default) four different evolutionary models: common rates and correlation; different rates, common correlation; different correlations, common rates; no common structure.
+	This function takes an object of class \code{"simmap"} with a mapped binary or multi-state trait and data for two and only two continuously valued character. It then fits (by default) four different evolutionary models: common rates and correlation; different rates, common correlation; different correlations, common rates; no common structure.
 	
 	In addition to the four default models specified above, \code{evolvcv.lite} now fits an additional four additional models.
 	

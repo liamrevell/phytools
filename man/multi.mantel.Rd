@@ -22,7 +22,7 @@ multi.mantel(Y, X, nperm=1000)
 	\item{probF}{probability of F, based on Mantel permutations.}
 	\item{residuals}{matrix of residuals.}
 	\item{predicted}{matrix of predicted values.}
-	\item{nperm}{tne number of permutations used.}
+	\item{nperm}{the number of permutations used.}
 }
 \details{
 	Printing the object to screen will result in a summary of the analysis similar to \code{summary.lm}, but with p-values derived from Mantel permutations.

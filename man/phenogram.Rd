@@ -1,6 +1,6 @@
 \name{phenogram}
 \alias{phenogram}
-\title{Plot phenogram (traitgram)}
+\title{Plot traitgram (phenogram)}
 \usage{
 phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
    add=FALSE, ...)

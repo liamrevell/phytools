@@ -6,7 +6,7 @@ plotBranchbyTrait(tree, x, mode=c("edges","tips","nodes"), palette="rainbow",
    legend=TRUE, xlims=NULL, ...)
 }
 \arguments{
-	\item{tree}{an object of class "phylo".}
+	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{either a vector of states for the edges, tips, or nodes of the tree (for \code{mode="edges"}, \code{"tips"}, and \code{"nodes"}, respectively).}
 	\item{mode}{string indicating plotting mode. \code{mode="edges"}, the default, requires that the mapping state of each edge in the tree should be provided. \code{mode="tips"} takes the tip values and estimates the state at each internal node. The mapped character value along each branch is the average of the nodes subtending that branch. \code{mode="nodes"} similar to \code{"tips"}, except that the node values are provided instead of estimated.}
 	\item{palette}{color palette to translate character values to color. Options are presently \code{"rainbow"} (the default), \code{"heat.colors"}, and \code{"gray"}. \code{palette} can also be a function produced by \code{\link{colorRampPalette}}.}

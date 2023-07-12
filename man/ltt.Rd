@@ -43,7 +43,7 @@ mccr(obj, rho=1, nsim=100, ...)
 \value{
 	\code{ltt} returns an object of class \code{"ltt"} which includes the following elements:
 	\item{times}{a vector of branching times.}
-	\item{ltt}{a vector of linages.}
+	\item{ltt}{a vector of lineages.}
 	\item{gamma}{optionally, a value for the \eqn{\gamma}-statistic.}
 	\item{p}{two-tailed P-value for the \eqn{\gamma}-test.}
 	If \code{tree} is an object of class \code{"multiPhylo"}, then an object of class \code{"multiLtt"} is returned consisting of a list of object of class \code{"ltt"}.
