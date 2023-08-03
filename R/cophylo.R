@@ -353,6 +353,12 @@ plot.cophylo<-function(x,...){
 			sb.fsize<- if(length(obj$fsize)>2) obj$fsize[3] else 1
 		} else sb.fsize<-1
 	} else sb.fsize<-1
+	if(!is.null(obj$ftype)){
+		if(length(obj$ftype)>1){
+			leftArgs$ftype<-obj$ftype[1]
+			rightArgs$ftype<-obj$ftype[2]
+		}
+	}
 	plotter<-if(type[1]=="cladogram") "cladogram" else "phylogram"
 	x1<-do.call(plotter,c(list(tree=x$trees[[1]]),leftArgs))
 	plotter<-if(type[2]=="cladogram") "cladogram" else "phylogram"
