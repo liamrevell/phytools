@@ -13,7 +13,7 @@ force.ultrametric<-function(tree,method=c("nnls","extend"),...){
 		cat("*                          Note:                              *\n")
 		cat("*    force.ultrametric does not include a formal method to    *\n")
 		cat("*    ultrametricize a tree & should only be used to coerce    *\n")
-		cat("*   a phylogeny that fails is.ultramtric due to rounding --   *\n")
+		cat("*   a phylogeny that fails is.ultrametric due to rounding --  *\n")
 		cat("*    not as a substitute for formal rate-smoothing methods.   *\n")
 		cat("***************************************************************\n")
 	}
