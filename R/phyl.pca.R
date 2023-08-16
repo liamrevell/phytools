@@ -310,3 +310,24 @@ as.princomp.phyl.pca<-function(x,...){
 	class(obj)<-"princomp"
 	obj
 }
+
+## S3 as.prcomp method to convert to "prcomp" object class
+
+as.prcomp<-function(x,...) UseMethod("as.prcomp")
+
+as.prcomp.default<-function(x,...){
+	warning(paste(
+		"as.prcomp does not know how to handle objects of class ",
+		class(x),"."))
+}
+
+as.prcomp.phyl.pca<-function(x,...){
+	object<-list(
+		sdev=sqrt(diag(x$Eval)),
+		rotation=x$Evec,
+		center=x$a,
+		scale=if(x$mode=="corr") TRUE else FALSE,
+		x=x$S)
+	class(object)<-"prcomp"
+	object
+}
