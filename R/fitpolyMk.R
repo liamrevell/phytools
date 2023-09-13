@@ -167,14 +167,22 @@ plot.fitpolyMk<-function(x,...){
 	else lwd<-1
 	if(hasArg(asp)) asp<-list(...)$asp
 	else asp<-1
+	if(hasArg(add)) add<-list(...)$add
+	else add<-FALSE
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-c(-1.2,1.2)
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(-1.2,1.2)
+	if(hasArg(offset)) offset<-list(...)$offset
+	else offset<-1.5
+	if(hasArg(spacer)) spacer<-list(...)$spacer
+	else spacer<-0.1
 	Q<-matrix(NA,length(x$states),length(x$states))
     Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
-	spacer<-0.1
-	plot.new()
+	if(!add) plot.new()
 	par(mar=mar)
-	xylim<-c(-1.2,1.2)
-	plot.window(xlim=xylim,ylim=xylim,asp=asp)
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-length(x$states)
 	if(x$ordered){
@@ -201,15 +209,15 @@ plot.fitpolyMk<-function(x,...){
 						if(isSymmetric(Q)) 0 else shift.y)
 					if(x$index.matrix[i,j]!=0){
 						if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
-							text(mean(c(s[1],e[1]))+1.5*shift.x,
-								mean(c(s[2],e[2]))+1.5*shift.y,
+							text(mean(c(s[1],e[1]))+offset*shift.x,
+								mean(c(s[2],e[2]))+offset*shift.y,
 								round(Q[i,j],signif),cex=cex.rates,
 								srt=atan(asp*dy/dx)*180/pi)
 						else
 							text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
-								1.5*shift.x,
+								offset*shift.x,
 								mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
-								1.5*shift.y,
+								offset*shift.y,
 								round(Q[i,j],signif),cex=cex.rates,
 								srt=atan(asp*dy/dx)*180/pi)
 						arrows(s[1],s[2],e[1],e[2],length=0.05,
@@ -246,8 +254,8 @@ plot.fitpolyMk<-function(x,...){
 						v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
 						if(isSymmetric(Q)) 0 else shift.y)
 					if(x$index.matrix[i,j]!=0){
-						text(mean(c(s[1],e[1]))+1.5*shift.x,
-							mean(c(s[2],e[2]))+1.5*shift.y,
+						text(mean(c(s[1],e[1]))+offset*shift.x,
+							mean(c(s[2],e[2]))+offset*shift.y,
 							round(Q[i,j],signif),cex=cex.rates,
 							srt=atan(asp*dy/dx)*180/pi)
 						arrows(s[1],s[2],e[1],e[2],length=0.05,
@@ -284,15 +292,15 @@ plot.fitpolyMk<-function(x,...){
 					if(isSymmetric(Q)) 0 else shift.y)
 				if(x$index.matrix[i,j]!=0){
 					if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
-						text(mean(c(s[1],e[1]))+1.5*shift.x,
-						mean(c(s[2],e[2]))+1.5*shift.y,
+						text(mean(c(s[1],e[1]))+offset*shift.x,
+						mean(c(s[2],e[2]))+offset*shift.y,
 						round(Q[i,j],signif),cex=cex.rates,
 						srt=atan(asp*dy/dx)*180/pi)
 				else
 					text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
-						1.5*shift.x,
+						offset*shift.x,
 						mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
-						1.5*shift.y,
+						offset*shift.y,
 						round(Q[i,j],signif),cex=cex.rates,
 						srt=atan(asp*dy/dx)*180/pi)
 				arrows(s[1],s[2],e[1],e[2],length=0.05,
