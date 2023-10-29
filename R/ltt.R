@@ -29,6 +29,13 @@ ltt.multiSimmap<-function(tree,gamma=TRUE,...){
 	}
 }
 
+## internally used function
+BRANCHING<-function(phy){
+	if(is.ultrametric(phy)) branching.times(phy)
+	else setNames(max(nodeHeights(phy))-sapply(1:phy$Nnode+Ntip(phy),
+		nodeheight,tree=phy),1:phy$Nnode+Ntip(phy))
+}
+
 ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 	if(!inherits(tree,"simmap")){
 		stop("tree must be an object of class \"simmap\".")
@@ -37,15 +44,17 @@ ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 			getStates(tree,"nodes"))))
 		tt<-map.to.singleton(tree)
 		H<-nodeHeights(tt)
-		h<-c(0,max(H)-branching.times(tt),min(sapply(1:Ntip(tt),
-			nodeheight,tree=tt)))
+		h<-c(0,max(H)-BRANCHING(tt),min(sapply(1:Ntip(tt),nodeheight,tree=tt)))
 		ss<-setNames(as.factor(names(tt$edge.length)),
 			tt$edge[,2])
 		lineages<-matrix(0,length(h),length(levs),
 			dimnames=list(names(h),levs))
 		lineages[1,getStates(tree,"nodes")[1]]<-1
 		for(i in 2:length(h)){
-			ii<-intersect(which(h[i]>H[,1]),which(h[i]<=H[,2]))
+			if(i==2)
+				ii<-intersect(which(h[i]>=H[,1]),which(h[i]<=H[,2]))
+			else
+				ii<-intersect(which(h[i]>H[,1]),which(h[i]<=H[,2]))
 			lineages[i,]<-summary(ss[ii])
 		}
 		ii<-order(h)
