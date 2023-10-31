@@ -276,7 +276,8 @@ ancr.anova.fitMk<-function(object,...){
 		return(obj)
 	} else {
 		best<-which(object$AIC==min(object$AIC))
-		return(ancr(object$fits[[best]],...))
+		fits<-attr(object,"models")
+		return(ancr(fits[[best]],...))
 	}
 }
 
