@@ -29,14 +29,25 @@ ltt.multiSimmap<-function(tree,gamma=TRUE,...){
 	}
 }
 
-## internally used function
-BRANCHING<-function(phy){
-	if(is.ultrametric(phy)) branching.times(phy)
-	else setNames(max(nodeHeights(phy))-sapply(1:phy$Nnode+Ntip(phy),
-		nodeheight,tree=phy),1:phy$Nnode+Ntip(phy))
+## internally used functions
+BRANCHING<-function(phy,tol){
+	x<-if(is.ultrametric(phy)) branching.times(phy)
+	else { 
+		sort(setNames(max(nodeHeights(phy))-sapply(1:phy$Nnode+Ntip(phy),
+			nodeheight,tree=phy),1:phy$Nnode+Ntip(phy)))
+	}
+	x
+}
+TIPHEIGHTS<-function(phy,tol){
+	x<-if(is.ultrametric(phy)) {
+		min(setNames(sapply(1:Ntip(phy),nodeheight,tree=phy),1:Ntip(phy)))
+	} else setNames(sapply(1:Ntip(phy),nodeheight,tree=phy),1:Ntip(phy))
+	x
 }
 
 ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
+	# set tolerance
+	if(hasArg(tol)) tol<-list(...)$tol else tol<-1e-6
 	if(!inherits(tree,"simmap")){
 		stop("tree must be an object of class \"simmap\".")
 	} else {
@@ -44,22 +55,21 @@ ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 			getStates(tree,"nodes"))))
 		tt<-map.to.singleton(tree)
 		H<-nodeHeights(tt)
-		h<-c(0,max(H)-BRANCHING(tt),min(sapply(1:Ntip(tt),nodeheight,tree=tt)))
+		h<-c(0,max(H)-BRANCHING(tt,tol),TIPHEIGHTS(tt,tol))
 		ss<-setNames(as.factor(names(tt$edge.length)),
 			tt$edge[,2])
 		lineages<-matrix(0,length(h),length(levs),
 			dimnames=list(names(h),levs))
 		lineages[1,getStates(tree,"nodes")[1]]<-1
+		ROOT<-Ntip(tt)+1
 		for(i in 2:length(h)){
-			if(i==2)
-				ii<-intersect(which(h[i]>=H[,1]),which(h[i]<=H[,2]))
-			else
-				ii<-intersect(which(h[i]>H[,1]),which(h[i]<=H[,2]))
+			if(h[i]<max(h)) ii<-intersect(which(h[i]>=H[,1]),which(h[i]<H[,2]))
+			else ii<-intersect(which(h[i]>=H[,1]),which(h[i]<=H[,2]))
 			lineages[i,]<-summary(ss[ii])
 		}
 		ii<-order(h)
 		times<-h[ii]
-		lineages<-lineages[ii,]
+		lineages<-lineages[ii,,drop=FALSE]
 		lineages<-cbind(lineages,total=rowSums(lineages))
 		obj<-list(times=times,ltt=lineages)	
 		if(gamma==FALSE){
