@@ -30,24 +30,26 @@ ltt.multiSimmap<-function(tree,gamma=TRUE,...){
 }
 
 ## internally used functions
-BRANCHING<-function(phy,tol){
-	x<-if(is.ultrametric(phy)) branching.times(phy)
+BRANCHING<-function(phy,is_ultrametric){
+	x<-if(is_ultrametric) branching.times(phy)
 	else { 
 		sort(setNames(max(nodeHeights(phy))-sapply(1:phy$Nnode+Ntip(phy),
 			nodeheight,tree=phy),1:phy$Nnode+Ntip(phy)))
 	}
 	x
 }
-TIPHEIGHTS<-function(phy,tol){
-	x<-if(is.ultrametric(phy)) {
+TIPHEIGHTS<-function(phy,is_ultrametric){
+	x<-if(is_ultrametric) {
 		min(setNames(sapply(1:Ntip(phy),nodeheight,tree=phy),1:Ntip(phy)))
 	} else setNames(sapply(1:Ntip(phy),nodeheight,tree=phy),1:Ntip(phy))
 	x
 }
 
 ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
-	# set tolerance
-	if(hasArg(tol)) tol<-list(...)$tol else tol<-1e-6
+	## set tolerance
+	if(hasArg(tol)) tol<-list(...)$tol else tol<-.Machine$double.eps^0.5
+	## check if ultrametric
+	is_ultrametric<-is.ultrametric(tree)
 	if(!inherits(tree,"simmap")){
 		stop("tree must be an object of class \"simmap\".")
 	} else {
@@ -55,7 +57,7 @@ ltt.simmap<-function(tree,plot=TRUE,log.lineages=FALSE,gamma=TRUE,...){
 			getStates(tree,"nodes"))))
 		tt<-map.to.singleton(tree)
 		H<-nodeHeights(tt)
-		h<-c(0,max(H)-BRANCHING(tt,tol),TIPHEIGHTS(tt,tol))
+		h<-c(0,max(H)-BRANCHING(tt,is_ultrametric),TIPHEIGHTS(tt,is_ultrametric))
 		ss<-setNames(as.factor(names(tt$edge.length)),
 			tt$edge[,2])
 		lineages<-matrix(0,length(h),length(levs),
