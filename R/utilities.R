@@ -1327,7 +1327,7 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 }
 
 ## function to ladderize phylogeny with mapped discrete character
-## written by Liam J. Revell 2014, 2015, 2019
+## written by Liam J. Revell 2014, 2015, 2019, 2023
 
 ladderize.simmap<-function(tree,right=TRUE){
 	if(!inherits(tree,"simmap")){
@@ -1342,7 +1342,7 @@ ladderize.simmap<-function(tree,right=TRUE){
 		rN<-Ntip(obj)+1
 		T<-cbind(1:Ntip(obj),sapply(obj$tip.label,
 			function(x,y) which(y==x),y=tree$tip.label))
-		N<-matchNodes(obj,tree)
+		N<-matchNodes(obj,as.phylo(tree))
 		M<-rbind(T,N[N[,1]!=rN,])
 		ii<-sapply(M[,1],function(x,y) which(y==x),y=obj$edge[,2])
 		jj<-sapply(M[,2],function(x,y) which(y==x),y=tree$edge[,2])
