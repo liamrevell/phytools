@@ -60,7 +60,7 @@ fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 	
 	Finally, the function \code{fitHRM} fits a hidden-rate M\emph{k} model following Beaulieu et al. (2013). For the hidden-rate model we need to specify a number of rate categories for each level of the trait - and this can be a vector of different values for each trait. We can also choose a model (\code{"ER"}, \code{"SYM"}, or \code{"ARD"}), as well as whether or not to treat the character as a 'threshold' trait (\code{umbral=TRUE}, defaults to \code{FALSE}). This latter model is basically one that allows absorbing conditions for some hidden states. Since this can be a difficult optimization problem, the optional argument \code{niter} sets the number of optimization iterations to be run. \code{niter} defaults to \code{niter=10}.
 
-	Note that both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \pkg{ape} package for computing the likelihood. \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
+	Note that (by default) both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \pkg{ape} package for computing the likelihood. (If the optional argument \code{pruning=TRUE} then alternative, slightly faster, \pkg{phytools} code for the pruning algorithm is used.) \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
 }
 \value{
 	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, or \code{"fitHRM"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.

@@ -25,7 +25,7 @@ hide.hidden(object, ...)
 \details{
 	If the optional argument \code{tips=TRUE}, then the matrix returned contains empirical Bayes posterior probabilities (marginal scaled likelihoods) for both tips \emph{and} internal nodes. Otherwise (the default) only node marginal states are returned.
 	
-	If the input object is a set of models (in the form of an \code{anova} table), then \code{ancr} will compute model-averaged marginal ancestral states (for \code{type="marginal"}, unless the optional argument \code{best=TRUE}, in which case only the best-supported model is used.
+	If the input object is a set of models (in the form of an \code{anova} table), then \code{ancr} will compute model-averaged marginal ancestral states (for \code{type="marginal"}, unless the optional argument \code{weighted=FALSE}, in which case only the best-supported model is used.
 }
 \value{
 	An object of class \code{"ancr"}. In the case of \code{type="marginal"}, this object consists of a matrix of marginal (empirical Bayes) probabilities and a likelihood. In the case of \code{type="joint"}, the object contains a set of most-likely internal node states stored in a data frame.
