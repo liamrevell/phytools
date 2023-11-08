@@ -42,6 +42,8 @@ plot(tortoise.phymap,direction="rightwards",pts=FALSE,
   xlim=c(-92.25,-89.25),ylim=c(-1.8,0.75),ftype="i",
   fsize=0.8,lty="dashed",map.bg="lightgreen",
   colors="slategrey")
+## reset margins
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
