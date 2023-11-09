@@ -2,7 +2,7 @@
 \alias{ancr}
 \alias{hide.hidden}
 \alias{plot.ancr}
-\title{Compute marginal ancestral states}
+\title{Compute marginal or joint ancestral state estimates}
 \usage{
 ancr(object, ...)
 hide.hidden(object, ...)
