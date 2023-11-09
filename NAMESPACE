@@ -1,3 +1,4 @@
+## names exported by phytools
 export(add.arrow, add.color.bar, add.everywhere, add.random, add.simmap.legend)
 export(add.species.to.genus, aic.w, allFurcTrees, allRotations, anc.Bayes, anc.ML)
 export(anc.trend, ancr, ancThresh, ansi_phylo, applyBranchLengths, arc.cladelabels, as.multiPhylo)
@@ -57,6 +58,7 @@ export(untangle)
 export(vcvPhylo)
 export(write.simmap, writeAncestors, writeNexus)
 
+## S3 methods
 S3method(plot, densityMap)
 S3method(plot, contMap)
 S3method(plot, phylo.to.map)
@@ -285,6 +287,7 @@ S3method(setMap, default)
 S3method(simmap, default)
 S3method(as.prcomp, default)
 
+## names imported from other packages
 importFrom(ape, .PlotPhyloEnv, .uncompressTipLabel, ace, all.equal.phylo, as.DNAbin) 
 importFrom(ape, as.phylo, bind.tree, branching.times, collapse.singles, consensus)
 importFrom(ape, compute.brlen, cophenetic.phylo, corBrownian, di2multi, dist.dna) 
@@ -305,6 +308,7 @@ importFrom(graphics, rect, curve, image, mtext, arrows, barplot, boxplot, contou
 importFrom(graphics, abline, legend, grid, clip)
 importFrom(grDevices, palette, palette.colors, colors, dev.hold, dev.flush, rainbow, heat.colors, gray)
 importFrom(grDevices, colorRamp, colorRampPalette, dev.new, rgb, pdf, dev.off, col2rgb, dev.size)
+importFrom(grDevices, xy.coords, dev.cur)
 importFrom(maps, map)
 importFrom(MASS, ginv)
 importFrom(methods, hasArg, is)
@@ -317,7 +321,6 @@ importFrom(phangorn, allTrees, Ancestors, as.phyDat, dist.hamming, midpoint, NJ,
 importFrom(phangorn, nnls.tree, optim.parsimony, parsimony, phyDat, pratchet, treedist) 
 importFrom(phangorn, RF.dist, KF.dist, path.dist, SPR.dist, Children, Descendants) 
 importFrom(phangorn, threshStateC)
-importFrom(plotrix, arctext, draw.arc, draw.circle, draw.ellipse, textbox)
 importFrom(scatterplot3d, scatterplot3d)
 importFrom(stats, cophenetic, reorder, runif, setNames, optim, dexp, dnorm, rnorm, var)
 importFrom(stats, nlminb, biplot, pchisq, rexp, optimize, logLik, as.dist, pnorm, median) 
@@ -325,3 +328,6 @@ importFrom(stats, cor, aggregate, rgamma, dgamma, lm, rbinom, rgeom, pt, anova, 
 importFrom(stats, screeplot, rchisq, optimHess, rmultinom, sd, dunif, dist, plogis) 
 importFrom(stats, density, coef, cmdscale, AIC, smooth.spline, predict)
 importFrom(utils, flush.console, head, installed.packages, str, capture.output, combn)
+
+## restore if plotrix unorphaned on CRAN
+## importFrom(plotrix, arctext, draw.arc, draw.circle, draw.ellipse, textbox)
