@@ -34,6 +34,7 @@
 \alias{vertebrate.tree}
 \alias{wasp.data}
 \alias{wasp.trees}
+\alias{whale.tree}
 \title{Phylogenetic datasets}
 \description{
 	Various phylogenetic datasets for comparative analysis.
@@ -43,9 +44,9 @@
 	
 	\code{bat.tree} is a ML phylogeny of bats from the families Mormoopidae, Molossidae, and Phyllostomidae, based on GenBank accession numbers reported in Caraballo (2022) and estimated using \pkg{phangorn}. \code{betaCoV.tree} is a ML phylogenetic tree of betacoronaviruses based on GenBank accession numbers reported in Caraballo (2022) and estimated using \pkg{phangorn}. \code{bat_virus.data} is an association table of host and virus from Caraballo (2022).
 	
-	\code{butterfly.tree} and \code{butterfly.data} are a phylogeny and dataset of habitat use in Mycalesina butterflies from Halali et al. (2020).
+	\code{butterfly.tree} and \code{butterfly.data} are a phylogeny and dataset of habitat use in Mycalesina butterflies from Halali et al. (2020). The phylogeny of that study was adapted from one originally published by Brattstrom et al. (2020).
 	
-	\code{bonyfish.tree} and \code{bonyfish.data} are a phylogeny and dataset of spawning mode and parental care in bony fishes from Benun Sutton and Wilson (2019).
+	\code{bonyfish.tree} and \code{bonyfish.data} are a phylogeny and dataset of spawning mode and parental care in bony fishes from Benun Sutton and Wilson (2019). Their phylogenetic tree was adapted from a tree originally published by Betancur-R et al. (2017)
 	
 	\code{cordylid.tree} and \code{cordylid.data} are a phylogeny and dataset of morphological traits for three different principal components axes from Broeckhoven et al. (2016).
 	
@@ -74,6 +75,8 @@
 	\code{vertebrate.tree} is a time-calibrated phylogeny of vertebrates and \code{vertebrate.data} is a dataset of phenotypic traits. The phylogeny is from \url{http://www.timetree.org/} (Hedges et al. 2006).
 	
 	\code{wasp.trees} and \code{wasp.data} are the phylogeny and host-parasite associations from Lopez-Vaamonde et al. (2001).
+	
+	\code{whale.tree} is a phylogeny of cetaceans originally published in Steeman et al. (2009).
 }
 \usage{
 data(anole.data)
@@ -110,6 +113,7 @@ data(vertebrate.data)
 data(vertebrate.tree)
 data(wasp.data)
 data(wasp.trees)
+data(whale.tree)
 }
 \format{
 	\code{anoletree} is an object of class \code{"simmap"}. \code{anole.data} is a data frame.
@@ -147,11 +151,17 @@ data(wasp.trees)
 	\code{vertebrate.tree} is an object of class \code{"phylo"}. \code{vertebrate.data} is a data frame.
 	
 	\code{wasp.trees} is an object of class \code{"multiPhylo"}. \code{wasp.data} is a data frame.
+	
+	\code{whale.tree} is an object of class \code{"phylo"}.
 }
 \source{
 	Benitez-Alvarez, L., A. Maria Leal-Zanchet, A. Oceguera-Figueroa, R. Lopes Ferreira, D. de Medeiros Bento, J. Braccini, R. Sluys, and M. Riutort (2020) Phylogeny and biogeography of the Cavernicola (Platyhelminthes: Tricladida): Relicts of an epigean group sheltering in caves? \emph{Molecular Phylogenetics and Evolution}, \bold{145}, 106709.
 	
 	Benun Sutton, F., and A. B. Wilson (2019) Where are all the moms? External fertilization predicts the rise of male parental care in bony fishes. \emph{Evolution}, \bold{73}, 2451-2460.
+	
+	Betancur-R, R., E. O. Wiley, G. Arratia, A. Acero, N. Bailly, M. Miya, G. Lecointre, and G. Orti (2017) Phylogenetic classification of bony fishes. \emph{BMC Ecology and Evolution}, \bold{17}, 162.
+	
+	Brattstrom, O., K. Aduse-Poku, E. van Bergen, V. French, and P. M. Brakefield (2020) A release from developmental bias accelerates morphological diversification in butterfly eyespots. \emph{Proceedings of the National Academy of Sciences}, \bold{177}, 27474-27480.
 
 	Broeckhoven, C., G. Diedericks, C. Hui, B. G. Makhubo, P. le Fras N. Mouton (2016) Enemy at the gates: Rapid defensive trait diversification in an adaptive radiation of lizards. \emph{Evolution}, \bold{70}, 2647-2656.
 	
@@ -184,5 +194,7 @@ data(wasp.trees)
 	Revell, L. J., and D. C. Collar (2009) Phylogenetic analysis of the evolutionary correlation using likelihood. \emph{Evolution}, \bold{63}, 1090-1100.
 
 	Revell, L. J., K. S. Toyama, and D. L. Mahler (2022) A simple hierarchical model for heterogeneity in the evolutionary correlation a phylogenetic tree. \emph{PeerJ}, \bold{10}, e13910.
+	
+	Steeman, M. E., M. B. Hebsgaard, R. E. Fordyce, S. Y. W. Ho, D. L. Rabosky, R. Nielsen, C. Rahbek, H. Glenner, M. V. Sorensen, and E. Willerslev (2009) Radiation of extant cetaceans driven by restructuring of the oceans. \emph{Systematic Biology}, \bold{58}, 573-585.
 }
 \keyword{datasets}
