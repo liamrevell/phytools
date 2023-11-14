@@ -184,6 +184,16 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
 			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="right"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==max(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="left"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==min(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
 		}
 	}
 	# compute node heights
@@ -320,6 +330,16 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			mm<-which(abs(Y[desc]-median(Y[1:Ntip(pw)]))==min(abs(Y[desc]-
 				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="right"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==max(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="left"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==min(Y[desc]))
 			Y[nodes[i]]<-Y[desc][mm]
 		}
 	}
@@ -549,6 +569,16 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
 			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="right"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==max(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="left"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==min(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
 		}
 	}
 	# compute node heights
@@ -605,7 +635,6 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 		function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }
-
 
 ## adds legend to an open stochastic map style plot
 ## written by Liam J. Revell 2013, 2016, 2017, 2023
@@ -745,5 +774,3 @@ splitEdgeColor<-function(tree,colors,lwd=2){
 		for(j in 1:length(x0)) segments(x0[j],y0[j],x1[j],y1[j],col=cols[j],lwd=lwd,lend=2)
 	}
 }
-
-
