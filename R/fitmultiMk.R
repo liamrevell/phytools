@@ -1,6 +1,6 @@
 ## new function to fit multi-regime Mk model
-## written by Liam J. Revell 2017, 2020
-## adapted from ape::ace by E. Paradis et al. 2013
+## written by Liam J. Revell 2017, 2020, 2023
+## pruning adapted from ape::ace by E. Paradis et al. 2013
 
 fitmultiMk<-function(tree,x,model="ER",...){
 	if(!inherits(tree,"simmap")){
@@ -11,6 +11,8 @@ fitmultiMk<-function(tree,x,model="ER",...){
 	}
 	if(hasArg(q.init)) q.init<-list(...)$q.init
 	else q.init<-length(unique(x))/sum(tree$edge.length)
+	if(hasArg(rand_start)) rand_start<-list(...)$rand_start
+	else rand_start<-FALSE
 	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
 	else opt.method<-"nlminb"
 	if(hasArg(min.q)) min.q<-list(...)$min.q
@@ -89,6 +91,7 @@ fitmultiMk<-function(tree,x,model="ER",...){
 		return(if(is.na(logL)) Inf else logL)
 	}
 	if(length(q.init)!=(k*nregimes)) q.init<-rep(q.init[1],k*nregimes)
+	if(rand_start) q.init<-q.init*rexp(length(q.init),1)
 	if(opt.method=="optim")
 		fit<-optim(q.init,function(p) lik(p,pi=pi),method="L-BFGS-B",
 			lower=rep(min.q,k))
