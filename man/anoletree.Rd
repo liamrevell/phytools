@@ -1,6 +1,8 @@
 \name{anoletree}
 \alias{anole.data}
 \alias{anoletree}
+\alias{ant.geog}
+\alias{ant.tree}
 \alias{bat.tree}
 \alias{bat_virus.data}
 \alias{betaCoV.tree}
@@ -42,6 +44,8 @@
 \details{
 	\code{anoletree} is a phylogeny of Greater Antillean anole species with a mapped discrete character - \emph{ecomorph class}. \code{anole.data} is a data frame of morphological characters. Data and tree are from Mahler et al. (2010).
 	
+	\code{ant.tree} is a phylogeny containing 84 species of fungus farming attine ants. \code{ant.geog} is a vector containing biogegraphic information for the species of the tree. Both the phylogeny and biogeographic information were originally published by Branstetter et al. (2017).
+	
 	\code{bat.tree} is a ML phylogeny of bats from the families Mormoopidae, Molossidae, and Phyllostomidae, based on GenBank accession numbers reported in Caraballo (2022) and estimated using \pkg{phangorn}. \code{betaCoV.tree} is a ML phylogenetic tree of betacoronaviruses based on GenBank accession numbers reported in Caraballo (2022) and estimated using \pkg{phangorn}. \code{bat_virus.data} is an association table of host and virus from Caraballo (2022).
 	
 	\code{butterfly.tree} and \code{butterfly.data} are a phylogeny and dataset of habitat use in Mycalesina butterflies from Halali et al. (2020). The phylogeny of that study was adapted from one originally published by Brattstrom et al. (2020).
@@ -81,6 +85,8 @@
 \usage{
 data(anole.data)
 data(anoletree)
+data(ant.geog)
+data(ant.tree)
 data(bat.tree)
 data(bat_virus.data)
 data(betaCoV.tree)
@@ -117,6 +123,8 @@ data(whale.tree)
 }
 \format{
 	\code{anoletree} is an object of class \code{"simmap"}. \code{anole.data} is a data frame.
+	
+	\code{ant.tree} is an object of class \code{"phylo"}. \code{ant.geog} is a vector.
 	
 	\code{bat.tree} and \code{betaCoV.tree} are objects of class \code{"phylo"}. \code{bat_virus.data} is a data frame.
 	
@@ -160,6 +168,8 @@ data(whale.tree)
 	Benun Sutton, F., and A. B. Wilson (2019) Where are all the moms? External fertilization predicts the rise of male parental care in bony fishes. \emph{Evolution}, \bold{73}, 2451-2460.
 	
 	Betancur-R, R., E. O. Wiley, G. Arratia, A. Acero, N. Bailly, M. Miya, G. Lecointre, and G. Orti (2017) Phylogenetic classification of bony fishes. \emph{BMC Ecology and Evolution}, \bold{17}, 162.
+	
+	Branstetter, M. G., A. Jesovnik, J. Sosa-Calvo, M. W. Lloyd, B. C. Faircloth, S. G. Brady, and T. R. Schultz (2017) Dry habitats were crucibles of domestication in the evolution of agriculture in ants. \emph{Proceedings of the Royal Society B}, \bold{284}, 20170095.
 	
 	Brattstrom, O., K. Aduse-Poku, E. van Bergen, V. French, and P. M. Brakefield (2020) A release from developmental bias accelerates morphological diversification in butterfly eyespots. \emph{Proceedings of the National Academy of Sciences}, \bold{177}, 27474-27480.
 
