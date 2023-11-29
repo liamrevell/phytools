@@ -15,8 +15,13 @@ Combinations<-function(n,r,v=1:n){
 }
 
 fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
-	if(hasArg(quiet)) quiet<-list(...)$quiet
-	else quiet<-FALSE
+	if(hasArg(return_matrix)) return_matrix<-list(...)$return_matrix
+	else return_matrix<-FALSE
+	if(return_matrix) quiet<-TRUE
+	else { 
+		if(hasArg(quiet)) quiet<-list(...)$quiet
+		else quiet<-FALSE
+	}
 	if(is.factor(x)) x<-setNames(as.character(x),names(x))
 	if(is.matrix(x)) X<-strsplit(colnames(x),"+",fixed=TRUE)
 	else X<-strsplit(x,"+",fixed=TRUE)
@@ -38,7 +43,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			else cat("order & states do not match. using alphabetical order.\n")
 		}
 	}
-	if(all(ns==1)){
+	if(all(ns==1)&&return_matrix==FALSE){
 		cat("No polymorphic species found. Use fitMk.\n\n")
 		object<-NULL
 	} else {
@@ -105,6 +110,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			X<-matrix(0,nrow(x),length(ss),dimnames=list(rownames(x),ss))
 			X[rownames(x),colnames(x)]<-x
 		} else X<-to.matrix(x,ss)
+		if(return_matrix) return(X)
 		object<-fitMk(tree,X,model=tmodel,...)
 	}
 	object$model<-model
