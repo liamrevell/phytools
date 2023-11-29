@@ -367,9 +367,11 @@ print.fitMk<-function(x,digits=6,...){
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",
 		sep=""))
-	if(x$opt_results$convergence==0) 
-		cat("R thinks it has found the ML solution.\n\n")
-	else cat("R thinks optimization may not have converged.\n\n")
+	if(!is.null(x$opt_results$convergence)){
+		if(x$opt_results$convergence==0) 
+			cat("R thinks it has found the ML solution.\n\n")
+		else cat("R thinks optimization may not have converged.\n\n")
+	}
 }
 
 ## summary method for objects of class "fitMk"
