@@ -360,8 +360,8 @@ pruning<-function(q,tree,x,model=NULL,...){
 	Q[]<-c(0,q)[model+1]
 	diag(Q)<--rowSums(Q)
 	L<-rbind(x[pw$tip.label,],
-		matrix(0,tree$Nnode,k,
-		dimnames=list(1:tree$Nnode+Ntip(tree))))
+		matrix(0,pw$Nnode,k,
+		dimnames=list(1:pw$Nnode+Ntip(pw))))
 	nn<-unique(pw$edge[,1])
 	pp<-vector(mode="numeric",length=length(nn))
 	root<-min(nn)
