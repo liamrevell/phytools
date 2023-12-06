@@ -43,7 +43,8 @@ gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
 		ee<-which(pw$edge[,1]==nn[i])
 		PP<-matrix(NA,length(ee),k)
 		for(j in 1:length(ee)){
-		  P<-Reduce("+",lapply(r,function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
+		  P<-Reduce("+",lapply(r,
+			function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
 		    k=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
 			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
 		}
@@ -81,7 +82,7 @@ fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 	if(hasArg(max.q)) max.q<-list(...)$max.q
 	else max.q<-max(nodeHeights(tree))*100
 	if(hasArg(min.alpha)) min.alpha<-list(...)$min.alpha
-	else min.alpha<-1e-12
+	else min.alpha<-1e-2
 	if(hasArg(max.alpha)) max.alpha<-list(...)$max.alpha
 	else max.alpha<-1000
 	if(hasArg(logscale)) logscale<-list(...)$logscale
