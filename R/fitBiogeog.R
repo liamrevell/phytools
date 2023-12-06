@@ -12,7 +12,7 @@ fitBiogeog<-function(tree,x,model="DEC",...){
   if(is.matrix(x)) X<-strsplit(colnames(x),"+",fixed=TRUE)
   else X<-strsplit(x,"+",fixed=TRUE)
   ns<-sapply(X,length)
-  ## get the states
+  ## get the regions
   regions<-sort(unique(unlist(X)))
   nn<-length(regions)
   ## fix the order of the input data
@@ -21,8 +21,8 @@ fitBiogeog<-function(tree,x,model="DEC",...){
     colnames(x)<-Levs
   } else x<-sapply(X,function(x) paste(sort(x),collapse="+"))
   ss<-vector()
-  for(i in 1:length(states))
-    ss<-c(ss,apply(Combinations(length(states),i,states),
+  for(i in 1:length(regions))
+    ss<-c(ss,apply(Combinations(length(regions),i,regions),
       1,paste,collapse="+"))
   if(!any(ss=="0")) ss<-c(0,ss)
   tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
