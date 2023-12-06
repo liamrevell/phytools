@@ -13,6 +13,7 @@
 \alias{fitHRM}
 \alias{plot.fitHRM}
 \alias{fitMk.parallel}
+\alias{fitgammaMk}
 \title{Fits extended M\emph{k} model for discrete character evolution}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
@@ -29,6 +30,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 fitHRM(tree, x, model="ARD", ncat=2, ...)
 \method{plot}{fitHRM}(x, ...)
 fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
+fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=4, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
@@ -40,10 +42,11 @@ fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 	\item{ngen}{number of generations of MCMC for \code{mcmcMk}.}
 	\item{ncat}{number of rate categories (per level of the discrete trait) in the hidden-rate model.}
 	\item{ncores}{number of cores for \code{fitMk.parallel}.}
+	\item{nrates}{number of rate categories for discretized \eqn{\Gamma} distribution.}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of FitzJohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, both \code{order} (an evolutionary sequence for the monomorphic condition) and \code{max.poly} can be set for the \code{ordered=TRUE} model. If not set, \code{order} defaults to alphanumeric order, and \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
 \description{
-	The functions \code{fitMk}, \code{fitmultiMk}, \code{fitpolyMk}, \code{fitHRM}, \code{fitMk.parallel}, and \code{mcmcMk} fit various flavors of the extended M\emph{k} model (Lewis, 2001) for discrete character evolution on a reconstructed phylogeny.
+	The functions \code{fitMk}, \code{fitmultiMk}, \code{fitpolyMk}, \code{fitHRM}, \code{fitMk.parallel}, \code{fitgammaMk}, and \code{mcmcMk} fit various flavors of the extended M\emph{k} model (Lewis, 2001) for discrete character evolution on a reconstructed phylogeny.
 }
 \details{
 	The function \code{fitMk} fits a so-called extended M\emph{k} model for discrete character evolution (Lewis, 2001).
@@ -51,6 +54,8 @@ fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 	\code{plot.fitMk} plots an object of class \code{"fitMk"} returned by \code{fitMk}. \code{plot.gfit} plots an object of class \code{"gfit"} from \pkg{geiger}'s \code{fitDiscrete} function. Both plots portray the fitted model using a graph of arrows connecting states.
 	
 	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree. It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree.
+	
+	The function \code{fitgammaMk} fits an M\emph{k} model in which the edge rates are assumed to have been sampled randomly from a \eqn{\Gamma} distribution with mean of 1.0 and shape parameter \eqn{\alpha}.
 	
 	The function \code{fitpolyMk} fits an M\emph{k} model to data for a discrete character with intraspecific polymorphism. Polymorphic species should be coded with the name of the two or more states recorded for the species separated by a plus sign \code{+} (e.g., \code{A+B} would indicate that both states \code{A} and \code{B} are found in the corresponding taxon). Invariably it's assumed that transitions between states must occur through a polymorphic condition, whereas transitions \emph{cannot} occur directly between two incompatible polymorphic conditions. For instance, a transition between \code{A+B} and \code{B+C} would have to occur through the monomorphic state \code{B}. At time of writing, this function permits the models \code{"ER"} (equal rates for all permitted transitions), \code{"SYM"} (symmetric backward & forward rates for all permitted transitions), \code{"ARD"} (all-rates-different for permitted transitions), and a new model called \code{"transient"} in which the acquisition of polymorphism (e.g., \code{A -> A+B}) is assumed to occur at a different rate than its loss (e.g., \code{A+B -> B}). The method \code{plot.fitpolyMk} plots the fitted M\emph{k} model with intraspecific polymorphism.
 	
@@ -63,7 +68,7 @@ fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 	Note that (by default) both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \pkg{ape} package for computing the likelihood. (If the optional argument \code{pruning=TRUE} then alternative, slightly faster, \pkg{phytools} code for the pruning algorithm is used.) \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
 }
 \value{
-	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, or \code{"fitHRM"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
+	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, \code{"fitHRM"}, or \code{"fitgammaMk"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
 	
 	\code{plot.fitMk}, \code{plot.gfit}, and \code{plot.HRM} invisibly return the coordinates of vertices of the plotted \bold{Q}-matrix.
 }
