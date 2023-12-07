@@ -412,3 +412,82 @@ marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
 	anc<-L/rep(rowSums(L),k)
 	if(tips) anc else anc[1:Nnode(tree)+Ntip(tree),]
 }
+
+## marginal ancestral states for "fitgammaMk" object
+ancr.fitgammaMk<-function(object,...){
+	if(hasArg(type)) type<-list(...)$type
+	else type<-"marginal"
+	if(hasArg(tips)) tips<-list(...)$tips
+	else tips<-FALSE
+	x<-object$data
+	tree<-object$tree
+	q<-object$rates
+	alpha<-object$alpha
+	nrates<-object$nrates
+	model<-object$index.matrix
+	model[is.na(model)]<-0
+	pi<-object$pi
+	if(type=="marginal"){
+		plik<-gamma_pruning(c(q,alpha),nrates,tree,x,
+			model=model,median=TRUE,pi=pi,return="conditional")
+		ace<-marginal_asr_gamma(q,alpha,nrates,tree,plik,
+			model,tips)
+		result<-list(ace=ace,
+			logLik=gamma_pruning(c(q,alpha),nrates,tree,x,
+			model=model,pi=pi))
+		attr(result$logLik,"df")<-max(model)
+		attr(result,"type")<-"marginal"
+		attr(result,"tree")<-tree
+		attr(result,"data")<-x
+		class(result)<-"ancr"
+	} else if(type=="joint"){
+		## turned off for now
+		# if(hasArg(tol)) tol<-list(...)$tol
+		# else tol<-1e-12
+		# result<-joint_asr(q,tree,x,pi,model,tips,tol)
+		# attr(result,"type")<-"joint"
+		# attr(result,"tree")<-tree
+		# attr(result,"data")<-x
+		# class(result)<-"ancr"
+		msg<-paste("type = \"joint\" does not yet work",
+			"for this object class.")
+		stop(msg)
+	}
+	result
+}
+
+marginal_asr_gamma<-function(q,alpha,nrates,tree,L,
+	model=NULL,tips=FALSE){
+	median<-TRUE
+	if(median){
+		r<-qgamma(seq(1/(2*nrates),1,by=1/nrates),alpha,alpha)
+		r<-r/mean(r)
+	} else {
+		stop("This does not work yet.\n")
+	}
+	pw<-reorder(tree,"postorder")
+	k<-ncol(L)
+	if(is.null(model)){
+		model<-matrix(1,k,k)
+		diag(model)<-0
+	}
+	Q<-matrix(0,k,k)
+	Q[]<-c(0,q)[model+1]
+	diag(Q)<--rowSums(Q)
+	nn<-unique(pw$edge[,1])
+	for(i in length(nn):1){
+		ee<-which(pw$edge[,1]==nn[i])
+		for(j in 1:length(ee)){
+			P<-Reduce("+",lapply(r,
+				function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
+				k=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
+			## P<-expm(Q*pw$edge.length[ee[j]])
+			pp<-t(L[nn[i],]/(P%*%L[pw$edge[ee[j],2],]))
+			pp[is.nan(pp)]<-0
+			L[pw$edge[ee[j],2],]<-(pp%*%P)*
+				L[pw$edge[ee[j],2],]
+		}
+	}
+	anc<-L/rep(rowSums(L),k)
+	if(tips) anc else anc[1:Nnode(tree)+Ntip(tree),]
+}
