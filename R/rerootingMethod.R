@@ -1,8 +1,16 @@
 ## function to compute the marginal posterior probabilities for nodes 
 ## using the rerooting method
-## written by Liam J. Revell 2013, 2015, 2017, 2018, 2020
+## written by Liam J. Revell 2013, 2015, 2017, 2018, 2020, 2023
 
 rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
+	if(!quiet){
+		cat("\nNote:\n")
+		cat("   This function is redundant with 'phytools::ancr' in situations in\n")
+		cat("   which it should be used (symmetric Q matrices) & invalid for non-\n")
+		cat("   symmetric Q matrices (e.g., model='ARD').\n\n")
+	}
 	if(!inherits(tree,"phylo")) 
 		stop("tree should be an object of class \"phylo\".")
 	if(hasArg(tips)) tips<-list(...)$tips

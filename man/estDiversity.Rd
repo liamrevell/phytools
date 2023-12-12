@@ -19,7 +19,7 @@ estDiversity(tree, x, method=c("asr","simulation"), model="ER", ...)
 	
 	For \code{method="asr"} the state at the current node, and at each position along each co-extant internal edge, is computed as the marginal (empirical Bayesian) ancestral state reconstruction using the re-rooting method of Yang (2006). The lineage density is then computed as the sum of the marginal reconstructions (posterior probabilities) times the summed marginal ancestral reconstructions across co-extant edges. 
 	
-	For \code{method="simulation"}, stochastic character mapping is used to generate optional argument \code{nsim} stochastic maps of ancestral biogeography. Then the lineage density at each node is computed as the number of co-existing lineages with the same biogeography as the focal node, averaged acrossed stochastic maps.
+	For \code{method="simulation"}, stochastic character mapping is used to generate optional argument \code{nsim} stochastic maps of ancestral biogeography. Then the lineage density at each node is computed as the number of co-existing lineages with the same biogeography as the focal node, averaged across stochastic maps.
 	
 	The importance of this distinction may depend on the degree to which reconstructions at internal nodes are independent, which relates to the distinction between marginal and joint reconstruction (e.g., see Yang 2006).
 }

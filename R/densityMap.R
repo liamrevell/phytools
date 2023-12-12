@@ -121,14 +121,16 @@ plot.densityMap<-function(x,...){
 	else hold<-TRUE
 	if(hasArg(underscore)) underscore<-list(...)$underscore
 	else underscore<-FALSE
-	if(is.null(legend)) legend<-0.5*max(H)
+	if(is.null(legend)) legend<-if(type=="arc") max(H) else 0.5*max(H)
 	if(is.null(fsize)) fsize<-c(1,1)
 	if(length(fsize)==1) fsize<-rep(fsize,2)
 	if(is.null(ftype)) ftype<-c("i","reg")
 	if(length(ftype)==1) ftype<-c(ftype,"reg")
+	if(hasArg(arc_height)) arc_height<-list(...)$arc_height
+	else arc_height<-2
 	# done optional arguments
 	if(legend){
-		if(legend>max(H)){ 
+		if(legend>max(H)&&type!="arc"){ 
 			message("legend scale cannot be longer than total tree length; resetting")
 			legend<-0.5*max(H)
 		}
@@ -190,20 +192,20 @@ plot.densityMap<-function(x,...){
 					3),sep=""))
 			}
 		}
-	} else if(type=="fan"){
+	} else if(type%in%c("fan","arc")){
 		if(outline){
 			COL<-par()$col
 			par(col="white")
-			invisible(capture.output(plotTree(tree,type="fan",lwd=lwd[1]+2,
+			invisible(capture.output(plotTree(tree,type=type,lwd=lwd[1]+2,
 				mar=mar,fsize=fsize[1],color=par()$fg,
 				ftype=ftype[1],xlim=xlim,ylim=ylim,hold=FALSE,offset=offset,
-				underscore=underscore)))
+				underscore=underscore,arc_height=arc_height)))
 			par(col=COL)
 		}
 		invisible(capture.output(plotSimmap(tree,cols,lwd=lwd[1],
 			mar=mar,fsize=fsize[1],add=outline,ftype=ftype[1],
-			type="fan",xlim=xlim,ylim=ylim,hold=FALSE,offset=offset,
-			underscore=underscore)))
+			type=type,xlim=xlim,ylim=ylim,hold=FALSE,offset=offset,
+			underscore=underscore,arc_height=arc_height)))
 		if(legend){
 			ff<-function(dd){
 				if(!("."%in%dd)) dig<-0
@@ -211,10 +213,27 @@ plot.densityMap<-function(x,...){
 				dig
 			}
 			dig<-max(sapply(strsplit(leg.txt[c(1,3)],split=""),ff))
-			add.color.bar(legend,cols,title=leg.txt[2],lims<-as.numeric(leg.txt[c(1,3)]),digits=dig,
-				outline=outline,
-				prompt=FALSE,x=0.9*par()$usr[1],y=0.9*par()$usr[3],lwd=lwd[2],
-				fsize=fsize[2])
+			if(type=="arc"){
+				add.color.bar(legend,cols,
+					title=leg.txt[2],
+					lims<-as.numeric(leg.txt[c(1,3)]),
+					digits=dig,
+					outline=outline,
+					prompt=FALSE,
+					x=mean(par()$usr[1:2])-0.5*legend,
+					y=par()$usr[3]+0.1*diff(par()$usr[3:4]),
+					fsize=fsize[2])
+			} else {
+				add.color.bar(legend,cols,
+					title=leg.txt[2],
+					lims<-as.numeric(leg.txt[c(1,3)]),
+					digits=dig,
+					outline=outline,
+					prompt=FALSE,
+					x=0.9*par()$usr[1],
+					y=0.9*par()$usr[3],lwd=lwd[2],
+					fsize=fsize[2])
+			}
 		}
 	}
 	if(hold) null<-dev.flush()

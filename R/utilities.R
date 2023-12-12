@@ -2,8 +2,265 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023
 
+## function forces a tree to be ultrametric using two different methods
+## written by Liam J. Revell 2017, 2021, 2022, 2023
+
+force.ultrametric<-function(tree,method=c("nnls","extend"),...){
+	if(hasArg(message)) message<-list(...)$message
+	else message<-TRUE
+	if(message){
+		cat("***************************************************************\n")
+		cat("*                          Note:                              *\n")
+		cat("*    force.ultrametric does not include a formal method to    *\n")
+		cat("*    ultrametricize a tree & should only be used to coerce    *\n")
+		cat("*   a phylogeny that fails is.ultrametric due to rounding --  *\n")
+		cat("*    not as a substitute for formal rate-smoothing methods.   *\n")
+		cat("***************************************************************\n")
+	}
+	method<-method[1]
+	if(method=="nnls") tree<-nnls.tree(cophenetic(tree),tree,
+		method="ultrametric",rooted=is.rooted(tree),trace=0)
+	else if(method=="extend"){
+		h<-diag(vcv(tree))
+		d<-max(h)-h
+		ii<-sapply(1:Ntip(tree),function(x,y) which(y==x),
+			y=tree$edge[,2])
+		tree$edge.length[ii]<-tree$edge.length[ii]+d
+	} else 
+		cat("method not recognized: returning input tree\n\n")
+	tree
+}
+
+## c "combine" method for "simmap" and "multiSimmap" object classes
+
+## adapted from c.phylo in ape (Paradis & Schliep 2019)
+c.simmap<-function(...,recursive=TRUE){
+	obj<-list(...)
+	classes<-lapply(obj,class)
+	isphylo<-sapply(classes,function(x) "simmap" %in% x)
+	if(all(isphylo)){
+		class(obj)<-c("multiSimmap","multiPhylo")
+		return(obj)
+	}
+	if(!recursive) return(obj)
+	ismulti<-sapply(classes, function(x) "multiSimmap" %in% x)
+	if(all(isphylo|ismulti)){
+		result<-list()
+		j<-1
+		for(i in 1:length(isphylo)){
+			if(isphylo[i]){ 
+				result[[j]]<-obj[[i]]
+				j<-j+1
+			} else {
+				n<-length(obj[[i]])
+				result[0:(n-1)+j]<-.uncompressTipLabel(obj[[i]])
+				j<-j+n
+			}
+		}
+		class(result)<-c("multiSimmap","multiPhylo")
+		obj<-result
+	} else {
+		msg<-paste("some objects not of class \"simmap\" or",
+			"\"multiSimmap\": argument recursive=TRUE ignored")
+		warning(msg)
+	}
+	return(obj)
+}
+
+## adapted from c.multiPhylo in ape (Paradis & Schliep 2019)
+c.multiSimmap<-function(...,recursive=TRUE){
+	obj<-list(...)
+	if(!recursive) return(obj)
+	classes<-lapply(obj,class)
+	isphylo<-sapply(classes,function(x) "simmap" %in% x)
+	ismulti<-sapply(classes, function(x) "multiSimmap" %in% x)
+	if(all(isphylo|ismulti)){
+		result<-list()
+		j<-1
+		for(i in 1:length(isphylo)){
+			if(isphylo[i]){ 
+				result[[j]]<-obj[[i]]
+				j<-j+1
+			} else {
+				n<-length(obj[[i]])
+				result[0:(n-1)+j]<-.uncompressTipLabel(obj[[i]])
+				j<-j+n
+			}
+		}
+		class(result)<-c("multiSimmap","multiPhylo")
+		obj<-result
+	} else {
+		msg<-paste("some objects not of class \"simmap\" or",
+			"\"multiSimmap\": argument recursive=TRUE ignored")
+		warning(msg)
+	}
+	return(obj)
+}
+
+## function to summarize the results of stochastic mapping
+## written by Liam J. Revell 2013, 2014, 2015, 2021, 2022, 2023
+
+describe.simmap<-function(tree,...){
+	if(hasArg(plot)) plot<-list(...)$plot
+	else plot<-FALSE
+	if(hasArg(check.equal)) check.equal<-list(...)$check.equal
+	else check.equal<-FALSE
+	if(hasArg(message)) message<-list(...)$message
+	else message<-FALSE
+	if(hasArg(ref.tree)) ref.tree<-list(...)$ref.tree
+	else ref.tree<-NULL
+	if(hasArg(states)) states<-list(...)$states
+	else states<-NULL
+	if(inherits(tree,"multiPhylo")){
+		if(check.equal){
+			TT<-sapply(tree,function(x,y) sapply(y,all.equal.phylo,x),y=tree)
+			check<-all(TT)
+			if(!check) cat("Note: Some trees are not equal.\nA \"reference\" tree will be computed if none was provided.\n\n")
+		} else check<-TRUE
+		if(is.null(ref.tree)&&check){ 
+			YY<-getStates(tree,"both")
+			if(is.null(states)) states<-sort(unique(as.vector(YY)))
+			ZZ<-t(apply(YY,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,
+				levels=states,Nsim=length(tree)))
+		} else {
+			YY<-getStates(tree)
+			if(is.null(states)) states<-sort(unique(as.vector(YY)))
+			if(is.null(ref.tree)){
+				cat("No reference tree provided & some trees are unequal.\nComputing majority-rule consensus tree.\n")
+				ref.tree<-consensus(tree,p=0.5)
+			}
+			YYp<-matrix(NA,ref.tree$Nnode,length(tree),dimnames=list(1:ref.tree$Nnode+Ntip(ref.tree),
+				NULL))
+			for(i in 1:length(tree)){
+				M<-matchNodes(ref.tree,tree[[i]])
+				jj<-sapply(M[,2],function(x,y) if(x%in%y) which(as.numeric(y)==x) else NA,
+					y=as.numeric(rownames(YY)))
+				YYp[,i]<-YY[jj,i]
+			}
+			ZZ<-t(apply(YYp,1,function(x,levels) summary(factor(x[!is.na(x)],
+				levels))/sum(!is.na(x)),levels=states))
+		}
+		XX<-countSimmap(tree,states,FALSE)
+		XX<-XX[,-(which(as.vector(diag(-1,length(states)))==-1)+1)]
+		AA<-lapply(unclass(tree),function(x) setNames(
+			c(colSums(x$mapped.edge),sum(x$edge.length)),
+			c(colnames(x$mapped.edge),"total")))
+		foo<-function(x,n){
+			y<-setNames(rep(0,length(n)),n)
+			y[names(x)]<-x
+			y
+		}
+		AA<-t(sapply(AA,foo,n=c(states,"total")))
+		BB<-getStates(tree,type="tips")
+		CC<-t(apply(BB,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,levels=states,
+			Nsim=length(tree)))
+		x<-list(count=XX,times=AA,ace=ZZ,tips=CC,tree=tree,ref.tree=if(!is.null(ref.tree)) 
+			ref.tree else NULL)
+		class(x)<-"describe.simmap"
+	} else if(inherits(tree,"phylo")){
+		XX<-countSimmap(tree,message=FALSE)
+		YY<-getStates(tree)
+		if(is.null(states)) states<-sort(unique(YY))
+		AA<-setNames(c(colSums(tree$mapped.edge),sum(tree$edge.length)),
+			c(colnames(tree$mapped.edge),"total"))
+		AA<-rbind(AA,AA/AA[length(AA)]); rownames(AA)<-c("raw","prop")
+		x<-list(N=XX$N,Tr=XX$Tr,times=AA,states=YY,tree=tree)
+		class(x)<-"describe.simmap"
+	}
+	if(message) print(x)
+	if(plot) plot(x)
+	x
+}
+
+# function works like extract.clade in ape but will preserve a discrete character mapping
+# written by Liam J. Revell 2013, 2023
+extract.clade.simmap<-function(tree,node){
+	if(!inherits(tree,"simmap")) stop("tree should be an object of class \"simmap\".")
+	x<-getDescendants(tree,node)
+	x<-x[x<=Ntip(tree)]
+	drop.tip.simmap(tree,tree$tip.label[-x])
+}
+
+## function to add an arrow pointing to a tip or node in the tree
+## written by Liam J. Revell 2014, 2017, 2020, 2023
+
+add.arrow<-function(tree=NULL,tip,...){
+	if(length(tip)>1){ 
+		object<-sapply(tip,add.arrow,tree=tree,...)
+		invisible(object)
+	} else {
+		lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		asp<-if(lastPP$type=="fan") 1 else (par()$usr[4]-par()$usr[3])/(par()$usr[2]-
+			par()$usr[1])
+		if(!is.null(tree)){
+			if(inherits(tree,"contMap")) tree<-tree$tree
+			else if(inherits(tree,"densityMap")) tree<-tree$tree
+		}
+		if(is.numeric(tip)){
+			ii<-tip
+			if(!is.null(tree)&&ii<=Ntip(tree)) tip<-tree$tip.label[ii]
+			else tip<-""
+		} else if(is.character(tip)&&!is.null(tree)) ii<-which(tree$tip.label==tip)
+		if(hasArg(offset)) offset<-list(...)$offset
+		else offset<-lastPP$label.offset
+		strw<-lastPP$cex*(strwidth(tip)+offset*mean(strwidth(c(LETTERS,letters))))
+		if(lastPP$direction%in%c("upwards","downwards")) 
+			strw<-strw*asp*par()$pin[1]/par()$pin[2]
+		if(hasArg(arrl)) arrl<-list(...)$arrl
+		else { 
+			if(lastPP$type=="fan") arrl<-0.3*max(lastPP$xx)
+			else if(lastPP$type=="phylogram") arrl<-0.15*max(lastPP$xx)
+		}
+		if(hasArg(hedl)) hedl<-list(...)$hedl
+		else hedl<-arrl/3
+		if(hasArg(angle)) angle<-list(...)$angle
+		else angle<-45
+		arra<-angle*pi/180
+		if(hasArg(col)) col<-list(...)$col
+		else col<-"black"
+		if(hasArg(lwd)) lwd<-list(...)$lwd	
+		else lwd<-2
+		if(lastPP$type=="fan") theta<-atan2(lastPP$yy[ii],lastPP$xx[ii])
+		else if(lastPP$type=="phylogram"){
+			if(lastPP$direction=="rightwards") theta<-0
+			else if(lastPP$direction=="upwards") theta<-pi/2 
+			else if(lastPP$direction=="leftwards") theta<-pi
+			else if(lastPP$direction=="downwards") theta<-3*pi/2
+		}
+		segments(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
+			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw,
+			col=col,lwd=lwd,lend="round")
+		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta+arra/2)*hedl,
+			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta+arra/2)*hedl*asp,
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw,
+			col=col,lwd=lwd,lend="round")
+		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta-arra/2)*hedl,
+			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta-arra/2)*hedl*asp,
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw,
+			col=col,lwd=lwd,lend="round")
+		invisible(list(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
+			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
+			x1=lastPP$xx[ii]+cos(theta)*strw,
+			y1=lastPP$yy[ii]+sin(theta)*strw))
+	}
+}
+
 ## function to rescale simmap style trees
 ## written by Liam J. Revell 2012, 2013, 2014, 2015, 2017, 2023
+
+## S3 Ntip etc. methods for "contMap" object class
+Ntip.contMap<-function(phy) Ntip(phy$tree)
+Nnode.contMap<-function(phy,...) Nnode(phy$tree)
+Nedge.contMap<-function(phy) Nedge(phy$tree)
+
+## S3 Ntip etc. methods for "densityMap" object class
+Ntip.densityMap<-function(phy) Ntip(phy$tree)
+Nnode.densityMap<-function(phy,...) Nnode(phy$tree)
+Nedge.densityMap<-function(phy) Nedge(phy$tree)
 
 rescale<-function(x,...) UseMethod("rescale")
 
@@ -45,101 +302,6 @@ rescaleSimmap<-function(tree,...){
 		}
 		return(tree)
 	} else message("tree should be an object of class \"simmap\" or \"multiSimmap\"")
-}
-
-
-## function forces a tree to be ultrametric using two different methods
-## written by Liam J. Revell 2017, 2021, 2022
-
-force.ultrametric<-function(tree,method=c("nnls","extend"),...){
-	if(hasArg(message)) message<-list(...)$message
-	else message<-TRUE
-	if(message){
-		cat("***************************************************************\n")
-		cat("*                          Note:                              *\n")
-		cat("*    force.ultrametric does not include a formal method to    *\n")
-		cat("*    ultrametricize a tree & should only be used to coerce    *\n")
-		cat("*   a phylogeny that fails is.ultramtric due to rounding --   *\n")
-		cat("*    not as a substitute for formal rate-smoothing methods.   *\n")
-		cat("***************************************************************\n")
-	}
-	method<-method[1]
-	if(method=="nnls") tree<-nnls.tree(cophenetic(tree),tree,
-		method="ultrametric",rooted=is.rooted(tree),trace=0)
-	else if(method=="extend"){
-		h<-diag(vcv(tree))
-		d<-max(h)-h
-		ii<-sapply(1:Ntip(tree),function(x,y) which(y==x),
-			y=tree$edge[,2])
-		tree$edge.length[ii]<-tree$edge.length[ii]+d
-	} else 
-		cat("method not recognized: returning input tree\n\n")
-	tree
-}
-
-## function to summarize the results of stochastic mapping
-## written by Liam J. Revell 2013, 2014, 2015, 2021, 2022
-describe.simmap<-function(tree,...){
-	if(hasArg(plot)) plot<-list(...)$plot
-	else plot<-FALSE
-	if(hasArg(check.equal)) check.equal<-list(...)$check.equal
-	else check.equal<-FALSE
-	if(hasArg(message)) message<-list(...)$message
-	else message<-FALSE
-	if(hasArg(ref.tree)) ref.tree<-list(...)$ref.tree
-	else ref.tree<-NULL
-	if(inherits(tree,"multiPhylo")){
-		if(check.equal){
-			TT<-sapply(tree,function(x,y) sapply(y,all.equal.phylo,x),y=tree)
-			check<-all(TT)
-			if(!check) cat("Note: Some trees are not equal.\nA \"reference\" tree will be computed if none was provided.\n\n")
-		} else check<-TRUE
-		if(is.null(ref.tree)&&check){ 
-			YY<-getStates(tree,"both")
-			states<-sort(unique(as.vector(YY)))
-			ZZ<-t(apply(YY,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,
-				levels=states,Nsim=length(tree)))
-		} else {
-			YY<-getStates(tree)
-			states<-sort(unique(as.vector(YY)))
-			if(is.null(ref.tree)){
-				cat("No reference tree provided & some trees are unequal.\nComputing majority-rule consensus tree.\n")
-				ref.tree<-consensus(tree,p=0.5)
-			}
-			YYp<-matrix(NA,ref.tree$Nnode,length(tree),dimnames=list(1:ref.tree$Nnode+Ntip(ref.tree),
-				NULL))
-			for(i in 1:length(tree)){
-				M<-matchNodes(ref.tree,tree[[i]])
-				jj<-sapply(M[,2],function(x,y) if(x%in%y) which(as.numeric(y)==x) else NA,
-					y=as.numeric(rownames(YY)))
-				YYp[,i]<-YY[jj,i]
-			}
-			ZZ<-t(apply(YYp,1,function(x,levels) summary(factor(x[!is.na(x)],
-				levels))/sum(!is.na(x)),levels=states))
-		}
-		XX<-countSimmap(tree,states,FALSE)
-		XX<-XX[,-(which(as.vector(diag(-1,length(states)))==-1)+1)]
-		AA<-t(sapply(unclass(tree),function(x) c(colSums(x$mapped.edge),sum(x$edge.length))))
-		colnames(AA)[ncol(AA)]<-"total"
-		BB<-getStates(tree,type="tips")
-		CC<-t(apply(BB,1,function(x,levels,Nsim) summary(factor(x,levels))/Nsim,levels=states,
-			Nsim=length(tree)))
-		x<-list(count=XX,times=AA,ace=ZZ,tips=CC,tree=tree,ref.tree=if(!is.null(ref.tree)) 
-			ref.tree else NULL)
-		class(x)<-"describe.simmap"
-	} else if(inherits(tree,"phylo")){
-		XX<-countSimmap(tree,message=FALSE)
-		YY<-getStates(tree)
-		states<-sort(unique(YY))
-		AA<-setNames(c(colSums(tree$mapped.edge),sum(tree$edge.length)),
-			c(colnames(tree$mapped.edge),"total"))
-		AA<-rbind(AA,AA/AA[length(AA)]); rownames(AA)<-c("raw","prop")
-		x<-list(N=XX$N,Tr=XX$Tr,times=AA,states=YY,tree=tree)
-		class(x)<-"describe.simmap"
-	}
-	if(message) print(x)
-	if(plot) plot(x)
-	x
 }
 
 ## function to get states at internal nodes from simmap style trees
@@ -243,8 +405,8 @@ expand.clade<-function(tree,node,factor=5){
 	cw<-reorder(tree)
 	tips<-setNames(rep(1,Ntip(tree)),cw$tip.label)
 	get.tips<-function(node,tree){
-    		dd<-getDescendants(tree,node)
-    		tree$tip.label[dd[dd<=Ntip(tree)]]
+				dd<-getDescendants(tree,node)
+				tree$tip.label[dd[dd<=Ntip(tree)]]
 	}
 	desc<-unlist(lapply(node,get.tips,tree=cw))
 	for(i in 2:Ntip(cw)){
@@ -264,7 +426,7 @@ expand.clade<-function(tree,node,factor=5){
 print.expand.clade<-function(x,...){
 	cat("An object of class \"expand.clade\" consisting of:\n")
 	cat(paste("(1) A phylogenetic tree (x$tree) with",Ntip(x$tree),
-		"tips and\n   ",x$tree$Nnode,"internal nodes.\n"))
+		"tips and\n	 ",x$tree$Nnode,"internal nodes.\n"))
 	cat("(2) A vector (x$tips) containing the desired tip-spacing.\n\n")
 }
 
@@ -448,9 +610,9 @@ get.asp<-function(){
 	asp
 }
 
-round.polygon<-function(x,y,col="transparent"){
+# round.polygon<-function(x,y,col="transparent"){
 	## just space holding for now	
-}
+# }
 
 ## draw a box around a clade
 ## written by Liam J. Revell 2017
@@ -660,7 +822,7 @@ print.aic.w<-function(x,...){
 }
 
 ## function to compute all paths towards the tips from a node
-## written by  Liam J. Revell
+## written by	Liam J. Revell
 node.paths<-function(tree,node){
 	d<-Descendants(tree,node,"children")
 	paths<-as.list(d)
@@ -1106,7 +1268,7 @@ drop.clade<-function(tree,tip){
 	chk<-tree$tip.label[desc[desc<=Ntip(tree)]]
 	if(!setequal(tip,chk)){
 		cat("Caution: Species in tip do not form a monophyletic clade.\n")
-		cat("         Pruning all tips descended from ancestor.\n\n")
+		cat("				 Pruning all tips descended from ancestor.\n\n")
 		tip<-chk
 	}
 	## step 2, find all edges in the clade & set them to zero length
@@ -1141,7 +1303,7 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 		else position<-tree$edge.length[which(tree$edge[,2]==node.number)]
 	} else {
 		if(node.number==(Ntip(tree)+1))
-			cat("      A value of position != 0 has been reset to zero.\n")
+			cat("			A value of position != 0 has been reset to zero.\n")
 	}
 	if(hasArg(edgelabel)) edgelabel<-list(...)$edgelabel
 	else edgelabel<-FALSE
@@ -1164,69 +1326,8 @@ reroot<-function(tree,node.number,position=NULL,interactive=FALSE,...){
 	obj
 }
 
-## function to add an arrow pointing to a tip or node in the tree
-## written by Liam J. Revell 2014, 2017, 2020
-
-add.arrow<-function(tree=NULL,tip,...){
-	if(length(tip)>1){ 
-		object<-sapply(tip,add.arrow,tree=tree,...)
-		invisible(object)
-	} else {
-		lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-		if(!is.null(tree)){
-			if(inherits(tree,"contMap")) tree<-tree$tree
-			else if(inherits(tree,"densityMap")) tree<-tree$tree
-		}
-		if(is.numeric(tip)){
-			ii<-tip
-			if(!is.null(tree)&&ii<=Ntip(tree)) tip<-tree$tip.label[ii]
-			else tip<-""
-		} else if(is.character(tip)&&!is.null(tree)) ii<-which(tree$tip.label==tip)
-		if(hasArg(offset)) offset<-list(...)$offset
-		else offset<-1
-		strw<-lastPP$cex*(strwidth(tip)+offset*mean(strwidth(c(LETTERS,letters))))
-		if(hasArg(arrl)) arrl<-list(...)$arrl
-		else { 
-			if(lastPP$type=="fan") arrl<-0.3*max(lastPP$xx)
-			else if(lastPP$type=="phylogram") arrl<-0.15*max(lastPP$xx)
-		}
-		if(hasArg(hedl)) hedl<-list(...)$hedl
-		else hedl<-arrl/3
-		if(hasArg(angle)) angle<-list(...)$angle
-		else angle<-45
-		arra<-angle*pi/180
-		asp<-if(lastPP$type=="fan") 1 else (par()$usr[4]-par()$usr[3])/(par()$usr[2]-
-			par()$usr[1])
-		if(hasArg(col)) col<-list(...)$col
-		else col<-"black"
-		if(hasArg(lwd)) lwd<-list(...)$lwd	
-		else lwd<-2
-		if(lastPP$type=="fan") theta<-atan2(lastPP$yy[ii],lastPP$xx[ii])
-		else if(lastPP$type=="phylogram") theta<-0	
-		segments(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
-			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw,
-			col=col,lwd=lwd,lend="round")
-		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta+arra/2)*hedl,
-			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta+arra/2)*hedl*asp,
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw,
-			col=col,lwd=lwd,lend="round")
-		segments(x0=lastPP$xx[ii]+cos(theta)*strw+cos(theta-arra/2)*hedl,
-			y0=lastPP$yy[ii]+sin(theta)*strw+sin(theta-arra/2)*hedl*asp,
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw,
-			col=col,lwd=lwd,lend="round")
-		invisible(list(x0=lastPP$xx[ii]+cos(theta)*(strw+arrl),
-			y0=lastPP$yy[ii]+sin(theta)*(strw+arrl),
-			x1=lastPP$xx[ii]+cos(theta)*strw,
-			y1=lastPP$yy[ii]+sin(theta)*strw))
-		}
-}
-
 ## function to ladderize phylogeny with mapped discrete character
-## written by Liam J. Revell 2014, 2015, 2019
+## written by Liam J. Revell 2014, 2015, 2019, 2023
 
 ladderize.simmap<-function(tree,right=TRUE){
 	if(!inherits(tree,"simmap")){
@@ -1241,7 +1342,7 @@ ladderize.simmap<-function(tree,right=TRUE){
 		rN<-Ntip(obj)+1
 		T<-cbind(1:Ntip(obj),sapply(obj$tip.label,
 			function(x,y) which(y==x),y=tree$tip.label))
-		N<-matchNodes(obj,tree)
+		N<-matchNodes(obj,as.phylo(tree))
 		M<-rbind(T,N[N[,1]!=rN,])
 		ii<-sapply(M[,1],function(x,y) which(y==x),y=obj$edge[,2])
 		jj<-sapply(M[,2],function(x,y) which(y==x),y=tree$edge[,2])
@@ -1443,7 +1544,8 @@ getAncestors<-function(tree,node,type=c("all","parent")){
 
 ## function for midpoint rooting
 ## written by Liam J. Revell 2014
-midpoint.root<-function(tree){
+## (being deprecated out in 2023)
+midpoint_root<-function(tree){
 	D<-cophenetic(tree)
 	dd<-max(D)
 	ii<-which(D==dd)[1]
@@ -1460,6 +1562,9 @@ midpoint.root<-function(tree){
 	tree<-reroot(tree,as.numeric(names(D)[i]),D[i+1]-dd/2)
 	tree
 }
+
+midpoint.root<-function(tree,node.labels="support",...) 
+	phangorn::midpoint(tree,node.labels="support",...)
 
 # function computes phylogenetic variance-covariance matrix, including for internal nodes
 # written by Liam J. Revell 2011, 2013, 2014, 2015
@@ -1520,7 +1625,7 @@ lambdaTree<-function(tree,lambda){
 	H1<-nodeHeights(tree)
 	tree$edge.length[ii]<-lambda*tree$edge.length[ii]
 	H2<-nodeHeights(tree)
-	tree$edge.length[-ii]<-tree$edge.length[-ii]+     H1[-ii,2]-H2[-ii,2]
+	tree$edge.length[-ii]<-tree$edge.length[-ii]+		 H1[-ii,2]-H2[-ii,2]
 	tree
 }
 
@@ -1569,20 +1674,20 @@ di2multi.simmap<-function(phy,...){
 # written by Liam J. Revell 2011, 2012, 2013, 2015, 2016
 # modified by Klaus Schliep 2017
 nodeHeights<-function(tree,...){
-    if(hasArg(root.edge)) root.edge<-list(...)$root.edge
-    else root.edge<-FALSE
-    if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
-    else ROOT<-0 
-    nHeight <- function(tree){
-        tree <- reorder(tree)
-        edge <- tree$edge
-        el <- tree$edge.length
-        res <- numeric(max(tree$edge))
-        for(i in seq_len(nrow(edge))) res[edge[i,2]] <- res[edge[i,1]] + el[i] 
-        res
-    }
-    nh <- nHeight(tree)
-    return(matrix(nh[tree$edge], ncol=2L)+ROOT)
+		if(hasArg(root.edge)) root.edge<-list(...)$root.edge
+		else root.edge<-FALSE
+		if(root.edge) ROOT<-if(!is.null(tree$root.edge)) tree$root.edge else 0
+		else ROOT<-0 
+		nHeight <- function(tree){
+				tree <- reorder(tree)
+				edge <- tree$edge
+				el <- tree$edge.length
+				res <- numeric(max(tree$edge))
+				for(i in seq_len(nrow(edge))) res[edge[i,2]] <- res[edge[i,1]] + el[i] 
+				res
+		}
+		nh <- nHeight(tree)
+		return(matrix(nh[tree$edge], ncol=2L)+ROOT)
 }
 
 ## function drops all the leaves from the tree & collapses singleton nodes
@@ -1728,8 +1833,8 @@ sampleFrom<-function(xbar=0,xvar=1,n=1,randn=NULL,type="norm"){
 
 	for(i in 1:length(xbar)){
 		y<-rnorm(n=n[i],mean=xbar[i],sd=sqrt(xvar[i]))
-   		names(y)<-rep(names(xbar)[i],length(y))
-   		x<-c(x,y)
+	 		names(y)<-rep(names(xbar)[i],length(y))
+	 		x<-c(x,y)
 	}
 	return(x)
 }
@@ -1816,7 +1921,7 @@ findMRCA<-function(tree,tips=NULL,type=c("node","height")){
 			X<-apply(X,c(1,2),function(x,y,z) y[which(z==x)[1]],y=H,z=tree$edge)
 		}
 		return(X)
-    } else {
+		} else {
 		node<-getMRCA(tree,tips)
 		if (type == "node") return(node)
 		else if(type=="height") return(nodeheight(tree,node))

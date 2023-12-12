@@ -17,10 +17,10 @@ gtt(tree, n=100, ...)
 mccr(obj, rho=1, nsim=100, ...)
 }
 \arguments{
-	\item{tree}{is a phylogenetic tree in \code{"phylo"} format, or an object of class \code{"multiPhylo"} containing a list of phylogenetic trees.}
+	\item{tree}{an object of class \code{"phylo"}, \code{"multiPhylo"}, \code{"simmap"}, or \code{"multiSimmap"}.}
 	\item{plot}{a logical value indicating whether or not to create LTT plot.}
 	\item{drop.extinct}{logical value indicating whether or not to drop extinct tips from the tree.}
-	\item{log.lineages}{logical value indicating whether LTT plot should be on log-linear (default) or linear-linear scale.}
+	\item{log.lineages}{logical value indicating whether LTT plot should be on log-linear (default for \code{"phylo"} and \code{"multiPhylo"} objects) or linear-linear scale.}
 	\item{gamma}{logical value indicating whether or not to compute \eqn{\gamma} from Pybus & Harvey (2000; \emph{Proc. Roy. Soc. B}).}
 	\item{n}{for \code{gtt} the number of time intervals to use to track \eqn{\gamma} through time.}
 	\item{obj}{for \code{mccr} an object of class \code{"ltt"}.}
@@ -34,6 +34,8 @@ mccr(obj, rho=1, nsim=100, ...)
 \details{
 	The function \code{ltt} computes LTT plot with extant and extinct lineages, and optionally conducts \eqn{\gamma}-test of Pybus & Harvey (2000). The object returned by \code{ltt} can be plotted or re-plotted using \code{\link{plot}}.
 	
+	For the case in which \code{tree} is an object of class \code{"simmap"} or \code{"multiSimmap"} then the object will contain the number of lineages through time (for each tree, in the case of \code{"multiSimmap"} objects) separated by mapped regimes.
+	
 	The function \code{gtt} computes the value of Pybus & Harvey's \eqn{\gamma} statistic through time by slicing the tree at various points - by default in even intervals from the time above the root at which \emph{N} = 3 to the present day.
 	
 	The function \code{mccr} performs the MCCR test of Pybus & Harvey (2000) which takes into account incomplete taxon sampling in computing a P-value of the \eqn{\gamma} statistic.
@@ -41,9 +43,9 @@ mccr(obj, rho=1, nsim=100, ...)
 	Although it is calculated here, it's unclear how to interpret the \eqn{\gamma}-statistic if not all the tips in the tree are contemporaneous.
 }
 \value{
-	\code{ltt} returns an object of class \code{"ltt"} which includes the following elements:
+	\code{ltt} returns an object of class \code{"ltt"} which normally includes the following elements:
 	\item{times}{a vector of branching times.}
-	\item{ltt}{a vector of linages.}
+	\item{ltt}{a vector of lineages, or a matrix of lineages in each state over time for objects of class \code{"simmap"} and \code{"multiSimmap"}.}
 	\item{gamma}{optionally, a value for the \eqn{\gamma}-statistic.}
 	\item{p}{two-tailed P-value for the \eqn{\gamma}-test.}
 	If \code{tree} is an object of class \code{"multiPhylo"}, then an object of class \code{"multiLtt"} is returned consisting of a list of object of class \code{"ltt"}.

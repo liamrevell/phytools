@@ -1,6 +1,6 @@
 ## function to interactively expand and contract subtrees on a phylogeny
 ## inspired by the phylogeny interface of sharksrays.org by Gavin Naylor
-## written by Liam J. Revell 2015, 2016, 2017, 2018, 2020
+## written by Liam J. Revell 2015, 2016, 2017, 2018, 2020, 2023
 
 collapseTree<-function(tree,...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -11,6 +11,8 @@ collapseTree<-function(tree,...){
 	else hold<-TRUE
 	if(hasArg(drop.extinct)) drop.extinct<-list(...)$drop.extinct
 	else drop.extinct<-TRUE
+	if(hasArg(sleep)) sleep<-list(...)$sleep
+	else sleep<-0.05
 	if(is.null(tree$edge.length)){
 		no.edge<-TRUE
 		tree<-compute.brlen(tree,power=0.5)
@@ -42,7 +44,7 @@ collapseTree<-function(tree,...){
 	rect(par()$usr[1],par()$usr[4]-3*strheight("W"),par()$usr[2],par()$usr[4],
 		border=0,col=make.transparent("blue",0.2))
 	textbox(x=par()$usr[1:2],y=par()$usr[4],
-		c("Click nodes to collapse or expand\nRIGHT CLICK to stop"),
+		c("Click nodes to collapse or expand\nRIGHT CLICK (or FINISH in RStudio) to stop"),
 		justify="c",border=0)		
 	dev.flush()
 	x<-unlist(locator(1))
@@ -85,7 +87,7 @@ collapseTree<-function(tree,...){
 						par()$usr[2],par()$usr[4],
 						border=0,col=make.transparent("blue",0.2))
 					textbox(x=par()$usr[1:2],y=par()$usr[4],
-						c("Click nodes to collapse or expand\nRIGHT CLICK to stop"),
+						c("Click nodes to collapse or expand\nRIGHT CLICK (or FINISH in RStudio) to stop"),
 						justify="c",border=0)
 					if(nodes||i==nrow(M)){
 						lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
@@ -95,6 +97,7 @@ collapseTree<-function(tree,...){
 							y=lastPP$yy[1:tree$Nnode+Ntip(tree)],pch=21,
 							col="blue",bg="white",cex=1.2)
 					}
+					Sys.sleep(sleep)
 					dev.flush()
 				}
 			} else if(nn<=Ntip(tree)) {
@@ -122,7 +125,7 @@ collapseTree<-function(tree,...){
 							par()$usr[2],par()$usr[4],
 							border=0,col=make.transparent("blue",0.2))
 						textbox(x=par()$usr[1:2],y=par()$usr[4],
-							c("Click nodes to collapse or expand \nRIGHT CLICK to stop"),
+							c("Click nodes to collapse or expand\nRIGHT CLICK (or FINISH in RStudio) to stop"),
 							justify="c",border=0)
 						if(nodes||i==nrow(M)){
 							lastPP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
@@ -132,6 +135,7 @@ collapseTree<-function(tree,...){
 								y=lastPP$yy[1:tree$Nnode+Ntip(tree)],pch=21,
 								col="blue",bg="white",cex=1.2)
 						}
+						Sys.sleep(sleep)
 						dev.flush()
 					}
 				}

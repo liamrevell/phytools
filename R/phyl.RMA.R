@@ -1,5 +1,5 @@
 ## this function computes a phylogenetic reduced major axis (RMA) regression
-## written by Liam Revell 2010, 2011, 2012, 2015, 2016, 2017
+## written by Liam Revell 2010, 2011, 2012, 2015, 2016, 2017, 2023
 
 phyl.RMA<-function(x,y,tree,method="BM",lambda=NULL,fixed=FALSE,h0=1.0){
 	if(!inherits(tree,"phylo")) 
@@ -69,11 +69,18 @@ coef.phyl.RMA<-function(object,...){
 residuals.phyl.RMA<-function(object,...) object$resid[,1]
 
 plot.phyl.RMA<-function(x,...){
-	phylomorphospace(x$tree,x$data,node.size=c(0,0),ftype="off")
+	args<-list(tree=x$tree,
+		X=x$data,
+		node.size=c(0,0),
+		ftype="off",...)
+	do.call(phylomorphospace,args)
+	#phylomorphospace(x$tree,x$data,node.size=c(0,0),ftype="off",
+	#	...)
 	points(x$data,cex=1.2,pch=21,bg="grey")
 	x0<-ace(x$data[,1],x$tree,method="pic")$ace[1]
 	y0<-ace(x$data[,2],x$tree,method="pic")$ace[1]
 	a0<-y0-x$h0*x0
+	grid()
 	abline(a=a0,b=x$h0,lwd=2,col="grey",lty="dashed")
 	abline(a=coef(x)[1],b=coef(x)[2],lwd=2,col="red")
 	tmp<-legend(x=0,y=0,legend=c(expression(beta[RMA]),expression(h[0])),
@@ -82,6 +89,5 @@ plot.phyl.RMA<-function(x,...){
 		y=par()$usr[4],col=c("red","grey"),
 		legend=c(expression(beta[RMA]),expression(h[0])),
 		lty=c("solid","dashed"),lwd=c(2,2),
-		bg=make.transparent("white",0.75))
-		
+		bg=make.transparent("white",0.75),bty="n")
 }

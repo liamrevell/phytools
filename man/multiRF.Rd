@@ -7,7 +7,7 @@ multiRF(trees,quiet=FALSE,multi2di=FALSE)
 \arguments{
 	\item{trees}{object of class \code{"multiPhylo"} consisting of two or more fully bifurcating, unrooted trees. If trees are rooted, they will be unrooted.}
 	\item{quiet}{logical argument indicating whether or not to run quietly. (Defaults to \code{FALSE}.)}
-	\item{multi2di}{logical argumenet indicating whether or not to resolve multifurcating trees. (Defaults to \code{FALSE}.)}
+	\item{multi2di}{logical argument indicating whether or not to resolve multifurcating trees. (Defaults to \code{FALSE}.)}
 }
 \description{
 	Computes the Robinson-Foulds (Robinson & Foulds 1981) distance between a set of trees in an object of class \code{"multiPhylo"}.

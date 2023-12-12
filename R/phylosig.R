@@ -3,7 +3,7 @@
 ## written by Liam J. Revell 2011/2012, 2019, 2020, 2021, 2023
 
 phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
-	se=NULL,start=NULL,control=list()){
+	se=NULL,start=NULL,control=list(),niter=10){
 	# some minor error checking
 	if(!inherits(tree,"phylo")) 
 		stop("tree should be an object of class \"phylo\".")
@@ -137,8 +137,13 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
 		x<-x[rownames(C)]
 		maxlam<-maxLambda(tree)
 		if(!me){
-			res<-optimize(f=likelihoodLambda,interval=c(0,maxlam),
-				y=x,C=C,maximum=TRUE) # optimize lambda
+			INTERVAL<-cbind(
+				seq(0,maxlam-maxlam/niter,length.out=niter),
+				seq(maxlam/niter,maxlam,length.out=niter))
+			FITS<-apply(INTERVAL,1,optimize,f=likelihoodLambda,
+				y=x,C=C,maximum=TRUE)
+			LIKS<-sapply(FITS,function(x) x$objective)
+			res<-FITS[[which(LIKS==max(LIKS))[1]]]
 			if(!test){
 				object<-list(lambda=res$maximum,logL=res$objective,
 					lik=function(lambda) likelihoodLambda(lambda,
@@ -153,14 +158,19 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
 					likelihoodLambda(lambda,C=C,y=x))
 			}
 		} else {
+			FITS<-list()
 			control$fnscale=-1
 			M<-M[rownames(C),colnames(C)]
-			if(is.null(start)) s<-c(0.02*runif(n=1)*mean(pic(x,
-				multi2di(tree,random=FALSE))^2),runif(n=1))
-			else s<-start
-			res<-optim(s,likelihoodLambda.me,C=C,y=x,M=M,
-				method="L-BFGS-B",lower=c(0,0),upper=c(Inf,maxlam),
-				control=control)
+			for(i in 1:niter){
+				if(is.null(start)) s<-c(0.5*runif(n=1)*mean(pic(x,
+					multi2di(tree,random=FALSE))^2),runif(n=1))
+				else s<-start
+				FITS[[i]]<-optim(s,likelihoodLambda.me,C=C,y=x,M=M,
+					method="L-BFGS-B",lower=c(0,0),upper=c(Inf,maxlam),
+					control=control)
+			}
+			LIKS<-sapply(FITS,function(x) x$value)
+			res<-FITS[[which(LIKS==max(LIKS))[1]]]
 			if(!test){
 				object<-list(lambda=res$par[2],sig2=res$par[1],
 					logL=res$value,convergence=res$convergence,
@@ -168,9 +178,15 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
 					sig2=res$par[1]) likelihoodLambda.me(c(sig2,lambda),
 					C=C,M=M,y=x))
 			} else {
-				res0<-optim(c(s[1],0),likelihoodLambda.me,C=C,
-					y=x,M=M,method="L-BFGS-B",lower=c(0,0),
-					upper=c(Inf,1e-10),control=control)
+				for(i in 1:niter){
+					s<-0.5*runif(n=1)*mean(pic(x,multi2di(tree,
+						random=FALSE))^2)
+					FITS[[i]]<-optim(c(s,0),likelihoodLambda.me,C=C,
+						y=x,M=M,method="L-BFGS-B",lower=c(0,0),
+						upper=c(Inf,1e-10),control=control)
+				}
+				LIKS<-sapply(FITS,function(x) x$value)
+				res0<-FITS[[which(LIKS==max(LIKS))[1]]]
 				P<-as.numeric(pchisq(2*(res$value-res0$value),df=1,
 					lower.tail=FALSE))
 				object<-list(lambda=res$par[2],sig2=res$par[1],

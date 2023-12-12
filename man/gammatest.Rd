@@ -25,8 +25,8 @@ gammatest(x)
 	\code{\link{ltt}}, \code{\link{mccr}}
 }
 \examples{
-tree<-pbtree(n=200)
-gammatest(ltt(tree,plot=FALSE))
+data(darter.tree)
+gammatest(ltt(darter.tree,plot=FALSE))
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

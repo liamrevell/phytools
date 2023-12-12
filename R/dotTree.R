@@ -1,5 +1,5 @@
 ## function to plot a tree with dots/circles for a plotted phenotype
-## written by Liam J. Revell 2016, 2017, 2018
+## written by Liam J. Revell 2016, 2017, 2018, 2023
 
 dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
 	if(is.data.frame(x)) x<-as.matrix(x)
@@ -23,7 +23,11 @@ dotTree<-function(tree,x,legend=TRUE,method="plotTree",standardize=FALSE,...){
 	}
 }
 	
-dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){	
+dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
+	if(hasArg(border)) border<-list(...)$border
+	else border<-par()$fg
+	if(hasArg(cex.dot)) cex.dot<-list(...)$cex.dot
+	else cex.dot<-1.0
 	if(is.data.frame(x)) x<-as.matrix(x)
 	if(is.matrix(x)&&method=="plotTree"){
 		if(ncol(x)>1) method<-"phylogram"
@@ -66,7 +70,7 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
 			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W"),y=y.tip,
-			radius=rr,MoreArgs=list(nv=200,col=color))
+			radius=cex.dot*rr,MoreArgs=list(nv=200,col=color,border=border))
 		## add legend
 		if(legend){ 
 			h<-dot.legend(x=par()$usr[1]+0.1*max(nodeHeights(tree)),
@@ -101,7 +105,8 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 			rr<-rr/max(rr)*strwidth("W")*fsize[1]/2
 		for(i in 1:ncol(x)){
 			nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W")+x.space*(i-1),
-				y=y.tip,radius=rr[,i],MoreArgs=list(nv=200,col=color))
+				y=y.tip,radius=cex.dot*rr[,i],MoreArgs=list(nv=200,col=color,
+				border=border))
 		}
 		## add legend
 		if(legend){ 
@@ -118,6 +123,10 @@ dotTree.continuous<-function(tree,x,color,legend,method,standardize,...){
 }
 
 dotTree.discrete<-function(tree,x,color,legend,method,...){
+	if(hasArg(border)) border<-list(...)$border
+	else border<-par()$fg
+	if(hasArg(cex.dot)) cex.dot<-list(...)$cex.dot
+	else cex.dot<-1.0
 	if(is.data.frame(x)) x<-as.matrix(x)
 	if(is.matrix(x)&&method=="plotTree"){
 		if(ncol(x)>1) method<-"phylogram"
@@ -143,12 +152,13 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 		r<-min(0.8/2*diff(par()$usr[1:2])/diff(par()$usr[3:4]),
 			strwidth("W")*fsize/2)
 		nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W"),y=y.tip,
-			col=color[as.character(x)],MoreArgs=list(nv=200,radius=r))
+			col=color[as.character(x)],MoreArgs=list(nv=200,
+			radius=cex.dot*r,border=border))
 		if(legend){ 
 			add.simmap.legend(colors=color,prompt=FALSE,
 				vertical=FALSE,shape="circle",
 				x=par()$usr[1]+0.1*max(nodeHeights(tree)),
-				y=-1/25*Ntip(tree))
+				y=-1/25*Ntip(tree),border=border)
 		}
 	} else if(method=="phylogram"){
 		if(is.vector(x)) x<-as.matrix(x)
@@ -176,12 +186,13 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 		for(i in 1:ncol(x)){
 			nulo<-mapply(draw.circle,x=x.tip+1.2*strwidth("W")+x.space*(i-1),
 				y=y.tip,col=color[as.character(x[,i])],MoreArgs=list(nv=20,
-				radius=r))
+				radius=cex.dot*r,border=border))
 		}
 		## add legend
 		if(legend){ 
 			add.simmap.legend(colors=color,prompt=FALSE,
-				vertical=FALSE,shape="circle",x=-0.45,y=-0.06)
+				vertical=FALSE,shape="circle",x=-0.45,y=-0.06,
+				border=border)
 		}
 		if(labels){
 			text(x=seq(max(x.tip)+1.2*strwidth("W"),
@@ -192,10 +203,14 @@ dotTree.discrete<-function(tree,x,color,legend,method,...){
 }
 
 ## dot legend
-## written by Liam J. Revell 2016
+## written by Liam J. Revell 2016, 2023
 
 dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,
 	method="plotTree",...){
+	if(hasArg(border)) border<-list(...)$border
+	else border<-par()$fg
+	if(hasArg(cex.dot)) cex.dot<-list(...)$cex.dot
+	else cex.dot<-1.0
 	if(hasArg(cex)) cex<-list(...)$cex
 	else cex<-1
 	if(hasArg(fsize)) fsize<-list(...)$fsize
@@ -220,9 +235,8 @@ dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,
 		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
 			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		temp<-c(0,cumsum((1+leg.space)*rep(2*max(rr),length-1)))
-		nulo<-mapply(draw.circle,x=x+temp,y=rep(y,length),radius=rr,
-			MoreArgs=list(nv=200,col=colors))
-		## draw.circle(x+temp,rep(y,length),nv=200,radius=rr,col=colors)
+		nulo<-mapply(draw.circle,x=x+temp,y=rep(y,length),radius=cex.dot*rr,
+			MoreArgs=list(nv=200,col=colors,border=border))
 		text(max(x+temp),y-0.5*(Ntip/25),round(max,2),pos=1,cex=cex)
 		y1<-0.1/25*Ntip
 		lines(c(x,max(x+temp)),rep(y-0.5*(Ntip/25)-y1,2))
@@ -237,9 +251,8 @@ dot.legend<-function(x,y,min,max,Ntip,length=5,prompt=FALSE,
 		if(k<=0.8&&any(rr>(strwidth("W")*fsize/2))) 
 			rr<-rr/max(rr)*strwidth("W")*fsize/2
 		temp<-c(0,cumsum((1+leg.space)*rep(2*max(rr),length-1)))
-		nulo<-mapply(draw.circle,x=x+temp,y=rep(y,length),radius=rr,
-			MoreArgs=list(nv=200,col=colors))
-		## draw.circle(x+temp,rep(y,length),nv=200,radius=rr,col=colors)
+		nulo<-mapply(draw.circle,x=x+temp,y=rep(y,length),radius=cex.dot*rr,
+			MoreArgs=list(nv=200,col=colors,border=border))
 		text(max(x+temp),y-0.04,round(max,2),pos=1,cex=cex)
 		y1<-0.01
 		lines(c(x,max(x+temp)),rep(y-0.02-y1,2))

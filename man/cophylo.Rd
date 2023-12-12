@@ -7,7 +7,7 @@
 cophylo(tr1, tr2, assoc=NULL, rotate=TRUE, ...)
 \method{plot}{cophylo}(x, ...)
 cotangleplot(tr1, tr2, type=c("cladogram","phylogram"),
-	use.edge.length=TRUE, tangle=c("both","tree1","tree2"), ...)
+   use.edge.length=TRUE, tangle=c("both","tree1","tree2"), ...)
 }
 \arguments{
 	\item{tr1}{object of class \code{"phylo"}.}

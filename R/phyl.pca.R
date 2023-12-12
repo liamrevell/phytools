@@ -1,7 +1,7 @@
 ## function to perform phylogenetic principal components analysis
 ## multiple morphological traits in Y
-## also can use lambda transformation in which lambda is optimized by ML or REML (in progress)
-## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017, 2019, 2020, 2022 
+## also can use lambda transformation in which lambda is optimized by ML or REML
+## written by Liam Revell 2010, 2011, 2013, 2015, 2016, 2017, 2019, 2020, 2022, 2023
 ## ref. Revell (2009; Evolution)
 
 phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
@@ -26,6 +26,76 @@ phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
 			"\" not a valid option; setting mode = \"cov\"",sep=""))
 		mode="cov"
 	}
+	if(opt=="REML") object<-reml_phyl.pca(tree,Y,method,mode,...)
+	else object<-ml_phyl.pca(tree,Y,method,mode,...)
+	object
+}
+
+reml_phyl.pca<-function(tree,X,method="BM",mode="cov",...){
+	if(!is.binary(tree)) tree<-multi2di(tree)
+	lik<-function(lambda,tree,X){
+		tt<-lambdaTree(tree,lambda)
+		pics<-lapply(X,pic,tt,scaled=FALSE,var.contrasts=TRUE)
+		pX<-sapply(pics,function(x) x[,1]/sqrt(x[,2]))
+		vcv<-t(pX)%*%pX/(Ntip(tt)-1)
+		vars<-pics[[1]][,2]
+		logL<-0
+		for(i in 1:nrow(pX)){
+			x<-sapply(pics,function(x,i) x[i,1],i=i)
+			logL<-logL+dmnorm(x,varcov=vars[i]*vcv,
+				log=TRUE)
+		}
+		logL
+	}
+	X<-X[tree$tip.label,]
+	if(method=="lambda"){
+		reml_fit<-optimize(lik,c(0,maxLambda(tree)),tree=tree,
+			X=as.data.frame(X),maximum=TRUE)
+		logL.lambda<-reml_fit$objective
+		lambda<-reml_fit$maximum
+		tree<-lambdaTree(tree,lambda)
+	} else {
+		logL.lambda<-lik(1,tree,as.data.frame(X))
+		lambda<-1
+	}
+	pX<-apply(X,2,pic,phy=tree)
+	vcv<-t(pX)%*%pX/(Ntip(tree)-1)
+	n<-nrow(X)
+	m<-ncol(X)
+	if(mode=="corr"){
+		X=X/matrix(rep(sqrt(diag(vcv)),n),n,m,byrow=TRUE)
+		vcv=vcv/(sqrt(diag(vcv))%*%t(sqrt(diag(vcv))))
+	}
+	a<-apply(X,2,function(x,tree) rep(ace(x,tree,
+		method="pic")$ace[1],Ntip(tree)),tree=tree)
+	eig<-eigen(vcv)
+	Eval<-diag(eig$values)
+	colnames(Eval)<-rownames(Eval)<-paste("PC",1:nrow(Eval),sep="")
+	Evec<-eig$vectors
+	rownames(Evec)<-colnames(X)
+	colnames(Evec)<-colnames(Eval)
+	S<-as.matrix(X-a)%*%Evec
+	pic_corr<-function(x,y,tree){ 
+		px<-pic(x,tree)
+		py<-pic(y,tree)
+		mean(px*py)/sqrt(mean(px^2)*mean(py^2))
+	}
+	L<-apply(S,2,function(x,y,tree) apply(y,2,pic_corr,
+		x=x,tree=tree),y=X,tree=tree)
+	dimnames(L)<-dimnames(Evec)
+	object<-list(Eval=Eval,Evec=Evec,
+		S=S,L=L,lambda=lambda,
+		logL.lambda=logL.lambda,
+		V=vcv,a=a[1,,drop=FALSE],
+		mode=mode,call=match.call())
+	class(object)<-"phyl.pca"
+	object
+}
+
+ml_phyl.pca<-function(tree,Y,method="BM",mode="cov",...){
+	## get optional argument
+	if(hasArg(opt)) opt<-list(...)$opt
+	else opt<-"ML"
 	# preliminaries
 	n<-nrow(Y)
 	m<-ncol(Y)
@@ -195,6 +265,8 @@ scores.default<-function(object,...){
 scores.phyl.pca<-function(object,...){
 	if(hasArg(newdata))newdata<-list(...)$newdata
 	else newdata<-NULL
+	if(hasArg(dim)) dim<-list(...)$dim
+	else dim<-NULL
 	if(!is.null(newdata)){
 		if(!is.matrix(newdata)) newdata<-as.matrix(newdata)
 		if(ncol(newdata)!=nrow(object$Evec))
@@ -207,8 +279,9 @@ scores.phyl.pca<-function(object,...){
 			Y<-newdata/matrix(rep(sqrt(diag(V)),n),n,m,byrow=TRUE)-A
 		} else Y<-newdata-A 
 		Scores<-Y%*%object$Evec
+		if(!is.null(dim)) Scores<-Scores[,dim,drop=FALSE]
 	} else { 
-		Scores<-object$S
+		Scores<-if(!is.null(dim)) object$S[,dim,drop=FALSE] else object$S
 	}
 	Scores
 }
@@ -229,11 +302,32 @@ as.princomp.phyl.pca<-function(x,...){
 	obj$sdev<-setNames(sqrt(diag(x$Eval)),nn)
 	obj$loadings<-x$L
 	colnames(obj$loadings)<-nn
-	obj$center<-setNames(x$a[1,],rownames(x$Evec))
+	obj$center<-setNames(as.vector(x$a),rownames(x$Evec))
 	obj$scale<-setNames(rep(1,length(obj$center)),names(obj$center))
 	obj$scores<-x$S
 	colnames(obj$scores)<-nn
 	obj$call<-x$call
 	class(obj)<-"princomp"
 	obj
+}
+
+## S3 as.prcomp method to convert to "prcomp" object class
+
+as.prcomp<-function(x,...) UseMethod("as.prcomp")
+
+as.prcomp.default<-function(x,...){
+	warning(paste(
+		"as.prcomp does not know how to handle objects of class ",
+		class(x),"."))
+}
+
+as.prcomp.phyl.pca<-function(x,...){
+	object<-list(
+		sdev=sqrt(diag(x$Eval)),
+		rotation=x$Evec,
+		center=x$a,
+		scale=if(x$mode=="corr") TRUE else FALSE,
+		x=x$S)
+	class(object)<-"prcomp"
+	object
 }

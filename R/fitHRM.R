@@ -1,6 +1,8 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
 ## written by Liam J. Revell 2020, 2021, 2023
 
+anova.fitHRM<-function(object,...) anova.fitMk(object,...)
+
 fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-0
@@ -68,8 +70,12 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	} else {
 		if(hasArg(ordered)) ordered<-list(...)$ordered
 		else ordered<-TRUE
-		order<-if(ordered) setNames(1:length(levels(x)),levels(x)) else 
-			setNames(rep(1,length(levels(x))),levels(x))
+		if(ordered){
+			if(hasArg(order)){ 
+				order<-list(...)$order
+				order<-setNames(1:length(levels(x)),order)
+			} else order<-setNames(1:length(levels(x)),levels(x))
+		} else order<-setNames(rep(1,length(levels(x))),levels(x))
 		ii<-1
 		for(i in 1:length(nn)){
 			FROM<-strsplit(nn[i],"_")[[1]]
@@ -157,8 +163,12 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		for(i in 1:niter){
 			args$logscale<-logscale[i]
 			args$opt.method<-opt.method[i]
-			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
-			fits[[i]]<-do.call(fitMk,args)
+			args$rand_start<-TRUE
+			fits[[i]]<-NA
+			class(fits[[i]])<-"try-error"
+			while(inherits(fits[[i]],"try-error")){ 
+				fits[[i]]<-try(do.call(fitMk,args))
+			}
 			if(trace>0) print(fits[[i]])
 			logL<-sapply(fits,logLik)
 			if(!quiet){
@@ -171,7 +181,7 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		}
 	} else if(parallel){
 		if(hasArg(ncores)) ncores<-list(...)$ncores
-		else ncores<-detectCores()-1
+		else ncores<-min(c(detectCores()-1,niter))
 		mc<-makeCluster(ncores,type="PSOCK")
 		registerDoParallel(cl=mc)
 		if(!quiet){
@@ -183,8 +193,13 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		fits<-foreach(i=1:niter)%dopar%{
 			args$logscale<-logscale[i]
 			args$opt.method<-opt.method[i]
-			args$q.init<-rexp(n=max(model),rate=sum(tree$edge.length)/(1e3*k))
-			do.call(phytools::fitMk,args)
+			args$rand_start<-TRUE
+			result<-NA
+			class(result)<-"try-error"
+			while(inherits(result,"try-error")){ 
+				result<-try(do.call(phytools::fitMk,args))
+			}
+			result
 		}
 		logL<-sapply(fits,logLik)
 		stopCluster(cl=mc)
@@ -221,6 +236,9 @@ print.fitHRM<-function(x,digits=6,...){
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",
 		sep=""))
+	if(x$opt_results$convergence==0) 
+		cat("R thinks it has found the ML solution.\n\n")
+	else cat("R thinks optimization may not have converged.\n\n")
 }
 
 isOdd<-function(x) (x%%2)==1

@@ -22,7 +22,7 @@ expand.clade(tree, node, factor=5)
 \value{
 	The function returns an object of class \code{"expand.clade"} which consists of the (possibly re-ordered) tree and a numerical vector with the calculated tip spacing based on the expansion factor specified by the user.
 	
-	This object can be plotted using the S3 \code{plot} method for the object class; or it can be plotted simplying by calling a standard plotting function on the tree & tip spacings.
+	This object can be plotted using the S3 \code{plot} method for the object class; or it can be plotted simply by calling a standard plotting function on the tree & tip spacings.
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

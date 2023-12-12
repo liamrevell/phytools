@@ -7,7 +7,7 @@ phylo.to.map(tree, coords, rotate=TRUE, ...)
 \method{plot}{phylo.to.map}(x, type=c("phylogram","direct"), ...)
 }
 \arguments{
-	\item{tree}{an object of class "phylo".}
+	\item{tree}{an object of class \code{"phylo"}.}
 	\item{coords}{a matrix containing the latitude (in column 1) and the longitude of all tip species in the tree. The row names should be the same as \code{tree$tip.label}; however, more than one set of coordinates per species can be supplied by duplicating some row names.}
 	\item{rotate}{a logical value indicating whether or not to rotate nodes of the tree to better match longitudinal positions.}
 	\item{x}{for \code{plot.phylo.to.map}, an object of class \code{"phylo.to.map"}.}
@@ -29,6 +29,21 @@ phylo.to.map(tree, coords, rotate=TRUE, ...)
 }
 \references{
 	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+}
+\examples{
+## generally recommend using higher resolution map
+## e.g., from mapdata package
+data(tortoise.tree)
+data(tortoise.geog)
+tortoise.phymap<-phylo.to.map(tortoise.tree,
+  tortoise.geog,plot=FALSE,direction="rightwards",
+  regions="Ecuador")
+plot(tortoise.phymap,direction="rightwards",pts=FALSE,
+  xlim=c(-92.25,-89.25),ylim=c(-1.8,0.75),ftype="i",
+  fsize=0.8,lty="dashed",map.bg="lightgreen",
+  colors="slategrey")
+## reset margins
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}

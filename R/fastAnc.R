@@ -1,8 +1,13 @@
 ## function does fast estimation of ML ancestral states using ace
-## written by Liam J. Revell 2012, 2013, 2015, 2019, 2020, 2021
+## written by Liam J. Revell 2012, 2013, 2015, 2019, 2020, 2021, 2023
 
 fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
+	if(is.null(names(x))){
+		warn<-paste("x should be a vector with names corresponding to the taxon labels of the tree.\n",
+			" Assuming x is in the order of tree$tip.label (this is seldom true).")
+		warning(warn)
+	}
 	if(length(class(tree)>1)) class(tree)<-"phylo"
 	if(hasArg(anc.states)) anc.states<-list(...)$anc.states
 	else anc.states<-NULL

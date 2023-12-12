@@ -3,7 +3,7 @@
 \alias{drop.tip.densityMap}
 \alias{keep.tip.contMap}
 \alias{keep.tip.densityMap}
-\title{Drop tip or tips from an object of class "contMap" or "densityMap"}
+\title{Drop tip or tips from an object of class \code{"contMap"} or \code{"densityMap"}}
 \usage{
 \method{drop.tip}{contMap}(phy, tip, ...)
 \method{drop.tip}{densityMap}(phy, tip, ...)

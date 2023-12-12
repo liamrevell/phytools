@@ -44,12 +44,13 @@ map.to.singleton<-function(tree){
 }
 
 ## function plots tree with singleton nodes
-## written by Liam J. Revell 2013, 2015, 2017
+## written by Liam J. Revell 2013, 2015, 2017, 2023
 plotTree.singletons<-function(tree){
 	## preliminaries
 	n<-length(tree$tip.label)
 	if(is.null(names(tree$edge.length))) names(tree$edge.length)<-rep(1,length(tree$edge.length))
-	colors<-setNames(palette()[1:length(unique(names(tree$edge.length)))],sort(unique(names(tree$edge.length))))
+	colors<-setNames(palette()[1:length(unique(names(tree$edge.length)))],
+		sort(unique(names(tree$edge.length))))
 	colors<-colors[names(tree$edge.length)]
 	# assume order is cladewise (otherwise we're in trouble!)
 	if(attr(tree,"order")=="cladewise") cw<-tree
@@ -69,8 +70,10 @@ plotTree.singletons<-function(tree){
 	# open & size a new plot
 	plot.new(); par(mar=c(1.1,1.1,0.1,0.1))
 	pp<-par("pin")[1]
-	sw<-par("cex")*(max(strwidth(cw$tip.label,units="inches")))+1.37*par("cex")*strwidth("W",units="inches")
-	alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=X,sw=sw,pp=pp,interval=c(0,1e6))$minimum
+	sw<-par("cex")*(max(strwidth(cw$tip.label,units="inches")))+
+		1.37*par("cex")*strwidth("W",units="inches")
+	alp<-optimize(function(a,H,sw,pp) (a*1.04*max(H)+sw-pp)^2,H=X,sw=sw,
+		pp=pp,interval=c(0,1e6))$minimum
 	xlim<-c(min(X),max(X)+sw/alp)
 	plot.window(xlim=xlim,ylim=c(1,max(y)))
 	axis(1,at=c(0,max(X)),labels=FALSE); axis(2,at=1:max(y),labels=FALSE)
@@ -90,8 +93,8 @@ plotTree.singletons<-function(tree){
 		show.tip.label=TRUE,show.node.label=FALSE,
 		font=par()$font,cex=par()$cex,adj=0,srt=0,no.margin=FALSE,label.offset=0.3,
 		x.lim=xlim,y.lim=c(1,max(y)),
-		direction="rightward",tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+		direction="rightwards",tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
+		edge=tree$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }

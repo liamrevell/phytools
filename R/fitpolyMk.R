@@ -2,7 +2,7 @@
 ## fits several polymorphic discrete character evolution models
 ## written by Liam J. Revell 2019, 2020, 2022, 2023
 
-anova.fitpolyMk<-anova.fitMk
+anova.fitpolyMk<-function(object,...) anova.fitMk(object,...)
 
 as.Qmatrix.fitpolyMk<-function(x,...){
 	class(x)<-"fitMk"
@@ -15,8 +15,13 @@ Combinations<-function(n,r,v=1:n){
 }
 
 fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
-	if(hasArg(quiet)) quiet<-list(...)$quiet
-	else quiet<-FALSE
+	if(hasArg(return_matrix)) return_matrix<-list(...)$return_matrix
+	else return_matrix<-FALSE
+	if(return_matrix) quiet<-TRUE
+	else { 
+		if(hasArg(quiet)) quiet<-list(...)$quiet
+		else quiet<-FALSE
+	}
 	if(is.factor(x)) x<-setNames(as.character(x),names(x))
 	if(is.matrix(x)) X<-strsplit(colnames(x),"+",fixed=TRUE)
 	else X<-strsplit(x,"+",fixed=TRUE)
@@ -38,7 +43,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			else cat("order & states do not match. using alphabetical order.\n")
 		}
 	}
-	if(all(ns==1)){
+	if(all(ns==1)&&return_matrix==FALSE){
 		cat("No polymorphic species found. Use fitMk.\n\n")
 		object<-NULL
 	} else {
@@ -105,6 +110,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			X<-matrix(0,nrow(x),length(ss),dimnames=list(rownames(x),ss))
 			X[rownames(x),colnames(x)]<-x
 		} else X<-to.matrix(x,ss)
+		if(return_matrix) return(X)
 		object<-fitMk(tree,X,model=tmodel,...)
 	}
 	object$model<-model
@@ -137,6 +143,9 @@ print.fitpolyMk<-function(x,digits=6,...){
 	print(round(x$pi,digits))
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",sep=""))
+	if(x$opt_results$convergence==0) 
+		cat("R thinks it has found the ML solution.\n\n")
+	else cat("R thinks optimization may not have converged.\n\n")
 }
 
 ## logLik method for objects of class "fitpolyMk"
@@ -164,14 +173,22 @@ plot.fitpolyMk<-function(x,...){
 	else lwd<-1
 	if(hasArg(asp)) asp<-list(...)$asp
 	else asp<-1
+	if(hasArg(add)) add<-list(...)$add
+	else add<-FALSE
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-c(-1.2,1.2)
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(-1.2,1.2)
+	if(hasArg(offset)) offset<-list(...)$offset
+	else offset<-1.5
+	if(hasArg(spacer)) spacer<-list(...)$spacer
+	else spacer<-0.1
 	Q<-matrix(NA,length(x$states),length(x$states))
     Q[]<-c(0,x$rates)[x$index.matrix+1]
 	diag(Q)<-0
-	spacer<-0.1
-	plot.new()
+	if(!add) plot.new()
 	par(mar=mar)
-	xylim<-c(-1.2,1.2)
-	plot.window(xlim=xylim,ylim=xylim,asp=asp)
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-length(x$states)
 	if(x$ordered){
@@ -198,15 +215,15 @@ plot.fitpolyMk<-function(x,...){
 						if(isSymmetric(Q)) 0 else shift.y)
 					if(x$index.matrix[i,j]!=0){
 						if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
-							text(mean(c(s[1],e[1]))+1.5*shift.x,
-								mean(c(s[2],e[2]))+1.5*shift.y,
+							text(mean(c(s[1],e[1]))+offset*shift.x,
+								mean(c(s[2],e[2]))+offset*shift.y,
 								round(Q[i,j],signif),cex=cex.rates,
 								srt=atan(asp*dy/dx)*180/pi)
 						else
 							text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
-								1.5*shift.x,
+								offset*shift.x,
 								mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
-								1.5*shift.y,
+								offset*shift.y,
 								round(Q[i,j],signif),cex=cex.rates,
 								srt=atan(asp*dy/dx)*180/pi)
 						arrows(s[1],s[2],e[1],e[2],length=0.05,
@@ -243,8 +260,8 @@ plot.fitpolyMk<-function(x,...){
 						v.y[j]+spacer*sin(atan(slope))*sign(-dy)+
 						if(isSymmetric(Q)) 0 else shift.y)
 					if(x$index.matrix[i,j]!=0){
-						text(mean(c(s[1],e[1]))+1.5*shift.x,
-							mean(c(s[2],e[2]))+1.5*shift.y,
+						text(mean(c(s[1],e[1]))+offset*shift.x,
+							mean(c(s[2],e[2]))+offset*shift.y,
 							round(Q[i,j],signif),cex=cex.rates,
 							srt=atan(asp*dy/dx)*180/pi)
 						arrows(s[1],s[2],e[1],e[2],length=0.05,
@@ -281,15 +298,15 @@ plot.fitpolyMk<-function(x,...){
 					if(isSymmetric(Q)) 0 else shift.y)
 				if(x$index.matrix[i,j]!=0){
 					if(abs(diff(c(i,j)))==1||abs(diff(c(i,j)))==(nstates-1))
-						text(mean(c(s[1],e[1]))+1.5*shift.x,
-						mean(c(s[2],e[2]))+1.5*shift.y,
+						text(mean(c(s[1],e[1]))+offset*shift.x,
+						mean(c(s[2],e[2]))+offset*shift.y,
 						round(Q[i,j],signif),cex=cex.rates,
 						srt=atan(asp*dy/dx)*180/pi)
 				else
 					text(mean(c(s[1],e[1]))+0.3*diff(c(s[1],e[1]))+
-						1.5*shift.x,
+						offset*shift.x,
 						mean(c(s[2],e[2]))+0.3*diff(c(s[2],e[2]))+
-						1.5*shift.y,
+						offset*shift.y,
 						round(Q[i,j],signif),cex=cex.rates,
 						srt=atan(asp*dy/dx)*180/pi)
 				arrows(s[1],s[2],e[1],e[2],length=0.05,

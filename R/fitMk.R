@@ -2,6 +2,88 @@
 ## character evolution
 ## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022, 2023)
 ## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
+## lik.func="pruning" uses phytools::pruning to compute likelihood instead
+
+## function to simulate multiple-rate Mk multiMk
+## written by Liam J. Revell 2018
+sim.multiMk<-function(tree,Q,anc=NULL,nsim=1,...){
+	if(hasArg(as.list)) as.list<-list(...)$as.list
+	else as.list<-FALSE
+	if(hasArg(internal)) internal<-list(...)$internal
+	else internal<-FALSE
+	ss<-rownames(Q[[1]])
+	tt<-map.to.singleton(reorder(tree))
+	P<-vector(mode="list",length=nrow(tt$edge))
+	for(i in 1:nrow(tt$edge))
+		P[[i]]<-expm(Q[[names(tt$edge.length)[i]]]*tt$edge.length[i])
+	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
+		data.frame(row.names=tt$tip.label)
+	for(i in 1:nsim){
+		a<-if(is.null(anc)) sample(ss,1) else anc
+		STATES<-matrix(NA,nrow(tt$edge),2)
+		root<-Ntip(tt)+1
+		STATES[which(tt$edge[,1]==root),1]<-a
+		for(j in 1:nrow(tt$edge)){
+			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
+			STATES[j,2]<-new
+			ii<-which(tt$edge[,1]==tt$edge[j,2])
+			if(length(ii)>0) STATES[ii,1]<-new
+		}
+		if(internal){
+			x<-as.factor(setNames(sapply(1:(Ntip(tt)+tt$Nnode),
+				function(n,S,E) S[which(E==n)[1]],S=STATES,E=tt$edge),
+				c(tt$tip.label,1:tt$Nnode+Ntip(tt))))
+		} else{
+			x<-as.factor(
+				setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
+				S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
+		}
+		if(nsim>1) X[,i]<-x else X<-x
+	}
+	X
+}
+
+## constant-rate Mk model simulator
+## written by Liam J. Revell 2018, 2023
+
+sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
+	if(hasArg(as.list)) as.list<-list(...)$as.list
+	else as.list<-FALSE
+	if(hasArg(internal)) internal<-list(...)$internal
+	else internal<-FALSE
+	ss<-rownames(Q)
+	tt<-reorder(tree)
+	P<-vector(mode="list",length=nrow(tt$edge))
+	for(i in 1:nrow(tt$edge))
+		P[[i]]<-expm(Q*tt$edge.length[i])
+	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
+		data.frame(row.names=tt$tip.label)
+	for(i in 1:nsim){
+		if(is.null(anc)) a<-sample(ss,1)
+		else if(is.numeric(anc)) a<-sample(names(anc),1,prob=anc)
+		else a<-anc
+		STATES<-matrix(NA,nrow(tt$edge),2)
+		root<-Ntip(tt)+1
+		STATES[which(tt$edge[,1]==root),1]<-a
+		for(j in 1:nrow(tt$edge)){
+			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
+			STATES[j,2]<-new
+			ii<-which(tt$edge[,1]==tt$edge[j,2])
+			if(length(ii)>0) STATES[ii,1]<-new
+		}
+		if(internal){
+			x<-as.factor(setNames(sapply(1:(Ntip(tt)+tt$Nnode),
+				function(n,S,E) S[which(E==n)[1]],S=STATES,E=tt$edge),
+				c(tt$tip.label,1:tt$Nnode+Ntip(tt))))
+		} else{
+			x<-as.factor(
+				setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
+				S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
+		}
+		if(nsim>1) X[[i]]<-x else X<-x
+	}
+	X
+}
 
 anova.fitMk<-function(object,...){
 	fits<-list(...)
@@ -29,6 +111,8 @@ anova.fitMk<-function(object,...){
 fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
 	else opt.method<-"nlminb"
+	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+	else lik.func<-"lik"
 	if(opt.method=="optimParallel"){ 
 		if(hasArg(ncores)) ncores<-list(...)$ncores
 		else ncores<-detectCores()
@@ -42,6 +126,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	} else {
 		if(hasArg(output.liks)) output.liks<-list(...)$output.liks
 		else output.liks<-FALSE
+		if(hasArg(smart_start)) smart_start<-list(...)$smart_start
+		else smart_start<-FALSE
 		if(hasArg(q.init)) q.init<-list(...)$q.init
 		else q.init<-length(unique(x))/sum(tree$edge.length)
 		if(hasArg(rand_start)) rand_start<-list(...)$rand_start
@@ -116,11 +202,16 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			Q<-fixedQ
 		}
 		index.matrix<-rate
+		if(lik.func=="pruning"){
+			MODEL<-rate
+			MODEL[is.na(MODEL)]<-0
+			diag(MODEL)<-0
+		}
 		tmp<-cbind(1:m,1:m)
 		rate[tmp]<-0
 		rate[rate==0]<-k+1
 		liks<-rbind(x,matrix(0,M,m,dimnames=list(1:M+N,states)))
-		pw<-reorder(tree,"pruningwise")
+		pw<-reorder(tree,"postorder")
 		lik<-function(Q,output.liks=FALSE,pi,...){
 			if(hasArg(output.pi)) output.pi<-list(...)$output.pi
 			else output.pi<-FALSE
@@ -146,7 +237,6 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 						vv<-D*D/sum(D)
 					}
 				} else vv<-Reduce('*',v)[,1]
-				## vv<-if(anc==root) Reduce('*',v)[,1]*pi else Reduce('*',v)[,1]
 				comp[anc]<-sum(vv)
 				liks[anc,]<-vv/comp[anc]
 			}
@@ -159,24 +249,49 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			}
 		}
 		if(is.null(fixedQ)){
+			if(smart_start&&max(index.matrix,na.rm=TRUE)>1){
+				MM<-index.matrix
+				MM[is.na(MM)]<-0
+				MM[MM>0]<-1
+				q.init<-fitMk(pw,x,model=MM,pi=pi,opt.method="nlminb")$rates
+			}
 			if(length(q.init)!=k) q.init<-rep(q.init[1],k)
 			if(rand_start) q.init<-q.init*rexp(length(q.init),1)
 			q.init<-if(logscale) log(q.init) else q.init
 			if(opt.method=="optim"){
-				fit<-if(logscale) 
-					optim(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
-						method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
-					optim(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
-						method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+				if(lik.func=="lik"){
+					fit<-if(logscale) 
+						optim(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
+							method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+						optim(q.init,function(p) lik(makeQ(m,p,index.matrix),pi=pi),
+							method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+				} else if(lik.func=="pruning") {
+					fit<-if(logscale)
+						optim(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,pi=pi),
+							method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+						optim(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,pi=pi),
+							method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+				}
 			} else if(opt.method=="none"){
-				fit<-list(objective=lik(makeQ(m,q.init,index.matrix),pi=pi),
-					par=q.init)
+				if(lik.func=="lik")
+					fit<-list(objective=lik(makeQ(m,q.init,index.matrix),pi=pi),
+						par=q.init)
+				else if(lik.func=="pruning")
+					fit<-list(objective=-pruning(q.init,pw,x,MODEL,pi=pi),par=q.init)
 			} else {
-				fit<-if(logscale)
-					nlminb(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
-						lower=rep(log(min.q),k),upper=rep(log(max.q),k))
-					else nlminb(q.init,function(p) lik(makeQ(m,p,index.matrix),
-						pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+				if(lik.func=="lik"){
+					fit<-if(logscale)
+						nlminb(q.init,function(p) lik(makeQ(m,exp(p),index.matrix),pi=pi),
+							lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else 
+						nlminb(q.init,function(p) lik(makeQ(m,p,index.matrix),
+							pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+				} else if(lik.func=="pruning"){
+					fit<-if(logscale)
+						nlminb(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,
+							pi=pi),lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+						nlminb(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,
+							pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+				}
 			}
 			if(logscale) fit$par<-exp(fit$par)
 			if(pi[1]=="fitzjohn") pi<-setNames(
@@ -190,6 +305,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				pi=pi,
 				method=opt.method,
 				root.prior=root.prior)
+			if(opt.method=="nlminb")
+				obj$opt_results<-fit[c("convergence","iterations","evaluations","message")]
+			else if(opt.method=="optim")
+				obj$opt_results<-fit[c("counts","convergence","message")]
 			if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 				pi=pi)
 		} else {
@@ -204,8 +323,17 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 				pi=pi)
 		}
-		lik.f<-function(q) -lik(q,output.liks=FALSE,
-			pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+		if(lik.func=="lik")
+			lik.f<-function(q) -lik(q,output.liks=FALSE,
+				pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+		else if(lik.func=="pruning") {
+			lik.f<-function(q){
+				q<-sapply(1:max(MODEL), function(ind,q,MODEL) q[which(MODEL==ind)],
+					q=q,MODEL=MODEL)
+				pruning(q,tree=pw,x=x,model=MODEL,
+					pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+			}
+		}
 		obj$data<-x
 		obj$tree<-tree
 		obj$lik<-lik.f
@@ -239,6 +367,11 @@ print.fitMk<-function(x,digits=6,...){
 	cat(paste("\nLog-likelihood:",round(x$logLik,digits),"\n"))
 	cat(paste("\nOptimization method used was \"",x$method,"\"\n\n",
 		sep=""))
+	if(!is.null(x$opt_results$convergence)){
+		if(x$opt_results$convergence==0) 
+			cat("R thinks it has found the ML solution.\n\n")
+		else cat("R thinks optimization may not have converged.\n\n")
+	}
 }
 
 ## summary method for objects of class "fitMk"
@@ -305,6 +438,8 @@ RANGE<-function(x,...) range(x[is.finite(x)],...)
 ## S3 method for "Qmatrix" object class
 plot.Qmatrix<-function(x,...){
 	Q<-unclass(x)
+	if(hasArg(asp)) asp<-list(...)$asp
+	else asp<-1
 	if(hasArg(signif)) signif<-list(...)$signif
 	else signif<-3
 	if(hasArg(main)) main<-list(...)$main
@@ -363,7 +498,7 @@ plot.Qmatrix<-function(x,...){
 			ylim<-c(-1.2,1.2)
 		}
 	}
-	plot.window(xlim=xlim,ylim=ylim,asp=1)
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)
 	if(!is.null(main)) title(main=main,cex.main=cex.main)
 	nstates<-nrow(Q)
 	if(is.null(rotate)){
@@ -461,19 +596,19 @@ plot.Qmatrix<-function(x,...){
 		if(dq>tol){
 			h<-1.5
 			LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
-			lines(x=rep(-1.3+LWD*15/2,2),y=c(-h/2,h/2))
+			lines(x=rep(0.93*xlim[1]+LWD*15/2,2),y=c(-h/2,h/2))
 			nticks<-6
 			Y<-cbind(seq(-h/2,h/2,length.out=nticks),
 				seq(-h/2,h/2,length.out=nticks))
-			X<-cbind(rep(-1.3+LWD*15/2,nticks),
-				rep(-1.3+LWD*15/2+0.02*h,nticks))
+			X<-cbind(rep(0.93*xlim[1]+LWD*15/2,nticks),
+				rep(0.93*xlim[1]+LWD*15/2+0.02*h,nticks))
 			for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
 			add.color.bar(h,sapply(seq(0,1,length.out=100),col_pal),
 				title="evolutionary rate (q)",
 				lims=NULL,digits=3,
 				direction="upwards",
 				subtitle="",lwd=15,
-				x=-1.3,y=-h/2,prompt=FALSE)
+				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
 			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
@@ -482,19 +617,19 @@ plot.Qmatrix<-function(x,...){
 			BLUE<-function(...) palette[1]
 			h<-1.5
 			LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
-			lines(x=rep(-1.3+LWD*15/2,2),y=c(-h/2,h/2))
+			lines(x=rep(0.93*xlim[1]+LWD*15/2,2),y=c(-h/2,h/2))
 			nticks<-6
 			Y<-cbind(seq(-h/2,h/2,length.out=nticks),
 				seq(-h/2,h/2,length.out=nticks))[nticks,,drop=FALSE]
-			X<-cbind(rep(-1.3+LWD*15/2,nticks),
-				rep(-1.3+LWD*15/2+0.02*h,nticks))[nticks,,drop=FALSE]
+			X<-cbind(rep(0.93*xlim[1]+LWD*15/2,nticks),
+				rep(0.93*xlim[1]+LWD*15/2+0.02*h,nticks))[nticks,,drop=FALSE]
 			for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
 			add.color.bar(h,sapply(seq(0,1,length.out=100),BLUE),
 				title="evolutionary rate (q)",
 				lims=NULL,digits=3,
 				direction="upwards",
 				subtitle="",lwd=15,
-				x=-1.3,y=-h/2,prompt=FALSE)
+				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
 			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
@@ -511,68 +646,6 @@ EXPM<-function(x,...){
 	e_x<-if(isSymmetric(x)) matexpo(x) else expm(x,...)
 	dimnames(e_x)<-dimnames(x)
 	e_x
-}
-
-## function to simulate multiple-rate Mk multiMk
-## written by Liam J. Revell 2018
-sim.multiMk<-function(tree,Q,anc=NULL,nsim=1,...){
-	if(hasArg(as.list)) as.list<-list(...)$as.list
-	else as.list<-FALSE
-	ss<-rownames(Q[[1]])
-	tt<-map.to.singleton(reorder(tree))
-	P<-vector(mode="list",length=nrow(tt$edge))
-	for(i in 1:nrow(tt$edge))
-		P[[i]]<-expm(Q[[names(tt$edge.length)[i]]]*tt$edge.length[i])
-	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
-		data.frame(row.names=tt$tip.label)
-	for(i in 1:nsim){
-		a<-if(is.null(anc)) sample(ss,1) else anc
-		STATES<-matrix(NA,nrow(tt$edge),2)
-		root<-Ntip(tt)+1
-		STATES[which(tt$edge[,1]==root),1]<-a
-		for(j in 1:nrow(tt$edge)){
-			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
-			STATES[j,2]<-new
-			ii<-which(tt$edge[,1]==tt$edge[j,2])
-			if(length(ii)>0) STATES[ii,1]<-new
-		}
-		x<-as.factor(
-			setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
-			S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
-		if(nsim>1) X[,i]<-x else X<-x
-	}
-	X
-}
-
-## constant-rate Mk model simulator
-## written by Liam J. Revell 2018
-sim.Mk<-function(tree,Q,anc=NULL,nsim=1,...){
-	if(hasArg(as.list)) as.list<-list(...)$as.list
-	else as.list<-FALSE
-	ss<-rownames(Q)
-	tt<-reorder(tree)
-	P<-vector(mode="list",length=nrow(tt$edge))
-	for(i in 1:nrow(tt$edge))
-		P[[i]]<-expm(Q*tt$edge.length[i])
-	if(nsim>1) X<- if(as.list) vector(mode="list",length=nsim) else 
-		data.frame(row.names=tt$tip.label)
-	for(i in 1:nsim){
-		a<-if(is.null(anc)) sample(ss,1) else anc
-		STATES<-matrix(NA,nrow(tt$edge),2)
-		root<-Ntip(tt)+1
-		STATES[which(tt$edge[,1]==root),1]<-a
-		for(j in 1:nrow(tt$edge)){
-			new<-ss[which(rmultinom(1,1,P[[j]][STATES[j,1],])[,1]==1)]
-			STATES[j,2]<-new
-			ii<-which(tt$edge[,1]==tt$edge[j,2])
-			if(length(ii)>0) STATES[ii,1]<-new
-		}
-		x<-as.factor(
-			setNames(sapply(1:Ntip(tt),function(n,S,E) S[which(E==n)],
-			S=STATES[,2],E=tt$edge[,2]),tt$tip.label))
-		if(nsim>1) X[[i]]<-x else X<-x
-	}
-	X
 }
 
 ## as.Qmatrix method

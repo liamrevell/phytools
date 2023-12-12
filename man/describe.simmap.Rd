@@ -22,7 +22,7 @@ describe.simmap(tree, ...)
 \value{
 	An object of class \code{"describe.simmap"} with the following elements:
 	\item{count}{a matrix containing the number and types of transitions for each tree, if \code{tree} is an object of class \code{"multiSimmap"}.}
-	\item{times}{a matrix containg the times spend in each state on each tree.}
+	\item{times}{a matrix containing the times spend in each state on each tree.}
 	\item{ace}{the posterior probabilities of each node being in each state, if \code{tree} is an object of class \code{"multiSimmap"}.}
 	\item{legend}{a vector containing the plot legend, if \code{plot=TRUE}.}
 	if \code{class(tree)="simmap"} then the function simply returns the results of \code{\link{countSimmap}} combined with the states at each node of the tree and a matrix containing the total and relative times spent in each state on the tree.

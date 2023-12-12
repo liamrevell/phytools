@@ -34,10 +34,46 @@ phylo.to.map<-function(tree,coords,rotate=TRUE,...){
 }
 
 ## S3 method to plot object of class "phylo.to.map"
-## written by Liam J. Revell 2013, 2014, 2016, 2019, 2020, 2022
+## written by Liam J. Revell 2013, 2014, 2016, 2019, 2020, 2022, 2023
+
+expand_range<-function(x){
+  d<-diff(x)
+  x+0.05*c(-1,1)*d
+}
+
+update_map<-function(map,xlim,ylim){
+  tmp<-list()
+  j<-k<-1
+  for(i in 1:length(map$names)){
+    xx<-yy<-c()
+    ii<-1
+    while(!is.na(map$x[j])&&j<=length(map$x)){
+      xx[ii]<-map$x[j]
+      yy[ii]<-map$y[j]
+      ii<-ii+1
+      j<-j+1
+    }
+    j<-j+1
+    if(any(xx>xlim[1])&&any(xx<xlim[2])&&any(yy>ylim[1])&&any(yy<ylim[2])){
+      tmp$x<-if(k>1) c(tmp$x,NA,xx) else xx
+      tmp$y<-if(k>1) c(tmp$y,NA,yy) else yy
+      tmp$names<-if(k>1) c(tmp$names,map$names[i]) else map$names[i]
+      k<-k+1
+    }
+  }
+  tmp$range<-c(range(tmp$x,na.rm=TRUE),range(tmp$y,na.rm=TRUE))
+  class(tmp)<-"map"
+  tmp
+}
 
 plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	type<-type[1]
+	if(hasArg(lim_to_coords)) lim_to_coords<-list(...)$lim_to_coords
+	else lim_to_coords<-TRUE
+	if(hasArg(slice_landmasses)) slice_landmasses<-list(...)$slice_landmasses
+	else slice_landmasses<-TRUE
+	if(hasArg(delimit_map)) delimit_map<-list(...)$delimit_map
+	else delimit_map<-FALSE
 	if(inherits(x,"phylo.to.map")){
 		tree<-x$tree
 		map<-x$map
@@ -45,9 +81,17 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	} else stop("x should be an object of class \"phylo.to.map\"")
 	# get optional arguments
 	if(hasArg(xlim)) xlim<-list(...)$xlim
-	else xlim<-map$range[1:2]
+	else { 
+		if(lim_to_coords) xlim<-expand_range(range(x$coords[,2]))
+		else xlim<-map$range[1:2]
+	}
 	if(hasArg(ylim)) ylim<-list(...)$ylim
-	else ylim<-map$range[3:4]
+	else {
+		if(lim_to_coords) ylim<-expand_range(range(x$coords[,1]))
+		else ylim<-map$range[3:4]
+	}
+	## update map
+	map<-update_map(map,xlim=xlim,ylim=ylim)
 	if(hasArg(fsize)) fsize<-list(...)$fsize
 	else fsize<-1.0
 	if(hasArg(split)) split<-list(...)$split
@@ -111,6 +155,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 		}
 	}
 	# recompute ylim or xlim to leave space for the tree
+	XLIM<-xlim
+	YLIM<-ylim
 	if(type=="phylogram"){
 		if(direction=="downwards"){
 			if(!ftype) ylim<-c(ylim[1],ylim[2]+0.03*diff(ylim))
@@ -125,8 +171,17 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	if(all(mar==0)) mar<-mar+0.01
 	plot.new()
 	par(mar=mar)
-	plot.window(xlim=xlim,ylim=ylim,asp=asp)
+	plot.window(xlim=xlim,ylim=ylim,asp=asp)	
+	if(slice_landmasses) clip(XLIM[1],XLIM[2],YLIM[1],YLIM[2])
+	if(hasArg(map.fill)) map.fill<-list(...)$map.fill
+	else map.fill<-par()$bg
+	if(delimit_map){
+		polygon(XLIM[c(1,2,2,1,1)],YLIM[c(1,1,2,2,1)],
+			border=make.transparent(map.bg,1),lty="dotted",
+			col=map.fill)
+	}
 	map(map,add=TRUE,fill=TRUE,col=map.bg,mar=rep(0,4))
+	if(slice_landmasses) clip(par()$usr[1],par()$usr[2],par()$usr[3],par()$usr[4])
 	if(type=="phylogram"){
 		## preliminaries
 		cw<-reorder(tree,"cladewise")
@@ -135,8 +190,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 		if(direction=="downwards"){
 			# plot a white rectangle
 			dx<-abs(diff(xlim))
-			rect(xlim[1]-1.04*dx,ylim[2]-split[1]*(ylim[2]-ylim[1]),
-				xlim[2]+1.04*dx,ylim[2],col=par()$bg,border=par()$bg)
+			# rect(xlim[1]-1.04*dx,ylim[2]-split[1]*(ylim[2]-ylim[1]),
+			# 	xlim[2]+1.04*dx,ylim[2],col=par()$bg,border=par()$bg)
 			# rescale tree so it fits in the upper half of the plot
 			# with enough space for labels
 			pdin<-par()$din[2]
@@ -180,8 +235,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 						pos=4,offset=c(0,1),
 					srt=-90,cex=fsize,font=ftype)
 				if(pts) points(x[i],Y[which(cw$edge[,2]==i),2],pch=21,
-					bg=colors[cw$tip.label,][i,2],
-					cex=cex.points[1])
+					bg=colors[sapply(cw$tip.label,function(x,y) which(y==x)[1],
+					y=rownames(colors)),][i,2],cex=cex.points[1])
 			}
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
@@ -194,8 +249,8 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 				cw$Nnode),function(x,y,z) y[match(x,z)],y=Y,z=cw$edge))
 		} else {
 			dy<-abs(diff(ylim))
-			rect(xlim[1],ylim[1],xlim[1]+split[1]*(xlim[2]-
-				xlim[1]),ylim[2],col=par()$bg,border=par()$bg)
+			#rect(xlim[1],ylim[1],xlim[1]+split[1]*(xlim[2]-
+			#	xlim[1]),ylim[2],col=par()$bg,border=par()$bg)
 			sh<-fsize*strwidth(paste(" ",cw$tip.label,sep=""))+
 				0.2*fsize*strwidth("W")
 			cw$edge.length<-cw$edge.length/max(nodeHeights(cw))*

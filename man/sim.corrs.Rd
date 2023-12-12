@@ -5,7 +5,7 @@
 sim.corrs(tree, vcv, anc=NULL, internal=FALSE)
 }
 \arguments{
-	\item{tree}{is a phylogenetic tree in 'phylo' format; or a modified 'phylo' tree with a mapped discrete character.}
+	\item{tree}{an object of class \code{"phylo"} or \code{"simmap"}.}
 	\item{vcv}{is a square covariance matrix or named list of matrices (one for each mapped state on the tree).}
 	\item{anc}{optional vector of values for the root state.}
 	\item{internal}{logical value indicating whether to return states at internal nodes.}

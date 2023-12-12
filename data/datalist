@@ -1,5 +1,7 @@
 anole.data
 anoletree
+ant.geog
+ant.tree
 bat.tree
 bat_virus.data
 betaCoV.tree
@@ -9,10 +11,13 @@ bonyfish.data
 bonyfish.tree
 cordylid.data
 cordylid.tree
+darter.tree
 eel.data
 eel.tree
+elapidae.tree
 flatworm.data
 flatworm.tree
+liolaemid.data
 liolaemid.tree
 mammal.data
 mammal.geog
@@ -22,9 +27,12 @@ primate.tree
 salamanders
 sunfish.data
 sunfish.tree
+tortoise.geog
+tortoise.tree
 tropidurid.data
 tropidurid.tree
 vertebrate.data
 vertebrate.tree
 wasp.data
 wasp.trees
+whale.tree

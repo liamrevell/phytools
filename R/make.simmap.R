@@ -1,7 +1,7 @@
 ## function creates a stochastic character mapped tree as a modified "phylo" object
 ## written by Liam Revell 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023
 
-## S3 method for Mk models of various classes
+## S3 method for Mk models & objects of various classes
 
 simmap<-function(object,...) UseMethod("simmap")
 
@@ -9,6 +9,26 @@ simmap.default<-function(object,...){
 	warning(paste(
 		"simmap does not know how to handle objects of class ",
 		class(object),".\n"))
+}
+
+simmap.simmap<-function(object,...){
+	args<-list(...)
+	args$tree<-as.phylo(object)
+	args$x<-getStates(object,"tips")
+	if(hasArg(Q)) Q<-list(...)$Q
+	else {
+		args$Q<-if(!is.null(object$Q)) object$Q
+	}
+	args$pi<-if(hasArg(pi)) list(...)$pi else "fitzjohn"
+	if(hasArg(nsim)){
+		nsim<-list(...)$nsim
+		args$nsim<-nsim
+	} else args$nsim<-100
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-0
+	if(trace>0) args$message<-TRUE
+	else args$message<-FALSE
+	do.call(make.simmap,args)
 }
 
 simmap.fitpolyMk<-function(object,...) simmap.fitMk(object,...)
@@ -95,7 +115,8 @@ make.simmap<-function(tree,x,model="SYM",nsim=1,...){
 		xx<-xx/rowSums(xx)
 		# reorder to cladewise
 		tree<-bt<-reorder.phylo(tree,"cladewise")
-		if(!is.binary(bt)) bt<-multi2di(bt,random=FALSE)
+		## this seems to be outdated & no longer needed
+		## if(!is.binary(bt)) bt<-multi2di(bt,random=FALSE)
 		# some preliminaries
 		N<-Ntip(tree)
 		m<-ncol(xx)
@@ -251,7 +272,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,pi,args=l
 }
 
 # get pars
-# written by Liam J. Revell 2013, 2017, 2021
+# written by Liam J. Revell 2013, 2017, 2021, 2023
 getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
 	if(!is.null(args$pi)) args$pi<-NULL
 	args<-c(list(tree=bt,x=xx,model=model,fixedQ=Q,output.liks=liks,pi=pi),args)
@@ -263,11 +284,12 @@ getPars<-function(bt,xx,model,Q,tree,tol,m,liks=TRUE,pi,args=list()){
 	if(liks){
 		L<-obj$lik.anc
 		rownames(L)<-N+1:nrow(L)
-		if(!is.binary(tree)){
-			ancNames<-matchNodes(tree,bt)
-			L<-L[as.character(ancNames[,2]),]
-			rownames(L)<-ancNames[,1]
-		}
+		## this seems to be outdated & no longer needed
+		#if(!is.binary(tree)){
+		#	ancNames<-matchNodes(tree,bt)
+		#	L<-L[as.character(ancNames[,2]),]
+		#	rownames(L)<-ancNames[,1]
+		#}
 		L<-rbind(xx,L)
 		rownames(L)[1:N]<-1:N
 	} else L<-NULL	
@@ -426,20 +448,6 @@ density.multiSimmap<-function(x,...){
 		ab<-lapply(ab,function(x){
 			class(x)<-"mcmc"
 			x })
-		## if(.check.pkg("coda")){
-			## hpd.ab<-lapply(ab,HPDinterval)
-		## } else {
-			## cat("  HPDinterval requires package coda.\n")
-			## cat("  Computing 95% interval from samples only.\n\n")
-			## hpd95<-function(x){
-				## obj<-setNames(c(sort(x)[round(0.025*length(x))],
-					## sort(x)[round(0.975*length(x))]),
-					## c("lower","upper"))
-				## attr(obj,"Probability")<-0.95
-				## obj
-			## }
-			## hpd.ab<-lapply(ab,hpd95)
-		## }
 		hpd.ab<-lapply(ab,HPDinterval)
 		minmax<-range(unlist(ab))
 		pcalc<-function(x,mm)

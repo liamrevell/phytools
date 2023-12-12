@@ -9,7 +9,7 @@ matchLabels(tr1, tr2)
 \arguments{
 	\item{tr1}{first tree.}
 	\item{tr2}{second tree.}
-	\item{method}{method to use to match nodes between trees. \code{"descendants"} uses the tip species descended from each node; \code{"distances"} uses the distances from the nodes to the tips. Any umambiguous shortening of \code{"descendants"} or \code{"distances"} is also permitted.}
+	\item{method}{method to use to match nodes between trees. \code{"descendants"} uses the tip species descended from each node; \code{"distances"} uses the distances from the nodes to the tips. Any unambiguous shortening of \code{"descendants"} or \code{"distances"} is also permitted.}
 	\item{...}{optional arguments which may or may not be used depending on the value of \code{method}. \code{tol} is a tolerance value for the difference from exact matching that is allowed for \code{method="distances"}. \code{corr}, which is \code{FALSE} by default, indicates whether to match nodes under \code{method="distances"} using the correlation (\code{corr=TRUE}) or the absolute similarity of distances.}
 }
 \description{

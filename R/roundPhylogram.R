@@ -2,6 +2,12 @@
 ## written by Liam J. Revell 2022, 2023
 
 splinePhylogram<-function(tree,...){
+	args<-list(...)
+	args$tree<-tree
+	args$plot<-FALSE
+	args$direction<-"rightwards"
+	do.call(plotTree,args)
+	pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 	if(hasArg(df)) df<-list(...)$df
 	else df<-50
 	if(hasArg(res)) res<-list(...)$res
@@ -17,6 +23,8 @@ splinePhylogram<-function(tree,...){
 	args<-list(...)
 	args$tree<-tree
 	args$color<-"transparent"
+	args$direction<-"rightwards"
+	args$add<-TRUE
 	dev.hold()
 	do.call(plotTree,args)
 	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
@@ -40,6 +48,7 @@ splinePhylogram<-function(tree,...){
 	par(fg="transparent")
 	do.call(plotTree,args)
 	par(fg=ffg)
+	assign("last_plot.phylo",pp,envir=.PlotPhyloEnv)
 }
 
 compute.brlen.simmap<-function(phy,method="Grafen",power=1,...){
@@ -173,10 +182,12 @@ sigmoidPhylogram<-function(tree,...){
 				col=COLS,lwd=lwd)
 	}
 	nulo<-dev.flush()
+	pp$edge<-tree$edge
+	assign("last_plot.phylo",pp,envir=.PlotPhyloEnv)
 }
 
 ## function plots a round phylogram
-## written by Liam J. Revell 2014, 2015, 2016
+## written by Liam J. Revell 2014, 2015, 2016, 2023
 
 roundPhylogram<-function(tree,fsize=1.0,ftype="reg",lwd=2,mar=NULL,offset=NULL,
 	direction="rightwards",type="phylogram",xlim=NULL,ylim=NULL,...){
@@ -245,7 +256,7 @@ roundPhylogram<-function(tree,fsize=1.0,ftype="reg",lwd=2,mar=NULL,offset=NULL,
 		PP<-list(type=type,use.edge.length=if(type=="phylogram") TRUE else FALSE,node.pos=1,
 			show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,font=ftype,cex=fsize,
 			adj=0,srt=0,no.margin=FALSE,label.offset=offset,x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
-			direction=direction,tip.color="black",Ntip=length(cw$tip.label),Nnode=cw$Nnode,edge=cw$edge,
+			direction=direction,tip.color="black",Ntip=length(cw$tip.label),Nnode=cw$Nnode,edge=tree$edge,
 			xx=sapply(1:(length(cw$tip.label)+cw$Nnode),function(x,y,z) y[match(x,z)],y=X,z=cw$edge),
 			yy=y)
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)

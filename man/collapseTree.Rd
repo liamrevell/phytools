@@ -12,7 +12,9 @@ collapseTree(tree, ...)
 	Function creates an interactive visualization of collapsing & expanding clades on the tree.
 }
 \details{
-	Function first plots a fan style tree, and then the user collapses node on the tree by clicking on them. Collapsed nodes are collapsed to the common ancestor of the clade. Nodes that have been collapsed can also be expanded by clicking. Right-click to end.
+	Function first plots a fan style tree, and then the user collapses node on the tree by clicking on them. Collapsed nodes are collapsed to the common ancestor of the clade. Nodes that have been collapsed can also be expanded by clicking. Right-click (or select Finish button in \pkg{RStudio}) to end.
+	
+	Note, for the animation to work probably when run in the \pkg{RStudio} IDE the "zoom" level should be set to 100\%.
 }
 \value{
 	Returns the final plotted tree.
@@ -26,8 +28,8 @@ collapseTree(tree, ...)
 }
 \examples{
 \dontrun{
-data(anoletree)
-pruned<-collapseTree(anoletree)}
+data(liolaemid.tree)
+pruned<-collapseTree(liolaemid.tree,fsize=0.5)}
 }
 \keyword{phylogenetics}
 \keyword{plotting}

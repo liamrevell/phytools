@@ -31,7 +31,7 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 \value{
 	An object of class \code{"evol.rate.mcmc"} consisting of at least the following elements:
 	\item{mcmc}{results from the MCMC run.}
-	\item{tips}{list of stips in rate \eqn{\sigma_1^2} for each sampled generation of MCMC (to polarize the rate shift).}
+	\item{tips}{list of tips in rate \eqn{\sigma_1^2} for each sampled generation of MCMC (to polarize the rate shift).}
 }
 \references{
 	Revell, L. J. (2012a) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.

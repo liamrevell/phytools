@@ -24,6 +24,24 @@ markChanges(tree, colors=NULL, cex=1, lwd=2, plot=TRUE)
 \seealso{
 	\code{\link{plotSimmap}}
 }
+\examples{
+## load tree and data from Revell & Collar (2009)
+data(sunfish.tree)
+data(sunfish.data)
+## extract discrete character (feeding mode)
+fmode<-setNames(sunfish.data$feeding.mode,
+  rownames(sunfish.data))
+## fit model
+er_model<-fitMk(sunfish.tree,fmode,model="ER",
+  pi="fitzjohn")
+## generate single stochastic map
+sunfish_smap<-simmap(er_model,nsim=1)
+## plot stochastic map & mark changes
+cols<-setNames(c("blue","red"),levels(fmode))
+plot(sunfish_smap,cols,ftype="i")
+markChanges(sunfish_smap,colors=cols,lwd=6)
+par(mar=c(5.1,4.1,4.1,2.1))
+}
 \keyword{ancestral states}
 \keyword{bayesian}
 \keyword{phylogenetics}

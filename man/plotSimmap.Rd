@@ -6,15 +6,16 @@
 \usage{
 plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE, 
    node.numbers=FALSE, mar=NULL, add=FALSE, offset=NULL,
-   direction="rightwards", type="phylogram", setEnv=TRUE, part=1.0, 
-   xlim=NULL, ylim=NULL, nodes="intermediate", tips=NULL, maxY=NULL, 
-   hold=TRUE, split.vertical=FALSE, lend=2, asp=NA, outline=FALSE, 
-   plot=TRUE, underscore=FALSE)
+   direction="rightwards", type="phylogram", setEnv=TRUE, 
+   part=if(type=="arc") 0.5 else 1.0, xlim=NULL, ylim=NULL, 
+   nodes="intermediate", tips=NULL, maxY=NULL, hold=TRUE, 
+   split.vertical=FALSE, lend=2, asp=NA, outline=FALSE, 
+   plot=TRUE, underscore=FALSE, arc_height=2)
 \method{plot}{simmap}(x, ...)
 \method{plot}{multiSimmap}(x, ...)
 }
 \arguments{
- 	\item{tree}{a modified object of class "phylo" or "multiPhylo" containing a stochastic mapping or set of mappings (e.g., see \code{\link{read.simmap}} & \code{\link{make.simmap}}).}
+ 	\item{tree}{an object of class \code{"simmap"} or \code{"multiSimmap"} containing a stochastic mapping or set of mappings (e.g., see \code{\link{read.simmap}} & \code{\link{make.simmap}}).}
  	\item{colors}{a vector with names translating the mapped states to colors - see \code{Examples}.}
  	\item{fsize}{relative font size for tip labels.}
 	\item{ftype}{font type - options are \code{"reg"}, \code{"i"} (italics), \code{"b"} (bold), or \code{"bi"} (bold-italics).}
@@ -40,6 +41,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{outline}{logical value indicating whether or not to draw a black outline around the plotted edges of the tree.}
 	\item{plot}{logical value indicating whether or not to actually plot the tree. (See equivalent argument in \code{\link{plot.phylo}}.)}
 	\item{underscore}{logical value indicating whether to plot the underscore character, \code{"_"} (if \code{underscore=TRUE}) or substitute for a space. Defaults to \code{underscore=FALSE}.}
+	\item{arc_height}{for \code{type="arc"} trees, the height of the arc in units of total tree depth.}
 	\item{x}{for S3 plotting method, object of class \code{"simmap"} or \code{"multiSimmap"}.}
 	\item{...}{for S3 plotting method, other arguments to be passed to \code{\link{plotSimmap}}.}
 }

@@ -55,13 +55,16 @@ data(mammal.data)
 data(mammal.tree)
 ## pull out & log transform variables
 lnBodyMass<-setNames(log(mammal.data$bodyMass),
-    rownames(mammal.data))
+  rownames(mammal.data))
 lnHomeRange<-setNames(log(mammal.data$homeRange),
-    rownames(mammal.data))
+  rownames(mammal.data))
 ## fit RMA regression & print results
 fitted.rma<-phyl.RMA(lnBodyMass,lnHomeRange,
-    mammal.tree)
+  mammal.tree)
 print(fitted.rma)
+## plot fitted RMA
+par(las=1,bty="n")
+plot(fitted.rma,las=1,bty="n")
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

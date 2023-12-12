@@ -3,9 +3,9 @@
 
 plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 	pts=FALSE,node.numbers=FALSE,mar=NULL,add=FALSE,offset=NULL,direction="rightwards",
-	type="phylogram",setEnv=TRUE,part=1.0,xlim=NULL,ylim=NULL,nodes="intermediate",
-	tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA,outline=FALSE,
-	plot=TRUE,underscore=FALSE){
+	type="phylogram",setEnv=TRUE,part=if(type=="arc") 0.5 else 1.0,xlim=NULL,ylim=NULL,
+	nodes="intermediate",tips=NULL,maxY=NULL,hold=TRUE,split.vertical=FALSE,lend=2,asp=NA,
+	outline=FALSE,plot=TRUE,underscore=FALSE,arc_height=2){
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		for(i in 1:length(tree)) plotSimmap(tree[[i]],colors=colors,fsize=fsize,
@@ -76,6 +76,18 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 			}
 			plotFan(tree,colors,fsize,ftype,lwd,mar,add=if(outline) TRUE else add,part,
 				setEnv,xlim,ylim,tips,maxY,lend,plot,offset)
+		} else if(type=="arc"){
+			if(outline){
+				fg<-par()$fg
+				par(fg="transparent")
+				black<-colors
+				black[]<-fg
+				arcPhylogram(tree,colors=black,fsize,ftype,lwd=lwd+2,mar,add,part,setEnv,
+					xlim,ylim,tips,maxY,lend,plot,offset,arc_height)
+				par(fg=fg)
+			}
+			arcPhylogram(tree,colors,fsize,ftype,lwd,mar,add=if(outline) TRUE else add,part,
+				setEnv,xlim,ylim,tips,maxY,lend,plot,offset,arc_height)
 		} else if(type=="cladogram"){
 			if(outline){
 				fg<-par()$fg
@@ -90,6 +102,37 @@ plotSimmap<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,
 				offset,direction,xlim,ylim,nodes,tips,lend,asp,plot)
 		}
 		if(hold) null<-dev.flush()
+	}
+}
+
+## this is a wrapper of plotFan
+## written by Liam J. Revell 2023
+arcPhylogram<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,
+	xlim,ylim,tips,maxY,lend,plot,offset,arc_height){
+	tree<-reorder(tree,"cladewise")
+	edge<-tree$edge
+	edge[edge>Ntip(tree)]<-edge[edge>Ntip(tree)]+1
+	edge<-rbind(Ntip(tree)+c(1,2),edge)
+	Nnode<-Nnode(tree)+1
+	edge.length<-c(arc_height*max(nodeHeights(tree)),tree$edge.length)
+	maps<-c(vector(length=1,mode="numeric"),tree$maps)
+	maps[[1]]<-setNames(edge.length[1],"NULO")
+	colors<-c(setNames("transparent","NULO"),colors)
+	object<-list(edge=edge,Nnode=Nnode,tip.label=tree$tip.label,
+		edge.length=edge.length,maps=maps)
+	class(object)<-class(tree)
+	attr(object,"map.order")<-attr(object,"map.order")
+	plotFan(object,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,
+		ylim,tips,maxY,lend,plot,offset)
+	if(setEnv){
+		PP<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		ROOT<-PP$Ntip+1
+		PP$Nnode<-PP$Nnode-1
+		PP$edge<-PP$edge[2:nrow(PP$edge),]
+		PP$edge[PP$edge>PP$Ntip]<-PP$edge[PP$edge>PP$Ntip]-1
+		PP$xx<-PP$xx[-ROOT]
+		PP$yy<-PP$yy[-ROOT]
+		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
 }
 
@@ -140,6 +183,16 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			mm<-which(abs(Y[desc]-median(Y[1:Ntip(pw)]))==min(abs(Y[desc]-
 				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="right"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==max(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="left"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==min(Y[desc]))
 			Y[nodes[i]]<-Y[desc][mm]
 		}
 	}
@@ -223,7 +276,7 @@ updownPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
 			x.lim=xlim,y.lim=ylim,
 			direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-			edge=cw$edge,xx=Y[,1],yy=sapply(1:(Ntip(cw)+cw$Nnode),
+			edge=tree$edge,xx=Y[,1],yy=sapply(1:(Ntip(cw)+cw$Nnode),
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge))
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
@@ -277,6 +330,16 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			mm<-which(abs(Y[desc]-median(Y[1:Ntip(pw)]))==min(abs(Y[desc]-
 				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="right"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==max(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="left"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==min(Y[desc]))
 			Y[nodes[i]]<-Y[desc][mm]
 		}
 	}
@@ -350,7 +413,7 @@ plotPhylogram<-function(tree,colors,fsize,ftype,lwd,pts,node.numbers,mar,
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
 			x.lim=xlim,y.lim=ylim,
 			direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-			edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+			edge=tree$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 			function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
 		assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 	}
@@ -452,7 +515,7 @@ plotFan<-function(tree,colors,fsize,ftype,lwd,mar,add,part,setEnv,xlim,ylim,tips
 			show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
 			font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
 			x.lim=xlim,y.lim=ylim,direction="rightwards",tip.color="black",
-			Ntip=Ntip(cw),Nnode=cw$Nnode,edge=cw$edge,
+			Ntip=Ntip(cw),Nnode=cw$Nnode,edge=tree$edge,
 			xx=c(x[sapply(1:n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2],x[1,1],
 			if(m>1) x[sapply(2:m+n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2] else c()),
 			yy=c(y[sapply(1:n,function(x,y) which(x==y)[1],y=cw$edge[,2]),2],y[1,1],
@@ -506,6 +569,16 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 				median(Y[1:Ntip(pw)]))))
 			if(length(mm>1)) mm<-mm[which(Y[desc][mm]==min(Y[desc][mm]))]
 			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="right"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==max(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
+		} else if(placement=="left"){
+			desc<-getDescendants(pw,nodes[i])
+			desc<-desc[desc<=Ntip(pw)]
+			mm<-which(Y[desc]==min(Y[desc]))
+			Y[nodes[i]]<-Y[desc][mm]
 		}
 	}
 	# compute node heights
@@ -558,15 +631,16 @@ plotCladogram<-function(tree,colors=NULL,fsize=1.0,ftype="reg",lwd=2,mar=NULL,
 		font=ftype,cex=fsize,adj=0,srt=0,no.margin=FALSE,label.offset=offset,
 		x.lim=xlim,y.lim=ylim,
 		direction=direction,tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+		edge=tree$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 		function(x,y,z) y[match(x,z)],y=H,z=cw$edge),yy=Y[,1])
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }
 
-
 ## adds legend to an open stochastic map style plot
-## written by Liam J. Revell 2013, 2016, 2017
+## written by Liam J. Revell 2013, 2016, 2017, 2023
 add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
+	if(hasArg(border)) border<-list(...)$border
+	else border<-par()$fg
 	if(hasArg(shape)) shape<-list(...)$shape
 	else shape<-"square"
 	if(prompt){
@@ -596,14 +670,15 @@ add.simmap.legend<-function(leg=NULL,colors,prompt=TRUE,vertical=TRUE,...){
 		y<-rep(y+w/2,length(x))
 		text(x,y,leg,pos=4,cex=fsize/par()$cex)
 	}
-	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE)
+	if(shape=="square") symbols(x,y,squares=rep(w,length(x)),bg=colors,add=TRUE,inches=FALSE,
+		fg=border)
 	else if(shape=="circle") nulo<-mapply(draw.circle,x=x,y=y,col=colors,
-		MoreArgs=list(nv=200,radius=w/2))
+		MoreArgs=list(nv=200,radius=w/2,border=border))
 	else stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
 }
 
 # function plots a tree; in the new version this is just a wrapper for plotSimmap
-# written by Liam Revell 2012-2017
+# written by Liam Revell 2012-2017, 2023
 plotTree<-function(tree,...){
 	if(hasArg(color)) color<-list(...)$color
 	else color<-NULL
@@ -630,7 +705,7 @@ plotTree<-function(tree,...){
 	if(hasArg(setEnv)) setEnv<-list(...)$setEnv
 	else setEnv<-TRUE
 	if(hasArg(part)) part<-list(...)$part
-	else part<-1.0
+	else part<-if(type=="arc") 0.5 else 1
 	if(hasArg(xlim)) xlim<-list(...)$xlim
 	else xlim<-NULL
 	if(hasArg(ylim)) ylim<-list(...)$ylim
@@ -650,7 +725,9 @@ plotTree<-function(tree,...){
 	if(hasArg(plot)) plot<-list(...)$plot
 	else plot<-TRUE
 	if(hasArg(underscore)) underscore<-list(...)$underscore
-	else underscore=FALSE
+	else underscore<-FALSE
+	if(hasArg(arc_height)) arc_height<-list(...)$arc_height
+	else arc_height<-2
 	if(inherits(tree,"multiPhylo")){
 		par(ask=TRUE)
 		if(!is.null(color)) names(color)<-"1"
@@ -658,7 +735,7 @@ plotTree<-function(tree,...){
 			lwd=lwd,pts=pts,node.numbers=node.numbers,mar=mar,add=add,offset=offset,
 			direction=direction,type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,
 			nodes=nodes,tips=tips,maxY=maxY,hold=hold,lend=lend,asp=asp,plot=plot,
-			underscore=underscore)
+			underscore=underscore,arc_height=arc_height)
 	} else {
 		if(is.null(tree$edge.length)) tree<-compute.brlen(tree)
 		tree$maps<-as.list(tree$edge.length)
@@ -667,7 +744,7 @@ plotTree<-function(tree,...){
 		plotSimmap(tree,colors=color,fsize=fsize,ftype=ftype,lwd=lwd,pts=pts,
 			node.numbers=node.numbers,mar=mar,add=add,offset=offset,direction=direction,
 			type=type,setEnv=setEnv,part=part,xlim=xlim,ylim=ylim,nodes=nodes,tips=tips,maxY=maxY,
-			hold=hold,lend=lend,asp=asp,plot=plot,underscore=underscore)
+			hold=hold,lend=lend,asp=asp,plot=plot,underscore=underscore,arc_height=arc_height)
 	}
 }
 
@@ -697,5 +774,3 @@ splitEdgeColor<-function(tree,colors,lwd=2){
 		for(j in 1:length(x0)) segments(x0[j],y0[j],x1[j],y1[j],col=cols[j],lwd=lwd,lend=2)
 	}
 }
-
-

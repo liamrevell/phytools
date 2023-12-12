@@ -15,7 +15,7 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 	Fits a multi-regime multivariate Brownian motion model following Revell & Collar (2009).
 }
 \details{
-	The function takes an object of class \code{"simmap"} with a mapped binary or multistate trait and data for an arbitrary number of continuously valued character. It then fits the multiple evolutionary variance-covariance matrix (rate matrix) model of Revell & Collar (2009; \emph{Evolution}).
+	The function takes an object of class \code{"simmap"} with a mapped binary or multi-state trait and data for an arbitrary number of continuously valued character. It then fits the multiple evolutionary variance-covariance matrix (rate matrix) model of Revell & Collar (2009; \emph{Evolution}).
 	
 	\code{evol.vcv} performs optimization by maximizing the likelihood with respect to the Cholesky matrices using \code{\link{optim}}.	Optimization is by \code{method="Nelder-Mead"}. Using box constraints does not make sense here as they would be applied to the Cholesky matrix rather than the target parameters. Users may have to increase \code{maxit} for large trees and/or more than two traits.
 }
@@ -24,7 +24,7 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 	\item{R.single}{vcv matrix for the single rate matrix model.}
 	\item{vars.single}{optionally, a matrix containing the variances of the elements of \code{R.single}.}
 	\item{logL1}{log-likelihood for single matrix model.}
-	\item{k1}{number of parameters in the single marix model.}
+	\item{k1}{number of parameters in the single matrix model.}
 	\item{R.multiple}{\code{m} x \code{m} x \code{p} array containing the \code{p} estimated vcv matrices for the \code{p} regimes painted on the tree.}
 	\item{vars.multiple}{optionally, an array containing the variances of the parameter estimates in \code{R.multiple}.}
 	\item{logL.multiple}{log-likelihood of the multi-matrix model.}

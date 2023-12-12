@@ -283,7 +283,7 @@ plot.backbonePhylo<-function(x,...){
 		font=1,cex=cex,adj=0,srt=0,no.margin=FALSE,label.offset=0.1,
 		x.lim=par()$usr[1:2],y.lim=par()$usr[3:4],
 		direction="rightwards",tip.color="black",Ntip=Ntip(cw),Nnode=cw$Nnode,
-		edge=cw$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
+		edge=x$edge,xx=sapply(1:(Ntip(cw)+cw$Nnode),
 		function(x,y,z) y[match(x,z)],y=X,z=cw$edge),yy=y)
 	assign("last_plot.phylo",PP,envir=.PlotPhyloEnv)
 }
