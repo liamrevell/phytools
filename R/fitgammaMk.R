@@ -1,6 +1,71 @@
 ## fit model in which the edge rates are distributed according to a 
 ## discretized gamma distribution with shape parameter alpha
 
+plot.fitgammaMk<-function(x,...){
+	if(hasArg(digits)) digits<-list(...)$digits
+	else digits<-3
+	if(is.null(x$marginal)){
+		stop("missing marginal likelihoods.")
+	} else {
+		r<-qgamma(seq(1/(2*x$nrates),1,by=1/x$nrates),x$alpha,x$alpha)
+		r<-r/mean(r)
+		Rates<-log(apply(x$marginal,1,function(x,y) sum(x*y),y=r))
+		cols<-setNames(colorRampPalette(c("yellow","red"))(101),
+			0:100)
+		args<-list(...)
+		if(is.null(args$type)) args$type<-"phylogram"
+		if(is.null(args$direction)) args$direction<-"rightwards"
+		if(is.null(args$fsize)){
+			if(args$type%in%c("phylogram","cladogram")){
+				if(args$direction%in%c("rightwards","leftwards"))
+					args$fsize<-min(c(6*par()$pin[2]/Ntip(x$tree),1))
+				else
+					args$fsize<-min(c(6*par()$pin[1]/Ntip(x$tree),1))
+			} else {
+				args$fsize<-min(c(0.6*min(par()$pin)/sqrt(Ntip(x$tree)),1))
+			}
+		}
+		args$plot<-FALSE
+		args$tree<-x$tree
+		nulo<-do.call(plotTree,args)
+		pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		ss<-round((Rates-min(Rates))/diff(range(Rates))*100)
+		tt<-paintBranches(x$tree,edge=x$tree$edge[1,2],state=ss[1])
+		for(j in 2:length(ss)) tt<-paintBranches(tt,edge=x$tree$edge[j,2],
+			state=ss[j])
+		args$plot<-TRUE
+		args$colors<-cols
+		args$xlim<-c(-0.3*pp$x.lim[2],pp$x.lim[2])
+		args$ylim<-pp$y.lim
+		args$add<-TRUE
+		args$split.vertical<-TRUE
+		args$tree<-tt
+		nulo<-do.call(plotSimmap,args)
+		pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+		h<-max(nodeHeights(x$tree))
+		LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
+		lines(x=rep(-0.25*h+LWD*15/2,2),y=c(2,Ntip(x$tree)-1))
+		nticks<-10
+		Y<-cbind(seq(2,Ntip(x$tree)-1,length.out=nticks),
+			seq(2,Ntip(x$tree)-1,length.out=nticks))
+		X<-cbind(rep(-0.25*h+LWD*15/2,nticks),
+			rep(-0.25*h+LWD*15/2+0.02*h,nticks))
+		for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
+		add.color.bar(Ntip(x$tree)-3,cols,
+			title="relative rate",
+			lims=NULL,digits=3,
+			direction="upwards",
+			subtitle="",lwd=15,
+			x=-0.25*h,
+			y=2,prompt=FALSE)
+		ticks<-exp(seq(min(Rates),max(Rates),length.out=10))
+		text(x=X[,2],y=Y[,2],signif(ticks,digits),pos=4,cex=0.7)
+		invisible(exp(Rates))
+	}
+}
+
+as.Qmatrix.fitgammaMk<-function(x,...) as.Qmatrix.fitMk(x,...)
+
 anova.fitgammaMk<-function(object,...) anova.fitMk(object,...)
 
 logLik.fitgammaMk<-function(object,...){
@@ -10,6 +75,14 @@ logLik.fitgammaMk<-function(object,...){
 }
 
 gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
+	if(hasArg(marginal)) marginal<-list(...)$marginal
+	else marginal<-FALSE
+	if(marginal){
+		if(hasArg(edge)) edge<-list(...)$edge
+		else marginal<-FALSE
+		if(hasArg(rate)) rate<-list(...)$rate
+		else marginal<-FALSE
+	}
 	q<-par[1:(length(par)-1)]
 	alpha<-par[length(par)]
 	if(median){
@@ -43,7 +116,12 @@ gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
 		ee<-which(pw$edge[,1]==nn[i])
 		PP<-matrix(NA,length(ee),k)
 		for(j in 1:length(ee)){
-			P<-Reduce("+",lapply(r,
+			if(marginal){
+				if(pw$edge[ee[j],2]==edge){ 
+					ind<-rate
+				} else ind<-1:nrates
+			} else ind<-1:nrates
+			P<-Reduce("+",lapply(r[ind],
 				function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
 				k=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
 			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
@@ -65,6 +143,11 @@ gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
 }
 
 fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
+	median<-TRUE
+	if(hasArg(marginal)) marginal<-list(...)$marginal
+	else marginal<-FALSE
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-TRUE
 	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
 	else opt.method<-"nlminb"
 	if(hasArg(output.liks)) output.liks<-list(...)$output.liks
@@ -94,10 +177,10 @@ fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 		m<-ncol(x)
 		states<-colnames(x)
 	} else {
-			x<-to.matrix(x,sort(unique(x)))
-			x<-x[tree$tip.label,]
-			m<-ncol(x)
-			states<-colnames(x)
+		x<-to.matrix(x,sort(unique(x)))
+		x<-x[tree$tip.label,]
+		m<-ncol(x)
+		states<-colnames(x)
 	}
 	if(hasArg(pi)) pi<-list(...)$pi
 	else pi<-"equal"
@@ -225,16 +308,60 @@ fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 			c(Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],alpha.init),
 			nrates=nrates,tree=tree,x=x,model=MODEL,median=TRUE,pi=pi,
 			return="pi"),states)
-		obj<-list(logLik=-fit,
+		obj<-list(logLik=fit,
 			rates=Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],
 			index.matrix=index.matrix,
 			states=states,
 			pi=pi,
-			root.prior=root.prior)
+			root.prior=root.prior,
+			nrates=nrates,
+			alpha=alpha.init)
 		if(output.liks) obj$lik.anc<-gamma_pruning(
 			c(Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],alpha.init),
 			nrates=nrates,tree=tree,x=x,model=MODEL,median=TRUE,pi=pi,
 			return="conditional")
+	}
+	if(marginal){
+		## get marginal likelihoods of each rate on each edge
+		cat(paste("  --\n  Computing marginal scaled likelihoods",
+		if(parallel) "(in parallel)" else "(in serial)",
+		"of each\n"))
+		cat("  rate on each edge. Caution: this is NOT fast....\n  --\n")
+		flush.console()
+		if(median){
+			Rates<-qgamma(seq(1/(2*nrates),1,by=1/nrates),obj$alpha,obj$alpha)
+			Rates<-Rates/mean(Rates)
+		} else Rates<-1:nrates
+		if(parallel){
+			ncores<-min(c(parallel::detectCores()-2,nrow(tree$edge)))
+			mc<-makeCluster(ncores,type="PSOCK")
+			registerDoParallel(cl=mc)
+			tmpRATES<-foreach(i=1:nrow(tree$edge))%dopar%{
+				foo<-function(X) phytools:::gamma_pruning(
+					par=c(obj$rates,obj$alpha),
+					nrates=nrates,tree=tree,x=x,model=MODEL,median=TRUE,
+					pi=pi,marginal=TRUE,edge=tree$edge[i,2],rate=X)
+				sapply(1:nrates,foo)
+			}
+			stopCluster(cl=mc)
+			RATES<-t(sapply(tmpRATES,function(x) x))
+			dimnames(RATES)<-list(apply(tree$edge,1,
+				function(x) paste(x[1],",",x[2],sep="")),
+				round(Rates,6))
+		} else {
+			RATES<-matrix(NA,nrow(tree$edge),nrates,
+				dimnames=list(apply(tree$edge,1,
+				function(x) paste(x[1],",",x[2],sep="")),
+				round(Rates,6)))
+			for(i in 1:nrow(RATES)){
+				for(j in 1:ncol(RATES)){
+					RATES[i,j]<-gamma_pruning(c(obj$rates,obj$alpha),nrates=nrates,
+						tree=tree,x=x,model=MODEL,median=TRUE,pi=pi,marginal=TRUE,
+						edge=tree$edge[i,2],rate=j)
+				}
+			}
+		}
+		RATES<-t(apply(RATES,1,function(x) exp(x)/sum(exp(x))))
 	}
 	lik.f<-function(q,alpha){
 		q<-sapply(1:max(MODEL), function(ind,q,MODEL) q[which(MODEL==ind)],
@@ -244,6 +371,7 @@ fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 	}
 	obj$data<-x
 	obj$tree<-tree
+	if(marginal) obj$marginal<-RATES
 	obj$lik<-lik.f
 	class(obj)<-"fitgammaMk"
 	return(obj)
