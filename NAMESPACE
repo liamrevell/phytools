@@ -278,6 +278,8 @@ S3method(print, fitgammaMk)
 S3method(logLik,fitgammaMk)
 S3method(anova, fitgammaMk)
 S3method(ancr, fitgammaMk)
+S3method(as.Qmatrix, fitgammaMk)
+S3method(plot, fitgammaMk)
 
 ## default methods
 S3method(ancr, default)
