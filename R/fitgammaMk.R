@@ -55,7 +55,7 @@ plot.fitgammaMk<-function(x,...){
 			rep(-0.25*h+LWD*15/2+0.02*h,nticks))
 		for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
 		add.color.bar(Nt-2/40*Nt-1,cols,
-			title="relative rate",
+			title="relative edge rate",
 			lims=NULL,digits=3,
 			direction="upwards",
 			subtitle="",lwd=15,
