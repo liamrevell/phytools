@@ -4,13 +4,15 @@
 plot.fitgammaMk<-function(x,...){
 	if(hasArg(digits)) digits<-list(...)$digits
 	else digits<-3
+	if(hasArg(colors)) colors<-list(...)$colors
+	else colors<-c("yellow","red")
 	if(is.null(x$marginal)){
 		stop("missing marginal likelihoods.")
 	} else {
 		r<-qgamma(seq(1/(2*x$nrates),1,by=1/x$nrates),x$alpha,x$alpha)
 		r<-r/mean(r)
 		Rates<-log(apply(x$marginal,1,function(x,y) sum(x*y),y=r))
-		cols<-setNames(colorRampPalette(c("yellow","red"))(101),
+		cols<-setNames(colorRampPalette(colors)(101),
 			0:100)
 		args<-list(...)
 		if(is.null(args$type)) args$type<-"phylogram"
@@ -44,20 +46,21 @@ plot.fitgammaMk<-function(x,...){
 		pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
 		h<-max(nodeHeights(x$tree))
 		LWD<-diff(par()$usr[1:2])/dev.size("px")[1]
-		lines(x=rep(-0.25*h+LWD*15/2,2),y=c(2,Ntip(x$tree)-1))
+		Nt<-Ntip(x$tree)
+		lines(x=rep(-0.25*h+LWD*15/2,2),y=c(1+1/40*Nt,Nt-1/40*Nt))
 		nticks<-10
-		Y<-cbind(seq(2,Ntip(x$tree)-1,length.out=nticks),
-			seq(2,Ntip(x$tree)-1,length.out=nticks))
+		Y<-cbind(seq(1+1/40*Nt,Nt-1/40*Nt,length.out=nticks),
+			seq(1+1/40*Nt,Nt-1/40*Nt,length.out=nticks))
 		X<-cbind(rep(-0.25*h+LWD*15/2,nticks),
 			rep(-0.25*h+LWD*15/2+0.02*h,nticks))
 		for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
-		add.color.bar(Ntip(x$tree)-3,cols,
+		add.color.bar(Nt-2/40*Nt-1,cols,
 			title="relative rate",
 			lims=NULL,digits=3,
 			direction="upwards",
 			subtitle="",lwd=15,
 			x=-0.25*h,
-			y=2,prompt=FALSE)
+			y=1+1/40*Nt,prompt=FALSE)
 		ticks<-exp(seq(min(Rates),max(Rates),length.out=10))
 		text(x=X[,2],y=Y[,2],signif(ticks,digits),pos=4,cex=0.7)
 		invisible(exp(Rates))
@@ -75,6 +78,8 @@ logLik.fitgammaMk<-function(object,...){
 }
 
 gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
+	if(hasArg(fn_min)) fn_min<-list(...)$fn_min
+	else fn_min<--Inf
 	if(hasArg(marginal)) marginal<-list(...)$marginal
 	else marginal<-FALSE
 	if(marginal){
@@ -122,8 +127,8 @@ gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
 				} else ind<-1:nrates
 			} else ind<-1:nrates
 			P<-Reduce("+",lapply(r[ind],
-				function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
-				k=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
+				function(rr,nr,Q,edge) expm(Q*rr*edge)/nr,
+				nr=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
 			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
 		}
 		L[nn[i],]<-apply(PP,2,prod)
@@ -137,13 +142,15 @@ gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
 	prob<-sum(log(pp))
 	if(return=="likelihood") 
 		if(is.na(prob)||is.nan(prob)) 
-			return(-Inf) else return(prob)
+			return(fn_min) else return(prob)
 	else if(return=="conditional") L
 	else if(return=="pi") pi
 }
 
 fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 	median<-TRUE
+	if(hasArg(fn_min)) fn_min<-list(...)$fn_min
+	else fn_min<--Inf
 	if(hasArg(marginal)) marginal<-list(...)$marginal
 	else marginal<-FALSE
 	if(hasArg(parallel)) parallel<-list(...)$parallel
@@ -260,25 +267,27 @@ fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 			fit<-if(logscale)
 				optim(c(q.init,alpha.init),function(p) 
 					-gamma_pruning(exp(p),nrates=nrates,tree=pw,x=x,model=MODEL,
-					median=TRUE,pi=pi),method="L-BFGS-B",lower=c(rep(log(min.q),k),
-							log(min.alpha)),upper=c(rep(log(max.q),k),
-								log(max.alpha))) else
-				optim(c(q.init,alpha.init),function(p) -pruning(p,nrates=nrates,
-					tree=pw,x=x,model=MODEL,median=TRUE,pi=pi),method="L-BFGS-B",
-					lower=c(rep(min.q,k),min.alpha),upper=c(rep(max.q,k),max.alpha))
+					median=TRUE,pi=pi,fn_min=fn_min),method="L-BFGS-B",
+					lower=c(rep(log(min.q),k),log(min.alpha)),
+					upper=c(rep(log(max.q),k),log(max.alpha))) else
+				optim(c(q.init,alpha.init),function(p) -gamma_pruning(p,nrates=nrates,
+					tree=pw,x=x,model=MODEL,median=TRUE,pi=pi,fn_min=fn_min),
+					method="L-BFGS-B",lower=c(rep(min.q,k),min.alpha),
+					upper=c(rep(max.q,k),max.alpha))
 		}
 		else if(opt.method=="none"){
-				fit<-list(objective=-gamma_pruning(c(q.init,alpha.init),
-					nrates=nrates,pw,x,MODEL,median=TRUE,pi=pi),par=q.init)
+			fit<-list(objective=-gamma_pruning(c(q.init,alpha.init),
+				nrates=nrates,pw,x,MODEL,median=TRUE,pi=pi),par=q.init)
 		} else {
 			fit<-if(logscale)
 				nlminb(c(q.init,alpha.init),function(p) -gamma_pruning(exp(p),
-					nrates=nrates,tree=pw,x=x,model=MODEL,median=TRUE,pi=pi),
-					lower=c(rep(log(min.q),k),log(min.alpha)),
+					nrates=nrates,tree=pw,x=x,model=MODEL,median=TRUE,pi=pi,
+					fn_min=fn_min),lower=c(rep(log(min.q),k),log(min.alpha)),
 					upper=c(rep(log(max.q),k),log(max.alpha))) else
 				nlminb(c(q.init,alpha.init),function(p) -gamma_pruning(p,
-					nrates=nrates,tree=pw,x=x,model=MODEL,median=TRUE,pi=pi),
-					lower=c(rep(min.q,k),min.alpha),upper=c(rep(max.q,k),max.alpha))
+					nrates=nrates,tree=pw,x=x,model=MODEL,median=TRUE,pi=pi,
+					fn_min=fn_min),lower=c(rep(min.q,k),min.alpha),
+					upper=c(rep(max.q,k),max.alpha))
 		}
 		if(logscale) fit$par<-exp(fit$par)
 		if(pi[1]=="fitzjohn") pi<-setNames(
