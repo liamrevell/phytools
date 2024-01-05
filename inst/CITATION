@@ -1,11 +1,10 @@
 bibentry(bibtype = "Article",
-	title = "phytools: An {R} package for phylogenetic comparative biology (and other things).",
+	title = "{p}hytools 2.0: an updated {R} ecosystem for phylogenetic comparative methods (and other things).",
 	author = person("Liam J.", "Revell"),
-	journal = "Methods in Ecology and Evolution",
-	year = "2012",
-	volume = "3",
-	pages = "217-223",
-	doi = "10.1111/j.2041-210X.2011.00169.x",
+	journal = "PeerJ",
+	year = "2024",
+	volume = "12",
+	pages = "e16505",
+	doi = "10.7717/peerj.16505",
 	header = "To cite phytools in a publication please use:",
-	textVersion = "Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3, 217-223.",
-	footer = "As phytools is continually evolving you may also want to cite its version number (found with 'library(help = phytools)' or 'packageVersion(\"phytools\")').")
+	textVersion = "Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). PeerJ, 12, e16505.", footer = "As phytools is continually evolving you may also want to cite its version number (found with 'library(help = phytools)' or 'packageVersion(\"phytools\")').")

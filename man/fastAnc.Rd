@@ -23,7 +23,7 @@ fastAnc(tree, x, vars=FALSE, CI=FALSE, ...)
 	An object of class \code{"fastAnc"} consisting of either: a named vector containing the states at internal nodes - names are node numbers; or a list containing ancestral state estimates (\code{ace}), variances on the estimates (\code{var}), and/or 95\% confidence intervals (\code{CI95}).
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

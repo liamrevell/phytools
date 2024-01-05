@@ -25,7 +25,7 @@ Map.Overlap(tree1, tree2, tol=1e-06, standardize=TRUE, ...)
 	A numerical value on the interval (0, 1), for \code{map.overlap}; or a matrix whose elements should sum to 1.0 (\code{Map.Overlap}).
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

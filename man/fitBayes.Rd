@@ -21,7 +21,7 @@ fitBayes(tree, x, ngen=10000, model="BM", method="reduced", control=list())
 	Matrix columns are labeled by species (for species means and variances), or by the corresponding evolutionary parameter.
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 
 	Revell, L. J. and R. G. Reynolds. (2012) A new Bayesian method for fitting evolutionary models to comparative data with intraspecific variation. \emph{Evolution}, 66, 2697-2707.
 }

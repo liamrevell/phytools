@@ -1,6 +1,6 @@
 Package: phytools
-Version: 2.0-13
-Date: 2023-12-15
+Version: 2.1-0
+Date: 2024-01-05
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>

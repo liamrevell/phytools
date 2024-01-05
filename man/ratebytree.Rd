@@ -52,14 +52,14 @@ ratebytree(trees, x, ...)
 	Nee, S., May, R. M. and Harvey, P. H. (1994) The reconstructed evolutionary process. \emph{Philosophical Transactions of the Royal Society of London B}, \bold{344}, 305-311.
 
 	O'Meara, B. C., C. Ane, M. J. Sanderson, and P. C. Wainwright. (2006) Testing for different rates of continuous trait evolution using likelihood. \emph{Evolution}, \bold{60}, 922-933.
-
-	Stadler, T. (2012) How can we improve the accuracy of macroevolutionary rate estimates? \emph{Systematic Biology}, \bold{62}, 321-329.
-	
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
 	
 	Revell, L. J. (2018) Comparing the rates of speciation and extinction between phylogenetic trees. \emph{Ecology and Evolution}, \bold{8}, 5303-5312.
 	
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
 	Revell, L. J., Gonzalez-Valenzuela, L. E., Alfonso, A., Castellanos-Garcia, L. A., Guarnizo, C. E., and Crawford, A. J. (2018) Comparing evolutionary rates between trees, clades, & traits. \emph{Methods Ecol. Evol.}, \bold{9}, 994-1005.
+	
+	Stadler, T. (2012) How can we improve the accuracy of macroevolutionary rate estimates? \emph{Systematic Biology}, \bold{62}, 321-329.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

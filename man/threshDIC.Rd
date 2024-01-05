@@ -22,9 +22,11 @@ threshDIC(tree, x, mcmc, burnin=NULL, sequence=NULL, method="pD")
 	A vector containing the mean deviance and deviance for the parameter means, the effective number of parameters, and the DIC.
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
-
 	Revell, L. J. (2014) Ancestral character estimation under the threshold model from quantitative genetics. \emph{Evolution}, \bold{68}, 743-759.
+	
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Spiegelhalter, D. J., N. G. Best, B. P. Carlin, and A. Van Der Linde (2002) Bayesian measures of model complexity and fit. \emph{Journal of the Royal Statistical Society Series B: Statistical Methodology}, \bold{64}, 583-639.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

@@ -31,7 +31,9 @@ hide.hidden(object, ...)
 	An object of class \code{"ancr"}. In the case of \code{type="marginal"}, this object consists of a matrix of marginal (empirical Bayes) probabilities and a likelihood. In the case of \code{type="joint"}, the object contains a set of most-likely internal node states stored in a data frame.
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Pagel, M. (1999) The Maximum Likelihood approach to reconstructing ancestral character states of discrete characters on phylogenies. \emph{Systematic Biology}, \bold{3}, 612-622.
+
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

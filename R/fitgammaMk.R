@@ -147,7 +147,7 @@ gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,...){
 	else if(return=="pi") pi
 }
 
-fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
+fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=8,...){
 	median<-TRUE
 	if(hasArg(fn_min)) fn_min<-list(...)$fn_min
 	else fn_min<--Inf
@@ -346,7 +346,7 @@ fitgammaMk<-function(tree,x,model="ER",fixedQ=NULL,nrates=4,...){
 			mc<-makeCluster(ncores,type="PSOCK")
 			registerDoParallel(cl=mc)
 			tmpRATES<-foreach(i=1:nrow(tree$edge))%dopar%{
-				foo<-function(X) phytools:::gamma_pruning(
+				foo<-function(X) phytools::gamma_pruning(
 					par=c(obj$rates,obj$alpha),
 					nrates=nrates,tree=tree,x=x,model=MODEL,median=TRUE,
 					pi=pi,marginal=TRUE,edge=tree$edge[i,2],rate=X)

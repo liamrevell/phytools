@@ -29,7 +29,7 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 	\item{convergence}{the value of \code{convergence} returned by \code{\link{optim}} (0 is good).}
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 
 	Schluter, D., Price, T., Mooers, A. O., and Ludwig, D. (1997) Likelihood of ancestor states in adaptive radiation. \emph{Evolution} \bold{51}, 1699-1711.
 }

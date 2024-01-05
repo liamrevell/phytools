@@ -30,7 +30,7 @@ mcmcMk(tree, x, model="ER", ngen=10000, ...)
 fitHRM(tree, x, model="ARD", ncat=2, ...)
 \method{plot}{fitHRM}(x, ...)
 fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
-fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=4, ...)
+fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=8, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
@@ -79,7 +79,9 @@ fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=4, ...)
 
 	Lewis, P. O. (2001) A likelihood approach to estimating phylogeny from discrete morphological character data. \emph{Systematic Biology}, \bold{50}, 913-925.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Revell, L. J. and L. J. Harmon (2022) \emph{Phylogenetic Comparative Methods in R}. Princeton University Press.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

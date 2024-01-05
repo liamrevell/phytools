@@ -15,6 +15,9 @@ consensus.edges(trees, method=c("mean.edge","least.squares"), ...)
 \value{
 	An object of class \code{"phylo"} with edge lengths.
 }
+\references{
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+}
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}
 \keyword{consensus tree}

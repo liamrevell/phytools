@@ -24,9 +24,9 @@ skewers(X, Y, nsim=100, method=NULL)
 \references{
 	Cheverud, J. M. (1996) Quantitative genetic analysis of cranial morphology in the cotton-top (\emph{Saguinus oedipus}) and saddle-back (\emph{S. fuscicollis}) tamarins. \emph{J. Evol. Biol.}, \bold{9}, 5--42.
 
-	Cheverud, J. M. & Marroig, G. (2007) Comparing covariance matrices: Random skewers method compared to the common principal components model. \emph{Genetics & Molecular Biology}, \bold{30}, 461--469.
+	Cheverud, J. M. and G. Marroig (2007) Comparing covariance matrices: Random skewers method compared to the common principal components model. \emph{Genetics & Molecular Biology}, \bold{30}, 461--469.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{comparative method}
