@@ -4,7 +4,7 @@
 anc.Bayes<-function(tree,x,ngen=10000,control=list(),...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
 	# give the function some defaults (in case none are provided)
-	temp<-phyl.vcv(as.matrix(x),vcv(tree),1)
+	temp<-phyl.vcv(as.matrix(x[tree$tip.label]),vcv(tree),1)
 	sig2<-temp$R[1,1]
 	a<-temp$alpha
 	y<-rep(a,tree$Nnode-1)

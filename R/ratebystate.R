@@ -13,7 +13,7 @@ ratebystate<-function(tree,x,y,nsim=100,corr=c("pearson","spearman"),...){
 	if(hasArg(logarithm)) logarithm<-list(...)$logarithm
 	else logarithm<-FALSE
 	if(!is.binary(tree)) tree<-multi2di(tree,random=FALSE)
-	V<-phyl.vcv(cbind(x,y),vcv(tree),lambda=1)$R
+	V<-phyl.vcv(cbind(x[tree$tip.label],y[tree$tip.label]),vcv(tree),lambda=1)$R
 	if(method=="by.branch"){
 		aa<-c(x[tree$tip.label],fastAnc(tree,x))
 		names(aa)[1:length(tree$tip)]<-1:length(tree$tip)
