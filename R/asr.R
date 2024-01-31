@@ -346,6 +346,8 @@ ancr.fitMk<-function(object,...){
 pruning<-function(q,tree,x,model=NULL,...){
 	if(hasArg(return)) return<-list(...)$return
 	else return<-"likelihood"
+	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+	else expm.method<-"Higham08.b"
 	pw<-if(!is.null(attr(tree,"order"))&&
 		attr(tree,"order")=="postorder") tree else 
 		reorder(tree,"postorder")
@@ -369,7 +371,7 @@ pruning<-function(q,tree,x,model=NULL,...){
 		ee<-which(pw$edge[,1]==nn[i])
 		PP<-matrix(NA,length(ee),k)
 		for(j in 1:length(ee)){
-			P<-expm(Q*pw$edge.length[ee[j]])
+			P<-expm(Q*pw$edge.length[ee[j]],method=expm.method)
 			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
 		}
 		L[nn[i],]<-apply(PP,2,prod)

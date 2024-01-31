@@ -206,6 +206,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			MODEL<-rate
 			MODEL[is.na(MODEL)]<-0
 			diag(MODEL)<-0
+			if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+			else expm.method<-"Higham08.b"
 		}
 		tmp<-cbind(1:m,1:m)
 		rate[tmp]<-0
@@ -267,17 +269,20 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 							method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
 				} else if(lik.func=="pruning") {
 					fit<-if(logscale)
-						optim(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,pi=pi),
-							method="L-BFGS-B",lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
-						optim(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,pi=pi),
-							method="L-BFGS-B",lower=rep(min.q,k),upper=rep(max.q,k))
+						optim(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,pi=pi,
+							expm.method=expm.method),method="L-BFGS-B",lower=rep(log(min.q),k),
+							upper=rep(log(max.q),k)) else
+						optim(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,pi=pi,
+							expm.method=expm.method),method="L-BFGS-B",lower=rep(min.q,k),
+							upper=rep(max.q,k))
 				}
 			} else if(opt.method=="none"){
 				if(lik.func=="lik")
 					fit<-list(objective=lik(makeQ(m,q.init,index.matrix),pi=pi),
 						par=q.init)
 				else if(lik.func=="pruning")
-					fit<-list(objective=-pruning(q.init,pw,x,MODEL,pi=pi),par=q.init)
+					fit<-list(objective=-pruning(q.init,pw,x,MODEL,pi=pi,expm.method=expm.method),
+						par=q.init)
 			} else {
 				if(lik.func=="lik"){
 					fit<-if(logscale)
@@ -288,9 +293,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				} else if(lik.func=="pruning"){
 					fit<-if(logscale)
 						nlminb(q.init,function(p) -pruning(exp(p),tree=pw,x=x,model=MODEL,
-							pi=pi),lower=rep(log(min.q),k),upper=rep(log(max.q),k)) else
+							pi=pi,expm.method=expm.method),lower=rep(log(min.q),k),
+							upper=rep(log(max.q),k)) else
 						nlminb(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,
-							pi=pi),lower=rep(0,k),upper=rep(max.q,k))
+							pi=pi,expm.method=expm.method),lower=rep(0,k),upper=rep(max.q,k))
 				}
 			}
 			if(logscale) fit$par<-exp(fit$par)
@@ -331,7 +337,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				q<-sapply(1:max(MODEL), function(ind,q,MODEL) q[which(MODEL==ind)],
 					q=q,MODEL=MODEL)
 				pruning(q,tree=pw,x=x,model=MODEL,
-					pi=if(root.prior=="nuisance") "fitzjohn" else pi)
+					pi=if(root.prior=="nuisance") "fitzjohn" else pi,
+					expm.method=expm.method)
 			}
 		}
 		obj$data<-x
