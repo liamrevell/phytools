@@ -113,6 +113,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 	else opt.method<-"nlminb"
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
 	else lik.func<-"lik"
+	if(lik.func=="parallel"){
+		if(hasArg(ncores)) ncores<-list(...)$ncores
+		else ncores<-min(nrow(tree$edge),detectCores()-1)
+	}	
 	if(opt.method=="optimParallel"){ 
 		if(hasArg(ncores)) ncores<-list(...)$ncores
 		else ncores<-detectCores()
@@ -164,7 +168,9 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			print(round(pi,6))
 			cat("\n")
 			root.prior<-"stationary"
-		} else if(pi[1]=="fitzjohn") root.prior<-"nuisance"
+		} else if(pi[1]=="fitzjohn"){ 
+			root.prior<-"nuisance"
+		} else if(pi[1]=="mle") root.prior<-"it's MLE"
 		if(is.numeric(pi)){ 
 			pi<-pi/sum(pi)
 			if(is.null(names(pi))) pi<-setNames(pi,states)
@@ -202,7 +208,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			Q<-fixedQ
 		}
 		index.matrix<-rate
-		if(lik.func=="pruning"){
+		if(lik.func%in%c("pruning","parallel")){
 			MODEL<-rate
 			MODEL[is.na(MODEL)]<-0
 			diag(MODEL)<-0
@@ -275,6 +281,16 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 						optim(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,pi=pi,
 							expm.method=expm.method),method="L-BFGS-B",lower=rep(min.q,k),
 							upper=rep(max.q,k))
+				} else if(lik.func=="parallel") {
+					mc<-makeCluster(ncores,type="PSOCK")
+					registerDoParallel(cl=mc)
+					fit<-if(logscale)
+						optim(q.init,function(p) -parallel_pruning(exp(p),tree=pw,x=x,model=MODEL,
+							pi=pi,expm.method=expm.method),method="L-BFGS-B",lower=rep(log(min.q),k),
+							upper=rep(log(max.q),k)) else
+						optim(q.init,function(p) -parallel_pruning(p,tree=pw,x=x,model=MODEL,pi=pi,
+							expm.method=expm.method),method="L-BFGS-B",lower=rep(min.q,k),
+							upper=rep(max.q,k))
 				}
 			} else if(opt.method=="none"){
 				if(lik.func=="lik")
@@ -283,6 +299,12 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				else if(lik.func=="pruning")
 					fit<-list(objective=-pruning(q.init,pw,x,MODEL,pi=pi,expm.method=expm.method),
 						par=q.init)
+				else if(lik.func=="parallel"){
+					mc<-makeCluster(ncores,type="PSOCK")
+					registerDoParallel(cl=mc)
+					fit<-list(objective=-parallel_pruning(q.init,pw,x,MODEL,pi=pi,
+						expm.method=expm.method),par=q.init)
+				}
 			} else {
 				if(lik.func=="lik"){
 					fit<-if(logscale)
@@ -297,10 +319,26 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 							upper=rep(log(max.q),k)) else
 						nlminb(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,
 							pi=pi,expm.method=expm.method),lower=rep(0,k),upper=rep(max.q,k))
+				} else if(lik.func=="parallel"){
+					mc<-makeCluster(ncores,type="PSOCK")
+					registerDoParallel(cl=mc)
+					fit<-if(logscale)
+						nlminb(q.init,function(p) -parallel_pruning(exp(p),tree=pw,x=x,
+							model=MODEL,pi=pi,expm.method=expm.method),lower=rep(log(min.q),k),
+							upper=rep(log(max.q),k)) else
+						nlminb(q.init,function(p) -parallel_pruning(p,tree=pw,x=x,model=MODEL,
+							pi=pi,expm.method=expm.method),lower=rep(0,k),upper=rep(max.q,k))
 				}
 			}
 			if(logscale) fit$par<-exp(fit$par)
-			if(pi[1]=="fitzjohn") pi<-setNames(
+			if(pi[1]=="fitzjohn") pi<-if(lik.func=="parallel") setNames(
+				parallel_pruning(fit$par,tree=pw,x=x,model=MODEL,pi="fitzjohn",
+				expm.method=expm.method,return="pi"),states) else setNames(
+				lik(makeQ(m,fit$par,index.matrix),FALSE,pi=pi,output.pi=TRUE),
+				states)
+			else if(pi[1]=="mle") pi<-if(lik.func=="parallel") setNames(
+				parallel_pruning(fit$par,tree=pw,x=x,model=MODEL,pi="mle",
+				expm.method=expm.method,return="pi"),states) else setNames(
 				lik(makeQ(m,fit$par,index.matrix),FALSE,pi=pi,output.pi=TRUE),
 				states)
 			obj<-list(logLik=
@@ -318,9 +356,30 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			if(output.liks) obj$lik.anc<-lik(makeQ(m,obj$rates,index.matrix),TRUE,
 				pi=pi)
 		} else {
-			fit<-lik(Q,pi=pi)
-			if(pi[1]=="fitzjohn") pi<-setNames(lik(Q,FALSE,pi=pi,output.pi=TRUE),states)
-			obj<-list(logLik=-fit,
+			if(lik.func=="lik"){
+				fit<--lik(Q,pi=pi)
+				if(pi[1]=="fitzjohn") pi<-setNames(lik(Q,FALSE,pi=pi,output.pi=TRUE),
+					states)
+			} else if(lik.func%in%c("pruning","parallel")){
+				q<-Q[sapply(1:k,function(x,y) which(x==y),index.matrix)]
+				if(lik.func=="pruning"){
+					fit<-pruning(q,pw,x,model=MODEL,expm.method=expm.method,pi=pi)
+					if(pi[1]=="fitzjohn") pi<-setNames(pruning(q,tree=pw,x=x,model=MODEL,
+						pi="fitzjohn",expm.method=expm.method,return="pi"),states)
+					else if(pi[1]=="mle") pi<-setNames(pruning(q,tree=pw,x=x,model=MODEL,
+						pi="mle",expm.method=expm.method,return="pi"),states)
+				} else if(lik.func=="parallel"){
+					mc<-makeCluster(ncores,type="PSOCK")
+					registerDoParallel(cl=mc)
+					fit<-parallel_pruning(q,pw,x,model=MODEL,expm.method=expm.method,pi=pi)
+					if(pi[1]=="fitzjohn") pi<-setNames(parallel_pruning(q,tree=pw,x=x,
+						model=MODEL,pi="fitzjohn",expm.method=expm.method,return="pi"),
+						states)
+					else if(pi[1]=="mle") pi<-setNames(parallel_pruning(q,tree=pw,x=x,
+						model=MODEL,pi="mle",expm.method=expm.method,return="pi"),states)
+				}
+			}
+			obj<-list(logLik=fit,
 				rates=Q[sapply(1:k,function(x,y) which(x==y),index.matrix)],
 				index.matrix=index.matrix,
 				states=states,
@@ -332,19 +391,26 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		if(lik.func=="lik")
 			lik.f<-function(q) -lik(q,output.liks=FALSE,
 				pi=if(root.prior=="nuisance") "fitzjohn" else pi)
-		else if(lik.func=="pruning") {
+		else if(lik.func%in%c("pruning","parallel")) {
 			lik.f<-function(q){
 				q<-sapply(1:max(MODEL), function(ind,q,MODEL) q[which(MODEL==ind)],
 					q=q,MODEL=MODEL)
-				pruning(q,tree=pw,x=x,model=MODEL,
-					pi=if(root.prior=="nuisance") "fitzjohn" else pi,
-					expm.method=expm.method)
+				if(lik.func=="pruning"){
+					pruning(q,tree=pw,x=x,model=MODEL,
+						pi=if(root.prior=="nuisance") "fitzjohn" else pi,
+						expm.method=expm.method)
+				} else if(lik.func=="parallel"){
+					parallel_pruning(q,tree=pw,x=x,model=MODEL,
+						pi=if(root.prior=="nuisance") "fitzjohn" else pi,
+						expm.method=expm.method)
+				}
 			}
 		}
 		obj$data<-x
 		obj$tree<-tree
 		obj$lik<-lik.f
 		class(obj)<-"fitMk"
+		if(lik.func=="parallel") stopCluster(cl=mc)
 	}
 	return(obj)
 }

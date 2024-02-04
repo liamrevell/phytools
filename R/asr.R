@@ -314,6 +314,16 @@ ancr.fitMk<-function(object,...){
 	else type<-"marginal"
 	if(hasArg(tips)) tips<-list(...)$tips
 	else tips<-FALSE
+	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+	else lik.func<-"pruning"
+	if(lik.func=="parallel"){
+		if(hasArg(ncores)) ncores<-list(...)$ncores
+		else ncores<-min(nrow(tree$edge),detectCores()-1)
+		mc<-makeCluster(ncores,type="PSOCK")
+		registerDoParallel(cl=mc)
+	}
+	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+	else expm.method<-"Higham08.b"
 	x<-object$data
 	tree<-object$tree
 	q<-object$rates
@@ -321,11 +331,21 @@ ancr.fitMk<-function(object,...){
 	model[is.na(model)]<-0
 	pi<-object$pi
 	if(type=="marginal"){
-		plik<-pruning(q,tree,x,model=model,pi=pi,
-			return="conditional")
-		ace<-marginal_asr(q,tree,plik,model,tips)
-		result<-list(ace=ace,
-			logLik=pruning(q,tree,x,model=model,pi=pi))
+		if(lik.func=="pruning"){
+			plik<-pruning(q,tree,x,model=model,pi=pi,
+				return="conditional",expm.method=expm.method)
+		} else if(lik.func=="parallel"){
+			plik<-parallel_pruning(q,tree,x,model=model,pi=pi,
+				return="conditional",expm.method=expm.method)
+		}
+		ace<-marginal_asr(q,tree,plik,model,tips,
+			parallel=if(lik.func=="parallel") TRUE else FALSE,
+			expm.method=expm.method)
+		result<-if(lik.func=="parallel") list(ace=ace,
+			logLik=parallel_pruning(q,tree,x,model=model,pi=pi,
+			expm.method=expm.method)) else list(ace=ace,logLik=pruning(q,
+			tree,x,model=model,pi=pi,expm.method=expm.method))
+		if(lik.func=="parallel") stopCluster(mc)
 		attr(result$logLik,"df")<-max(model)
 		attr(result,"type")<-"marginal"
 		attr(result,"tree")<-tree
@@ -377,6 +397,7 @@ pruning<-function(q,tree,x,model=NULL,...){
 		L[nn[i],]<-apply(PP,2,prod)
 		if(nn[i]==root){
 			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			else if(pi[1]=="mle") pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
 			L[nn[i],]<-pi*L[nn[i],]
 		}
 		pp[i]<-sum(L[nn[i],])
@@ -390,7 +411,8 @@ pruning<-function(q,tree,x,model=NULL,...){
 	else if(return=="pi") pi
 }
 
-marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
+marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE,
+	parallel=FALSE,expm.method="Higham08.b"){
 	pw<-reorder(tree,"postorder")
 	k<-ncol(L)
 	if(is.null(model)){
@@ -401,10 +423,16 @@ marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
 	Q[]<-c(0,q)[model+1]
 	diag(Q)<--rowSums(Q)
 	nn<-unique(pw$edge[,1])
+	if(parallel){
+		P.all<-foreach(i=1:nrow(pw$edge))%dopar%{ 
+			expm(Q*pw$edge.length[i],method=expm.method)
+		}
+	}
 	for(i in length(nn):1){
 		ee<-which(pw$edge[,1]==nn[i])
 		for(j in 1:length(ee)){
-			P<-expm(Q*pw$edge.length[ee[j]])
+			if(parallel) P<-P.all[[ee[j]]]
+			else P<-expm(Q*pw$edge.length[ee[j]])
 			pp<-t(L[nn[i],]/(P%*%L[pw$edge[ee[j],2],]))
 			pp[is.nan(pp)]<-0
 			L[pw$edge[ee[j],2],]<-(pp%*%P)*
@@ -492,4 +520,55 @@ marginal_asr_gamma<-function(q,alpha,nrates,tree,L,
 	}
 	anc<-L/rep(rowSums(L),k)
 	if(tips) anc else anc[1:Nnode(tree)+Ntip(tree),]
+}
+
+parallel_pruning<-function(q,tree,x,model=NULL,...){
+	if(hasArg(return)) return<-list(...)$return
+	else return<-"likelihood"
+	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+	else expm.method<-"Higham08.b"
+	pw<-if(!is.null(attr(tree,"order"))&&
+		attr(tree,"order")=="postorder") tree else 
+		reorder(tree,"postorder")
+	k<-ncol(x)
+	if(is.null(model)){
+		model<-matrix(1,k,k)
+		diag(model)<-0
+	}
+	if(hasArg(pi)) pi<-list(...)$pi
+	else pi<-rep(1/k,k)
+	Q<-matrix(0,k,k)
+	Q[]<-c(0,q)[model+1]
+	diag(Q)<--rowSums(Q)
+	L<-rbind(x[pw$tip.label,],
+		matrix(0,pw$Nnode,k,
+		dimnames=list(1:pw$Nnode+Ntip(pw))))
+	nn<-unique(pw$edge[,1])
+	pp<-vector(mode="numeric",length=length(nn))
+	root<-min(nn)
+	P.all<-foreach(i=1:nrow(pw$edge))%dopar%{ 
+		expm(Q*pw$edge.length[i],method=expm.method)
+	}
+	for(i in 1:length(nn)){
+		ee<-which(pw$edge[,1]==nn[i])
+		PP<-matrix(NA,length(ee),k)
+		for(j in 1:length(ee)){
+			P<-P.all[[ee[j]]]
+			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
+		}
+		L[nn[i],]<-apply(PP,2,prod)
+		if(nn[i]==root){
+			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			else if(pi[1]=="mle") pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
+			L[nn[i],]<-pi*L[nn[i],]
+		}
+		pp[i]<-sum(L[nn[i],])
+		L[nn[i],]<-L[nn[i],]/pp[i]
+	}
+	prob<-sum(log(pp))
+	if(return=="likelihood") 
+		if(is.na(prob)||is.nan(prob)) 
+			return(-Inf) else return(prob)
+	else if(return=="conditional") L
+	else if(return=="pi") pi
 }
