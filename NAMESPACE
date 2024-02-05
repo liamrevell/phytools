@@ -4,7 +4,7 @@ export(add.species.to.genus, aic.w, allFurcTrees, allRotations, anc.Bayes, anc.M
 export(anc.trend, ancr, ancThresh, ansi_phylo, applyBranchLengths, arc.cladelabels, as.multiPhylo)
 export(as.prcomp, as.princomp, as.Qmatrix, ave.rates, averageTree)
 export(backbone.toPhylo, bd, bmPlot, bind.tip, bind.tree.simmap, biplot.phyl.pca)
-export(branching.diffusion, brownie.lite, brownieREML)
+export(bounded_bm, branching.diffusion, brownie.lite, brownieREML)
 export(cladelabels, coef.phyl.RMA, collapse.to.star, collapseTree, compare.chronograms)
 export(consensus.edges, contMap, cophylo, countSimmap, compute.mr, cotangleplot, cospeciation)
 export(ctt)
@@ -280,6 +280,9 @@ S3method(anova, fitgammaMk)
 S3method(ancr, fitgammaMk)
 S3method(as.Qmatrix, fitgammaMk)
 S3method(plot, fitgammaMk)
+S3method(ancr, bounded_bm)
+S3method(print, bounded_bm)
+S3method(print, ancr.bounded_bm)
 
 ## default methods
 S3method(ancr, default)
