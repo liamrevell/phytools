@@ -29,15 +29,15 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	pic_x<-pic(x,multi2di(tree))
 	nn<-max(c(floor(0.2*multi2di(tree)$Nnode),1))
 	max.q=20*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
-		((levs-1)/dd)^2
+		(levs/dd)^2
 	q.init<-runif(n=1,0,2)*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
-		((levs-1)/dd)^2
+		(levs/dd)^2
 	fit<-fitMk(tree,X,model=MODEL,lik.func=lik.func,pi=pi,
 		expm.method=expm.method,logscale=TRUE,max.q=max.q,q.init=q.init)
-	lik<-logLik(fit)-Ntip(tree)*log(dd/(levs-1))
+	lik<-logLik(fit)-Ntip(tree)*log(dd/levs)
 	attr(lik,"df")<-2
 	class(lik)<-"logLik"
-	sigsq<-2*fit$rates*(dd/(levs-1))^2
+	sigsq<-2*fit$rates*(dd/levs)^2
 	ff<-if(lik.func%in%c("pruning","parallel")) lik.func else "pruning"
 	x0<-sum(ancr(fit,lik.func=ff,expm.method=expm.method)$ace[1,]*
 			rowMeans(bins))
@@ -64,7 +64,7 @@ print.bounded_bm<-function(x,digits=6,...){
 		",",round(x$bounds[2],digits),"]\n\n"))
 	cat("Fitted model parameters:\n")
 	cat(paste("	 sigsq:",round(x$sigsq,6),"\n"))
-	cat(paste("		x0:",round(x$x0,6),"\n\n"))
+	cat(paste("     x0:",round(x$x0,6),"\n\n"))
 	cat(paste("Log-likelihood:",round(x$logLik,digits),"\n\n"))
 	if(x$opt_results$convergence == 0) 
 		cat("R thinks it has found the ML solution.\n\n")
