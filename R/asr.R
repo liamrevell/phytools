@@ -318,7 +318,7 @@ ancr.fitMk<-function(object,...){
 	else lik.func<-"pruning"
 	if(lik.func=="parallel"){
 		if(hasArg(ncores)) ncores<-list(...)$ncores
-		else ncores<-min(nrow(tree$edge),detectCores()-1)
+		else ncores<-min(nrow(object$tree$edge),detectCores()-1)
 		mc<-makeCluster(ncores,type="PSOCK")
 		registerDoParallel(cl=mc)
 	}
