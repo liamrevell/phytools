@@ -6,7 +6,7 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(levs)) levs<-list(...)$levs
 	else levs<-100
 	if(hasArg(wrapped)) wrapped<-list(...)$wrapped
-	else wrapped<-TRUE
+	else wrapped<-FALSE
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"R_Eigen"
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
