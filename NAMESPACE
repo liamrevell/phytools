@@ -283,6 +283,7 @@ S3method(plot, fitgammaMk)
 S3method(ancr, bounded_bm)
 S3method(print, bounded_bm)
 S3method(print, ancr.bounded_bm)
+S3method(logLik, bounded_bm)
 
 ## default methods
 S3method(ancr, default)
