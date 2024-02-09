@@ -2,11 +2,16 @@
 ## wrapped (circular) Brownian model based on Kuhn et al
 
 bounded_bm<-function(tree,x,lims=NULL,...){
-	if(is.null(lims)) lims<-range(x)
-	if(hasArg(levs)) levs<-list(...)$levs
-	else levs<-100
 	if(hasArg(wrapped)) wrapped<-list(...)$wrapped
 	else wrapped<-FALSE
+	if(is.null(lims)){ 
+		lims<-expand.range(x,p=3)
+		df<-2
+	} else if(wrapped){ 
+		df<-2
+	} else df<-4
+	if(hasArg(levs)) levs<-list(...)$levs
+	else levs<-200
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"R_Eigen"
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
@@ -35,7 +40,7 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	fit<-fitMk(tree,X,model=MODEL,lik.func=lik.func,pi=pi,
 		expm.method=expm.method,logscale=TRUE,max.q=max.q,q.init=q.init)
 	lik<-logLik(fit)-Ntip(tree)*log(dd/levs)
-	attr(lik,"df")<-2
+	attr(lik,"df")<-df
 	class(lik)<-"logLik"
 	sigsq<-2*fit$rates*(dd/levs)^2
 	ff<-if(lik.func%in%c("pruning","parallel")) lik.func else "pruning"

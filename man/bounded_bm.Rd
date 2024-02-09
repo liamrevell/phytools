@@ -7,7 +7,7 @@
 \arguments{
 	\item{tree}{object of class \code{"phylo"}.}
 	\item{x}{continuous character data in a vector.}
-	\item{lims}{bounds. If \code{NULL} will be set to the observed range of the trait.}
+	\item{lims}{bounds. If \code{NULL} will be set to three times the observed range of the trait. (This is designed to be an effectively "unbounded" null model.)}
 	\item{...}{optional arguments.}
 }
 \description{
