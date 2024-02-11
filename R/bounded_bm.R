@@ -10,6 +10,14 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	} else if(wrapped){ 
 		df<-2
 	} else df<-4
+	if(lims[1]==-Inf){ 
+		lims[1]<-expand.range(x,p=3)[1]
+		df<-df-1
+	}
+	if(lims[2]==Inf){
+		lims[2]<-expand.range(x,p=3)[2]
+		df<-df-1
+	}
 	if(hasArg(levs)) levs<-list(...)$levs
 	else levs<-200
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
@@ -21,7 +29,8 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(root=="nuisance") pi<-"fitzjohn"
 	else if(root=="mle") pi<-"mle"
 	dd<-diff(lims)
-	tol<-1e-8*dd/levs
+	if(hasArg(tol)) tol<-list(...)$tol
+	else tol<-1e-8*dd/levs
 	bins<-cbind(seq(from=lims[1]-tol,by=(dd+2*tol)/levs,length.out=levs),
 		seq(to=lims[2]+tol,by=(dd+2*tol)/levs,length.out=levs))
 	xx<-setNames(
