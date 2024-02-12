@@ -324,6 +324,11 @@ ancr.fitMk<-function(object,...){
 	}
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"Higham08.b"
+	if(lik.func=="eigen"){
+		QQ<-object$index.matrix
+		diag(QQ)<--rowSums(QQ)
+		eQQ<-eigen(QQ)
+	}
 	x<-object$data
 	tree<-object$tree
 	q<-object$rates
@@ -337,14 +342,20 @@ ancr.fitMk<-function(object,...){
 		} else if(lik.func=="parallel"){
 			plik<-parallel_pruning(q,tree,x,model=model,pi=pi,
 				return="conditional",expm.method=expm.method)
+		} else if(lik.func=="eigen"){
+			plik<-eigen_pruning(q,tree,x,eQQ,pi=pi,return="conditional")
 		}
 		ace<-marginal_asr(q,tree,plik,model,tips,
 			parallel=if(lik.func=="parallel") TRUE else FALSE,
-			expm.method=expm.method)
+			expm.method=expm.method,
+			eigen=if(lik.func=="eigen") TRUE else FALSE)
 		result<-if(lik.func=="parallel") list(ace=ace,
 			logLik=parallel_pruning(q,tree,x,model=model,pi=pi,
-			expm.method=expm.method)) else list(ace=ace,logLik=pruning(q,
-			tree,x,model=model,pi=pi,expm.method=expm.method))
+			expm.method=expm.method)) else 
+			if(lik.func=="pruning") list(ace=ace,logLik=pruning(q,
+			tree,x,model=model,pi=pi,expm.method=expm.method)) else 
+			if(lik.func=="eigen") list(ace=ace,
+			logLik=eigen_pruning(q,tree,x,eigenQ=eQQ))
 		if(lik.func=="parallel") stopCluster(mc)
 		attr(result$logLik,"df")<-max(model)
 		attr(result,"type")<-"marginal"
@@ -412,7 +423,7 @@ pruning<-function(q,tree,x,model=NULL,...){
 }
 
 marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE,
-	parallel=FALSE,expm.method="Higham08.b"){
+	parallel=FALSE,expm.method="Higham08.b",eigen=FALSE){
 	pw<-reorder(tree,"postorder")
 	k<-ncol(L)
 	if(is.null(model)){
@@ -428,10 +439,24 @@ marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE,
 			expm(Q*pw$edge.length[i],method=expm.method)
 		}
 	}
+	if(eigen){
+		QQ<-model
+		diag(QQ)<--rowSums(QQ)
+		eigQ<-eigen(Q)
+		V<-eigQ$vectors
+		Vi<-t(V)
+		Vals<-eigQ$values
+		Expm<-function(t,q) Re(V%*%(exp(q*t*Vals)*Vi))
+		if(parallel){
+			P.all<-foreach(i=1:nrow(pw$edge))%dopar%{
+				Expm(pw$edge.length[i],q)
+			}
+		} else P.all<-lapply(pw$edge.length,Expm,q=q)
+	}
 	for(i in length(nn):1){
 		ee<-which(pw$edge[,1]==nn[i])
 		for(j in 1:length(ee)){
-			if(parallel) P<-P.all[[ee[j]]]
+			if(parallel||eigen) P<-P.all[[ee[j]]]
 			else P<-expm(Q*pw$edge.length[ee[j]])
 			pp<-t(L[nn[i],]/(P%*%L[pw$edge[ee[j],2],]))
 			pp[is.nan(pp)]<-0
@@ -511,7 +536,6 @@ marginal_asr_gamma<-function(q,alpha,nrates,tree,L,
 			P<-Reduce("+",lapply(r,
 				function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
 				k=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
-			## P<-expm(Q*pw$edge.length[ee[j]])
 			pp<-t(L[nn[i],]/(P%*%L[pw$edge[ee[j],2],]))
 			pp[is.nan(pp)]<-0
 			L[pw$edge[ee[j],2],]<-(pp%*%P)*

@@ -1,5 +1,5 @@
 ## bounded Brownian model based on Boucher & Demery 2016 and
-## wrapped (circular) Brownian model based on Kuhn et al
+## wrapped (circular) Brownian model based on Juhn et al. (in review)
 
 bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(wrapped)) wrapped<-list(...)$wrapped
@@ -23,7 +23,9 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"R_Eigen"
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
-	else lik.func<-"pruning"
+	else lik.func<-"eigen"
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE
 	if(hasArg(root)) root=list(...)$root
 	else root<-"nuisance"
 	if(root=="nuisance") pi<-"fitzjohn"
@@ -44,17 +46,46 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	nn<-max(c(floor(0.2*multi2di(tree)$Nnode),1))
 	max.q=20*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
 		(levs/dd)^2
-	q.init<-runif(n=1,0,2)*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
-		(levs/dd)^2
-	fit<-fitMk(tree,X,model=MODEL,lik.func=lik.func,pi=pi,
-		expm.method=expm.method,logscale=TRUE,max.q=max.q,q.init=q.init)
+	if(lik.func%in%c("pruning","parallel")){
+		q.init<-runif(n=1,0,2)*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
+			(levs/dd)^2
+		fit<-fitMk(tree,X,model=MODEL,lik.func=lik.func,pi=pi,
+			expm.method=expm.method,logscale=TRUE,max.q=max.q,q.init=q.init)
+	} else if(lik.func=="eigen"){
+		QQ<-MODEL
+		diag(QQ)<--rowSums(MODEL)
+		eQQ<-eigen(QQ)
+		pw<-reorder(tree,"postorder")
+		if(parallel){
+			if(hasArg(ncores)) ncores<-list(...)$ncores
+			else ncores<-min(nrow(tree$edge),detectCores()-1)
+			mc<-makeCluster(ncores,type="PSOCK")
+			registerDoParallel(cl=mc)
+		}
+		fit<-optimize(eigen_pruning,c(tol,max.q),tree=pw,
+			x=X,eigenQ=eQQ,parallel=parallel,pi=pi,maximum=TRUE)
+		fit<-list(
+			logLik=fit$objective,
+			rates=fit$maximum,
+			index.matrix=MODEL,
+			states=colnames(X),
+			pi=eigen_pruning(fit$maximum,pw,X,eQQ,pi=pi,return="pi",
+				parallel=parallel),
+			method="optimize",
+			root.prior=if(pi=="fitzjohn") "nuisance" else pi,
+			opt_results=list(convergence=0),
+			data=X,
+			tree=pw)
+		class(fit)<-"fitMk"
+	}
 	lik<-logLik(fit)-Ntip(tree)*log(dd/levs)
 	attr(lik,"df")<-df
 	class(lik)<-"logLik"
 	sigsq<-2*fit$rates*(dd/levs)^2
-	ff<-if(lik.func%in%c("pruning","parallel")) lik.func else "pruning"
-	x0<-sum(ancr(fit,lik.func=ff,expm.method=expm.method)$ace[1,]*
-			rowMeans(bins))
+	ff<-if(lik.func%in%c("pruning","parallel","eigen")) lik.func else "pruning"
+	x0<-sum(ancr(fit,lik.func=ff,expm.method=expm.method,parallel=parallel)$ace[1,]*
+		rowMeans(bins))
+	if(parallel) stopCluster(cl=mc)
 	object<-list(
 		wrapped=wrapped,
 		sigsq=sigsq,
@@ -66,6 +97,57 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 		mk_fit=fit)
 	class(object)<-"bounded_bm"
 	object
+}
+
+eigen_pruning<-function(q,tree,x,eigenQ,...){
+	if(hasArg(return)) return<-list(...)$return
+	else return<-"likelihood"
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE
+	pw<-if(!is.null(attr(tree,"order"))&&
+		attr(tree,"order")=="postorder") tree else 
+		reorder(tree,"postorder")
+	k<-ncol(x)
+	if(hasArg(pi)) pi<-list(...)$pi
+	else pi<-rep(1/k,k)
+	L<-rbind(x[pw$tip.label,],
+		matrix(0,pw$Nnode,k,
+		dimnames=list(1:pw$Nnode+Ntip(pw))))
+	nn<-unique(pw$edge[,1])
+	pp<-vector(mode="numeric",length=length(nn))
+	root<-min(nn)
+	V<-eigenQ$vectors
+	Vi<-t(V)
+	Vals<-eigenQ$values
+	Expm<-function(t,q) Re(V%*%(exp(q*t*Vals)*Vi))
+	if(parallel){
+		P.all<-foreach(i=1:nrow(pw$edge))%dopar%{ 
+			Expm(pw$edge.length[i],q)
+		}
+	}
+	for(i in 1:length(nn)){
+		ee<-which(pw$edge[,1]==nn[i])
+		PP<-matrix(NA,length(ee),k)
+		for(j in 1:length(ee)){
+			if(parallel) P<-P.all[[ee[j]]]
+			else P<-Expm(q=q,t=pw$edge.length[ee[j]])
+			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
+		}
+		L[nn[i],]<-apply(PP,2,prod)
+		if(nn[i]==root){
+			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			else if(pi[1]=="mle") pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
+			L[nn[i],]<-pi*L[nn[i],]
+		}
+		pp[i]<-sum(L[nn[i],])
+		L[nn[i],]<-L[nn[i],]/pp[i]
+	}
+	prob<-sum(log(pp))
+	if(return=="likelihood") 
+		if(is.na(prob)||is.nan(prob)) 
+			return(-Inf) else return(prob)
+	else if(return=="conditional") L
+	else if(return=="pi") pi
 }
 
 print.bounded_bm<-function(x,digits=6,...){
@@ -85,7 +167,7 @@ print.bounded_bm<-function(x,digits=6,...){
 	else cat("R thinks optimization may not have converged.\n\n")
 }
 
-logLik.bounded_bm<-function(x) x$logLik
+logLik.bounded_bm<-function(object,...) x$logLik
 
 ancr.bounded_bm<-function(object,...){
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
@@ -128,3 +210,4 @@ print.ancr.bounded_bm<-function(x,digits=6,printlen=6,...){
 	else printDotDot(x$CI95,digits,printlen)
 	cat("\n")
 }
+
