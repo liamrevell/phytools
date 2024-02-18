@@ -94,6 +94,36 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	x0<-sum(ancr(fit,lik.func=ff,expm.method=expm.method,parallel=parallel)$ace[1,]*
 		rowMeans(bins))
 	if(parallel) stopCluster(cl=mc)
+	lfunc<-function(sig2,x0="nuisance",...){
+		if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+		if(hasArg(parallel)) parallel<-list(...)$parallel
+		q<-(sig2/2)*(levs/dd)^2
+		if(x0=="nuisance") pi<-"fitzjohn"
+		else if(is.numeric(x0)) pi<-to_binned(x0,bins)[1,]
+		if(lik.func=="pruning"){
+			lnL<-pruning(q,tree,X,MODEL,pi=pi,expm.method=expm.method)-
+				Ntip(tree)*log(dd/levs)
+		} else if(lik.func=="parallel"){
+			if(!exists("ncores")) ncores<-min(nrow(tree$edge),detectCores()-1)
+			mc<-makeCluster(ncores,type="PSOCK")
+			registerDoParallel(cl=mc)
+			lnL<-parallel_pruning(q,tree,X,MODEL,pi=pi,
+				expm.method=expm.method)-Ntip(tree)*log(dd/levs)
+			stopCluster(cl=mc)
+		} else if(lik.func=="eigen"){
+			if(parallel){
+				mc<-makeCluster(ncores,type="PSOCK")
+				registerDoParallel(cl=mc)
+			}
+			Q<-MODEL
+			diag(Q)<--rowSums(MODEL)
+			eQ<-eigen(Q)
+			lnL<-eigen_pruning(q,tree,X,eQ,parallel=parallel,pi=pi)-
+				Ntip(tree)*log(dd/levs)
+			if(parallel) stopCluster(cl=mc)
+		}
+		lnL		
+	}
 	object<-list(
 		wrapped=wrapped,
 		sigsq=sigsq,
@@ -102,7 +132,8 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 		ncat=levs,
 		logLik=lik,
 		opt_results=fit$opt_results,
-		mk_fit=fit)
+		mk_fit=fit,
+		lik=lfunc)
 	class(object)<-"bounded_bm"
 	object
 }
