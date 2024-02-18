@@ -324,6 +324,8 @@ ancr.fitMk<-function(object,...){
 	}
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"Higham08.b"
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE ## only for lik.func="eigen"
 	if(lik.func=="eigen"){
 		QQ<-object$index.matrix
 		diag(QQ)<--rowSums(QQ)
@@ -346,7 +348,7 @@ ancr.fitMk<-function(object,...){
 			plik<-eigen_pruning(q,tree,x,eQQ,pi=pi,return="conditional")
 		}
 		ace<-marginal_asr(q,tree,plik,model,tips,
-			parallel=if(lik.func=="parallel") TRUE else FALSE,
+			parallel=if((lik.func=="parallel")||parallel) TRUE else FALSE,
 			expm.method=expm.method,
 			eigen=if(lik.func=="eigen") TRUE else FALSE)
 		result<-if(lik.func=="parallel") list(ace=ace,
@@ -434,7 +436,7 @@ marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE,
 	Q[]<-c(0,q)[model+1]
 	diag(Q)<--rowSums(Q)
 	nn<-unique(pw$edge[,1])
-	if(parallel){
+	if(parallel&&(!eigen)){
 		P.all<-foreach(i=1:nrow(pw$edge))%dopar%{ 
 			expm(Q*pw$edge.length[i],method=expm.method)
 		}

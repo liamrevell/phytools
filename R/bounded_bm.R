@@ -1,9 +1,18 @@
 ## bounded Brownian model based on Boucher & Demery 2016 and
 ## wrapped (circular) Brownian model based on Juhn et al. (in review)
 
+to_binned<-function(x,bins){
+	xx<-setNames(
+		sapply(x,function(y,bins) which((y>=bins[,1])+(y<bins[,2])==2),
+		bins=bins),names(x))
+	to.matrix(xx,1:nrow(bins))
+}
+
 bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(wrapped)) wrapped<-list(...)$wrapped
 	else wrapped<-FALSE
+	if(hasArg(bins)) bins<-list(...)$bins
+	else bins<-NULL
 	if(is.null(lims)){ 
 		lims<-expand.range(x,p=3)
 		df<-2
@@ -30,15 +39,14 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	else root<-"nuisance"
 	if(root=="nuisance") pi<-"fitzjohn"
 	else if(root=="mle") pi<-"mle"
+	else if(root=="flat") pi<-rep(1/levs,levs)
 	dd<-diff(lims)
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8*dd/levs
-	bins<-cbind(seq(from=lims[1]-tol,by=(dd+2*tol)/levs,length.out=levs),
-		seq(to=lims[2]+tol,by=(dd+2*tol)/levs,length.out=levs))
-	xx<-setNames(
-		sapply(x,function(y,bins) which((y>=bins[,1])+(y<bins[,2])==2),
-		bins=bins),names(x))
-	X<-to.matrix(xx,1:levs)
+	bins<-if(is.null(bins)) cbind(seq(from=lims[1]-tol,
+		by=(dd+2*tol)/levs,length.out=levs),seq(to=lims[2]+tol,
+		by=(dd+2*tol)/levs,length.out=levs)) else bins
+	X<-to_binned(x,bins)
 	MODEL<-matrix(0,levs,levs,dimnames=list(1:levs,1:levs))
 	for(i in 1:(levs-1)) MODEL[i,i+1]<-MODEL[i+1,i]<-1
 	if(wrapped) MODEL[1,levs]<-MODEL[levs,1]<-1
@@ -72,7 +80,7 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 			pi=eigen_pruning(fit$maximum,pw,X,eQQ,pi=pi,return="pi",
 				parallel=parallel),
 			method="optimize",
-			root.prior=if(pi=="fitzjohn") "nuisance" else pi,
+			root.prior=if(pi[1]=="fitzjohn") "nuisance" else pi,
 			opt_results=list(convergence=0),
 			data=X,
 			tree=pw)
@@ -167,13 +175,15 @@ print.bounded_bm<-function(x,digits=6,...){
 	else cat("R thinks optimization may not have converged.\n\n")
 }
 
-logLik.bounded_bm<-function(object,...) x$logLik
+logLik.bounded_bm<-function(object,...) object$logLik
 
 ancr.bounded_bm<-function(object,...){
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
 	else lik.func<-"pruning"
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"R_Eigen"
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE
 	dd<-diff(object$bounds)
 	tol<-1e-8*dd/object$ncat
 	bins<-cbind(seq(from=object$bounds[1]-tol,
@@ -181,7 +191,7 @@ ancr.bounded_bm<-function(object,...){
 		seq(to=object$bounds[2]+tol,by=(dd+2*tol)/object$ncat,
 			length.out=object$ncat))
 	mids<-rowMeans(bins)
-	Anc<-ancr(object$mk_fit,lik.func=lik.func,
+	Anc<-ancr(object$mk_fit,lik.func=lik.func,parallel=parallel,
 		expm.method=expm.method)
 	ace<-colSums(apply(Anc$ace,1,function(x,y) x*y,
 		y=mids))
