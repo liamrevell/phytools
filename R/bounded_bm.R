@@ -198,7 +198,7 @@ print.bounded_bm<-function(x,digits=6,...){
 	cat(paste("Set or estimated bounds: [",round(x$bounds[1],digits),
 		",",round(x$bounds[2],digits),"]\n\n"))
 	cat("Fitted model parameters:\n")
-	cat(paste("	 sigsq:",round(x$sigsq,6),"\n"))
+	cat(paste("  sigsq:",round(x$sigsq,6),"\n"))
 	cat(paste("     x0:",round(x$x0,6),"\n\n"))
 	cat(paste("Log-likelihood:",round(x$logLik,digits),"\n\n"))
 	if(x$opt_results$convergence == 0) 
