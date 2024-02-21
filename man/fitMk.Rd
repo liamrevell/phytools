@@ -14,6 +14,7 @@
 \alias{plot.fitHRM}
 \alias{fitMk.parallel}
 \alias{fitgammaMk}
+\alias{fitfnMk}
 \title{Fits extended M\emph{k} model for discrete character evolution}
 \usage{
 fitMk(tree, x, model="SYM", fixedQ=NULL, ...)
@@ -31,11 +32,12 @@ fitHRM(tree, x, model="ARD", ncat=2, ...)
 \method{plot}{fitHRM}(x, ...)
 fitMk.parallel(tree, x, model="SYM", ncores=1, ...)
 fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=8, ...)
+fitfnMk(tree, x, model="polynomial", degree=2, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
-	\item{x}{a vector of tip values for species; \code{names(x)} should be the species names. In the case of \code{plot} and \code{density} methods, an object of the appropriate class.}
-	\item{model}{model. See \code{make.simmap} or \code{ace} for details.}
+	\item{x}{a vector (or numeric matrix) of tip values for species; \code{names(x)} should be the species names. In the case of \code{plot} and \code{density} methods, an object of the appropriate class.}
+	\item{model}{model. See \code{make.simmap} or \code{ace} for details. For \code{fitfnMk} the only option is presently \code{model="polynomial"}.}
 	\item{fixedQ}{fixed value of transition matrix \code{Q}, if one is desired.}
 	\item{ordered}{for \code{fitpolyMk}, a logical value indicating whether or not the character should be treated as ordered. For now the function assumes alphanumerical order (i.e., numbers sorted by their initial and then successive digits followed by characters or character strings in alphabetical order).}
 	\item{k}{For \code{graph.polyMk}, the number of monomorphic states for the discrete trait.}
@@ -43,10 +45,11 @@ fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=8, ...)
 	\item{ncat}{number of rate categories (per level of the discrete trait) in the hidden-rate model.}
 	\item{ncores}{number of cores for \code{fitMk.parallel}.}
 	\item{nrates}{number of rate categories for discretized \eqn{\Gamma} distribution.}
+	\item{degree}{the degree of the polynomial for \code{fitfnMk}. (Defaults to \code{degree=2}.)}
 	\item{...}{optional arguments, including \code{pi}, the prior distribution at the root node (defaults to \code{pi="equal"}). Other options for \code{pi} include \code{pi="fitzjohn"} (which implements the prior distribution of FitzJohn et al. 2009), \code{pi="estimated"} (which finds the stationary distribution of state frequencies and sets that as the prior), or an arbitrary prior distribution specified by the user. For \code{plot} method optional arguments include (but may not be limited to): \code{signif}, the number of digits for the rates to be plotted; \code{main}, a character vector of length two with the headings for each subplot; \code{cex.main}, \code{cex.traits}, and \code{cex.rates}, font sizes for the various text elements of the plot; and \code{show.zeros}, a logical argument specifying whether or not to plot arrows with the ML estimated transition rate is not different from zero (with tolerance specified by the optional argument \code{tol}). Finally, for \code{fitpolyMk}, both \code{order} (an evolutionary sequence for the monomorphic condition) and \code{max.poly} can be set for the \code{ordered=TRUE} model. If not set, \code{order} defaults to alphanumeric order, and \code{max.poly} defaults to the highest level of polymorphism observed in the data.}
 }
 \description{
-	The functions \code{fitMk}, \code{fitmultiMk}, \code{fitpolyMk}, \code{fitHRM}, \code{fitMk.parallel}, \code{fitgammaMk}, and \code{mcmcMk} fit various flavors of the extended M\emph{k} model (Lewis, 2001) for discrete character evolution on a reconstructed phylogeny.
+	The functions \code{fitMk}, \code{fitmultiMk}, \code{fitpolyMk}, \code{fitHRM}, \code{fitMk.parallel}, \code{fitgammaMk}, \code{fitfnMk}, and \code{mcmcMk} fit various flavors of the extended M\emph{k} model (Lewis, 2001) for discrete character evolution on a reconstructed phylogeny.
 }
 \details{
 	The function \code{fitMk} fits a so-called extended M\emph{k} model for discrete character evolution (Lewis, 2001).
@@ -56,6 +59,8 @@ fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=8, ...)
 	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree. It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree.
 	
 	The function \code{fitgammaMk} fits an M\emph{k} model in which the edge rates are assumed to have been sampled randomly from a \eqn{\Gamma} distribution with mean of 1.0 and shape parameter \eqn{\alpha}.
+	
+	The function \code{fitfnMk} fit an ordered M\emph{k} model in which the backward and forward transition rates between adjacent levels of the trait vary according to a functional form. Presently that function form is an \emph{n}th degree polynomial, in which \code{degree} is set by the user (but defaults to \code{degree = 2}).
 	
 	The function \code{fitpolyMk} fits an M\emph{k} model to data for a discrete character with intraspecific polymorphism. Polymorphic species should be coded with the name of the two or more states recorded for the species separated by a plus sign \code{+} (e.g., \code{A+B} would indicate that both states \code{A} and \code{B} are found in the corresponding taxon). Invariably it's assumed that transitions between states must occur through a polymorphic condition, whereas transitions \emph{cannot} occur directly between two incompatible polymorphic conditions. For instance, a transition between \code{A+B} and \code{B+C} would have to occur through the monomorphic state \code{B}. At time of writing, this function permits the models \code{"ER"} (equal rates for all permitted transitions), \code{"SYM"} (symmetric backward & forward rates for all permitted transitions), \code{"ARD"} (all-rates-different for permitted transitions), and a new model called \code{"transient"} in which the acquisition of polymorphism (e.g., \code{A -> A+B}) is assumed to occur at a different rate than its loss (e.g., \code{A+B -> B}). The method \code{plot.fitpolyMk} plots the fitted M\emph{k} model with intraspecific polymorphism.
 	
@@ -68,7 +73,7 @@ fitgammaMk(tree, x, model="ER", fixedQ=NULL, nrates=8, ...)
 	Note that (by default) both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \pkg{ape} package for computing the likelihood. (If the optional argument \code{pruning=TRUE} then alternative, slightly faster, \pkg{phytools} code for the pruning algorithm is used.) \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
 }
 \value{
-	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, \code{"fitHRM"}, or \code{"fitgammaMk"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
+	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, \code{"fitHRM"}, \code{"fitgammaMk"}, or \code{"fitfnMk"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
 	
 	\code{plot.fitMk}, \code{plot.gfit}, and \code{plot.HRM} invisibly return the coordinates of vertices of the plotted \bold{Q}-matrix.
 }
