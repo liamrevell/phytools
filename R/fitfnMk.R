@@ -61,7 +61,22 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 	pw<-reorder(tree,"postorder")
 	xx<-0:(k-2)+0.5
 	if(is.null(start)) q1_start<-q2_start<--1
-	else {
+	else if(start=="smart"){
+		MODEL<-matrix(0,k,k,dimnames=list(colnames(x),colnames(x)))
+		MODEL[cbind(1:(k-1),2:k)]<-1
+		MODEL[cbind(2:k,1:(k-1))]<-2
+		RATES<-fitMk(pw,x,model=MODEL,pi=pi)$rates
+		start<-rep(0,sum(degree)+2)
+		start[c(degree[1]+1,sum(degree)+2)]<-RATES
+		start<-start+runif(n=sum(degree)+2,min=-0.0001*mean(RATES),
+			max=0.0001*mean(RATES))
+		q1_start<-q2_start<-rep(0,length(xx))
+		for(i in 0:degree[1]) q1_start<-q1_start+start[i+1]*xx^(degree[1]-i)
+		for(i in 0:degree[2]) q2_start<-q2_start+start[degree[1]+i+2]*xx^(degree[2]-i)
+		q1_start[q1_start<0]<-0
+		q2_start[q2_start<0]<-0
+		if(all(q1_start==0)&&all(q2_start==0)) q1_start<-q2_start<--1	
+	} else {
 		q1_start<-q2_start<-rep(0,length(xx))
 		for(i in 0:degree[1]) q1_start<-q1_start+start[i+1]*xx^(degree[1]-i)
 		for(i in 0:degree[2]) q2_start<-q2_start+start[degree[1]+i+2]*xx^(degree[2]-i)
