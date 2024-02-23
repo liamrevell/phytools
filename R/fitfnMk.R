@@ -103,7 +103,7 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 	index.matrix<-matrix(0,k,k,dimnames=list(colnames(x),colnames(x)))
 	index.matrix[cbind(1:(k-1),2:k)]<-1:(k-1)
 	index.matrix[cbind(2:k,1:(k-1))]<-k:(2*k-2)
-	lik.f<-function(par) lik(par,pw=pw,X=x,pi=pi,degree=degree)
+	lik.f<-function(par) -lik(par,pw=pw,X=x,pi=pi,degree=degree)
 	object<-list(
 		logLik=-fit$objective,
 		rates=c(q1_est,q2_est),
