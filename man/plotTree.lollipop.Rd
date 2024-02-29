@@ -8,17 +8,19 @@ plotTree.lollipop(tree, x, args.plotTree=list(), args.lollipop=list(), ...)
  	\item{tree}{an object of class \code{"phylo"}.}
 	\item{x}{a matrix, data frame, or vector of numeric values.}
 	\item{args.plotTree}{list of arguments to be passed to \code{\link{plotTree}}.}
-	\item{args.lollilop}{list of arguments for the lollipop plot(s).}
+	\item{args.lollipop}{list of arguments for the lollipop plot(s).}
 	\item{...}{optional arguments.}
 }
 \description{
-	Plots an upward facing phylogenetic tree with one or more matched lollipop plots.
+	Plots an upward facing phylogenetic tree with one or more matched lollipop plots. Inspired by a plotting style used by Title et al. (2024).
 }
 \value{
 	Creates a plot.
 }
 \references{
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Title, P. O., Singhal, S., Grundler, M. C., Costa, G. C., Pyron, R. A., Colston, T. J., Grundler, M. R., Prates, I., Stepanova, N., Jones, M. E. H., Cavalcanti, L. B. Q., Colli, G. R., Di-Poi, N., Donnellan, S. C., Moritz, C., Mesquita, D. O., Pianka, E. R., Smith, S. A., Vitt, L. J., and Rabosky, D. L. (2024) The macroevolutionary singularity of snakes. \emph{Science}, \bold{383}, 918-923.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
@@ -40,4 +42,4 @@ par(mar=c(5.1,4.1,4.1,2.1))
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}
-\keyword{discrete character}
+\keyword{continuous character}
