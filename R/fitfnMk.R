@@ -172,7 +172,8 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 			}
 			if(trace>0) cat("\n")
 			fit<-DEoptim(lik,
-				lower=rep(-3,length(start)),upper=rep(3,length(start)),
+				lower=rep(-10*max(start),length(start)),
+				upper=rep(10*max(start),length(start)),
 				pw=pw,Y=x,pi=pi,degree=degree,
 				control=list(itermax=maxit,
 				initialpop=initialpop,
