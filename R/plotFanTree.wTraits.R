@@ -2,7 +2,7 @@
 
 plotFanTree.wTraits<-function(tree,X,type=c("arc","fan"),...){
 	X<-if(is.vector(X)) as.matrix(X[tree$tip.label]) else 
-		X[tree$tip.label,]
+		X[tree$tip.label,,drop=FALSE]
 	h<-max(nodeHeights(tree))
 	d<-min(ncol(X)*0.07*h,h)
 	type<-type[1]
