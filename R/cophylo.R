@@ -1,5 +1,5 @@
 ## creates an object of class "cophylo"
-## written by Liam J. Revell 2015, 2016, 2017, 2019, 2021, 2023
+## written by Liam J. Revell 2015, 2016, 2017, 2019, 2021, 2023, 2024
 
 cophylo<-function(tr1,tr2,assoc=NULL,rotate=TRUE,...){
 	if(!inherits(tr1,"phylo")||!inherits(tr2,"phylo")) 
@@ -125,6 +125,8 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	if(hasArg(tip.len)) tip.len<-list(...)$tip.len
 	else tip.len<-0.1
 	if(pts==TRUE&&tip.len==0) tip.len<-0.1
+	if(hasArg(frame)) frame<-list(...)$frame
+	else frame<-TRUE
 	d<-if(direction=="rightwards") 1 else -1
 	## sub "_" for " "
 	tree$tip.label<-gsub("_"," ",tree$tip.label)
@@ -183,7 +185,7 @@ phylogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		for(i in 1:n) TEXTBOX(d*(h[i]+fsize*strwidth(tree$tip.label[i])+
 			tip.len*(max(X)-min(X))),y[i],
 			tree$tip.label[i], pos=if(d<0) 4 else 2,offset=0,
-			cex=fsize,font=font)
+			cex=fsize,font=font,frame=frame)
 	}	
 	PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 		show.tip.label=if(ftype!="off") TRUE else FALSE,show.node.label=FALSE,
@@ -209,6 +211,8 @@ cladogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 	if(hasArg(tip.len)) tip.len<-list(...)$tip.len
 	else tip.len<-0.1
 	if(pts==TRUE&&tip.len==0) tip.len<-0.1
+	if(hasArg(frame)) frame<-list(...)$frame
+	else frame<-TRUE
 	d<-if(direction=="rightwards") 1 else -1
 	## sub "_" for " "
 	tree$tip.label<-gsub("_"," ",tree$tip.label)
@@ -257,7 +261,7 @@ cladogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 		for(i in 1:n) TEXTBOX(d*(h[i]+fsize*strwidth(tree$tip.label[i])+
 			tip.len*(max(X)-min(X))),y[i],
 			tree$tip.label[i], pos=if(d<0) 4 else 2,offset=0,
-			cex=fsize,font=font)
+			cex=fsize,font=font,frame=frame)
 	}	
 	PP<-list(type="cladogram",use.edge.length=TRUE,node.pos=1,
 		show.tip.label=if(ftype!="off") TRUE else FALSE,show.node.label=FALSE,
@@ -273,8 +277,9 @@ cladogram<-function(tree,part=1,direction="rightwards",fsize=1,ftype="i",lwd=1,.
 
 ## internally used function
 
-TEXTBOX<-function(x,y,label,pos,offset,cex,font){
-	rect(x,y-0.5*strheight(label,cex=cex,font=font),x+if(pos==4) strwidth(label,
+TEXTBOX<-function(x,y,label,pos,offset,cex,font,frame=TRUE){
+	if(frame) rect(x,y-0.5*strheight(label,cex=cex,font=font),
+		x+if(pos==4) strwidth(label,
 		cex=cex,font=font) else -strwidth(label,cex=cex,font=font),
 		y+0.5*strheight(label,cex=cex,font=font),border=FALSE,
 		col=if(par()$bg%in%c("white","transparent")) "white" else par()$bg)
@@ -339,6 +344,9 @@ plot.cophylo<-function(x,...){
 	else edge.col<-list(
 		left=rep("black",nrow(x$trees[[1]]$edge)),
 		right=rep("black",nrow(x$trees[[2]]$edge)))
+	if(hasArg(frame)) frame<-list(...)$frame
+	else frame<-c(TRUE,TRUE)
+	if(length(frame)==1) frame<-rep(frame,2)
 	obj<-list(...)
 	if(is.null(obj$part)) obj$part<-0.4
 	par(mar=mar)
@@ -359,6 +367,8 @@ plot.cophylo<-function(x,...){
 			rightArgs$ftype<-obj$ftype[2]
 		}
 	}
+	leftArgs$frame<-frame[1]
+	rightArgs$frame<-frame[2]
 	plotter<-if(type[1]=="cladogram") "cladogram" else "phylogram"
 	x1<-do.call(plotter,c(list(tree=x$trees[[1]]),leftArgs))
 	plotter<-if(type[2]=="cladogram") "cladogram" else "phylogram"

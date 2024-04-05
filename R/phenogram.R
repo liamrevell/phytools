@@ -1,5 +1,5 @@
 ## function creates a phenogram (i.e., 'traitgram')
-## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2020, 2021
+## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2020, 2021, 2024
 
 phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FALSE,...){
 	## get optional arguments
@@ -54,6 +54,8 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	else cex.lab<-par()$cex.lab
 	if(hasArg(las)) las<-list(...)$las
 	else las<-par()$las
+	if(hasArg(Axes)) Axes<-list(...)$Axes
+	else Axes<-TRUE
 	## end optional arguments
 	# check tree
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -68,10 +70,15 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 	x[1:length(tree$tip)]<-x[tree$tip.label]
 	names(x)[1:length(tree$tip)]<-1:length(tree$tip)
 	X<-matrix(x[as.character(tree$edge)],nrow(tree$edge),ncol(tree$edge))
-	# legacy 'axes' argument trumps ylim & xlim from optional (...)
-	if(is.null(axes$trait)&&is.null(ylim)) ylim<-c(min(x),max(x))
-	else if(!is.null(axes$trait)) ylim<-axes$trait
-	if(!is.null(axes$time)) xlim<-axes$time
+	## legacy 'axes' argument trumps ylim & xlim from optional (...)
+	if(is.logical(axes)){ 
+		Axes<-axes
+		if(is.null(ylim)) ylim<-c(min(x),max(x))
+	} else {
+		if(is.null(axes$trait)&&is.null(ylim)) ylim<-c(min(x),max(x))
+		else if(!is.null(axes$trait)) ylim<-axes$trait
+		if(!is.null(axes$time)) xlim<-axes$time
+	}
 	if(!add&&is.null(xlim)){
 		pp<-par("pin")[1]
 		sw<-fsize*(max(strwidth(tree$tip.label,units="inches")))+
@@ -153,8 +160,9 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			}
 		}
 	}
-	if(!add){
-		at<-round(0:(nticks-1)*max(H)/(nticks-1),digits)
+	if(!add&&Axes){
+		at<-pretty(round(0:(nticks-1)*max(H)/(nticks-1),digits))
+		at<-at[which(at<=max(H))]
 		axis(1,at=at,cex.axis=cex.axis,cex.lab=cex.lab,las=las) 
 		axis(2,cex.axis=cex.axis,cex.lab=cex.lab,las=las)
 		title(xlab=xlab,ylab=ylab,main=main,sub=sub)

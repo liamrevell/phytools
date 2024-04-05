@@ -32,7 +32,7 @@ fitPagel(tree, x, y, method="fitMk", model="ARD", dep.var="xy", ...)
 \references{
 	Pagel, M. (1994) Detecting correlated evolution on phylogenies: A general method for the comparative analysis of discrete characters. \emph{Proceedings of the Royal Society B}, \bold{255}, 37-45.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

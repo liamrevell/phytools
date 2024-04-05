@@ -42,13 +42,15 @@ simmap(object, ...)
 \references{
 	Bollback, J. P. (2006) Stochastic character mapping of discrete traits on phylogenies. \emph{BMC Bioinformatics}, \bold{7}, 88.
 	
-	Fitzjohn, R. G., W. P. Maddison, and S. P. Otto (2009) Estimating trait-dependent speciation and extinction rates from incompletely resolved phylogenies. \emph{Systematic Biology}, \bold{58}, 595-611.
+	FitzJohn, R. G., W. P. Maddison, and S. P. Otto (2009) Estimating trait-dependent speciation and extinction rates from incompletely resolved phylogenies. \emph{Systematic Biology}, \bold{58}, 595-611.
 
 	Huelsenbeck, J. P., R. Neilsen, and J. P. Bollback (2003) Stochastic mapping of morphological characters. \emph{Systematic Biology}, \bold{52}, 131-138. 
 
  	Paradis, E., J. Claude, and K. Strimmer (2004) APE: Analyses of phylogenetics and evolution in R language. \emph{Bioinformatics}, \bold{20}, 289-290.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Revell, L. J. and L. J. Harmon (2022) \emph{Phylogenetic Comparative Methods in R}. Princeton University Press.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

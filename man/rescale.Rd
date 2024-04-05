@@ -20,7 +20,7 @@ rescale(x, ...)
 \references{
 	Pennell, M.W., J. M. Eastman, G. J. Slater, J. W. Brown, J. C. Uyeda, R. G. FitzJohn, M. E. Alfaro, and L. J. Harmon (2014) geiger v2.0: an expanded suite of methods for fitting macroevolutionary models to phylogenetic trees. \emph{Bioinformatics}, \bold{30}, 2216-2218.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

@@ -28,8 +28,14 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 }
 \references{
 	Evans, M. E. K., Smith, S. A., Flynn, R. S., Donoghue, M. J. (2009) Climate, niche evolution, and diversification of the "bird-cage" evening primroses (Oenothera, sections Anogra and Kleinia). \emph{American Naturalist}, \bold{173}, 225-240.
+	
+	Revell, L. J. (2013) Two new graphical methods for mapping trait evolution on phylogenies. \emph{Methods in Ecology and Evolution}, \bold{4}, 754-759.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2014) Graphical methods for visualizing comparative data on phylogenies. Chapter 4 in \emph{Modern phylogenetic comparative methods and their application in evolutionary biology: Concepts and practice} (L. Z. Garamszegi ed.), pp. 77-103.
+
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Revell, L. J., K. Schliep, E. Valderrama, and J. E. Richardson (2018) Graphs in phylogenetic comparative analysis: Anscombe's quartet revisited. \emph{Methods in Ecology and Evolution}, \bold{9}, 2145-2154.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{

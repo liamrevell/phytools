@@ -19,9 +19,9 @@ multiRF(trees,quiet=FALSE,multi2di=FALSE)
 	A matrix containing distances.
 }
 \references{
-	Robinson, D. R., Foulds, L. R. (1981) Comparison of phylogenetic trees. \emph{Mathematical Biosciences}, \bold{53}, 131-147.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Robinson, D. R., Foulds, L. R. (1981) Comparison of phylogenetic trees. \emph{Mathematical Biosciences}, \bold{53}, 131-147.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}

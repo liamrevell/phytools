@@ -30,9 +30,9 @@ multi.mantel(Y, X, nperm=1000)
 	Methods \code{residuals} and \code{fitted} can be used to return residual and fitted matrices, respectively.
 }	
 \references{
-	Mantel, N. (1967) The detection of disease clustering and a generalized regression approach. \emph{Cancer Research}, \bold{27}, 209--220.
+	Mantel, N. (1967) The detection of disease clustering and a generalized regression approach. \emph{Cancer Research}, \bold{27}, 209-220.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{comparative method}

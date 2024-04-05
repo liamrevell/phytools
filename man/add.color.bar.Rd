@@ -26,6 +26,8 @@ add.color.bar(leg, cols, title=NULL, lims=c(0,1), digits=1, prompt=TRUE,
 }
 \references{
 	Revell, L. J. (2013) Two new graphical methods for mapping trait evolution on phylogenies. \emph{Methods in Ecology and Evolution}, \bold{4}, 754-759.
+	
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

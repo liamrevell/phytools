@@ -1,12 +1,12 @@
 Package: phytools
-Version: 2.0-11
-Date: 2023-12-11
+Version: 2.2-3
+Date: 2024-04-03
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Author: Liam J. Revell
 Maintainer: Liam J. Revell <liam.revell@umb.edu>
 Depends: R (>= 3.5.0), ape (>= 5.7), maps
-Imports: clusterGeneration, coda, combinat, doParallel, expm, foreach, 
-	graphics, grDevices, MASS, methods, mnormt, nlme, numDeriv, 
+Imports: clusterGeneration, coda, combinat, DEoptim, doParallel, expm, 
+	foreach, graphics, grDevices, MASS, methods, mnormt, nlme, numDeriv, 
 	optimParallel, parallel, phangorn (>= 2.3.1), scatterplot3d, stats, 
 	utils
 Suggests: animation, geiger, plotrix, RColorBrewer, rgl

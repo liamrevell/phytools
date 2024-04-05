@@ -1,6 +1,6 @@
 ## some utility functions
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
-## 2018, 2019, 2020, 2021, 2022, 2023
+## 2018, 2019, 2020, 2021, 2022, 2023, 2024
 
 ## function forces a tree to be ultrametric using two different methods
 ## written by Liam J. Revell 2017, 2021, 2022, 2023
@@ -2083,9 +2083,10 @@ applyBranchLengths<-function(tree,edge.length){
 }
 
 # function to compute phylogenetic VCV using joint Pagel's lambda
-# written by Liam Revell 2011
+# written by Liam Revell 2011, 2024
 
 phyl.vcv<-function(X,C,lambda){
+	if(!is.null(rownames(X))) C<-C[rownames(X),rownames(X)] ## sort by rownames of X (if present)
 	C<-lambda.transform(lambda,C)
 	invC<-solve(C)
 	a<-matrix(colSums(invC%*%X)/sum(invC),ncol(X),1)

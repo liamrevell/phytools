@@ -32,7 +32,9 @@ likSurface.rateshift(tree, x, nrates=2, shift.range=NULL,
 	A fitted object of class \code{"rateshift"}, or, in the case of \code{likSurface.rateshift}, a likelihood surface for the shift points.
 }
 \references{
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Revell, L. J. and L. J. Harmon (2022) \emph{Phylogenetic Comparative Methods in R}. Princeton University Press.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

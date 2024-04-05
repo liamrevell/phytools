@@ -1,5 +1,6 @@
 ## function plots reconstructed values for ancestral characters along the edges of the tree
-## written by Liam J. Revell 2012-2023
+## written by Liam J. Revell 2012-2024
+
 contMap<-function(tree,x,res=100,fsize=NULL,ftype=NULL,lwd=4,legend=NULL,
 	lims=NULL,outline=TRUE,sig=3,type="phylogram",direction="rightwards",
 	plot=TRUE,...){
@@ -183,11 +184,18 @@ plot.contMap<-function(x,...){
 			if(direction=="rightwards")
 				xx[1:N]<-xx[1:N]+strwidth(paste(obj$tip.label,"__",sep=""),cex=fsize[1])+offset
 		}
-		DROP<-if(type=="arc") DROP<-Ntip(x$tree)+1 else DROP<-NULL
-		points(xx[-DROP],yy[-DROP],pch=if(outline) 21 else 16,
-			col=if(outline) par()$fg else node.cols[-DROP],
-			bg=if(outline) node.cols[-DROP] else NULL,
-			cex=c(rep(cex[2],N),rep(cex[1],obj$Nnode-length(DROP))))
+		if(type=="arc"){ 
+			DROP<-Ntip(x$tree)+1
+			points(xx[-DROP],yy[-DROP],pch=if(outline) 21 else 16,
+				col=if(outline) par()$fg else node.cols[-DROP],
+				bg=if(outline) node.cols[-DROP] else NULL,
+				cex=c(rep(cex[2],N),rep(cex[1],obj$Nnode-length(DROP))))
+		} else {
+			points(xx,yy,pch=if(outline) 21 else 16,
+				col=if(outline) par()$fg else node.cols,
+				bg=if(outline) node.cols else NULL,
+				cex=c(rep(cex[2],N),rep(cex[1],obj$Nnode)))
+		}
 		if(legend){
 			if(is.logical(legend)) legend<-0.5*max(H)
 			if(length(leg.txt)==1) 
@@ -250,6 +258,7 @@ plot.contMap<-function(x,...){
 
 ## S3 print method for object of class 'contMap'
 ## written by Liam J. Revell 2013
+
 print.contMap<-function(x,digits=6,...){
 	cat("Object of class \"contMap\" containing:\n\n")
 	cat(paste("(1) A phylogenetic tree with ",length(x$tree$tip.label)," tips and ",x$tree$Nnode," internal nodes.\n\n",sep=""))
@@ -258,6 +267,7 @@ print.contMap<-function(x,digits=6,...){
 
 ## drop tips from an object of class 'contMap'
 ## written by Liam J. Revell 2014, 2023
+
 drop.tip.contMap<-function(phy,tip,...){
 	if(!inherits(phy,"contMap")) cat("phy should be an object of class \"contMap\"\n")
 	else {
@@ -268,6 +278,7 @@ drop.tip.contMap<-function(phy,tip,...){
 
 ## add error bars to contMap plot
 ## written by Liam J. Revell 2017
+
 errorbar.contMap<-function(obj,...){
 	if(hasArg(x)) x<-list(...)$x
 	else x<-setNames(sapply(1:Ntip(obj$tree),function(x,obj){

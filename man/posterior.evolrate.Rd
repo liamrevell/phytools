@@ -21,6 +21,8 @@ posterior.evolrate(tree, ave.shift, mcmc, tips, showTree=FALSE)
 	A matrix containing the posterior sample of evolutionary rates and shift-points between rates.
 }
 \references{
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+
 	Revell, L. J., D. L. Mahler, P. Peres-Neto, and B. D. Redelings (2012) A new method for identifying exceptional phenotypic diversification. \emph{Evolution}, \bold{66}, 135-146.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}

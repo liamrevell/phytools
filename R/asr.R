@@ -314,6 +314,23 @@ ancr.fitMk<-function(object,...){
 	else type<-"marginal"
 	if(hasArg(tips)) tips<-list(...)$tips
 	else tips<-FALSE
+	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+	else lik.func<-"pruning"
+	if(lik.func=="parallel"){
+		if(hasArg(ncores)) ncores<-list(...)$ncores
+		else ncores<-min(nrow(object$tree$edge),detectCores()-1)
+		mc<-makeCluster(ncores,type="PSOCK")
+		registerDoParallel(cl=mc)
+	}
+	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+	else expm.method<-"Higham08.b"
+	if(hasArg(parallel)) parallel<-list(...)$parallel
+	else parallel<-FALSE ## only for lik.func="eigen"
+	if(lik.func=="eigen"){
+		QQ<-object$index.matrix
+		diag(QQ)<--rowSums(QQ)
+		eQQ<-eigen(QQ)
+	}
 	x<-object$data
 	tree<-object$tree
 	q<-object$rates
@@ -321,11 +338,27 @@ ancr.fitMk<-function(object,...){
 	model[is.na(model)]<-0
 	pi<-object$pi
 	if(type=="marginal"){
-		plik<-pruning(q,tree,x,model=model,pi=pi,
-			return="conditional")
-		ace<-marginal_asr(q,tree,plik,model,tips)
-		result<-list(ace=ace,
-			logLik=pruning(q,tree,x,model=model,pi=pi))
+		if(lik.func=="pruning"){
+			plik<-pruning(q,tree,x,model=model,pi=pi,
+				return="conditional",expm.method=expm.method)
+		} else if(lik.func=="parallel"){
+			plik<-parallel_pruning(q,tree,x,model=model,pi=pi,
+				return="conditional",expm.method=expm.method)
+		} else if(lik.func=="eigen"){
+			plik<-eigen_pruning(q,tree,x,eQQ,pi=pi,return="conditional")
+		}
+		ace<-marginal_asr(q,tree,plik,model,tips,
+			parallel=if((lik.func=="parallel")||parallel) TRUE else FALSE,
+			expm.method=expm.method,
+			eigen=if(lik.func=="eigen") TRUE else FALSE)
+		result<-if(lik.func=="parallel") list(ace=ace,
+			logLik=parallel_pruning(q,tree,x,model=model,pi=pi,
+			expm.method=expm.method)) else 
+			if(lik.func=="pruning") list(ace=ace,logLik=pruning(q,
+			tree,x,model=model,pi=pi,expm.method=expm.method)) else 
+			if(lik.func=="eigen") list(ace=ace,
+			logLik=eigen_pruning(q,tree,x,eigenQ=eQQ))
+		if(lik.func=="parallel") stopCluster(mc)
 		attr(result$logLik,"df")<-max(model)
 		attr(result,"type")<-"marginal"
 		attr(result,"tree")<-tree
@@ -346,6 +379,8 @@ ancr.fitMk<-function(object,...){
 pruning<-function(q,tree,x,model=NULL,...){
 	if(hasArg(return)) return<-list(...)$return
 	else return<-"likelihood"
+	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+	else expm.method<-"Higham08.b"
 	pw<-if(!is.null(attr(tree,"order"))&&
 		attr(tree,"order")=="postorder") tree else 
 		reorder(tree,"postorder")
@@ -369,12 +404,13 @@ pruning<-function(q,tree,x,model=NULL,...){
 		ee<-which(pw$edge[,1]==nn[i])
 		PP<-matrix(NA,length(ee),k)
 		for(j in 1:length(ee)){
-			P<-expm(Q*pw$edge.length[ee[j]])
+			P<-expm(Q*pw$edge.length[ee[j]],method=expm.method)
 			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
 		}
 		L[nn[i],]<-apply(PP,2,prod)
 		if(nn[i]==root){
 			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			else if(pi[1]=="mle") pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
 			L[nn[i],]<-pi*L[nn[i],]
 		}
 		pp[i]<-sum(L[nn[i],])
@@ -388,7 +424,8 @@ pruning<-function(q,tree,x,model=NULL,...){
 	else if(return=="pi") pi
 }
 
-marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
+marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE,
+	parallel=FALSE,expm.method="Higham08.b",eigen=FALSE){
 	pw<-reorder(tree,"postorder")
 	k<-ncol(L)
 	if(is.null(model)){
@@ -399,10 +436,30 @@ marginal_asr<-function(q,tree,L,model=NULL,tips=FALSE){
 	Q[]<-c(0,q)[model+1]
 	diag(Q)<--rowSums(Q)
 	nn<-unique(pw$edge[,1])
+	if(parallel&&(!eigen)){
+		P.all<-foreach(i=1:nrow(pw$edge))%dopar%{ 
+			expm(Q*pw$edge.length[i],method=expm.method)
+		}
+	}
+	if(eigen){
+		QQ<-model
+		diag(QQ)<--rowSums(QQ)
+		eigQ<-eigen(Q)
+		V<-eigQ$vectors
+		Vi<-t(V)
+		Vals<-eigQ$values
+		Expm<-function(t,q) Re(V%*%(exp(q*t*Vals)*Vi))
+		if(parallel){
+			P.all<-foreach(i=1:nrow(pw$edge))%dopar%{
+				Expm(pw$edge.length[i],q)
+			}
+		} else P.all<-lapply(pw$edge.length,Expm,q=q)
+	}
 	for(i in length(nn):1){
 		ee<-which(pw$edge[,1]==nn[i])
 		for(j in 1:length(ee)){
-			P<-expm(Q*pw$edge.length[ee[j]])
+			if(parallel||eigen) P<-P.all[[ee[j]]]
+			else P<-expm(Q*pw$edge.length[ee[j]])
 			pp<-t(L[nn[i],]/(P%*%L[pw$edge[ee[j],2],]))
 			pp[is.nan(pp)]<-0
 			L[pw$edge[ee[j],2],]<-(pp%*%P)*
@@ -481,7 +538,6 @@ marginal_asr_gamma<-function(q,alpha,nrates,tree,L,
 			P<-Reduce("+",lapply(r,
 				function(rr,k,Q,edge) EXPM(Q*rr*edge)/k,
 				k=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
-			## P<-expm(Q*pw$edge.length[ee[j]])
 			pp<-t(L[nn[i],]/(P%*%L[pw$edge[ee[j],2],]))
 			pp[is.nan(pp)]<-0
 			L[pw$edge[ee[j],2],]<-(pp%*%P)*
@@ -490,4 +546,55 @@ marginal_asr_gamma<-function(q,alpha,nrates,tree,L,
 	}
 	anc<-L/rep(rowSums(L),k)
 	if(tips) anc else anc[1:Nnode(tree)+Ntip(tree),]
+}
+
+parallel_pruning<-function(q,tree,x,model=NULL,...){
+	if(hasArg(return)) return<-list(...)$return
+	else return<-"likelihood"
+	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+	else expm.method<-"Higham08.b"
+	pw<-if(!is.null(attr(tree,"order"))&&
+		attr(tree,"order")=="postorder") tree else 
+		reorder(tree,"postorder")
+	k<-ncol(x)
+	if(is.null(model)){
+		model<-matrix(1,k,k)
+		diag(model)<-0
+	}
+	if(hasArg(pi)) pi<-list(...)$pi
+	else pi<-rep(1/k,k)
+	Q<-matrix(0,k,k)
+	Q[]<-c(0,q)[model+1]
+	diag(Q)<--rowSums(Q)
+	L<-rbind(x[pw$tip.label,],
+		matrix(0,pw$Nnode,k,
+		dimnames=list(1:pw$Nnode+Ntip(pw))))
+	nn<-unique(pw$edge[,1])
+	pp<-vector(mode="numeric",length=length(nn))
+	root<-min(nn)
+	P.all<-foreach(i=1:nrow(pw$edge))%dopar%{ 
+		expm(Q*pw$edge.length[i],method=expm.method)
+	}
+	for(i in 1:length(nn)){
+		ee<-which(pw$edge[,1]==nn[i])
+		PP<-matrix(NA,length(ee),k)
+		for(j in 1:length(ee)){
+			P<-P.all[[ee[j]]]
+			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
+		}
+		L[nn[i],]<-apply(PP,2,prod)
+		if(nn[i]==root){
+			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			else if(pi[1]=="mle") pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
+			L[nn[i],]<-pi*L[nn[i],]
+		}
+		pp[i]<-sum(L[nn[i],])
+		L[nn[i],]<-L[nn[i],]/pp[i]
+	}
+	prob<-sum(log(pp))
+	if(return=="likelihood") 
+		if(is.na(prob)||is.nan(prob)) 
+			return(-Inf) else return(prob)
+	else if(return=="conditional") L
+	else if(return=="pi") pi
 }

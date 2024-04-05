@@ -26,11 +26,11 @@ brownieREML(tree, x, maxit=2000, ...)
 	\item{convergence}{numerical value from \code{\link{optim}}.}
 }
 \references{
-	Felsenstein, J. 1985. Phylogenies and the comparative method. \emph{American Naturalist}, \bold{125}, 1-15. 
+	Felsenstein, J. (1985) Phylogenies and the comparative method. \emph{American Naturalist}, \bold{125}, 1-15. 
 
-	O'Meara, B. C., C. Ane, M. J. Sanderson, and P. C. Wainwright. 2006. Testing for different rates of continuous trait evolution using likelihood. \emph{Evolution}, \bold{60}, 922-933.
+	O'Meara, B. C., C. Ane, M. J. Sanderson, and P. C. Wainwright (2006) Testing for different rates of continuous trait evolution using likelihood. \emph{Evolution}, \bold{60}, 922-933.
 
-	Revell, L. J. (2012) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{

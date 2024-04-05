@@ -34,9 +34,9 @@ evol.rate.mcmc(tree, x, ngen=10000, control=list(), ...)
 	\item{tips}{list of tips in rate \eqn{\sigma_1^2} for each sampled generation of MCMC (to polarize the rate shift).}
 }
 \references{
-	Revell, L. J. (2012a) phytools: An R package for phylogenetic comparative biology (and other things). \emph{Methods Ecol. Evol.}, \bold{3}, 217-223.
-
-	Revell, L. J., D. L. Mahler, P. Peres-Neto, and B. D. Redelings. (2012b) A new method for identifying exceptional phenotypic diversification. \emph{Evolution}, \bold{66}, 135-146.
+	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Revell, L. J., D. L. Mahler, P. Peres-Neto, and B. D. Redelings (2012) A new method for identifying exceptional phenotypic diversification. \emph{Evolution}, \bold{66}, 135-146.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
