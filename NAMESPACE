@@ -16,7 +16,7 @@ export(evol.rate.mcmc, evol.vcv, evolvcv.lite, exhaustiveMP, expand.clade, expor
 export(extract.clade.simmap, extract.strahlerNumber)
 export(fancyTree, fastAnc, fastBM, fastDist, fastHeight, fastMRCA, findMRCA, fit.bd)
 export(fit.yule, fitBayes, fitfnMk, fitgammaMk, fitHRM, fitMk, fitMk.parallel, fitmultiMk, fitpolyMk)
-export(fitDiversityModel, fitPagel, force.ultrametric)
+export(fitDiversityModel, fitPagel, fitThresh, force.ultrametric)
 export(gamma_pruning, gammatest, genus.to.species.tree, genSeq, geo.palette, geo.legend, get.treepos)
 export(getCladesofSize, getDescendants, getExtant, getExtinct, getnode, getParent)
 export(getSisters, getStates, graph.polyMk, gtt)
@@ -287,6 +287,9 @@ S3method(logLik, bounded_bm)
 S3method(print, fitfnMk)
 S3method(plot, fitfnMk)
 S3method(logLik, fitfnMk)
+S3method(ancr, fitThresh)
+S3method(logLik, fitThresh)
+S3method(print, fitThresh)
 
 ## default methods
 S3method(ancr, default)
@@ -340,7 +343,7 @@ importFrom(stats, cophenetic, reorder, runif, setNames, optim, dexp, dnorm, rnor
 importFrom(stats, nlminb, biplot, pchisq, rexp, optimize, logLik, as.dist, pnorm, median) 
 importFrom(stats, cor, aggregate, rgamma, dgamma, lm, rbinom, rgeom, pt, anova, p.adjust) 
 importFrom(stats, screeplot, rchisq, optimHess, rmultinom, sd, dunif, dist, plogis) 
-importFrom(stats, density, coef, cmdscale, AIC, smooth.spline, predict, qgamma)
+importFrom(stats, density, coef, cmdscale, AIC, smooth.spline, predict, qgamma, qnorm)
 importFrom(utils, flush.console, head, installed.packages, str, capture.output, combn)
 
 ## restore if plotrix unorphaned on CRAN
