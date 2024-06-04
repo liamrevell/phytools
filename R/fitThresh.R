@@ -68,6 +68,7 @@ fitThresh<-function(tree,x,sequence=NULL,...){
 			liability,X,P,trace=trace,pi=root)
 		attr(lnL,"df")<-1
 		threshold<-0
+		opt<-list(convergence=0)
 	} else if(length(sequence)>2){
 		fixed_threshold<-min(liability)+
 			diff(range(liability))/length(sequence)
