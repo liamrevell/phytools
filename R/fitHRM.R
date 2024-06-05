@@ -1,5 +1,5 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
-## written by Liam J. Revell 2020, 2021, 2023
+## written by Liam J. Revell 2020, 2021, 2023, 2024
 
 anova.fitHRM<-function(object,...) anova.fitMk(object,...)
 
@@ -46,6 +46,8 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	model<-matrix(0,ncol(X),ncol(X),dimnames=list(colnames(X),
 		colnames(X)))
 	if(!umbral){
+		if(hasArg(ordered_hrm)) ordered_hrm<-list(...)$ordered_hrm
+		else ordered_hrm<-TRUE
 		ii<-1
 		for(i in 1:length(nn)){
 			FROM<-strsplit(nn[i],"_")[[1]]
@@ -56,9 +58,16 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 						r<-as.numeric(
 							c(strsplit(FROM[2],"R")[[1]][2],
 							strsplit(TO[[j]][2],"R")[[1]][2]))
-						if(abs(diff(r))==1){
-							model[i,j]<-ii
-							ii<-ii+1
+						if(ordered_hrm){
+							if(abs(diff(r))==1){
+								model[i,j]<-ii
+								ii<-ii+1
+							}
+						} else {
+								if(abs(diff(r))>=1){
+								model[i,j]<-ii
+								ii<-ii+1
+							}
 						}
 					} else if(FROM[2]==TO[[j]][2]){
 						model[i,j]<-ii
