@@ -45,6 +45,9 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	dd<-diff(lims)
 	if(hasArg(tol)) tol<-list(...)$tol
 	else tol<-1e-8*dd/levs
+	if(hasArg(CI)) CI<-list(...)$CI
+	else CI<-FALSE
+	if(CI==TRUE) CI<-0.95
 	pic_x<-pic(x,multi2di(tree))
 	nn<-max(c(floor(0.2*multi2di(tree)$Nnode),1))
 	if(hasArg(max.sigsq)) max.sigsq<-list(...)$max.sigsq
@@ -128,9 +131,19 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 		}
 		lnL		
 	}
+	if(CI!=FALSE){
+		foo<-function(ln_sigsq) lfunc(exp(ln_sigsq))
+		hh<-hessian(foo,log(sigsq))
+		vv<--1/hh
+		if(vv<=0) ci<-c(0,Inf)
+		else ci_sigsq<-exp(qnorm(c((1-CI)/2,1-(1-CI)/2),
+			mean=log(sigsq),sd=sqrt(vv)))
+		attr(ci_sigsq,"prob")<-CI
+	} else ci_sigsq<-NULL
 	object<-list(
 		wrapped=wrapped,
 		sigsq=sigsq,
+		CI=ci_sigsq,
 		x0=x0,
 		bounds=lims,
 		ncat=levs,
@@ -203,7 +216,9 @@ print.bounded_bm<-function(x,digits=6,...){
 	cat(paste("Set or estimated bounds: [",round(x$bounds[1],digits),
 		",",round(x$bounds[2],digits),"]\n\n"))
 	cat("Fitted model parameters:\n")
-	cat(paste("  sigsq:",round(x$sigsq,6),"\n"))
+	if(is.null(x$CI)) cat(paste("  sigsq:",round(x$sigsq,6),"\n"))
+	else cat(paste("  sigsq:",round(x$sigsq,6),"  [",round(x$CI[1],4),
+		",",round(x$CI[2],4),"]\n"))
 	cat(paste("     x0:",round(x$x0,6),"\n\n"))
 	cat(paste("Log-likelihood:",round(x$logLik,digits),"\n\n"))
 	if(x$opt_results$convergence == 0 && !x$at_bounds) 
