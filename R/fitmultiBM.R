@@ -12,6 +12,8 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	levs<-if(hasArg(levs)) list(...)$levs else 100
 	parallel<-if(hasArg(parallel)) list(...)$parallel else 
 		FALSE
+	null_model<-if(hasArg(null_model)) list(...)$null_model else
+		FALSE
 	ncores<-if(hasArg(ncores)) list(...)$ncores else 
 		detectCores()-1
 	## continuous character
@@ -64,6 +66,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 				cmodel[i+1+j*levs,i+j*levs]<-(j+1)
 		}
 	}
+	if(null_model) cmodel[cmodel>0]<-1
 	## build discrete model
 	dmodel<-matrix(0,nrow=ncol(XX),ncol=ncol(XX),
 		dimnames=list(nn,nn))
@@ -176,9 +179,9 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		dev.flush()
 	}
 	## set initial values for optimization
-	q.init<-runif(n=ncol(y)+max(qmodel),0,2)*c(
+	q.init<-runif(n=max(cmodel)+max(qmodel),0,2)*c(
 		rep((1/2)*mean(pic(x,multi2di(tree))^2)*(levs/dd)^2,
-			ncol(y)),
+			max(cmodel)),
 		rep(fitMk(tree,y,model="ER")$rates,max(qmodel)))
 	## optimize model
 	fit<-fitMk(tree,XX,model=model,
