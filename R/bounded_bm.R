@@ -103,7 +103,9 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(parallel) stopCluster(cl=mc)
 	lfunc<-function(sig2,x0="nuisance",...){
 		if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+		else lik.func<-"pruning"
 		if(hasArg(parallel)) parallel<-list(...)$parallel
+		else parallel<-FALSE
 		q<-(sig2/2)*(levs/dd)^2
 		if(x0=="nuisance") pi<-"fitzjohn"
 		else if(is.numeric(x0)) pi<-to_binned(x0,bins)[1,]
