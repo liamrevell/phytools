@@ -66,7 +66,34 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 				cmodel[i+1+j*levs,i+j*levs]<-(j+1)
 		}
 	}
-	if(null_model) cmodel[cmodel>0]<-1
+	state_ind<-setNames(1:ncol(y),colnames(y))
+	if(null_model){ 
+		if(ncat==1){ 
+			cmodel[cmodel>0]<-1
+			state_ind[]<-1
+		}
+		else {
+			## allow hidden character to have different rates
+			hs<-strsplit(nn,"")
+			foo<-function(x){
+				a<-paste(x[x!="*"],collapse="")
+				b<-paste(x[x=="*"],collapse="")
+				return(c(a,b))
+			}
+			hs<-sapply(hs,foo)[2,]
+			un.hs<-sort(unique(hs))
+			ind<-which(cmodel>1,arr.ind=TRUE)
+			k<-1
+			for(i in 1:ncat){
+				ii<-which(hs==un.hs[i])
+				ii<-ii[!((ii%%10)==0)]
+				state_ind[unique(cmodel[cbind(ii+1,ii)])]<-k
+				cmodel[cbind(ii+1,ii)]<-
+					cmodel[cbind(ii,ii+1)]<-k
+				k<-k+1
+			}
+		}
+	}
 	## build discrete model
 	dmodel<-matrix(0,nrow=ncol(XX),ncol=ncol(XX),
 		dimnames=list(nn,nn))
@@ -223,6 +250,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	}
 	object<-list(
 		sigsq=sig2,
+		state_ind=state_ind,
 		x0=sum(fit$pi*rowMeans(bins)),
 		rates=q,
 		index.matrix=qmodel,
@@ -242,10 +270,10 @@ print.fitmultiBM<-function(x,digits=4,...){
 		x$ncat,"levels.\n\n"))
 	cat("Fitted multi-rate BM model parameters:\n")
 	cat(paste(" levels: [",
-		paste(colnames(x$index.matrix),collapse=", "),
+		paste(names(x$state_ind),collapse=", "),
 		"]\n"))
 	cat(paste("  sigsq: [",
-		paste(round(x$sigsq,digits),collapse=", "),
+		paste(round(x$sigsq[x$state_ind],digits),collapse=", "),
 		"]\n"))
 	cat(paste("     x0:",round(x$x0,digits),"\n\n"))
 	print(as.Qmatrix(x))
