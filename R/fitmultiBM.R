@@ -86,7 +86,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 			k<-1
 			for(i in 1:ncat){
 				ii<-which(hs==un.hs[i])
-				ii<-ii[!((ii%%10)==0)]
+				ii<-ii[!((ii%%levs)==0)]
 				state_ind[unique(cmodel[cbind(ii+1,ii)])]<-k
 				cmodel[cbind(ii+1,ii)]<-
 					cmodel[cbind(ii,ii+1)]<-k
