@@ -186,7 +186,8 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		par(mar=c(5.1,2.1,4.1,2.1))
 		cols<-setNames(c("#f9f9f7",sample(rainbow(n=max(model)))),
 			0:max(model))
-		plot.window(xlim=c(0,ncol(model)),ylim=c(nrow(model),0))
+		plot.window(xlim=c(0,ncol(model)),ylim=c(nrow(model),0),
+			asp=1)
 		for(i in 1:nrow(model)){
 			for(j in 1:ncol(model)){
 				polygon(x=c(i-1,i,i,i-1),y=c(j-1,j-1,j,j),
