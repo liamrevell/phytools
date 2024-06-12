@@ -9,9 +9,15 @@ x_by_y<-function(x,y){
 }
 
 fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
+	if(hasArg(logscale)) logscale<-list(...)$logscale
+	else logscale<-TRUE
+	if(hasArg(rand_start)) rand_start<-list(...)$rand_start
+	else rand_start<-TRUE
 	levs<-if(hasArg(levs)) list(...)$levs else 100
 	parallel<-if(hasArg(parallel)) list(...)$parallel else 
 		FALSE
+	lik.func<-if(parallel) "parallel" else "pruning"
+	if(is.null(y)&&ncat==1) lik.func<-"eigen"
 	null_model<-if(hasArg(null_model)) list(...)$null_model else
 		FALSE
 	ncores<-if(hasArg(ncores)) list(...)$ncores else 
@@ -207,16 +213,47 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		dev.flush()
 	}
 	## set initial values for optimization
-	q.init<-runif(n=max(cmodel)+max(qmodel),0,2)*c(
-		rep((1/2)*mean(pic(x,multi2di(tree))^2)*(levs/dd)^2,
-			max(cmodel)),
-		rep(fitMk(tree,y,model="ER")$rates,max(qmodel)))
+	qq<-if(ncol(y)>1) fitMk(tree,y,model="ER")$rates else 
+		1/sum(tree$edge.length)
+	q.init<-c(rep((1/2)*mean(pic(x,multi2di(tree))^2)*(levs/dd)^2,
+			max(cmodel)),rep(qq,max(qmodel)))
 	## optimize model
-	fit<-fitMk(tree,XX,model=model,
-		lik.func=if(parallel) "parallel" else "pruning",
-		expm.method=if(isSymmetric(model)) "R_Eigen" else 
-			"Higham08.b",
-		pi="mle",logscale=TRUE,q.init=q.init)
+	if(lik.func%in%c("pruning","parallel")){
+		fit<-fitMk(tree,XX,model=model,
+			lik.func=if(parallel) "parallel" else "pruning",
+			expm.method=if(isSymmetric(model)) "R_Eigen" else 
+				"Higham08.b",
+			pi="mle",logscale=logscale,q.init=q.init,
+			rand_start=rand_start)
+	} else {
+		QQ<-model
+		diag(QQ)<--rowSums(QQ)
+		eQQ<-eigen(QQ)
+		pw<-reorder(tree,"postorder")
+		if(parallel){
+			if(hasArg(ncores)) ncores<-list(...)$ncores
+			else ncores<-min(nrow(tree$edge),detectCores()-1)
+			mc<-makeCluster(ncores,type="PSOCK")
+			registerDoParallel(cl=mc)
+		}
+		fit<-optimize(eigen_pruning,c(tol,2*q.init[1]),tree=pw,
+			x=X,eigenQ=eQQ,parallel=parallel,pi="mle",
+			maximum=TRUE)
+		fit<-list(
+			logLik=fit$objective,
+			rates=fit$maximum,
+			index.matrix=model,
+			states=colnames(X),
+			pi=eigen_pruning(fit$maximum,pw,X,eQQ,pi="mle",
+				return="pi",parallel=parallel),
+			method="optimize",
+			root.prior=if(pi[1]=="fitzjohn") "nuisance" else pi,
+			opt_results=list(convergence=0),
+			data=X,
+			tree=pw)
+		class(fit)<-"fitMk"
+		if(parallel) stopCluster(cl=mc)
+	}	
 	sig2<-2*fit$rates[1:max(cmodel)]*(dd/levs)^2
 	q<-fit$rates[1:max(qmodel)+max(cmodel)]
 	index.matrix<-qmodel
