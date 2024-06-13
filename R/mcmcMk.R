@@ -57,6 +57,7 @@ mcmcMk<-function(tree,x,model="ER",ngen=10000,...){
 			fitDiscrete<-function(...) NULL
 		}
 	}
+	if(is.matrix(x)&&likelihood=="fitDiscrete") likelihood<-"fitMk"
 	if(is.matrix(x)){
 		x<-x[tree$tip.label,]
 		m<-ncol(x)
