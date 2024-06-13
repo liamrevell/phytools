@@ -292,6 +292,8 @@ S3method(logLik, fitThresh)
 S3method(print, fitThresh)
 S3method(print, fitmultiBM)
 S3method(logLik, fitmultiBM)
+S3method(ancr, fitmultiBM)
+S3method(print, ancr.fitmultiBM)
 
 ## default methods
 S3method(ancr, default)

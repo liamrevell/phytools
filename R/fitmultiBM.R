@@ -63,6 +63,12 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 			XX[j,1:levs+(i-1)*levs]<-X[j,]*y[j,i]
 		}
 	}
+	## set pi
+	if(hasArg(root)) root=list(...)$root
+	else root<-"mle"
+	if(root=="nuisance") pi<-"fitzjohn"
+	else if(root=="mle") pi<-"mle"
+	else if(root=="flat") pi<-rep(1/ncol(XX),ncol(XX))
 	## build continuous model
 	cmodel<-matrix(0,nrow=ncol(XX),ncol=ncol(XX),
 		dimnames=list(nn,nn))
@@ -189,10 +195,11 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	if(plot_model){
 		plot.new()
 		dev.hold()
-		par(mar=c(5.1,2.1,4.1,2.1))
+		par(mar=c(1.1,1.1,4.1,1.1))
 		cols<-setNames(c("#f9f9f7",sample(rainbow(n=max(model)))),
 			0:max(model))
-		plot.window(xlim=c(0,ncol(model)),ylim=c(nrow(model),0),
+		plot.window(xlim=c(-0.05*ncol(model),1.1*ncol(model)),
+			ylim=c(nrow(model),-0.05*nrow(model)),
 			asp=1)
 		for(i in 1:nrow(model)){
 			for(j in 1:ncol(model)){
@@ -201,30 +208,47 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 			}
 		}
 		polygon(c(0,ncol(model),ncol(model),0),
-			c(0,0,nrow(model),nrow(model)),border="grey")
-		## box(col="grey")
+			c(0,0,nrow(model),nrow(model)),border="black")
+		for(i in 1:ncol(qmodel)) for(j in 1:nrow(qmodel)){
+			polygon(c(0,levs,levs,0)+(i-1)*levs,
+				c(0,0,levs,levs)+(j-1)*levs,border="grey")
+		}
+		for(i in 1:ncol(qmodel)){
+			text(x=mean(c(0,levs)+(i-1)*levs),
+				y=-0.025*ncol(model),colnames(qmodel)[i])
+			text(x=-0.025*ncol(model),
+				y=mean(c(0,levs)+(i-1)*levs),
+				rownames(qmodel)[i])
+		}
 		title("structure of discretized model",font.main=3)
 		lp<-legend(x=ncol(model)/2,y=1.05*nrow(model),
 			legend=names(cols),pch=15,col=cols,bty="n",xpd=TRUE,
 			horiz=TRUE,plot=FALSE,cex=0.8)
-		legend(x=ncol(model)/2-lp$rect$w/2,y=1.05*nrow(model),
-			legend=names(cols),pch=15,col=cols,bty="n",xpd=TRUE,
-			horiz=TRUE,cex=0.8)
+		for(i in 1:ncol(qmodel)){
+			tmp<-paste("[",colnames(qmodel)[i],"]",sep="")
+			if(i==1) nm<-bquote(sigma^2~.(tmp))
+			else nm<-c(nm,bquote(sigma^2~.(tmp)))
+		}
+		if(max(qmodel)>=1) nm<-c(nm,paste("q[",1:max(qmodel),"]",sep=""))
+		legend(x=ncol(model),y=0,
+			legend=nm,pch=15,
+			col=cols[c(state_ind+1,1:max(qmodel)+max(cmodel)+1)],
+			bty="n",xpd=TRUE,horiz=FALSE,cex=0.8)
 		dev.flush()
 	}
 	## set initial values for optimization
 	qq<-if(ncol(y)>1) fitMk(tree,y,model="ER")$rates else 
 		1/sum(tree$edge.length)
 	q.init<-c(rep((1/2)*mean(pic(x,multi2di(tree))^2)*(levs/dd)^2,
-			max(cmodel)),rep(qq,max(qmodel)))
+		max(cmodel)),rep(qq,max(qmodel)))
+	if(rand_start) q.init<-q.init*runif(n=length(q.init),0,2)
 	## optimize model
 	if(lik.func%in%c("pruning","parallel")){
 		fit<-fitMk(tree,XX,model=model,
 			lik.func=if(parallel) "parallel" else "pruning",
 			expm.method=if(isSymmetric(model)) "R_Eigen" else 
 				"Higham08.b",
-			pi="mle",logscale=logscale,q.init=q.init,
-			rand_start=rand_start)
+			pi=pi,logscale=logscale,q.init=q.init)
 	} else {
 		QQ<-model
 		diag(QQ)<--rowSums(QQ)
@@ -237,19 +261,19 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 			registerDoParallel(cl=mc)
 		}
 		fit<-optimize(eigen_pruning,c(tol,2*q.init[1]),tree=pw,
-			x=X,eigenQ=eQQ,parallel=parallel,pi="mle",
+			x=X,eigenQ=eQQ,parallel=parallel,pi=pi,
 			maximum=TRUE)
 		fit<-list(
 			logLik=fit$objective,
 			rates=fit$maximum,
 			index.matrix=model,
-			states=colnames(X),
-			pi=eigen_pruning(fit$maximum,pw,X,eQQ,pi="mle",
+			states=colnames(XX),
+			pi=eigen_pruning(fit$maximum,pw,X,eQQ,pi=pi,
 				return="pi",parallel=parallel),
 			method="optimize",
 			root.prior=if(pi[1]=="fitzjohn") "nuisance" else pi,
 			opt_results=list(convergence=0),
-			data=X,
+			data=XX,
 			tree=pw)
 		class(fit)<-"fitMk"
 		if(parallel) stopCluster(cl=mc)
@@ -290,6 +314,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		sigsq=sig2,
 		state_ind=state_ind,
 		x0=sum(fit$pi*rowMeans(bins)),
+		bounds=lims,
 		rates=q,
 		index.matrix=qmodel,
 		states=colnames(y),
@@ -324,3 +349,70 @@ print.fitmultiBM<-function(x,digits=4,...){
 }
 
 logLik.fitmultiBM<-function(object,...) object$logLik
+
+ancr.fitmultiBM<-function(object,...){
+  if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+  else lik.func<-"pruning"
+  if(hasArg(expm.method)) expm.method<-list(...)$expm.method
+  else expm.method<-if(isSymmetric(object$mk_fit$index.matrix)) "R_Eigen" else 
+    "Higham08.b"
+  if(hasArg(parallel)) parallel<-list(...)$parallel
+  else parallel<-FALSE
+  dd<-diff(object$bounds)
+  tol<-1e-8*dd/object$ncat
+  bins<-cbind(seq(from=object$bounds[1]-tol,
+    by=(dd+2*tol)/object$ncat,length.out=object$ncat),
+    seq(to=object$bounds[2]+tol,by=(dd+2*tol)/object$ncat,
+      length.out=object$ncat))
+  mids<-rowMeans(bins)
+  Anc<-ancr(object$mk_fit,lik.func=lik.func,parallel=parallel,
+    expm.method=expm.method)
+  mAce_cont<-matrix(0,nrow(Anc$ace),object$ncat,
+    dimnames=list(rownames(Anc$ace),1:object$ncat))
+  nn<-sapply(strsplit(colnames(Anc$ace),","),function(x) x[2])
+  for(i in 1:object$ncat){
+    mAce_cont[,i]<-rowSums(Anc$ace[,which(nn==as.character(i)),drop=FALSE])
+  }
+  ace_cont<-colSums(apply(mAce_cont,1,function(x,y) x*y,
+    y=mids))
+  ci_cont<-matrix(NA,length(ace_cont),2,dimnames=list(names(ace_cont),
+    c("lower","upper")))
+  for(i in 1:nrow(mAce_cont)){
+    cumprob<-cumsum(mAce_cont[i,])
+    ci_cont[i,1]<-mids[which(cumprob>0.025)][1]
+    ci_cont[i,2]<-mids[which(cumprob>0.975)][1]
+  }
+  ace_disc<-matrix(0,nrow(Anc$ace),length(object$states),
+    dimnames=list(rownames(Anc$ace),object$states))
+  nn<-sapply(strsplit(colnames(Anc$ace),","),function(x) x[1])
+  for(i in 1:length(object$states)){
+    ace_disc[,i]<-rowSums(Anc$ace[,which(nn==as.character(object$states[i])),
+      drop=FALSE])
+  }
+  result<-list(
+    ace=list(
+      continuous=ace_cont,
+      discrete=ace_disc),
+    CI95=list(
+      continuous=ci_cont))
+  class(result)<-"ancr.fitmultiBM"
+  result
+}
+
+print.ancr.fitmultiBM<-function(x,digits=6,printlen=6,...){
+  cat("Continuous character node estimates from \"fitmultiBM\" object:\n")
+  Nnode<-length(x$ace$continuous)
+  if(is.null(printlen)||printlen>=Nnode) print(round(x$ace$continuous,digits))
+  else printDotDot(x$ace$continuous,digits,printlen)
+  cat("\nLower & upper 95% CIs:\n")
+  if(is.null(printlen)||printlen>=Nnode) print(round(x$CI95$continuous,digits))
+  else printDotDot(x$CI95$continuous,digits,printlen)
+  cat("\n")
+  cat("Discrete character node estimates from \"fitmultiBM\" object:\n")
+  if(is.null(printlen)||printlen>=Nnode) 
+    print(round(x$ace$discrete,digits))
+  else {
+    print(round(x$ace$discrete[1:printlen,,drop=FALSE],digits))
+    cat("...\n")
+  }
+}
