@@ -1,16 +1,20 @@
 ## plotTree.boxplot
-## written by Liam J. Revell 2016, 2021, 2022
+## written by Liam J. Revell 2016, 2021, 2022, 2024
 
 plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	args.boxplot=list(),...){
 	tree<-untangle(tree,"read.tree")
 	cw<-reorder(tree)
-	if(!is.list(x)&&inherits(x,"formula",FALSE)){
-		obj<-setNames(
-			lapply(cw$tip.label,function(x,y) y[which(names(y)==x)],
-			y=x),cw$tip.label)
-	} else obj<-x
-	if(inherits(x,"formula")) 
+	if(inherits(x,"formula")){ 
+		obj<-x
+	} else {
+		if(!is.list(x)){
+			obj<-setNames(
+				lapply(cw$tip.label,function(x,y) y[which(names(y)==x)],
+					y=x),cw$tip.label)
+		} else obj<-x
+	}
+	if(inherits(obj,"formula")) 
 		args.boxplot$formula<-obj else args.boxplot$x<-obj
 	args.boxplot$horizontal<-TRUE
 	args.boxplot$axes<-FALSE
@@ -54,6 +58,7 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	else title(xlab="x")
 	invisible(obj)
 }
+
 
 ## plotTree.barplot
 ## written by Liam J. Revell 2016, 2017, 2018, 2021
