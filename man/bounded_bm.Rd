@@ -28,7 +28,7 @@
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{fitMk}}
+	\code{\link{fitMk}}, \code{\link{fitmultiBM}}, \code{\link{fitThresh}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

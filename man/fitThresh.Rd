@@ -27,7 +27,7 @@ fitThresh(tree, x, sequence=NULL, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ancThresh}}, \code{\link{bounded_bm}}, \code{\link{threshBayes}}
+	\code{\link{ancThresh}}, \code{\link{bounded_bm}}, \code{\link{fitmultiBM}}, \code{\link{threshBayes}}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}
