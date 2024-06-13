@@ -1,4 +1,4 @@
-This repository contains source code, documentation, and R data for the project "phytools: Phylogenetic Tools for Comparative Biology (and Other Things)."
+This repository contains source code, documentation, and R data for the project "phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things)."
 
 The development version of *phytools* can be most easily installed using the *remotes* package as follows:
 
