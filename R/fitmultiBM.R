@@ -18,6 +18,8 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		FALSE
 	lik.func<-if(parallel) "parallel" else "pruning"
 	if(is.null(y)&&ncat==1) lik.func<-"eigen"
+	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
+	else opt.method<-"nlminb"
 	null_model<-if(hasArg(null_model)) list(...)$null_model else
 		FALSE
 	ncores<-if(hasArg(ncores)) list(...)$ncores else 
@@ -242,13 +244,15 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	q.init<-c(rep((1/2)*mean(pic(x,multi2di(tree))^2)*(levs/dd)^2,
 		max(cmodel)),rep(qq,max(qmodel)))
 	if(rand_start) q.init<-q.init*runif(n=length(q.init),0,2)
+	max.q<-max(q.init)*1000
 	## optimize model
 	if(lik.func%in%c("pruning","parallel")){
 		fit<-fitMk(tree,XX,model=model,
 			lik.func=if(parallel) "parallel" else "pruning",
 			expm.method=if(isSymmetric(model)) "R_Eigen" else 
 				"Higham08.b",
-			pi=pi,logscale=logscale,q.init=q.init)
+			pi=pi,logscale=logscale,q.init=q.init,
+			opt.method=opt.method,max.q=max.q)
 	} else {
 		QQ<-model
 		diag(QQ)<--rowSums(QQ)
@@ -260,7 +264,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 			mc<-makeCluster(ncores,type="PSOCK")
 			registerDoParallel(cl=mc)
 		}
-		fit<-optimize(eigen_pruning,c(tol,2*q.init[1]),tree=pw,
+		fit<-optimize(eigen_pruning,c(tol,10*q.init[1]),tree=pw,
 			x=X,eigenQ=eQQ,parallel=parallel,pi=pi,
 			maximum=TRUE)
 		fit<-list(
