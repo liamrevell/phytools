@@ -41,6 +41,8 @@ fitThresh<-function(tree,x,sequence=NULL,...){
 	else levs<-200
 	if(hasArg(root)) root<-list(...)$root
 	else root<-"fitzjohn"
+	if(hasArg(rand_start)) rand_start<-list(...)$rand_start
+	else rand_start<-TRUE
 	C<-vcv(tree)
 	N<-Ntip(tree)
 	Ed<-tr(C)/N-sum(C)/(N^2)
@@ -85,6 +87,7 @@ fitThresh<-function(tree,x,sequence=NULL,...){
 			init<-seq(fixed_threshold,max(liability),
 				length.out=length(sequence))[
 					-c(1,length(sequence))]
+			if(rand_start) init<-runif(n=length(init))*init
 			opt<-optim(init,function(p) -lik_thresh(p,pw=pw,
 				fixed_threshold=fixed_threshold,liability=liability,
 				x=X,pi=root,P.all=P,trace=trace),method="L-BFGS",

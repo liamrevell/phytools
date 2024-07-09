@@ -106,10 +106,13 @@ print.phyloScattergram<-function(x,...){
 }
 	
 ## phenogram95 internal function
-## written by Liam J. Revell 2013, 2014, 2019
+## written by Liam J. Revell 2013, 2014, 2019, 2024
 
 phenogram95<-function(tree,x=NULL,...){
 	if(is.null(x)) stop("no phenotypic data provided")
+	if(hasArg(colors)) colors<-list(...)$colors
+	else colors<-c("#0000ff","white")
+	if(length(colors)==1) colors<-c(colors,"white")
 	if(hasArg(spread.labels)) spread.labels<-list(...)$spread.labels
 	else spread.labels<-TRUE
 	if(hasArg(link)) link<-list(...)$link
@@ -145,7 +148,7 @@ phenogram95<-function(tree,x=NULL,...){
 		args$link<-if(i==0) link else 0
 		args$offset<-if(i==0) offset else offset+link
 		args$x<-c(x,(1-p)*A$CI95[,1]+p*A$ace)
-		args$colors<-paste("#0000ff",trans[i+1],sep="")
+		args$colors<-paste(colors[1],trans[i+1],sep="")
 		do.call(phenogram,args)
 		args$x<-c(x,(1-p)*A$CI95[,2]+p*A$ace)
 		args$add<-TRUE
@@ -156,7 +159,7 @@ phenogram95<-function(tree,x=NULL,...){
 	}
 	args$x<-c(x,A$ace)
 	args$add<-TRUE
-	args$colors<-"white"
+	args$colors<-colors[2]
 	args$lwd<-2
 	args$offset<-offset+link
 	do.call(phenogram,args)

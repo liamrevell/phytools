@@ -124,6 +124,10 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		length(unique(dn[1,])),
 		dimnames=list(sort(unique(dn[1,])),
 			sort(unique(dn[1,]))))
+	if(is.matrix(model)){
+		cust_model<-model
+		model<-"custom"
+	}
 	if(model=="ER"){ 
 		q1[]<-1
 		diag(q1)<-0
@@ -145,29 +149,41 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 				}
 			}
 		}
+	} else if(model=="custom"){
+		if(is.null(rownames(cust_model))) 
+			colnames(cust_model)<-rownames(cust_model)<-rownames(q1)
+		q1[]<-cust_model[rownames(q1),colnames(q1)]
+		cat("This is the design of your custom discrete-trait model:\n")
+		print(q1)
 	}
 	q2<-matrix(0,length(unique(dn[2,])),
 		length(unique(dn[2,])),
 		dimnames=list(sort(unique(dn[2,])),
 			sort(unique(dn[2,]))))
-	if(model=="ER"){ 
-		q2[]<-max(q1)+1
-		diag(q2)<-0
-	} else if(model=="SYM"){
-		k<-max(q1)+1
-		for(i in 1:(nrow(q2)-1)){
-			for(j in (i+1):ncol(q2)){
-				q2[i,j]<-q2[j,i]<-k
-				k<-k+1
-			}
-		}
-	} else if(model=="ARD"){
-		k<-max(q1)+1
-		for(i in 1:nrow(q2)){
-			for(j in 1:ncol(q2)){
-				if(i!=j){
-					q2[i,j]<-k
+	if(ncat>1){
+		if(hasArg(model.hrm)) model.hrm<-list(...)$model.hrm
+		else model.hrm<-if(model%in%c("ER","SYM","ARD")) model else "SYM"
+	} else model.hrm<-NULL
+	if(!is.null(model.hrm)){
+		if(model.hrm=="ER"){ 
+			q2[]<-max(q1)+1
+			diag(q2)<-0
+		} else if(model.hrm=="SYM"){
+			k<-max(q1)+1
+			for(i in 1:(nrow(q2)-1)){
+				for(j in (i+1):ncol(q2)){
+					q2[i,j]<-q2[j,i]<-k
 					k<-k+1
+				}
+			}
+		} else if(model.hrm=="ARD"){
+			k<-max(q1)+1
+			for(i in 1:nrow(q2)){
+				for(j in 1:ncol(q2)){
+					if(i!=j){
+						q2[i,j]<-k
+						k<-k+1
+					}
 				}
 			}
 		}
@@ -220,7 +236,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 				y=-0.025*ncol(model),colnames(qmodel)[i])
 			text(x=-0.025*ncol(model),
 				y=mean(c(0,levs)+(i-1)*levs),
-				rownames(qmodel)[i])
+				rownames(qmodel)[i],srt=90)
 		}
 		title("structure of discretized model",font.main=3)
 		lp<-legend(x=ncol(model)/2,y=1.05*nrow(model),
