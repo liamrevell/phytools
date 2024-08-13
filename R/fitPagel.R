@@ -139,6 +139,8 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 		P=pchisq(2*(logLik(fit.dQ)-logLik(fit.iQ)),
 		df=k.dQ-k.iQ,
 		lower.tail=FALSE),
+		tree=tree,
+		data=xy,
 		method=method,
 		dep.var=dep.var,
 		model=model)
