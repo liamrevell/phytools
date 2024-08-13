@@ -3,6 +3,10 @@
 fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 	if(hasArg(rand_start)) rand_start<-list(...)$rand_start
 	else rand_start<-FALSE
+	if(hasArg(min.q)) min.q<-list(...)$min.q
+	else min.q<-1e-12
+	if(hasArg(max.q)) max.q<-list(...)$max.q
+	else max.q<-max(nodeHeights(tree))*100
 	## compute states
 	if(is.matrix(x)){
 		x<-x[tree$tip.label,]
@@ -26,7 +30,7 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 		pi<-pi/sum(pi)
 		if(is.null(names(pi))) pi<-setNames(pi,ss)
 		pi<-pi[ss]
-	} 
+	}
 	## create object of class "fitMk"
 	args<-list(...)
 	args$tree<-tree
@@ -59,8 +63,8 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 		log(q.init),
 		loglik,lik=unfitted$lik,
 		index.matrix=unfitted$index.matrix,
-		lower=log(1e-12),
-		upper=log(max(nodeHeights(tree))*100),
+		lower=min.q,
+		upper=max.q,
 		parallel=list(cl=cl,forward=FALSE,
 		loginfo=TRUE)
 	)
