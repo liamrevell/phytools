@@ -560,6 +560,8 @@ plot.Qmatrix<-function(x,...){
 	else offset<-0.02
 	if(hasArg(palette)) palette<-list(...)$palette
 	else palette<-c("blue","purple","red")
+	if(hasArg(logscale)) logscale<-list(...)$logscale
+	else logscale<-TRUE
 	## set all Q<tol to zero (may remove later)
 	Q[Q<tol]<-0
 	## end may remove later
@@ -587,7 +589,7 @@ plot.Qmatrix<-function(x,...){
 			rgb(colorRamp(palette)(qq),maxColorValue=255)
 		qq<-Q
 		diag(qq)<-NA
-		qq<-log(qq)
+		qq<-if(logscale) log(qq) else qq
 		dq<-diff(RANGE(qq,na.rm=TRUE))
 		if(dq<tol){
 			cols<-matrix(palette[1],nstates,nstates)
@@ -602,7 +604,7 @@ plot.Qmatrix<-function(x,...){
 			if(is.infinite(qq)) 0 else qq*(max.lwd-1)+1
 		qq<-Q
 		diag(qq)<-NA
-		qq<-log(qq)
+		qq<-if(logscale) log(qq) else qq
 		dq<-max(qq[!is.infinite(qq)],na.rm=TRUE)-
 			min(qq[!is.infinite(qq)],na.rm=TRUE)
 		if(dq<tol){
@@ -687,8 +689,12 @@ plot.Qmatrix<-function(x,...){
 				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
-			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
-				MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
+			if(logscale)
+				text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
+					MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
+			else
+				text(x=X[,2],y=Y[,2],signif(seq(MIN(QQ,na.rm=TRUE),
+					MAX(QQ,na.rm=TRUE),length.out=6),signif),pos=4,cex=0.7)
 		} else {
 			BLUE<-function(...) palette[1]
 			h<-1.5
@@ -708,8 +714,12 @@ plot.Qmatrix<-function(x,...){
 				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
-			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
-				MAX(log(QQ),na.rm=TRUE),length.out=1)),signif),pos=4,cex=0.7)
+			if(logscale)
+				text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
+					MAX(log(QQ),na.rm=TRUE),length.out=1)),signif),pos=4,cex=0.7)
+			else
+				text(x=X[,2],y=Y[,2],signif(seq(MIN(QQ,na.rm=TRUE),
+					MAX(QQ,na.rm=TRUE),length.out=1),signif),pos=4,cex=0.7)
 		}
 	}
 	object<-data.frame(states=rownames(Q),x=v.x,y=v.y)
