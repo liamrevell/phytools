@@ -1,8 +1,9 @@
 ## compute trace (used internally)
 tr<-function(X) sum(diag(X))
 
-## convert discrete character to liability matrix
-thresh2bin<-function(liability,threshold,X){
+## convert discrete character to liability matrix (two versions)
+
+thresh2bin_v1<-function(liability,threshold,X){
 	Y<-matrix(0,length(liability),nrow(X),
 		dimnames=list(round(liability,3),rownames(X)))
 	interval<-mean(liability[2:length(liability)]-
@@ -33,6 +34,39 @@ thresh2bin<-function(liability,threshold,X){
 	t(Y)
 }
 
+thresh2bin_v2<-function(liability,threshold,X){
+  Y<-matrix(0,length(liability),nrow(X),
+    dimnames=list(round(liability,3),rownames(X)))
+  interval<-mean(liability[2:length(liability)]-
+      liability[1:(length(liability)-1)])
+  down<-liability-interval/2
+  ## down[1]<--Inf
+  up<-liability+interval/2
+  ## up[length(up)]<-Inf
+  xx<-rep(0,length(liability))
+  for(i in 1:(length(threshold)-1)){
+    xx[]<-0
+    ind<-intersect(which(up>threshold[i]),
+      which(down<threshold[i+1]))
+    xx[ind]<-1
+    ind<-setdiff(ind,
+      intersect(which(down>threshold[i]),
+        which(up<threshold[i+1])))
+    if(length(ind)>0){
+      for(j in 1:length(ind)){
+        xx[ind[j]]<-if(down[ind[j]]>threshold[i]&&
+            down[ind[j]]<threshold[i+1]) 
+          (threshold[i+1]-down[ind[j]])/interval else
+            abs(up[ind[j]]-threshold[i])/interval
+      }
+    }
+    ii<-which(X[,i]>0)
+    Y[,ii]<-Y[,ii]+matrix(rep(xx,length(ii)),length(xx),
+      length(ii))*sapply(X[ii,i],rep,times=length(xx))
+  }
+  t(Y)
+}
+
 ## fit threshold model using discrete approximation
 fitThresh<-function(tree,x,sequence=NULL,...){
 	if(hasArg(trace)) trace<-list(...)$trace
@@ -48,9 +82,17 @@ fitThresh<-function(tree,x,sequence=NULL,...){
 	Ed<-tr(C)/N-sum(C)/(N^2)
 	lims<-qnorm(c(0.005,0.995),sd=sqrt(Ed))
 	liability<-seq(lims[1],lims[2],length.out=levs)
-	if(!is.factor(x)) x<-setNames(as.factor(x),names(x))
-	if(is.null(sequence)) sequence<-levels(x)
-	X<-to.matrix(x,sequence)
+	if(!is.matrix(x)){
+		if(!is.factor(x)) x<-setNames(as.factor(x),names(x))
+		if(is.null(sequence)) sequence<-levels(x)
+		X<-to.matrix(x,sequence)
+		thresh2bin<-thresh2bin_v1
+	} else {
+		X<-x
+		if(is.null(sequence)) sequence<-colnames(X)
+		X<-X[,sequence]
+		thresh2bin<-thresh2bin_v2
+	}
 	q<-1/(2*(diff(lims)/levs)^2)
 	model<-matrix(0,levs,levs,
 		dimnames=list(round(liability,3),round(liability,3)))
