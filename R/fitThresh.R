@@ -3,7 +3,14 @@ tr<-function(X) sum(diag(X))
 
 ## convert discrete character to liability matrix (two versions)
 
-thresh2bin_v1<-function(liability,threshold,X){
+thresh2bin<-function(liability,threshold,X){
+	if(all(rowSums(X)==1)&&all(X%in%c(0,1))){ 
+		Y<-t2bin_v1(liability,threshold,X)
+	} else Y<-t2bin_v2(liability,threshold,X)
+	Y
+}
+
+t2bin_v1<-function(liability,threshold,X){
 	Y<-matrix(0,length(liability),nrow(X),
 		dimnames=list(round(liability,3),rownames(X)))
 	interval<-mean(liability[2:length(liability)]-
@@ -34,7 +41,7 @@ thresh2bin_v1<-function(liability,threshold,X){
 	t(Y)
 }
 
-thresh2bin_v2<-function(liability,threshold,X){
+t2bin_v2<-function(liability,threshold,X){
   Y<-matrix(0,length(liability),nrow(X),
     dimnames=list(round(liability,3),rownames(X)))
   interval<-mean(liability[2:length(liability)]-
@@ -86,12 +93,10 @@ fitThresh<-function(tree,x,sequence=NULL,...){
 		if(!is.factor(x)) x<-setNames(as.factor(x),names(x))
 		if(is.null(sequence)) sequence<-levels(x)
 		X<-to.matrix(x,sequence)
-		thresh2bin<-thresh2bin_v1
 	} else {
 		X<-x
 		if(is.null(sequence)) sequence<-colnames(X)
 		X<-X[,sequence]
-		thresh2bin<-thresh2bin_v2
 	}
 	q<-1/(2*(diff(lims)/levs)^2)
 	model<-matrix(0,levs,levs,
