@@ -181,10 +181,12 @@ logLik.fitThresh<-function(object,...) object$logLik
 
 ## marginal ancestral states of "fitThresh" object
 ancr.fitThresh<-function(object,...){
-	anc_mk<-ancr(object$mk_fit,type="marginal")
-	anc<-matrix(0,object$tree$Nnode,ncol(object$data),
-		dimnames=list(1:object$tree$Nnode+Ntip(object$tree),
-			colnames(object$data)))
+	if(hasArg(tips)) tips<-list(...)$tips
+	else tips<-FALSE
+	anc_mk<-ancr(object$mk_fit,type="marginal",tips=tips)
+	anc<-matrix(0,nrow(anc_mk$ace),ncol(object$data),
+		dimnames=list(rownames(anc_mk$ace),
+		colnames(object$data)))
 	tmp<-diag(rep(1,ncol(object$data)))
 	colnames(tmp)<-colnames(object$data)
 	xx<-thresh2bin(object$liability,
