@@ -1,5 +1,5 @@
 ## find the temporal position of a rate shift using ML
-## written by Liam J. Revell 2013, 2014, 2015, 2020, 2023
+## written by Liam J. Revell 2013, 2014, 2015, 2020, 2023, 2024
 
 rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -223,37 +223,48 @@ logLik.rateshift<-function(object,...){
 }
 
 ## S3 plot method for object of class "rateshift"
-## written by Liam J. Revell 2015, 2020, 2021
+## written by Liam J. Revell 2015, 2020, 2021, 2024
 plot.rateshift<-function(x,...){
-	if(length(x$sig2)>1){
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(-0.1*Ntip(x$tree),Ntip(x$tree))
+	if(hasArg(legend)) legend<-list(...)$legend
+	else legend<-TRUE
+	if(hasArg(lims)) lims<-list(...)$lims
+	else lims<-range(x$sig2)
+	if(length(x$sig2)>1||(lims[1]!=lims[2])){
 		if(hasArg(col)) col<-list(...)$col
 		else col<-c("blue","purple","red")
 		cols<-colorRampPalette(col)(101)
-		rr<-range(x$sig2)
-		names(cols)<-seq(rr[1],rr[2],by=diff(rr)/100)
+		names(cols)<-seq(lims[1],lims[2],by=diff(lims)/100)
 		ii<-sapply(x$sig2,function(x,y) order(abs(y-x))[1],
 			y=as.numeric(names(cols)))
 		colors<-setNames(cols[ii],names(ii))
-		args<-list(x=x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
-			colors=colors,...)
+		args<-list(x=x$tree,ylim=ylim,colors=colors,...)
 		args$col<-NULL
+		args$lims<-NULL
+		args$legend<-NULL
 		do.call(plot,args)
 		nulo<-lapply(x$shift,function(x,y) lines(rep(x,2),c(1,Ntip(y)),
 			lty="dotted",col="grey"),y=x$tree)
-		add.color.bar(leg=0.5*max(nodeHeights(x$tree)),cols=cols,
-			prompt=FALSE,x=0,y=-0.05*Ntip(x$tree),lims=round(rr,3),
-			title=expression(sigma^2))
+		if(legend){
+			add.color.bar(leg=0.5*max(nodeHeights(x$tree)),cols=cols,
+				prompt=FALSE,x=0,y=-0.05*Ntip(x$tree),lims=round(lims,3),
+				title=expression(sigma^2))
+		}
 	} else {
 		if(hasArg(col)) col<-list(...)$col
 		else col<-"blue"
 		colors<-setNames(col[1],1)
-		args<-list(x=x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
-			colors=colors,...)
+		args<-list(x=x$tree,ylim=ylim,colors=colors,...)
 		args$col<-NULL
+		args$lims<-NULL
+		args$legend<-NULL
 		do.call(plot,args)
-		legend(x=0,y=0,
-			legend=bquote(sigma^2 == .(round(x$sig2,3))),
-			pch=15,col=colors,pt.cex=2,bty="n")
+		if(legend){
+			legend(x=0,y=0,
+				legend=bquote(sigma^2 == .(round(x$sig2,3))),
+				pch=15,col=colors,pt.cex=2,bty="n")
+		}
 	}
 }
 
