@@ -294,6 +294,7 @@ S3method(print, fitmultiBM)
 S3method(logLik, fitmultiBM)
 S3method(ancr, fitmultiBM)
 S3method(print, ancr.fitmultiBM)
+S3method(anova, rateshift)
 
 ## default methods
 S3method(ancr, default)

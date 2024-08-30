@@ -301,3 +301,5 @@ likSurface.rateshift<-function(tree,x,nrates=2,shift.range=NULL,
 	}
 	invisible(obj)
 }
+
+anova.rateshift<-function(object,...) anova.fitMk(object,...)
