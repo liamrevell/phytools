@@ -137,6 +137,7 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 	else pts<-TRUE
 	if(hasArg(col.edge)) col.edge<-list(...)$col.edge
 	else col.edge<-rep(par()$fg,nrow(x$tree$edge))
+	if(length(col.edge)==1) col.edge<-rep(col.edge,nrow(x$tree$edge))
 	if(hasArg(map.bg)) map.bg<-list(...)$map.bg
 	else map.bg<-"gray95"
 	if(type=="phylogram"){
@@ -219,14 +220,16 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 					if(from.tip) 0 else sh[tip.i],coords[i,2]),
 					col=colors[i,1],lty=lty,lwd=lwd[2])
 			}
-			points(coords,pch=pch,cex=cex.points[2],bg=colors[,2])
+			points(coords,pch=pch[2],cex=cex.points[2],bg=colors[,2],
+				col=if(pch[2]<21) colors[,2] else par()$fg)
 			# plot vertical edges
 			for(i in 1:nrow(Y)) lines(rep(x[cw$edge[i,2]],2),Y[i,],
-				lwd=lwd[1],lend=2)
+				lwd=lwd[1],lend=2,col=col.edge[i])
 			# plot horizontal relationships
 			for(i in 1:cw$Nnode+n){
 				ii<-which(cw$edge[,1]==i)
-				if(length(ii)>1) lines(range(x[cw$edge[ii,2]]),Y[ii,1],lwd=lwd[1],lend=2)
+				if(length(ii)>1) lines(range(x[cw$edge[ii,2]]),Y[ii,1],lwd=lwd[1],lend=2,
+					col=col.edge[ii])
 			}
 			# plot tip labels
 			for(i in 1:n){ 
@@ -234,9 +237,10 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 					paste(" ",sub("_"," ",cw$tip.label[i]),sep=""),
 						pos=4,offset=c(0,1),
 					srt=-90,cex=fsize,font=ftype)
-				if(pts) points(x[i],Y[which(cw$edge[,2]==i),2],pch=21,
-					bg=colors[sapply(cw$tip.label,function(x,y) which(y==x)[1],
-					y=rownames(colors)),][i,2],cex=cex.points[1])
+				if(pts) points(x[i],Y[which(cw$edge[,2]==i),2],pch=pch[1],
+					bg=colors[sapply(cw$tip.label,function(x,y) which(y==x)[1],y=rownames(colors)),][i,2],
+					col=if(pch[1]<21) colors[sapply(cw$tip.label,function(x,y) which(y==x)[1],
+					y=rownames(colors)),][i,2] else par()$fg,cex=cex.points[1])
 			}
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
@@ -271,18 +275,22 @@ plot.phylo.to.map<-function(x,type=c("phylogram","direct"),...){
 				lines(c(X[which(cw$edge[,2]==tip.i),2]+if(from.tip) 0 else sh[tip.i],coords[i,1]),
 					c(y[tip.i],coords[i,2]),col=colors[i,1],lty=lty,lwd=lwd[2])
 			}
-			points(coords,pch=pch,cex=cex.points[2],bg=colors[,2])
-			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2)
+			
+			points(coords,pch=pch[2],cex=cex.points[2],bg=colors[,2],
+				col=if(pch[2]<21) colors[,2] else par()$fg)
+			for(i in 1:nrow(X)) lines(X[i,],rep(y[cw$edge[i,2]],2),lwd=lwd[1],lend=2,col=col.edge[i])
 			for(i in 1:cw$Nnode+n){ 
 				ii<-which(cw$edge[,1]==i)
-				if(length(ii)>1) lines(X[ii,1],range(y[cw$edge[ii,2]]),lwd=lwd[1],lend=2)
+				if(length(ii)>1) lines(X[ii,1],range(y[cw$edge[ii,2]]),lwd=lwd[1],lend=2,
+					col=col.edge[ii])
 			}
 			for(i in 1:n){
 				if(ftype) text(X[which(cw$edge[,2]==i),2],y[i],
 					paste(" ",sub("_"," ",cw$tip.label[i]),sep=""),
 					pos=4,offset=0.1,cex=fsize,font=ftype)
 				if(pts) points(X[which(cw$edge[,2]==i),2],y[i],
-					pch=21,bg=colors[cw$tip.label,][i,2],cex=cex.points[1])
+					pch=pch[1],bg=colors[cw$tip.label,][i,2], 
+					col=if(pch[1]<21) colors[cw$tip.label,][i,2] else par()$fg,cex=cex.points[1])
 			}
 			PP<-list(type="phylogram",use.edge.length=TRUE,node.pos=1,
 				show.tip.label=if(ftype) TRUE else FALSE,show.node.label=FALSE,
