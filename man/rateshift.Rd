@@ -24,7 +24,7 @@ likSurface.rateshift(tree, x, nrates=2, shift.range=NULL,
 	Fits a model with one or more temporal rate shifts for a continuous trait on the tree.
 }
 \details{
-	\code{rateshift} attempts to find the location of one or more rate shifts. This model is quite easy to compute the likelihood for, but quite difficult to optimize as the likelihood surface is often rugged.
+	\code{rateshift} attempts to find the location of one or more rate shifts. This model is quite easy to compute the likelihood for, but quite difficult to optimize as the likelihood surface is often rugged. In addition, the model of \code{rateshift} is sometimes non-identifiable, i.e., more than one solution may have the same (maximum) likelihood, depending on the data, the tree, and the number of shifts in our model.
 
 	\code{likSurface.rateshift} plots the likelihood surface.
 }
