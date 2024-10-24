@@ -295,6 +295,9 @@ S3method(logLik, fitmultiBM)
 S3method(ancr, fitmultiBM)
 S3method(print, ancr.fitmultiBM)
 S3method(anova, rateshift)
+S3method(Ntip, cophylo)
+S3method(Nnode, cophylo)
+S3method(Nedge, cophylo)
 
 ## default methods
 S3method(ancr, default)
