@@ -595,3 +595,8 @@ summary.cophylo<-function(object,...){
 	cat("\n")
 }
 
+## S3 Ntip, Nedge, and Nnode methods
+
+Ntip.cophylo<-function(phy) sapply(phy$trees,Ntip)
+Nnode.cophylo<-function(phy,...) sapply(phy$trees,Nnode,...)
+Nedge.cophylo<-function(phy) sapply(phy$trees,Nedge)
