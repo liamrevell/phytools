@@ -12,7 +12,7 @@ gamma_pruning(par, nrates=4, tree, x, model=NULL, median=TRUE,
 	\item{x}{data in the form of a binary matrix.}
 	\item{model}{design matrix of fitted model.}
 	\item{median}{use the median of each rate category.}
-	\item{exp.method}{method used for matrix exponentiation.}
+	\item{expm.method}{method used for matrix exponentiation.}
 	\item{...}{optional arguments.}
 }
 \description{
