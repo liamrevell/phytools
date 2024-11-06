@@ -165,7 +165,11 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		else model.hrm<-if(model%in%c("ER","SYM","ARD")) model else "SYM"
 	} else model.hrm<-NULL
 	if(!is.null(model.hrm)){
-		if(model.hrm=="ER"){ 
+		if(is.matrix(model.hrm)){ 
+			q2[]<-model.hrm
+			cat("This is the design of your custom hidden-trait model:\n")
+			print(q2)
+		} else if(model.hrm=="ER"){ 
 			q2[]<-max(q1)+1
 			diag(q2)<-0
 		} else if(model.hrm=="SYM"){
@@ -378,6 +382,8 @@ ancr.fitmultiBM<-function(object,...){
     "Higham08.b"
   if(hasArg(parallel)) parallel<-list(...)$parallel
   else parallel<-FALSE
+  if(hasArg(tips)) tips<-list(...)$tips
+  else tips<-FALSE
   dd<-diff(object$bounds)
   tol<-1e-8*dd/object$ncat
   bins<-cbind(seq(from=object$bounds[1]-tol,
@@ -386,7 +392,7 @@ ancr.fitmultiBM<-function(object,...){
       length.out=object$ncat))
   mids<-rowMeans(bins)
   Anc<-ancr(object$mk_fit,lik.func=lik.func,parallel=parallel,
-    expm.method=expm.method)
+    expm.method=expm.method,tips=tips)
   mAce_cont<-matrix(0,nrow(Anc$ace),object$ncat,
     dimnames=list(rownames(Anc$ace),1:object$ncat))
   nn<-sapply(strsplit(colnames(Anc$ace),","),function(x) x[2])
