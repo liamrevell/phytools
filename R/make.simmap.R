@@ -384,14 +384,15 @@ statdist<-function(Q){
 
 ## S3 print method for objects of class "simmap" & multiSimmap
 ## based on print.phylo in ape
+
 print.simmap<-function(x,printlen=6,...){
 	N<-Ntip(x)
     	M<-x$Nnode
 	cat(paste("\nPhylogenetic tree with",N,"tips and",M,"internal nodes.\n\n"))
 	cat("Tip labels:\n")
 	if(N>printlen) cat(paste("\t",paste(x$tip.label[1:printlen],collapse=", "),", ...\n",sep=""))
-	else print(x$tip.label)
-	ss<-sort(unique(c(getStates(x,"tips"),getStates(x,"nodes"))))
+	else cat(paste("\t",paste(x$tip.label,collapse=", "),sep=""))
+	ss<-sort(unique(unlist(lapply(x$maps,names))))
 	cat(paste("\nThe tree includes a mapped, ",length(ss),"-state discrete character\nwith states:\n",
 		sep=""))
 	if(length(ss)>printlen) cat(paste("\t",paste(ss[1:printlen],collapse=", "),", ...\n",sep=""))
@@ -399,6 +400,7 @@ print.simmap<-function(x,printlen=6,...){
     	rlab<-if(is.rooted(x)) "Rooted" else "Unrooted"
 	cat("\n",rlab,"; includes branch lengths.\n",sep="")
 }
+
 print.multiSimmap<-function(x,details=FALSE,...){
 	N<-length(x)
 	cat(N,"phylogenetic trees with mapped discrete characters\n")

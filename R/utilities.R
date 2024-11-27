@@ -2,6 +2,64 @@
 ## written by Liam J. Revell 2011, 2012, 2013, 2014, 2015, 2016, 2017, 
 ## 2018, 2019, 2020, 2021, 2022, 2023, 2024
 
+## function to match nodes between trees
+## written by Liam J. Revell 2012, 2013, 2015, 2024
+	
+matchNodes<-function(tr1,tr2,method=c("descendants","distances"),...){
+	if(!inherits(tr1,"phylo")||!inherits(tr1,"phylo")) 
+		stop("tr1 & tr2 should both be objects of class \"phylo\".")
+	if(hasArg(quiet)) quiet<-list(...)$quiet
+	else quiet<-FALSE
+	method<-method[1]
+	method<-matchType(method,c("descendants","distances"))
+	if(method=="descendants"){
+		foo<-function(node,phy){
+			dd<-getDescendants(phy,node)
+			phy$tip.label[dd[dd<=Ntip(phy)]]
+		}
+		desc.tr1<-lapply(1:tr1$Nnode+Ntip(tr1),foo,phy=tr1)
+		names(desc.tr1)<-1:tr1$Nnode+Ntip(tr1)
+		desc.tr2<-lapply(1:tr2$Nnode+Ntip(tr2),foo,phy=tr2)
+		names(desc.tr2)<-1:tr2$Nnode+Ntip(tr2)
+		Nodes<-matrix(NA,length(desc.tr1),2,dimnames=list(NULL,c("tr1","tr2")))
+		for(i in 1:length(desc.tr1)){
+			Nodes[i,1]<-as.numeric(names(desc.tr1)[i])
+			for(j in 1:length(desc.tr2))
+				if(all(desc.tr1[[i]]%in%desc.tr2[[j]])&&all(desc.tr2[[j]]%in%desc.tr1[[i]]))
+					Nodes[i,2]<-as.numeric(names(desc.tr2)[j])
+		}
+	} else if(method=="distances"){
+		if(hasArg(tol)) tol<-list(...)$tol
+		else tol<-1e-6
+		if(hasArg(corr)) corr<-list(...)$corr
+		else corr<-FALSE
+		if(corr) tr1$edge.length<-tr1$edge.length/max(nodeHeights(tr1))
+		if(corr) tr2$edge.length<-tr2$edge.length/max(nodeHeights(tr2))
+		D1<-dist.nodes(tr1)[1:Ntip(tr1),1:tr1$Nnode+Ntip(tr1)]
+		D2<-dist.nodes(tr2)[1:Ntip(tr2),1:tr2$Nnode+Ntip(tr2)]
+		rownames(D1)<-tr1$tip.label
+		rownames(D2)<-tr2$tip.label
+		common.tips<-intersect(tr1$tip.label,tr2$tip.label)
+		D1<-D1[common.tips,]
+		D2<-D2[common.tips,]
+		Nodes<-matrix(NA,tr1$Nnode,2,dimnames=list(NULL,c("tr1","tr2")))
+		for(i in 1:tr1$Nnode){
+			if(corr) z<-apply(D2,2,function(X,y) cor(X,y),y=D1[,i])
+			else z<-apply(D2,2,function(X,y) 1-sum(abs(X-y)),y=D1[,i])
+			Nodes[i,1]<-as.numeric(colnames(D1)[i])
+			if(any(z>=(1-tol))){
+				a<-as.numeric(names(which(z>=(1-tol))))
+				if(length(a)==1) Nodes[i,2]<-a
+				else {
+					Nodes[i,2]<-a[1]
+					if(!quiet) warning("polytomy detected; some node matches may be arbitrary")
+				}
+			}
+		}
+	}
+	return(Nodes)
+}
+
 ## function forces a tree to be ultrametric using two different methods
 ## written by Liam J. Revell 2017, 2021, 2022, 2023
 
@@ -2001,58 +2059,6 @@ countSimmap<-function(tree,states=NULL,message=TRUE){
 			"N is the total number of character changes on the tree",
 			"Tr gives the number of transitions from row state->column state")))
 	}
-}
-
-# function to match nodes between trees
-# written by Liam J. Revell 2012, 2013, 2015
-matchNodes<-function(tr1,tr2,method=c("descendants","distances"),...){
-	if(!inherits(tr1,"phylo")||!inherits(tr1,"phylo")) stop("tr1 & tr2 should both be objects of class \"phylo\".")
-	if(hasArg(quiet)) quiet<-list(...)$quiet
-	else quiet<-FALSE
-	method<-method[1]
-	method<-matchType(method,c("descendants","distances"))
-	if(method=="descendants"){
-		desc.tr1<-lapply(1:tr1$Nnode+length(tr1$tip),function(x) extract.clade(tr1,x)$tip.label)
-		names(desc.tr1)<-1:tr1$Nnode+length(tr1$tip)
-		desc.tr2<-lapply(1:tr2$Nnode+length(tr2$tip),function(x) extract.clade(tr2,x)$tip.label)
-		names(desc.tr2)<-1:tr2$Nnode+length(tr2$tip)
-		Nodes<-matrix(NA,length(desc.tr1),2,dimnames=list(NULL,c("tr1","tr2")))
-		for(i in 1:length(desc.tr1)){
-			Nodes[i,1]<-as.numeric(names(desc.tr1)[i])
-			for(j in 1:length(desc.tr2))
-				if(all(desc.tr1[[i]]%in%desc.tr2[[j]])&&all(desc.tr2[[j]]%in%desc.tr1[[i]]))
-					Nodes[i,2]<-as.numeric(names(desc.tr2)[j])
-		}
-	} else if(method=="distances"){
-		if(hasArg(tol)) tol<-list(...)$tol
-		else tol<-1e-6
-		if(hasArg(corr)) corr<-list(...)$corr
-		else corr<-FALSE
-		if(corr) tr1$edge.length<-tr1$edge.length/max(nodeHeights(tr1))
-		if(corr) tr2$edge.length<-tr2$edge.length/max(nodeHeights(tr2))
-		D1<-dist.nodes(tr1)[1:length(tr1$tip),1:tr1$Nnode+length(tr1$tip)]
-		D2<-dist.nodes(tr2)[1:length(tr2$tip),1:tr2$Nnode+length(tr2$tip)]
-		rownames(D1)<-tr1$tip.label
-		rownames(D2)<-tr2$tip.label
-		common.tips<-intersect(tr1$tip.label,tr2$tip.label)
-		D1<-D1[common.tips,]
-		D2<-D2[common.tips,]
-		Nodes<-matrix(NA,tr1$Nnode,2,dimnames=list(NULL,c("tr1","tr2")))
-		for(i in 1:tr1$Nnode){
-			if(corr) z<-apply(D2,2,function(X,y) cor(X,y),y=D1[,i])
-			else z<-apply(D2,2,function(X,y) 1-sum(abs(X-y)),y=D1[,i])
-			Nodes[i,1]<-as.numeric(colnames(D1)[i])
-			if(any(z>=(1-tol))){
-				a<-as.numeric(names(which(z>=(1-tol))))
-				if(length(a)==1) Nodes[i,2]<-a
-				else {
-					Nodes[i,2]<-a[1]
-					if(!quiet) warning("polytomy detected; some node matches may be arbitrary")
-				}
-			}
-		}
-	}
-	return(Nodes)
 }
 
 # function applies the branch lengths of a reference tree to a second tree, including mappings

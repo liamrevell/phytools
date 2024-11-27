@@ -170,7 +170,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			root.prior<-"stationary"
 		} else if(pi[1]=="fitzjohn"){ 
 			root.prior<-"nuisance"
-		} else if(pi[1]=="mle") root.prior<-"it's MLE"
+		} else if(pi[1]=="mle"){ 
+			root.prior<-"it's MLE"
+			if(lik.func=="lik") lik.func<-"pruning"
+		}
 		if(is.numeric(pi)){ 
 			pi<-pi/sum(pi)
 			if(is.null(names(pi))) pi<-setNames(pi,states)
@@ -214,7 +217,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			diag(MODEL)<-0
 			if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 			else expm.method<-"Higham08.b"
-		}
+		} else expm.method<-"Higham08.b"
 		tmp<-cbind(1:m,1:m)
 		rate[tmp]<-0
 		rate[rate==0]<-k+1
@@ -339,8 +342,8 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			else if(pi[1]=="mle") pi<-if(lik.func=="parallel") setNames(
 				parallel_pruning(fit$par,tree=pw,x=x,model=MODEL,pi="mle",
 				expm.method=expm.method,return="pi"),states) else setNames(
-				lik(makeQ(m,fit$par,index.matrix),FALSE,pi=pi,output.pi=TRUE),
-				states)
+				pruning(fit$par,tree=pw,x=x,model=MODEL,pi="mle",expm.method=expm.method,
+				return="pi"),states)
 			obj<-list(logLik=
 				if(opt.method=="optim") -fit$value else -fit$objective,
 				rates=fit$par,
@@ -557,6 +560,8 @@ plot.Qmatrix<-function(x,...){
 	else offset<-0.02
 	if(hasArg(palette)) palette<-list(...)$palette
 	else palette<-c("blue","purple","red")
+	if(hasArg(logscale)) logscale<-list(...)$logscale
+	else logscale<-TRUE
 	## set all Q<tol to zero (may remove later)
 	Q[Q<tol]<-0
 	## end may remove later
@@ -584,7 +589,7 @@ plot.Qmatrix<-function(x,...){
 			rgb(colorRamp(palette)(qq),maxColorValue=255)
 		qq<-Q
 		diag(qq)<-NA
-		qq<-log(qq)
+		qq<-if(logscale) log(qq) else qq
 		dq<-diff(RANGE(qq,na.rm=TRUE))
 		if(dq<tol){
 			cols<-matrix(palette[1],nstates,nstates)
@@ -599,7 +604,7 @@ plot.Qmatrix<-function(x,...){
 			if(is.infinite(qq)) 0 else qq*(max.lwd-1)+1
 		qq<-Q
 		diag(qq)<-NA
-		qq<-log(qq)
+		qq<-if(logscale) log(qq) else qq
 		dq<-max(qq[!is.infinite(qq)],na.rm=TRUE)-
 			min(qq[!is.infinite(qq)],na.rm=TRUE)
 		if(dq<tol){
@@ -684,8 +689,12 @@ plot.Qmatrix<-function(x,...){
 				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
-			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
-				MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
+			if(logscale)
+				text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
+					MAX(log(QQ),na.rm=TRUE),length.out=6)),signif),pos=4,cex=0.7)
+			else
+				text(x=X[,2],y=Y[,2],signif(seq(MIN(QQ,na.rm=TRUE),
+					MAX(QQ,na.rm=TRUE),length.out=6),signif),pos=4,cex=0.7)
 		} else {
 			BLUE<-function(...) palette[1]
 			h<-1.5
@@ -705,8 +714,12 @@ plot.Qmatrix<-function(x,...){
 				x=0.93*xlim[1],y=-h/2,prompt=FALSE)
 			QQ<-Q
 			diag(QQ)<-0
-			text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
-				MAX(log(QQ),na.rm=TRUE),length.out=1)),signif),pos=4,cex=0.7)
+			if(logscale)
+				text(x=X[,2],y=Y[,2],signif(exp(seq(MIN(log(QQ),na.rm=TRUE),
+					MAX(log(QQ),na.rm=TRUE),length.out=1)),signif),pos=4,cex=0.7)
+			else
+				text(x=X[,2],y=Y[,2],signif(seq(MIN(QQ,na.rm=TRUE),
+					MAX(QQ,na.rm=TRUE),length.out=1),signif),pos=4,cex=0.7)
 		}
 	}
 	object<-data.frame(states=rownames(Q),x=v.x,y=v.y)

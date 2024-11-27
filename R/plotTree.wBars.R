@@ -1,16 +1,20 @@
 ## plotTree.boxplot
-## written by Liam J. Revell 2016, 2021, 2022
+## written by Liam J. Revell 2016, 2021, 2022, 2024
 
 plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	args.boxplot=list(),...){
 	tree<-untangle(tree,"read.tree")
 	cw<-reorder(tree)
-	if(!is.list(x)&&inherits(x,"formula",FALSE)){
-		obj<-setNames(
-			lapply(cw$tip.label,function(x,y) y[which(names(y)==x)],
-			y=x),cw$tip.label)
-	} else obj<-x
-	if(inherits(x,"formula")) 
+	if(inherits(x,"formula")){ 
+		obj<-x
+	} else {
+		if(!is.list(x)){
+			obj<-setNames(
+				lapply(cw$tip.label,function(x,y) y[which(names(y)==x)],
+					y=x),cw$tip.label)
+		} else obj<-x
+	}
+	if(inherits(obj,"formula")) 
 		args.boxplot$formula<-obj else args.boxplot$x<-obj
 	args.boxplot$horizontal<-TRUE
 	args.boxplot$axes<-FALSE
@@ -55,11 +59,13 @@ plotTree.boxplot<-function(tree,x,args.plotTree=list(),
 	invisible(obj)
 }
 
+
 ## plotTree.barplot
-## written by Liam J. Revell 2016, 2017, 2018, 2021
+## written by Liam J. Revell 2016, 2017, 2018, 2021, 2024
 
 plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	args.barplot=list(),...){
+	tree$tip.label<-gsub(" ","_",tree$tip.label)
 	tree<-untangle(tree,"read.tree")
 	if(hasArg(add)) add<-list(...)$add
 	else add<-FALSE
@@ -67,10 +73,12 @@ plotTree.barplot<-function(tree,x,args.plotTree=list(),
 	else args.axis<-list()
 	args.axis$side<-1
 	cw<-reorder(tree)
+	if(is.vector(x)) names(x)<-gsub(" ","_",names(x))
 	if(is.data.frame(x)) x<-as.matrix(x)
 	if(is.matrix(x)){
 		x<-x[cw$tip.label,]
 		x<-t(x)
+		colnames(x)<-gsub(" ","_",colnames(x))
 	}
 	args.barplot$height<-if(is.matrix(x)) x[,cw$tip.label] else x[cw$tip.label]
 	args.barplot$plot<-FALSE

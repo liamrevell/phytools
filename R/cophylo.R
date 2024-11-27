@@ -446,6 +446,8 @@ tipRotate<-function(tree,x,...){
 		if(is.null(left)&&is.null(right)) anim.cophylo<-FALSE
 		if(hasArg(only.accepted)) only.accepted<-list(...)$only.accepted
 		else only.accepted<-TRUE
+		if(hasArg(sleep)) sleep<-list(...)$sleep
+		else sleep<-0.1
 	}
 	tree<-reorder(tree)
 	nn<-1:tree$Nnode+length(tree$tip.label)
@@ -481,6 +483,7 @@ tipRotate<-function(tree,x,...){
 		else if(is.null(right)) plot(cophylo(left,tree,assoc=assoc,rotate=FALSE),...)
 		nodelabels.cophylo(node=i+Ntip(tree),pie=1,col="red",cex=0.4,
 			which=if(is.null(left)) "left" else "right")
+		Sys.sleep(sleep)
 		dev.flush()
 	}
 	if("pre"%in%methods){
@@ -592,3 +595,8 @@ summary.cophylo<-function(object,...){
 	cat("\n")
 }
 
+## S3 Ntip, Nedge, and Nnode methods
+
+Ntip.cophylo<-function(phy) sapply(phy$trees,Ntip)
+Nnode.cophylo<-function(phy,...) sapply(phy$trees,Nnode,...)
+Nedge.cophylo<-function(phy) sapply(phy$trees,Nedge)

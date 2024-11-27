@@ -1,5 +1,5 @@
 ## find the temporal position of a rate shift using ML
-## written by Liam J. Revell 2013, 2014, 2015, 2020, 2023
+## written by Liam J. Revell 2013, 2014, 2015, 2020, 2023, 2024
 
 rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	if(!inherits(tree,"phylo")) stop("tree should be an object of class \"phylo\".")
@@ -24,7 +24,8 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 	if(!fixed.shift[1]){
 		if(print){
 			if(!parallel) cat("Optimization progress:\n\n")
-			if(nrates>1&&!parallel) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),"logL\n"),collapse="\t"))
+			if(nrates>1&&!parallel) cat(paste(c("iter",paste("shift",1:(nrates-1),sep=":"),
+				"logL\n"),collapse="\t"))
 			else if(!parallel) cat("iter\ts^2(1)\tlogL\n")
 		} else if(niter==1) {
 			if(!quiet) cat("Optimizing. Please wait.\n\n")
@@ -45,14 +46,17 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 		else {
 			tree<-make.era.map(tree,shift,tol=Tol/10)
 			if(plot){ 
-				plotSimmap(tree,setNames(rainbow(nrates),1:nrates),lwd=3,ftype="off",mar=c(0.1,0.1,4.1,0.1))
+				plotSimmap(tree,setNames(rainbow(nrates),1:nrates),lwd=3,ftype="off",
+					mar=c(0.1,0.1,4.1,0.1))
 				title(main=paste("Optimizing rate shift(s), round",iter,"....",sep=" "))
-				for(i in 2:(length(shift))) lines(rep(shift[i],2),c(0,length(tree$tip.label)+1),lty="dashed")
+				for(i in 2:(length(shift))) lines(rep(shift[i],2),c(0,length(tree$tip.label)+1),
+					lty="dashed")
 			}
 			logL<-fn(tree,y)$logL.multiple
 		}
 		if(print){
-			if(nrates>1) cat(paste(c(iter,round(shift[2:length(shift)],4),round(logL,4),"\n"),collapse="\t"))
+			if(nrates>1) cat(paste(c(iter,round(shift[2:length(shift)],4),round(logL,4),"\n"),
+				collapse="\t"))
 			else cat(paste(c(iter,round(par,4),round(logL,4),"\n"),collapse="\t"))
 		}
 		-logL
@@ -95,7 +99,6 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 				flush.console()
 			}
 			fit<-foreach(i=1:niter)%dopar%{
-				if(nrates>1) par<-sort(runif(n=nrates-1)*h)
 				if(nrates==1){ 
 					obj<-fn(make.era.map(tree,setNames(0,1)),x)
 					obj$convergence<-if(obj$convergence=="Optimization has converged.") 0 else 1
@@ -113,9 +116,29 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 			stopCluster(cl=mc)
 		}
 		if(!print&&niter>1) if(!quiet) if(!parallel) cat("|\nDone.\n\n") else cat("Done.\n\n")
+		if(nrates>2){
+			for(i in 1:niter){
+				oo<-order(fit[[i]]$par)
+				fit[[i]]$par<-fit[[i]]$par[oo]
+			}
+		}
 		ll<-sapply(fit,function(x) if(nrates>1) x$value else -x$logL1)
+		all.fits<-fit
 		fit<-fit[[which(ll==min(ll))[1]]]
-		frequency.best<-mean(ll<=(min(ll)+1e-4))
+		if(niter==1) frequency.best<-1
+		else {
+			if(nrates==1){
+				all.est<-sapply(all.fits,function(x) x$sig2.single)
+				frequency.best<-mean(signif(fit$sig2.single,5)==signif(all.est,5))
+			} else if(nrates==2){
+				all.est<-sapply(all.fits,function(x) x$par)
+				frequency.best<-mean(signif(fit$par,5)==signif(all.est,5))
+			} else {
+				all.est<-sapply(all.fits,function(x) x$par)
+				frequency.best<-mean(apply(all.est,2,function(y,x) all(signif(x,5)==signif(y,5)),
+					x=fit$par))
+			}
+		}
 		likHess<-if(method=="ML") function(par,tree,y,nrates,tol,maxh){
 			sig2<-par[1:nrates]
 			shift<-if(nrates>1) setNames(c(0,par[1:(nrates-1)+nrates]),1:nrates) else shift<-setNames(0,1)
@@ -139,24 +162,44 @@ rateshift<-function(tree,x,nrates=1,niter=10,method="ML",...){
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fit$par)) else make.era.map(tree,0)
 		obj<-fn(mtree,x)
 		if(compute.se){
-			H<-optimHess(c(obj$sig2.multiple,fit$par),likHess,tree=tree,y=x,nrates=nrates,tol=tol,maxh=h)
+			H<-optimHess(c(obj$sig2.multiple,fit$par),likHess,tree=tree,y=x,nrates=nrates,
+				tol=tol,maxh=h)
 			vcv<-if(nrates>1) solve(H) else 1/H
 		} else vcv<-matrix(-1,2*nrates-1,2*nrates-1)
 		if(nrates>1)
-			rownames(vcv)<-colnames(vcv)<-c(paste("sig2(",1:nrates,")",sep=""),paste(1:(nrates-1),"<->",2:nrates,sep=""))
+			rownames(vcv)<-colnames(vcv)<-c(paste("sig2(",1:nrates,")",sep=""),
+				paste(1:(nrates-1),"<->",2:nrates,sep=""))
 		else rownames(vcv)<-colnames(vcv)<-"sig2(1)"
+		if(niter>1){
+			for(i in 1:niter){
+				all.fits[[i]]$sig2<-fn(if(nrates>1) make.era.map(tree,c(0,all.fits[[i]]$par)) else 
+					make.era.map(tree,0),x)$sig2.multiple
+			}
+			if(nrates>1){
+				tmp<-t(sapply(all.fits,function(x) c(x$par,x$sig2,-x$value)))
+				colnames(tmp)<-c(paste(1:(nrates-1),"<->",2:nrates,sep=""),
+					paste("sig2(",1:nrates,")",sep=""),"log(L)")
+				rownames(tmp)<-1:niter
+			} else {
+				tmp<-t(sapply(all.fits,function(x) c(x$sig2.single,x$logL1)))
+				colnames(tmp)<-c("sig2(1)","log(L)")
+				rownames(tmp)<-1:niter
+			}
+			all.fits<-tmp[order(tmp[,"log(L)"],decreasing=TRUE),]
+		}
 		obj<-list(sig2=setNames(obj$sig2.multiple,1:nrates),
 			shift=if(nrates>1) setNames(fit$par,paste(1:(nrates-1),"<->",2:nrates,sep="")) else NULL,
-			vcv=vcv,tree=mtree,logL=obj$logL.multiple,convergence=fit$convergence,message=fit$message,
-			method=method,frequency.best=frequency.best)
+			vcv=vcv,tree=mtree,logL=obj$logL.multiple,convergence=fit$convergence,
+			message=fit$message,method=method,frequency.best=frequency.best,all.fits=all.fits)
 	} else {
 		mtree<-if(nrates>1) make.era.map(tree,c(0,fixed.shift)) else make.era.map(tree,0)
 		fit<-fn(mtree,x)
 		if(fit$convergence=="Optimization has converged.") fit$convergence<-0
 		obj<-list(sig2=setNames(fit$sig2.multiple,1:nrates),
 			shift=if(nrates>1) setNames(fixed.shift,paste(1:(nrates-1),"<->",2:nrates,sep="")) else NULL,
-			vcv=matrix(-1,2*nrates-1,2*nrates-1),tree=mtree,logL=fit$logL.multiple,convergence=fit$convergence,
-			method=method,message="Fitted rates from a fixed shifts",frequency.best=NA)
+			vcv=matrix(-1,2*nrates-1,2*nrates-1),tree=mtree,logL=fit$logL.multiple,
+			convergence=fit$convergence,method=method,message="Fitted rates from a fixed shifts",
+			frequency.best=NA)
 	}
 	class(obj)<-"rateshift"
 	if(plot) plot(obj,ftype="off")	
@@ -223,37 +266,48 @@ logLik.rateshift<-function(object,...){
 }
 
 ## S3 plot method for object of class "rateshift"
-## written by Liam J. Revell 2015, 2020, 2021
+## written by Liam J. Revell 2015, 2020, 2021, 2024
 plot.rateshift<-function(x,...){
-	if(length(x$sig2)>1){
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(-0.1*Ntip(x$tree),Ntip(x$tree))
+	if(hasArg(legend)) legend<-list(...)$legend
+	else legend<-TRUE
+	if(hasArg(lims)) lims<-list(...)$lims
+	else lims<-range(x$sig2)
+	if(length(x$sig2)>1||(lims[1]!=lims[2])){
 		if(hasArg(col)) col<-list(...)$col
 		else col<-c("blue","purple","red")
 		cols<-colorRampPalette(col)(101)
-		rr<-range(x$sig2)
-		names(cols)<-seq(rr[1],rr[2],by=diff(rr)/100)
+		names(cols)<-seq(lims[1],lims[2],by=diff(lims)/100)
 		ii<-sapply(x$sig2,function(x,y) order(abs(y-x))[1],
 			y=as.numeric(names(cols)))
 		colors<-setNames(cols[ii],names(ii))
-		args<-list(x=x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
-			colors=colors,...)
+		args<-list(x=x$tree,ylim=ylim,colors=colors,...)
 		args$col<-NULL
+		args$lims<-NULL
+		args$legend<-NULL
 		do.call(plot,args)
 		nulo<-lapply(x$shift,function(x,y) lines(rep(x,2),c(1,Ntip(y)),
 			lty="dotted",col="grey"),y=x$tree)
-		add.color.bar(leg=0.5*max(nodeHeights(x$tree)),cols=cols,
-			prompt=FALSE,x=0,y=-0.05*Ntip(x$tree),lims=round(rr,3),
-			title=expression(sigma^2))
+		if(legend){
+			add.color.bar(leg=0.5*max(nodeHeights(x$tree)),cols=cols,
+				prompt=FALSE,x=0,y=-0.05*Ntip(x$tree),lims=round(lims,3),
+				title=expression(sigma^2))
+		}
 	} else {
 		if(hasArg(col)) col<-list(...)$col
 		else col<-"blue"
 		colors<-setNames(col[1],1)
-		args<-list(x=x$tree,ylim=c(-0.1*Ntip(x$tree),Ntip(x$tree)),
-			colors=colors,...)
+		args<-list(x=x$tree,ylim=ylim,colors=colors,...)
 		args$col<-NULL
+		args$lims<-NULL
+		args$legend<-NULL
 		do.call(plot,args)
-		legend(x=0,y=0,
-			legend=bquote(sigma^2 == .(round(x$sig2,3))),
-			pch=15,col=colors,pt.cex=2,bty="n")
+		if(legend){
+			legend(x=0,y=0,
+				legend=bquote(sigma^2 == .(round(x$sig2,3))),
+				pch=15,col=colors,pt.cex=2,bty="n")
+		}
 	}
 }
 
@@ -290,3 +344,5 @@ likSurface.rateshift<-function(tree,x,nrates=2,shift.range=NULL,
 	}
 	invisible(obj)
 }
+
+anova.rateshift<-function(object,...) anova.fitMk(object,...)
