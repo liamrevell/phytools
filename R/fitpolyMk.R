@@ -1,6 +1,6 @@
 ## fitpolyMk 
 ## fits several polymorphic discrete character evolution models
-## written by Liam J. Revell 2019, 2020, 2022, 2023
+## written by Liam J. Revell 2019, 2020, 2022, 2023, 2024
 
 anova.fitpolyMk<-function(object,...) anova.fitMk(object,...)
 
@@ -42,6 +42,9 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			if(setequal(order,states)) states<-order
 			else cat("order & states do not match. using alphabetical order.\n")
 		}
+	} else {
+		if(hasArg(max.poly)) max.poly<-list(...)$max.poly
+		else max.poly<-length(states)
 	}
 	if(all(ns==1)&&return_matrix==FALSE){
 		cat("No polymorphic species found. Use fitMk.\n\n")
@@ -63,7 +66,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 			tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
 		} else {
 			ss<-vector()
-			for(i in 1:length(states))
+			for(i in 1:max.poly)
 				ss<-c(ss,apply(Combinations(length(states),i,states),
 					1,paste,collapse="+"))
 			tmodel<-matrix(0,length(ss),length(ss),dimnames=list(ss,ss))
@@ -115,7 +118,7 @@ fitpolyMk<-function(tree,x,model="SYM",ordered=FALSE,...){
 	}
 	object$model<-model
 	object$ordered<-ordered
-	if(ordered) attr(object$ordered,"max.poly")<-max.poly
+	attr(object$ordered,"max.poly")<-max.poly
 	class(object)<-"fitpolyMk"
 	object
 }
@@ -273,10 +276,11 @@ plot.fitpolyMk<-function(x,...){
 				col=make.transparent(par()$fg,0.7))
 		}
 	} else {
-		Ns<-inv.ncombn(nstates)
-		step.y<-2/(Ns-1)
+		nlevs<-attr(x$ordered,"max.poly")
+		Ns<-inv.ncombn(nstates,nlevs)
+		step.y<-2/(min(Ns,nlevs)-1)
 		v.x<-v.y<-vector()
-		for(i in 1:Ns){
+		for(i in 1:min(Ns,nlevs)){
 			nc<-ncombn(Ns,i)
 			v.x<-c(v.x,if(nc>1) seq(-1,1,by=2/(nc-1)) else 0)
 			v.y<-c(v.y,rep(1-rep((i-1)*step.y,nc)))
@@ -323,14 +327,15 @@ plot.fitpolyMk<-function(x,...){
 ## of r elements of n or calculate the number of elements n from the sum of
 ## all combinations from 1:r of n elements
 ncombn<-function(n,r) factorial(n)/(factorial(n-r)*factorial(r))
-inv.ncombn<-function(N){
-	n<-Nc<-1
+inv.ncombn<-function(N,m){
+	Nc<-n<-0
 	while(Nc!=N){
-		Nc<-0
-		for(r in 1:n) Nc<-Nc+factorial(n)/(factorial(n-r)*factorial(r))
-		n<-n+1
+ 		n<-n+1
+		tmp<-sapply(1:n,ncombn,n=n)
+		tmp<-if(length(tmp)<m) tmp else tmp[1:m]
+		Nc<-sum(tmp)
 	}
-	return(n-1)
+	n
 }
 inv.ncombn2<-function(N,m){
 	n<-2
