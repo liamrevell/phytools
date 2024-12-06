@@ -120,7 +120,8 @@ anc.OU<-function(tree,x,maxit=2000,...){
 	x<-x[tree$tip.label]
 	pp<-rep(NA,tree$Nnode+2)
 	pp[1:tree$Nnode+2]<-fastAnc(tree,x)
-	pp[1]<-phyl.vcv(as.matrix(c(x,pp[2:tree$Nnode+2])),vcvPhylo(tree),lambda=1)$R[1,1]
+	pp[1]<-phyl.vcv(as.matrix(c(x,setNames(pp[2:tree$Nnode+2],2:tree$Nnode+Ntip(tree)))),
+		vcvPhylo(tree),lambda=1)$R[1,1]
 	pp[2]<-a.init ## arbitrarily
 	fit<-optim(pp,likOU,tree=tree,x=x,trace=trace,method="L-BFGS-B",
 		lower=c(tol,tol,rep(-Inf,tree$Nnode)),upper=rep(Inf,length(pp)),
