@@ -131,6 +131,16 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
 			colors<-setNames(palette()[1:length(nn)],nn)
 		}
+		if(length(lty)==1){
+			nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
+			lty<-setNames(rep(lty,length(nn)),nn)
+		} else {
+			if(is.null(names(lty))){
+				nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
+				lty<-setNames(lty,nn)
+			}
+		}
+		print(lty)
 		for(i in 1:nrow(H)){
 			y<-H[i,1]
 			m<-diff(X[i,])/diff(H[i,])
@@ -139,13 +149,14 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 				b<-m*(a-H[i,1])+X[i,1]
 				if(i==1&&j==1&&!add) {
 					plot(a,b,col=colors[names(tree$maps[[i]])[j]],type=type,lwd=lwd,
-						lty=lty,xlim=xlim,ylim=ylim,log=log,asp=asp,axes=FALSE,xlab="",
+						lty=lty[names(tree$maps[[i]])[j]],xlim=xlim,ylim=ylim,log=log,
+						asp=asp,axes=FALSE,xlab="",
 						ylab="")
 					if(spread.labels) tt<-spreadlabels(tree,x[1:length(tree$tip)],
 						fsize=fsize,cost=spread.cost,range=spread.range,log=log) else 
 						tt<-x[1:length(tree$tip)]
-				} else lines(a,b,col=colors[names(tree$maps[[i]])[j]],lwd=lwd,lty=lty,
-					type=type)
+				} else lines(a,b,col=colors[names(tree$maps[[i]])[j]],lwd=lwd,
+					lty=lty[names(tree$maps[[i]])[j]],type=type)
 				y<-a[2]
 			}
 			if(tree$edge[i,2]<=length(tree$tip)){
