@@ -236,11 +236,17 @@ plot.fitfnMk<-function(x,...){
 	k<-length(x$states)
 	q1<-x$rates[1:(k-1)]
 	q2<-x$rates[k:(2*k-2)]
-	xx<-0:(k-2)+0.5
-	plot(xx,q1,type="b",col="blue",bty="n",las=1,
+	xx<-seq(0,(k-2)+0.5,length.out=100) ## 0:(k-2)+0.5
+	## compute actual polynomial function
+	X<-seq(0.5,(k-0.5),length.out=100)
+	qq1<-rep(0,100)
+	for(i in 0:x$degree[1]) qq1<-qq1+x$par[i+1]*xx^(x$degree[1]-i)
+	qq2<-rep(0,100)
+	for(i in 0:x$degree[2]) qq2<-qq2+par[x$degree[1]+i+2]*xx^(x$degree[2]-i)
+	plot(xx,qq1,type="l",col="blue",bty="n",las=1,
 		axes=FALSE,xlab="",ylab="transition rate (q)",
-		ylim=c(0,max(c(q1,q2))))
-	lines(xx,q2,type="b",col="red")
+		ylim=c(0,1.1*max(c(q1,q2))))
+	lines(xx,qq2,type="l",col="red")
 	labs<-mapply(function(x,y) bquote(.(x) %<->% .(y)),
 		x=x$states[1:(k-1)],y=x$states[2:k])
 	axis(1,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
@@ -248,7 +254,7 @@ plot.fitfnMk<-function(x,...){
 		MoreArgs=list(side=1,line=1,las=3,cex=0.7))
 	axis(2,las=1,cex.axis=0.8)
 	grid()
-	legend("bottomleft",c("forward","backward"),
+	legend("topright",c("forward","backward"),
 		col=c("blue","red"),
 		lty="solid",pch=1,cex=0.8)
 }
