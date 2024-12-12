@@ -236,17 +236,25 @@ plot.fitfnMk<-function(x,...){
 	k<-length(x$states)
 	q1<-x$rates[1:(k-1)]
 	q2<-x$rates[k:(2*k-2)]
-	xx<-seq(0,(k-2)+0.5,length.out=100) ## 0:(k-2)+0.5
+	xx<-seq(0.5,(k-2)+0.5,length.out=100)
 	## compute actual polynomial function
 	X<-seq(0.5,(k-0.5),length.out=100)
 	qq1<-rep(0,100)
 	for(i in 0:x$degree[1]) qq1<-qq1+x$par[i+1]*xx^(x$degree[1]-i)
+	qq1[qq1<0]<-0
 	qq2<-rep(0,100)
-	for(i in 0:x$degree[2]) qq2<-qq2+par[x$degree[1]+i+2]*xx^(x$degree[2]-i)
+	for(i in 0:x$degree[2]) qq2<-qq2+x$par[x$degree[1]+i+2]*xx^(x$degree[2]-i)
+	qq2[qq2<0]<-0
 	plot(xx,qq1,type="l",col="blue",bty="n",las=1,
 		axes=FALSE,xlab="",ylab="transition rate (q)",
-		ylim=c(0,1.1*max(c(q1,q2))))
+		ylim=c(0,1.1*max(c(qq1,qq2))))
+	points(0:(k-2)+0.5,q1,pch=16,
+		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
 	lines(xx,qq2,type="l",col="red")
+	points(0:(k-2)+0.5,q2,pch=16,
+		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
+	points(0:(k-2)+0.5,q1,pch=16,col="blue",cex=1)
+	points(0:(k-2)+0.5,q2,pch=16,col="red",cex=1)	
 	labs<-mapply(function(x,y) bquote(.(x) %<->% .(y)),
 		x=x$states[1:(k-1)],y=x$states[2:k])
 	axis(1,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
@@ -258,6 +266,7 @@ plot.fitfnMk<-function(x,...){
 		col=c("blue","red"),
 		lty="solid",pch=1,cex=0.8)
 }
+
 
 logLik.fitfnMk<-function(object,...){
 	lik<-object$logLik
