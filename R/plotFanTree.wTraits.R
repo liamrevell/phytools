@@ -48,7 +48,7 @@ plotFanTree.wTraits<-function(tree,X,type=c("arc","fan"),...){
 	par(lty="solid")
 	plotTree(tree,type=type,ftype="off",part=part,
 		lwd=1,add=TRUE,xlim=pp$x.lim,ylim=pp$y.lim,
-		arc_height=arc_height,ftype="off")
+		arc_height=arc_height,ftype="off",color=par()$fg)
 	par(lend=3)
 	for(i in 1:ncol(X)){
 		if(is.numeric(X[,i])){
