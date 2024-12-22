@@ -232,12 +232,15 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 		index.matrix[cbind(1:(k-1),2:k)]<-1:(k-1)
 		index.matrix[cbind(2:k,1:(k-1))]<-k:(2*k-2)
 		lik.f<-function(par) -lik(par,pw=pw,Y=x,pi=pi,degree=degree)
+		if(is.numeric(pi)[1]) PI<-pi else {
+			PI<-pruning(c(q1_est,q2_est),pw,x,model=index.matrix,pi=pi,return="pi")
+		}
 		object<-list(
 			logLik=-fit$objective,
 			rates=c(q1_est,q2_est),
 			index.matrix=index.matrix,
 			states=levs,
-			pi=pi,
+			pi=PI,
 			method=opt.method,
 			root.prior=root.prior,
 			opt_results=fit[c("convergence","iterations","evaluations","message")],
@@ -256,8 +259,10 @@ plot.fitfnMk<-function(x,...){
 	else mar<-c(5.1,4.1,4.1,4.1)
 	if(hasArg(log)) log<-list(...)$log
 	else log=""
-	if(hasArg(leg_pos)) leg_pos<-list(...)$leg_pos
-	else leg_pos<-"topright"
+	if(hasArg(args.legend)) args.legend<-list(...)$args.legend
+	else args.legend<-list()
+	if(hasArg(col)) col<-list(...)$col
+	else col<-c("blue","red")
 	k<-length(x$states)
 	q1<-x$rates[1:(k-1)]
 	q2<-x$rates[k:(2*k-2)]
@@ -273,35 +278,61 @@ plot.fitfnMk<-function(x,...){
 	if(hasArg(xlim)) xlim<-list(...)$xlim
 	else xlim<-range(pretty(c(0,max(x$rates))))
 	par(mar=mar)
-	plot(qq1,xx,type="l",col="blue",bty="n",las=1,
+	plot(qq1,xx-0.1,type="l",col=col[1],bty="n",las=1,
 		axes=FALSE,xlab="transition rate (q)",ylab="",
-		xlim=xlim,ylim=c(min(xx),1.05*max(xx)),log=log)
-	points(q1,0:(k-2)+0.5,pch=16,
-		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
-	lines(qq2,xx,type="l",col="red")
-	points(q2,0:(k-2)+0.5,pch=16,
-		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
-	points(q1,0:(k-2)+0.5,pch=16,col="blue",cex=1)
-	points(q2,0:(k-2)+0.5,pch=16,col="red",cex=1)	
+		xlim=xlim,ylim=c(min(xx)-0.1,max(xx)+0.1),log=log)
 	labs<-mapply(function(x,y) bquote(.(x) %->% .(y)),
 		x=x$states[1:(k-1)],y=x$states[2:k])
-	axis(2,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
-	nulo<-mapply(mtext,text=labs,at=seq(0.5,k-1.5,by=1),
+	axis(2,at=c(par()$usr[3],seq(0.4,k-1.6,by=1)),
+		tick=TRUE,labels=FALSE,col.ticks="transparent")
+	axis(2,at=seq(0.4,k-1.6,by=1),labels=rep("",k-1))
+	nulo<-mapply(mtext,text=labs,at=seq(0.4,k-1.6,by=1),
 		MoreArgs=list(side=2,line=1,las=3,cex=0.7))
-	axis(4,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
+	axis(4,at=c(seq(0.6,k-1.4,by=1),par()$usr[4]),
+		tick=TRUE,labels=FALSE,col.ticks="transparent")
+	axis(4,at=seq(0.6,k-1.4,by=1),labels=rep("",k-1))
 	labs<-mapply(function(x,y) bquote(.(x) %<-% .(y)),
 		x=x$states[1:(k-1)],y=x$states[2:k])
-	nulo<-mapply(mtext,text=labs,at=seq(0.5,k-1.5,by=1),
+	nulo<-mapply(mtext,text=labs,at=seq(0.6,k-1.4,by=1),
 		MoreArgs=list(side=4,line=1,las=3,cex=0.7))
+	points(q1,0:(k-2)+0.4,pch=16,
+		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
+	points(q1,0:(k-2)+0.4,pch=16,col=col[1],cex=1)
+	ss<-0:(k-2)+0.4
+	for(i in 1:length(q1)) 
+		arrows(par()$usr[1],ss[i],q1[i]-0.015*diff(par()$usr[1:2]),ss[i],
+			col=make.transparent(col[1],0.25),
+			length=0.1)
+	axis(1,at=c(par()$usr[1],pretty(c(0,max(x$rates)))),
+		tick=TRUE,labels=FALSE,col.ticks="transparent")
 	axis(1,las=1,cex.axis=0.8,
 		at=pretty(c(0,max(x$rates))))
-	clip(par()$usr[1],par()$usr[2],par()$usr[3],max(xx))
-	grid()
-	do.call("clip",as.list(par()$usr))
-	legend(leg_pos,c("forward","backward"),
-		col=c("blue","red"),
-		lty="solid",pch=16,cex=0.8,pt.cex=1,
-		bg=make.transparent("white",0.75))
+	usr<-par()$usr
+	par(usr=par()$usr[c(2,1,3,4)])
+	lines(qq2,xx+0.1,type="l",col=col[2])
+	points(q2,0:(k-2)+0.6,pch=16,
+		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
+	points(q2,0:(k-2)+0.6,pch=16,col=col[2],cex=1)	
+	ss<-0:(k-2)+0.6
+	for(i in 1:length(q1)) 
+		arrows(par()$usr[2],ss[i],q2[i]+0.015*diff(par()$usr[1:2]),ss[i],
+			col=make.transparent(col[2],0.25),
+			length=0.1)
+	axis(3,at=c(par()$usr[2],pretty(c(0,max(x$rates)))),
+		tick=TRUE,labels=FALSE,col.ticks="transparent")
+	axis(3,las=1,cex.axis=0.8,
+		at=pretty(c(0,max(x$rates))))
+	par(usr=usr)
+	if(is.null(args.legend$x)) args.legend$x<-"bottomleft"
+	if(is.null(args.legend$args.legend)) args.legend$legend<-c("forward","backward")
+	if(is.null(args.legend$cex)) args.legend$cex<-0.8
+	if(is.null(args.legend$pt.cex)) args.legend$pt.cex<-1
+	if(is.null(args.legend$bg)) args.legend$bg<-make.transparent("white",0.75)
+	args.legend$col<-col
+	args.legend$lty<-"solid"
+	args.legend$pch<-16
+	args.legend$cex<-0.8
+	do.call(legend,args.legend)
 }
 
 logLik.fitfnMk<-function(object,...){
