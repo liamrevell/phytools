@@ -100,7 +100,9 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 			for(i in 0:degree[2]) q2<-q2+par[degree[1]+i+2]*m^(degree[2]-i)
 			q1[q1<0]<-0
 			q2[q2<0]<-0
-			if(all(q1<0)||all(q2<0)){ 
+			if(any(is.nan(c(q1,q2)))){
+				return(Inf)
+			} else if(all(q1<0)||all(q2<0)){ 
 				return(Inf)
 			} else {
 				MODEL<-matrix(0,k,k,dimnames=list(colnames(Y),colnames(Y)))
@@ -113,8 +115,8 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 		xx<-0:(k-2)+0.5
 		if(is.null(start)) q1_start<-q2_start<--1
 		else if(start[1]=="smart"){
-			cat("Numerically optimizing simple equal-rates ordered model\n")
-			cat("  to get better random starting values....\n\n")
+			cat("\nNumerically optimizing simple equal-rates ordered model\n")
+			cat("  to get better random starting values....\n")
 			MODEL<-matrix(0,k,k,dimnames=list(colnames(x),colnames(x)))
 			MODEL[cbind(1:(k-1),2:k)]<-1
 			MODEL[cbind(2:k,1:(k-1))]<-2
@@ -129,7 +131,24 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 			q1_start[q1_start<0]<-0
 			q2_start[q2_start<0]<-0
 			if(all(q1_start==0)&&all(q2_start==0)) q1_start<-q2_start<--1	
-		} else if(is.numeric(start)) {
+		} else if(start[1]=="really smart"){
+			cat("\nNumerically optimizing ordered all-rates-different model\n")
+			cat("  to get better random starting values....\n")
+			MODEL<-matrix(0,k,k,dimnames=list(colnames(x),colnames(x)))
+			MODEL[cbind(1:(k-1),2:k)]<-1:(k-1)
+			MODEL[cbind(2:k,1:(k-1))]<-1:(k-1)+(k-1)
+			RATES<-fitMk(pw,x,model=MODEL,pi=pi,lik.func="pruning",rand_start=TRUE)$rates
+			lm1<-lm(RATES[1:(k-1)]~poly(xx,degree=degree[1],raw=TRUE))
+			lm2<-lm(RATES[1:(k-1)+(k-1)]~poly(xx,degree=degree[2],raw=TRUE))
+			start<-c(unclass(coef(lm1))[(degree[1]+1):1],
+				unclass(coef(lm2))[(degree[2]+1):1])
+			names(start)<-NULL
+			q1_start<-q2_start<-rep(0,length(xx))
+			for(i in 0:degree[1]) q1_start<-q1_start+start[i+1]*xx^(degree[1]-i)
+			for(i in 0:degree[2]) q2_start<-q2_start+start[degree[1]+i+2]*xx^(degree[2]-i)
+			q1_start[q1_start<0]<-0
+			q2_start[q2_start<0]<-0
+		} else if(is.numeric(start)){
 			q1_start<-q2_start<-rep(0,length(xx))
 			for(i in 0:degree[1]) q1_start<-q1_start+start[i+1]*xx^(degree[1]-i)
 			for(i in 0:degree[2]) q2_start<-q2_start+start[degree[1]+i+2]*xx^(degree[2]-i)
@@ -233,6 +252,12 @@ fitfnMk<-function(tree,x,model="polynomial",degree=2,...){
 }
 
 plot.fitfnMk<-function(x,...){
+	if(hasArg(mar)) mar<-list(...)$mar
+	else mar<-c(5.1,4.1,4.1,4.1)
+	if(hasArg(log)) log<-list(...)$log
+	else log=""
+	if(hasArg(leg_pos)) leg_pos<-list(...)$leg_pos
+	else leg_pos<-"topright"
 	k<-length(x$states)
 	q1<-x$rates[1:(k-1)]
 	q2<-x$rates[k:(2*k-2)]
@@ -245,28 +270,39 @@ plot.fitfnMk<-function(x,...){
 	qq2<-rep(0,100)
 	for(i in 0:x$degree[2]) qq2<-qq2+x$par[x$degree[1]+i+2]*xx^(x$degree[2]-i)
 	qq2[qq2<0]<-0
-	plot(xx,qq1,type="l",col="blue",bty="n",las=1,
-		axes=FALSE,xlab="",ylab="transition rate (q)",
-		ylim=c(0,1.1*max(c(qq1,qq2))))
-	points(0:(k-2)+0.5,q1,pch=16,
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-range(pretty(c(0,max(x$rates))))
+	par(mar=mar)
+	plot(qq1,xx,type="l",col="blue",bty="n",las=1,
+		axes=FALSE,xlab="transition rate (q)",ylab="",
+		xlim=xlim,ylim=c(min(xx),1.05*max(xx)),log=log)
+	points(q1,0:(k-2)+0.5,pch=16,
 		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
-	lines(xx,qq2,type="l",col="red")
-	points(0:(k-2)+0.5,q2,pch=16,
+	lines(qq2,xx,type="l",col="red")
+	points(q2,0:(k-2)+0.5,pch=16,
 		col=if(par()$bg=="transparent") "white" else par()$bg,cex=2)
-	points(0:(k-2)+0.5,q1,pch=16,col="blue",cex=1)
-	points(0:(k-2)+0.5,q2,pch=16,col="red",cex=1)	
-	labs<-mapply(function(x,y) bquote(.(x) %<->% .(y)),
+	points(q1,0:(k-2)+0.5,pch=16,col="blue",cex=1)
+	points(q2,0:(k-2)+0.5,pch=16,col="red",cex=1)	
+	labs<-mapply(function(x,y) bquote(.(x) %->% .(y)),
 		x=x$states[1:(k-1)],y=x$states[2:k])
-	axis(1,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
+	axis(2,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
 	nulo<-mapply(mtext,text=labs,at=seq(0.5,k-1.5,by=1),
-		MoreArgs=list(side=1,line=1,las=3,cex=0.7))
-	axis(2,las=1,cex.axis=0.8)
+		MoreArgs=list(side=2,line=1,las=3,cex=0.7))
+	axis(4,at=seq(0.5,k-1.5,by=1),labels=rep("",k-1))
+	labs<-mapply(function(x,y) bquote(.(x) %<-% .(y)),
+		x=x$states[1:(k-1)],y=x$states[2:k])
+	nulo<-mapply(mtext,text=labs,at=seq(0.5,k-1.5,by=1),
+		MoreArgs=list(side=4,line=1,las=3,cex=0.7))
+	axis(1,las=1,cex.axis=0.8,
+		at=pretty(c(0,max(x$rates))))
+	clip(par()$usr[1],par()$usr[2],par()$usr[3],max(xx))
 	grid()
-	legend("topright",c("forward","backward"),
+	do.call("clip",as.list(par()$usr))
+	legend(leg_pos,c("forward","backward"),
 		col=c("blue","red"),
-		lty="solid",pch=1,cex=0.8)
+		lty="solid",pch=16,cex=0.8,pt.cex=1,
+		bg=make.transparent("white",0.75))
 }
-
 
 logLik.fitfnMk<-function(object,...){
 	lik<-object$logLik
