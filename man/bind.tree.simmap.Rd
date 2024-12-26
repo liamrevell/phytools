@@ -13,7 +13,7 @@ bind.tree.simmap(x, y, where="root")
 	This function grafts tree \code{y} onto tree \code{x} at node \code{where}.
 }
 \details{
-	This function wraps around \code{\link{bind.tree}} for objects of class \code{"simmap"}; however it presently only allows \code{y} to be grafted at a node of \code{x} and it does not allow \code{y} to possess a root edge.
+	This function wraps around \code{\link[ape]{bind.tree}} for objects of class \code{"simmap"}; however it presently only allows \code{y} to be grafted at a node of \code{x} and it does not allow \code{y} to possess a root edge.
 }
 \value{
 	An object of class \code{"simmap"}.

@@ -21,7 +21,7 @@ phenogram95(tree, x=NULL, ...)
 	Plots phylogenies (or phylogenetic trees and comparative data) in a variety of different styles.
 }
 \details{
-	This function plots a phylogeny or phylogenetic tree and comparative data in a variety of different styles, depending on the value of \code{type}. In some instances, \code{fancyTree} is now just a wrappe for other \pkg{phytools} functions, such as \code{\link{contMap}} and \code{\link{densityMap}}.
+	This function plots a phylogeny or phylogenetic tree and comparative data in a variety of different styles, depending on the value of \code{type}. In some instances, \code{fancyTree} is now just a wrapper for other \pkg{phytools} functions, such as \code{\link{contMap}} and \code{\link{densityMap}}.
 	
 	If \code{type="extinction"} (or any unambiguous abbreviation) the function will plot a tree in which branches preceding the MRCA of all extant taxa and branches leading only to extinct lineages are plotted with dashed red lines. 
 	
@@ -55,7 +55,7 @@ phenogram95(tree, x=NULL, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link{drop.tip}}, \code{\link{phenogram}}, \code{\link{phylomorphospace3d}}, \code{\link{plot.phylo}}, \code{\link{plotSimmap}}
+	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link[ape]{drop.tip}}, \code{\link{phenogram}}, \code{\link{phylomorphospace3d}}, \code{\link[ape]{plot.phylo}}, \code{\link{plotSimmap}}
 }
 \examples{
 ## plot tree with extinction

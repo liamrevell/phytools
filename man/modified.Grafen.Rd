@@ -29,7 +29,7 @@ node.paths(tree, node)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{compute.brlen}}
+	\code{\link[ape]{compute.brlen}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

@@ -20,7 +20,7 @@ add.arrow(tree=NULL, tip, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{nodelabels}}
+	\code{\link[ape]{nodelabels}}
 }
 \examples{
 ## show arrows with a black outline

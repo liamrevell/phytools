@@ -19,11 +19,11 @@ extract.clade.simmap(tree, node)
 	This function drops one or multiple tips from an object of class \code{"simmap"}.
 }
 \details{
-	Equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} but for a tree with a mapped discrete character.
+	Equivalent to \code{\link[ape]{drop.tip}} and \code{\link[ape]{keep.tip}} but for a tree with a mapped discrete character.
 
-	\code{extract.clade.simmap} is functionally equivalent to \code{\link{extract.clade}} but preserves discrete character mappings on the tree.
+	\code{extract.clade.simmap} is functionally equivalent to \code{\link[ape]{extract.clade}} but preserves discrete character mappings on the tree.
 	
-	Following \code{\link{drop.tip}} in \pkg{ape}, the returned tree is always in \code{"cladewise"} order.
+	Following \code{\link[ape]{drop.tip}} in \pkg{ape}, the returned tree is always in \code{"cladewise"} order.
 }
 \value{
 	A modified object of class \code{"phylo"} containing the elements \code{maps} and \code{$mapped.edge} with the time spent in each state along each edge of the tree.
@@ -33,7 +33,7 @@ extract.clade.simmap(tree, node)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{drop.tip}}, \code{\link{extract.clade}}, \code{\link{make.simmap}}, \code{\link{read.simmap}}, \code{\link{sim.history}}
+	\code{\link[ape]{drop.tip}}, \code{\link[ape]{extract.clade}}, \code{\link[ape]{keep.tip}}, \code{\link{make.simmap}}, \code{\link{read.simmap}}, \code{\link{sim.history}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

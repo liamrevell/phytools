@@ -6,7 +6,7 @@
 }
 \arguments{
 	\item{x}{an object of class \code{"backbonePhylo"}.}
-	\item{order}{order. See \code{\link{reorder.phylo}} for possible orderings.}
+	\item{order}{order. See \code{\link[ape]{reorder.phylo}} for possible orderings.}
 	\item{...}{optional arguments.}
 }
 \description{

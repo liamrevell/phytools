@@ -1,9 +1,11 @@
 Package: phytools
-Version: 2.3-28
-Date: 2024-12-22
+Version: 2.4-1
+Date: 2024-12-26
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
-Author: Liam J. Revell
-Maintainer: Liam J. Revell <liam.revell@umb.edu>
+Authors@R: person(given = c("Liam", "J."),
+	family = "Revell",
+	role = c("aut", "cre"),
+	email = "liam.revell@umb.edu")
 Depends: R (>= 3.5.0), ape (>= 5.7), maps
 Imports: clusterGeneration, coda, combinat, DEoptim, doParallel, expm, 
 	foreach, graphics, grDevices, MASS, methods, mnormt, nlme, numDeriv, 

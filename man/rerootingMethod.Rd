@@ -35,7 +35,7 @@ rerootingMethod(tree, x, model=c("ER","SYM"), ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{ancr}}, \code{\link{fitMk}}, \code{\link{make.simmap}}
+	\code{\link[ape]{ace}}, \code{\link{ancr}}, \code{\link{fitMk}}, \code{\link{make.simmap}}
 }
 \keyword{phylogenetics}
 \keyword{bayesian}

@@ -21,7 +21,7 @@ linklabels(text,tips,link.type=c("bent","curved","straight"),
 	This function annotates a plot.
 }
 \seealso{
-	\code{\link{cladelabels}}, \code{\link{nodelabels}}, \code{\link{tiplabels}}
+	\code{\link{cladelabels}}, \code{\link[ape]{nodelabels}}, \code{\link[ape]{tiplabels}}
 }
 \references{
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.

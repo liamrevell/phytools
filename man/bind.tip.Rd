@@ -20,7 +20,7 @@ bind.tip(tree, tip.label, edge.length=NULL, where=NULL, position=0,
 \details{
 	 If the tree is ultrametric and no branch length is specified, then \code{edge.length} is scaled so that the tree remains ultrametric after the new tip is added.
 
-	Wrapper function for \pkg{ape} \code{\link{bind.tree}}. Note that \code{interactive=TRUE} works only for right-facing phylograms.
+	Wrapper function for \pkg{ape} \code{\link[ape]{bind.tree}}. Note that \code{interactive=TRUE} works only for right-facing phylograms.
 }
 \value{
 	An object of class \code{"phylo"}.

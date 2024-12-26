@@ -28,7 +28,7 @@ resolveAllNodes(tree)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{multi2di}}
+	\code{\link[ape]{multi2di}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

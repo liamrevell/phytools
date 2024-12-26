@@ -13,7 +13,7 @@ vcvPhylo(tree, anc.nodes=TRUE, ...)
 	Computes a phylogenetic variance-covariance matrix.
 }
 \details{
-	This function returns a so-called \emph{phylogenetic variance covariance matrix} (e.g., see \code{\link{vcv.phylo}}), but (optionally) including ancestral nodes, as well as under multiple evolutionary models.
+	This function returns a so-called \emph{phylogenetic variance covariance matrix} (e.g., see \code{\link[ape]{vcv.phylo}}), but (optionally) including ancestral nodes, as well as under multiple evolutionary models.
 	
 	\code{vcvPhylo} is designed primarily for internal use by other \emph{phytools} functions.
 }

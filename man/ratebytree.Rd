@@ -31,13 +31,13 @@ ratebytree(trees, x, ...)
 
 	At present it is not possible to specify different models to fit for the different trees - although if (for instance) character evolution on tree 1 proceeded by a strong \emph{OU} process while character evolution on tree 2 was by \emph{BM}, we would probably reject a constant-process model and tree 2 should show a very low value of \code{alpha}.
 	
-	To compute the standard errors for each fitted parameter value, the function computes the negative inverse of the Hessian matrix at the MLEs; however, if this matrix is computationally singular the generalized inverse (\code{\link{ginv}}) will be used instead without warning.
+	To compute the standard errors for each fitted parameter value, the function computes the negative inverse of the Hessian matrix at the MLEs; however, if this matrix is computationally singular the generalized inverse (\code{\link[MASS]{ginv}}) will be used instead without warning.
 
 	The function also conducts a likelihood-ratio test to compare the two models.
 	
 	For continuous character, optional arguments presently include the following: \code{model}, the model of continuous trait evolution (options are \code{"BM"}, the default, \code{"OU"}, and \code{"EB"}). \code{tol}, used as a minimum value for the fitting rates, to prevent problems in optimization. \code{trace}, a logical value indicating whether or not to report progress in the optimization. \code{test}, the method for hypothesis testing (options are \code{"chisq"} and \code{"simulation"}). \code{quiet}, a logical value indicating whether or not to run perfectly quietly. Finally, \code{se}, a list of vectors containing the standard errors for each value of \code{x}. 
 	
-	For \code{type="discrete"} the optional arguments are slightly different. The argument \code{model} can be used, but it must assume the values \code{"ER"}, \code{"SYM"}, \code{"ARD"}, or a numeric matrix following \code{\link{ace}}. 
+	For \code{type="discrete"} the optional arguments are slightly different. The argument \code{model} can be used, but it must assume the values \code{"ER"}, \code{"SYM"}, \code{"ARD"}, or a numeric matrix following \code{\link[ape]{ace}}. 
 	
 	Finally, for \code{type= "diversification"} models are so far \code{"birth-death"}, \code{"equal-extinction"}, and \code{"equal-specation"}, and \code{"Yule"}. It is also important to consider supplying the sampling fractions, \code{rho}, which is a vector of values between 0 and 1 of the same length as \code{trees}. If not provided the method will assume a sampling fraction of 1.0 for all trees - which is seldom true of empirical studies.
 }

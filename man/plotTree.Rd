@@ -24,7 +24,7 @@ plotTree(tree, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{plot.phylo}}, \code{\link{plotSimmap}}
+	\code{\link[ape]{plot.phylo}}, \code{\link{plotSimmap}}
 }
 \examples{
 data(vertebrate.tree)

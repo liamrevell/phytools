@@ -32,7 +32,7 @@ tree<-pbtree(n=100)
 trees<-rep(tree,100)
 }
 \seealso{
-	\code{\link{c.phylo}}, \code{\link{rep}}
+	\code{\link[ape]{c.phylo}}, \code{\link{rep}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

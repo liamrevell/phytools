@@ -45,7 +45,7 @@ lik.bd(theta, t, rho=1, N=NULL)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{birthdeath}}
+	\code{\link[ape]{birthdeath}}
 }
 \examples{
 data(salamanders)

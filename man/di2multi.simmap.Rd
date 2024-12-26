@@ -23,14 +23,14 @@
 	\item{...}{optional arguments: \code{tol}, length below which edges should be treated as having zero length; and \code{random}, specifying whether to resolve polytomies randomly (if \code{TRUE}) or in the order in which they are encountered.}
 }
 \description{
-	Collapses or resolves polytomies in special types of phylogenetic trees. (See \code{\link{di2multi}} and \code{\link{multi2di}}.)
+	Collapses or resolves polytomies in special types of phylogenetic trees. (See \code{\link[ape]{di2multi}} and \code{\link[ape]{multi2di}}.)
 }
 \details{
 	The method \code{di2multi} collapses branches of zero length (or, more specifically, branches with length shorter than \code{tol}) to create a polytomy in a tree or set of trees.
 	
 	The method \code{multi2di} resolves polytomies by adding branches of zero length (while preserving the mappings) in a tree or set of trees.
 
-	This methods should theoretically behave similarly to \code{\link{di2multi}} and \code{\link{multi2di}} from the \pkg{ape} package.
+	This methods should theoretically behave similarly to \code{\link[ape]{di2multi}} and \code{\link[ape]{multi2di}} from the \pkg{ape} package.
 }
 \value{
 	An object of class \code{"simmap"}, \code{"multiSimmap"}, \code{"contMap"}, or \code{"densityMap"}, depending on the class of \code{phy}.
@@ -40,7 +40,7 @@
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link{di2multi}}, \code{\link{make.simmap}}, \code{\link{multi2di}}, \code{\link{read.simmap}}
+	\code{\link{contMap}}, \code{\link{densityMap}}, \code{\link[ape]{di2multi}}, \code{\link{make.simmap}}, \code{\link[ape]{multi2di}}, \code{\link{read.simmap}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

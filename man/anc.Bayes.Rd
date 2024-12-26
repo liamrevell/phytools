@@ -35,7 +35,7 @@ anc.Bayes(tree, x, ngen=10000, control=list(), ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{anc.ML}}, \code{\link{anc.trend}}, \code{\link{evol.rate.mcmc}}, \code{\link{fastAnc}}
+	\code{\link[ape]{ace}}, \code{\link{anc.ML}}, \code{\link{anc.trend}}, \code{\link{ancr}}, \code{\link{evol.rate.mcmc}}, \code{\link{fastAnc}}
 }
 \examples{
 ## set seed

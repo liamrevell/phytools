@@ -7,7 +7,7 @@ likMlambda(lambda, X, C)
 \arguments{
 	\item{lambda}{scalar, usually on the interval 0,1 (although not required to be).}
 	\item{X}{data for various continuous character, in the form of a matrix.}
-	\item{C}{\emph{n} x \emph{n} matrix (for \emph{n} taxa) containing the height above the root for each pair of taxa in the tree (e.g., \code{\link{vcv.phylo}}).}
+	\item{C}{\emph{n} x \emph{n} matrix (for \emph{n} taxa) containing the height above the root for each pair of taxa in the tree (e.g., \code{\link[ape]{vcv.phylo}}).}
 }
 \description{
 	Likelihood function for joint estimation of Pagel's \eqn{\lambda} parameter.

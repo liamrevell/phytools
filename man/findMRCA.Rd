@@ -15,11 +15,11 @@ findMRCA(tree, tips=NULL, type=c("node","height"))
 \details{
 	This function returns node number of the most recent common ancestor of a set of taxa.
 	
-	If \code{tips==NULL} and \code{type="node"} (the default) it will return the result of a normal function call to \code{\link{mrca}}. 
+	If \code{tips==NULL} and \code{type="node"} (the default) it will return the result of a normal function call to \code{\link[ape]{mrca}}. 
 	
-	If \code{tips=NULL} and \code{type="height"} it will return a matrix equal to that produced by \code{\link{vcv.phylo}}.
+	If \code{tips=NULL} and \code{type="height"} it will return a matrix equal to that produced by \code{\link[ape]{vcv.phylo}}.
 	
-	From \pkg{phytools} 0.5-66 forward, \code{findMRCA} uses \code{\link{getMRCA}} in the \pkg{ape} package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package namespace to ensure backward compatibility.
+	From \pkg{phytools} 0.5-66 forward, \code{findMRCA} uses \code{\link[ape]{getMRCA}} in the \pkg{ape} package internally, which results in a big speed-up. Even though the two functions are thus totally redundant I have left \code{findMRCA} in the package namespace to ensure backward compatibility.
 }
 \value{
   The node number of the MRCA, or a matrix of node numbers (if \code{tips==NULL}) - for \code{type="node"}; or the height of the MRCA, or a matrix of heights (if \code{tips==NULL}) - for \code{type="height"}.
@@ -29,7 +29,7 @@ findMRCA(tree, tips=NULL, type=c("node","height"))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{findMRCA}}, \code{\link{mrca}}
+	\code{\link{findMRCA}}, \code{\link[ape]{mrca}}
 }
 \examples{
 data(anoletree)

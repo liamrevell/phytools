@@ -14,7 +14,7 @@ describe.simmap(tree, ...)
 	\item{tree}{a single tree or a set of trees as an object of class \code{"simmap"} or \code{"multiSimmap"}, respectively.}
 	\item{object}{object of class \code{"simmap"} or \code{"multiSimmap"}.}
 	\item{x}{for S3 \code{plot} method, an object of class \code{"describe.simmap"}.}
-	\item{...}{optional arguments which include: \code{plot}, a logical value indicating whether or not to plot the posterior probabilities at nodes (default is \code{plot=FALSE}); \code{check.equal}, a logical value indicating whether or not to check if all trees are equal using \code{\link{all.equal.phylo}} (default is \code{check.equal=FALSE}); and \code{message}, a logical indicating whether or not to print an informative message to the screen (default is \code{message=TRUE}).}
+	\item{...}{optional arguments which include: \code{plot}, a logical value indicating whether or not to plot the posterior probabilities at nodes (default is \code{plot=FALSE}); \code{check.equal}, a logical value indicating whether or not to check if all trees are equal using \code{\link[ape]{all.equal.phylo}} (default is \code{check.equal=FALSE}); and \code{message}, a logical indicating whether or not to print an informative message to the screen (default is \code{message=TRUE}).}
 }
 \description{
 	Summarizes the result of one or more stochastic maps.

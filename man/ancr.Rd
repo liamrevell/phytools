@@ -13,7 +13,7 @@ hide.hidden(object, ...)
 	\item{...}{optional arguments.}
 	\item{x}{in the case of \code{plot.ancr}, an object of class \code{"ancr"}.}
 	\item{args.plotTree}{arguments to be passed to \code{\link{plotTree}}, in a list.}
-	\item{args.nodelabels}{arguments to be passed to \code{\link{nodelabels}}, in a list.}
+	\item{args.nodelabels}{arguments to be passed to \code{\link[ape]{nodelabels}}, in a list.}
 }
 \description{
 	By default, \code{ancr} computes marginal ancestral states, also known as empirical Bayes posterior probabilities, conditioning on the fitted (or set) model of \code{object}.

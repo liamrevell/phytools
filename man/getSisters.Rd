@@ -19,7 +19,7 @@ getSisters(tree, node, mode=c("number","label"))
 	If \code{mode="number"} this function returns an integer or vector containing the node number of numbers of the sister node or tip. If \code{mode="label"} then this function returns a list containing up to two vectors: one for the node numbers of labels of sister nodes (if applicable); and the other containing the tip labels of the sister tips.
 }
 \seealso{
-	\code{\link{getDescendants}}, \code{\link{Siblings}}
+	\code{\link{getDescendants}}, \code{\link[phangorn]{Siblings}}
 }
 \references{
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.

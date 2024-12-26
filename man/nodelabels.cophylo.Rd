@@ -9,7 +9,7 @@ edgelabels.cophylo(..., which=c("left","right"))
 tiplabels.cophylo(..., which=c("left","right"))
 }
 \arguments{
-	\item{...}{arguments to be passed to \code{\link{nodelabels}}, \code{\link{edgelabels}}, or \code{\link{tiplabels}}.}
+	\item{...}{arguments to be passed to \code{\link[ape]{nodelabels}}, \code{\link[ape]{edgelabels}}, or \code{\link[ape]{tiplabels}}.}
 	\item{which}{argument indicated which of the two plotted trees (the \code{"left"} or \code{"right"} tree) to be used.}
 }
 \description{
@@ -25,7 +25,7 @@ tiplabels.cophylo(..., which=c("left","right"))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{cophylo}}, \code{\link{edgelabels}}, \code{\link{nodelabels}}, \code{\link{tiplabels}}
+	\code{\link{cophylo}}, \code{\link[ape]{edgelabels}}, \code{\link[ape]{nodelabels}}, \code{\link[ape]{tiplabels}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

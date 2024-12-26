@@ -1,6 +1,6 @@
 \name{fitmultiBM}
 \alias{fitmultiBM}
-\title{Fits bounded and wrapped Brownian motion models}
+\title{Fits multi-rate discrete character dependent continuous trait evolution}
 \usage{
 	fitmultiBM(tree, x, y=NULL, model="ER", ncat=1, ...)
 }

@@ -22,7 +22,7 @@ starTree(species, branch.lengths=NULL)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{stree}}
+	\code{\link[ape]{stree}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

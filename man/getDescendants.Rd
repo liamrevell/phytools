@@ -27,7 +27,7 @@ getParent(tree, node)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{Descendants}}, \code{\link{paintSubTree}}
+	\code{\link[phangorn]{Descendants}}, \code{\link{paintSubTree}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

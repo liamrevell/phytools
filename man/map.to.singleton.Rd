@@ -22,7 +22,7 @@ rootedge.to.singleton(tree)
 \details{	
 	The states for each edge are stored in \code{names(tree$edge.length)}. In a sense this is just an alternative way to use the general structure of the \code{"phylo"} object to encode a tree with a mapped character.	
 	
-	\code{plotTree.singletons} plots a tree with singleton nodes. Note that \code{\link{plotTree}} and \code{\link{plot.phylo}} now have no trouble graphing trees with singleton nodes - but they do this by just ignoring the singletons. \code{plotTree.singletons} marks the singletons as nodes on the plotted phylogeny.
+	\code{plotTree.singletons} plots a tree with singleton nodes. Note that \code{\link{plotTree}} and \code{\link[ape]{plot.phylo}} now have no trouble graphing trees with singleton nodes - but they do this by just ignoring the singletons. \code{plotTree.singletons} marks the singletons as nodes on the plotted phylogeny.
 	
 	\code{drop.tip.singleton} drops tips from the tree leaving ancestral nodes for all remaining tips as singletons. 
 	
@@ -38,7 +38,7 @@ rootedge.to.singleton(tree)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{collapse.singles}}, \code{\link{drop.tip}}, \code{\link{make.simmap}}
+	\code{\link[ape]{collapse.singles}}, \code{\link[ape]{drop.tip}}, \code{\link{make.simmap}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

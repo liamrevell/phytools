@@ -36,7 +36,7 @@ phyl.resid(tree, x, Y, method="BM")
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{phyl.pca}}, \code{\link{gls}}
+	\code{\link{phyl.pca}}, \code{\link[nlme]{gls}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

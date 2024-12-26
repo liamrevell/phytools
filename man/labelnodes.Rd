@@ -22,7 +22,7 @@ labelnodes(text, node=NULL, interactive=TRUE, shape=c("circle","ellipse",
 	Invisibly returns a vector of the node indices for the labeled nodes.
 }
 \seealso{
-	\code{\link{cladelabels}}, \code{\link{nodelabels}}
+	\code{\link{cladelabels}}, \code{\link[ape]{nodelabels}}
 }
 \references{
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.

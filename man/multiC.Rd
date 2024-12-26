@@ -12,7 +12,7 @@ multiC(tree, internal=FALSE)
 	Computes phylogenetic covariance matrices from a \code{"simmap"} object.
 }
 \details{
-	This function takes a modified \code{"phylo"} object as input and returns a set of so-called phylogenetic covariance matrices (e.g., see \code{\link{vcv.phylo}}) as a list: one for each mapped state.
+	This function takes a modified \code{"phylo"} object as input and returns a set of so-called phylogenetic covariance matrices (e.g., see \code{\link[ape]{vcv.phylo}}) as a list: one for each mapped state.
 	
 	Used internally by multiple \pkg{phytools} functions, such as \code{\link{brownie.lite}}.
 }
@@ -24,7 +24,7 @@ multiC(tree, internal=FALSE)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{evolvcv.lite}}, \code{\link{read.simmap}}, \code{\link{vcvPhylo}}, \code{\link{vcv.phylo}}
+	\code{\link{evolvcv.lite}}, \code{\link{read.simmap}}, \code{\link{vcvPhylo}}, \code{\link[ape]{vcv.phylo}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

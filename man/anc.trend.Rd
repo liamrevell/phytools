@@ -30,7 +30,7 @@ anc.trend(tree, x, maxit=2000)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{anc.Bayes}}, \code{\link{anc.ML}}, \code{\link{optim}}
+	\code{\link[ape]{ace}}, \code{\link{anc.Bayes}}, \code{\link{anc.ML}}, \code{\link{optim}}
 }
 \examples{
 ## simulate tree & data using fastBM with a trend (m!=0)

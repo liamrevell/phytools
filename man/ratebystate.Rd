@@ -30,7 +30,7 @@ ratebystate(tree, x, y, nsim=100, corr=c("pearson","spearman"), ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{fastAnc}}, \code{\link{pic}}
+	\code{\link{fastAnc}}, \code{\link[ape]{pic}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

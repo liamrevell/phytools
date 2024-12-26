@@ -8,8 +8,8 @@ midpoint_root(tree)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}.}
-	\item{node.labels}{argument to be passed to \code{\link{midpoint}}.}
-	\item{...}{optional arguments to be passed to \code{\link{midpoint}}.}
+	\item{node.labels}{argument to be passed to \code{\link[phangorn]{midpoint}}.}
+	\item{...}{optional arguments to be passed to \code{\link[phangorn]{midpoint}}.}
 }
 \description{
 	These functions midpoint root a rooted or unrooted tree (Farris 1972).
@@ -17,9 +17,9 @@ midpoint_root(tree)
 \details{
 	Midpoint rooting involves locating the midpoint of the longest path between any two tips and putting the root in that location. 
 	
-	The function \code{midpoint_root} performs the same operation as \code{\link{midpoint}} in the \pkg{phangorn} package, but uses no \pkg{phangorn} (Schliep, 2011) code internally.
+	The function \code{midpoint_root} performs the same operation as \code{\link[phangorn]{midpoint}} in the \pkg{phangorn} package, but uses no \pkg{phangorn} (Schliep, 2011) code internally.
 	
-	The function \code{midpoint.root} is a pseudo S3 method for the object class \code{"root"} that exists because when \code{\link{midpoint}} was created in \pkg{phangorn} it was not defined as a generic method. This function merely points to \code{\link{midpoint}} and is being deprecated out.
+	The function \code{midpoint.root} is a pseudo S3 method for the object class \code{"root"} that exists because when \code{\link[phangorn]{midpoint}} was created in \pkg{phangorn} it was not defined as a generic method. This function merely points to \code{\link[phangorn]{midpoint}} and is being deprecated out.
 }
 \value{
 	An object of class \code{"phylo"} containing a rooted phylogenetic tree.
@@ -35,7 +35,7 @@ midpoint_root(tree)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{midpoint}}, \code{\link{reroot}}, \code{\link{root}}
+	\code{\link[phangorn]{midpoint}}, \code{\link{reroot}}, \code{\link[ape]{root}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

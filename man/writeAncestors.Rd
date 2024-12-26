@@ -7,7 +7,7 @@ writeAncestors(tree, Anc=NULL, file="", digits=6, format=c("phylip","nexus"),
 }
 \arguments{
 	\item{tree}{a phylogenetic tree or set of trees as an object of class \code{"phylo"} or \code{"multiPhylo"}.}
-	\item{Anc}{a vector of ancestral states, a list containing the ancestral states and 95\% confidence intervals (as from \code{\link{fastAnc}} or \code{\link{ace}}, or a list of such results.}
+	\item{Anc}{a vector of ancestral states, a list containing the ancestral states and 95\% confidence intervals (as from \code{\link{fastAnc}} or \code{\link[ape]{ace}}, or a list of such results.}
 	\item{file}{an optional string with the filename for output.}
 	\item{digits}{an integer indicating the number of digits to print for branch lengths and ancestral character values.}
 	\item{format}{a string indicating whether to output the result in simple Newick (i.e., \code{"phylip"}) or Nexus format.}
@@ -24,7 +24,7 @@ writeAncestors(tree, Anc=NULL, file="", digits=6, format=c("phylip","nexus"),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{fastAnc}}, \code{\link{write.tree}}
+	\code{\link[ape]{ace}}, \code{\link{fastAnc}}, \code{\link[ape]{write.tree}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

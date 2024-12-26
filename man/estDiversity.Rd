@@ -8,7 +8,7 @@ estDiversity(tree, x, method=c("asr","simulation"), model="ER", ...)
 	\item{tree}{is a phylogenetic tree in \code{"phylo"} format.}
 	\item{x}{a vector containing the biogeographic area for each of the tip taxa.}
 	\item{method}{method for reconstructing ancestral biogeography.}
-	\item{model}{model for ancestral character estimation. In theory, any model from \code{\link{ace}}; however only symmetric models permitted for \code{method="asr"}.}
+	\item{model}{model for ancestral character estimation. In theory, any model from \code{\link[ape]{ace}}; however only symmetric models permitted for \code{method="asr"}.}
 	\item{...}{optional arguments. So far, this includes only \code{nsim}, the number of stochastic mappings to conduct using \code{\link{make.simmap}} for \code{method="simulation"}.}
 }
 \description{

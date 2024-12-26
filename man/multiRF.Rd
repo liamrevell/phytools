@@ -13,7 +13,7 @@ multiRF(trees,quiet=FALSE,multi2di=FALSE)
 	Computes the Robinson-Foulds (Robinson & Foulds 1981) distance between a set of trees in an object of class \code{"multiPhylo"}.
 }
 \details{
-	Computes the Robinson-Foulds distance between all phylogenies in an object of class \code{"multiPhylo"}. Uses \code{\link{prop.part}} internally for most of the heavy lifting.
+	Computes the Robinson-Foulds distance between all phylogenies in an object of class \code{"multiPhylo"}. Uses \code{\link[ape]{prop.part}} internally for most of the heavy lifting.
 }
 \value{
 	A matrix containing distances.

@@ -17,7 +17,7 @@ read.simmap(file="", text, format="nexus", rev.order=TRUE, version=1)
 \details{
 	This function now accepts trees in both SIMMAP v1.0 and SIMMAP v1.5 format. In addition, it can read a more flexible format than is produced by SIMMAP (for instance, multi-character mapped states and more than 7 mapped states).
 	
-	The function uses some modified code from \code{\link{read.nexus}} from the \pkg{ape} package to read the NEXUS block created by SIMMAP. Also creates the attribute \code{"map.order"} which indicates whether the stochastic map was read in from left to right or right to left.  This attribute is used by default by \code{\link{write.simmap}} to write the tree in the same order. 
+	The function uses some modified code from \code{\link[ape]{read.nexus}} from the \pkg{ape} package to read the NEXUS block created by SIMMAP. Also creates the attribute \code{"map.order"} which indicates whether the stochastic map was read in from left to right or right to left.  This attribute is used by default by \code{\link{write.simmap}} to write the tree in the same order. 
 }
 \value{
 	An object of class \code{"simmap"} (or list of such objects with class \code{"multiSimmap"}), consisting of a modified object of class \code{"phylo"} with at least the following additional elements:
@@ -33,7 +33,7 @@ read.simmap(file="", text, format="nexus", rev.order=TRUE, version=1)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{brownie.lite}}, \code{\link{evol.vcv}}, \code{\link{read.tree}}, \code{\link{read.nexus}}
+	\code{\link{brownie.lite}}, \code{\link{evol.vcv}}, \code{\link[ape]{read.nexus}}, \code{\link[ape]{read.tree}}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

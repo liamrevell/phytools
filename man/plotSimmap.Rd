@@ -27,7 +27,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{offset}{offset for the tip labels in character widths.}
 	\item{direction}{plotting direction. Options are \code{"rightwards"} (the default), \code{"leftwards"}, \code{"upwards"} or \code{"downwards"}. For \code{method="fan"} \code{direction} is ignored.}
 	\item{type}{plot type. Can be \code{"phylogram"}, \code{"fan"}, or \code{"cladogram"}. Only a subset of options are presently available for \code{type="fan"}.}
-	\item{setEnv}{logical value indicating whether or not to set the environment \code{.PlotPhyloEnv}. Setting this to \code{TRUE} (the default) will allow compatibility with \pkg{ape} labeling functions such as \code{\link{nodelabels}}.}
+	\item{setEnv}{logical value indicating whether or not to set the environment \code{.PlotPhyloEnv}. Setting this to \code{TRUE} (the default) will allow compatibility with \pkg{ape} labeling functions such as \code{\link[ape]{nodelabels}}.}
 	\item{part}{value between 0 and 1 for \code{type="fan"} indicating what fraction of the full circular tree to use as plotting area. For instance, \code{part=0.5} will plot a half fan phylogeny. It also affects the axis scaling used.}
 	\item{xlim}{x-limits for the plot.}
 	\item{ylim}{y-limits for the plot.}
@@ -39,7 +39,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{lend}{line end style. See \code{\link{par}}.}
 	\item{asp}{aspect ratio. See \code{\link{plot.window}}.}
 	\item{outline}{logical value indicating whether or not to draw a black outline around the plotted edges of the tree.}
-	\item{plot}{logical value indicating whether or not to actually plot the tree. (See equivalent argument in \code{\link{plot.phylo}}.)}
+	\item{plot}{logical value indicating whether or not to actually plot the tree. (See equivalent argument in \code{\link[ape]{plot.phylo}}.)}
 	\item{underscore}{logical value indicating whether to plot the underscore character, \code{"_"} (if \code{underscore=TRUE}) or substitute for a space. Defaults to \code{underscore=FALSE}.}
 	\item{arc_height}{for \code{type="arc"} trees, the height of the arc in units of total tree depth.}
 	\item{x}{for S3 plotting method, object of class \code{"simmap"} or \code{"multiSimmap"}.}

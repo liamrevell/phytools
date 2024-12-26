@@ -11,7 +11,7 @@ writeNexus(tree, file="")
 \description{
 	Writes one or multiple phylogenetic trees to file in NEXUS format. 
 	
-	Somewhat redundant with \code{\link{write.nexus}}.
+	Somewhat redundant with \code{\link[ape]{write.nexus}}.
 }
 \value{
 	Trees written to file.
@@ -21,7 +21,7 @@ writeNexus(tree, file="")
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-  \code{\link{write.simmap}}, \code{\link{write.nexus}}
+  \code{\link{write.simmap}}, \code{\link[ape]{write.nexus}}
 }
 \keyword{phylogenetics}
 \keyword{input/output}

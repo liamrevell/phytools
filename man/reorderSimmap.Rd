@@ -6,7 +6,7 @@ reorderSimmap(tree, order="cladewise", index.only=FALSE, ...)
 }
 \arguments{
 	\item{tree}{a modified object of class \code{"phylo"}.}
-	\item{order}{\code{"cladewise"}, \code{"pruningwise"}, or any other allowable order permitted by \code{\link{reorder.phylo}}.}
+	\item{order}{\code{"cladewise"}, \code{"pruningwise"}, or any other allowable order permitted by \code{\link[ape]{reorder.phylo}}.}
 	\item{index.only}{logical value indicating whether only an index should be returned.}
 	\item{...}{other arguments.}
 }
@@ -21,7 +21,7 @@ reorderSimmap(tree, order="cladewise", index.only=FALSE, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{reorder.phylo}}, \code{\link{plotSimmap}}
+	\code{\link[ape]{reorder.phylo}}, \code{\link{plotSimmap}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

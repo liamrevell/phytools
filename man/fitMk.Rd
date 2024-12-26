@@ -70,7 +70,7 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 	
 	Finally, the function \code{fitHRM} fits a hidden-rate M\emph{k} model following Beaulieu et al. (2013). For the hidden-rate model we need to specify a number of rate categories for each level of the trait - and this can be a vector of different values for each trait. We can also choose a model (\code{"ER"}, \code{"SYM"}, or \code{"ARD"}), as well as whether or not to treat the character as a 'threshold' trait (\code{umbral=TRUE}, defaults to \code{FALSE}). This latter model is basically one that allows absorbing conditions for some hidden states. Since this can be a difficult optimization problem, the optional argument \code{niter} sets the number of optimization iterations to be run. \code{niter} defaults to \code{niter=10}. To fit the same default hidden-rates model as is implemented in \pkg{corHMM}, one should set \code{corHMM_model=TRUE} and \code{ordered_hrm=FALSE}.
 
-	Note that (by default) both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link{ace}} in the \pkg{ape} package for computing the likelihood. (If the optional argument \code{pruning=TRUE} then alternative, slightly faster, \pkg{phytools} code for the pruning algorithm is used.) \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
+	Note that (by default) both \code{fitMk} and \code{fitmultiMk} recycle code from \code{\link[ape]{ace}} in the \pkg{ape} package for computing the likelihood. (If the optional argument \code{pruning=TRUE} then alternative, slightly faster, \pkg{phytools} code for the pruning algorithm is used.) \code{fitpolyMk}, \code{mcmcMk}, and \code{fitHRM} use \code{fitMk} internally to compute the likelihood.
 }
 \value{
 	An object of class \code{"fitMk"}, \code{"fitmultiMk"}, \code{"fitpolyMk"}, \code{"mcmcMk"}, \code{"fitHRM"}, \code{"fitgammaMk"}, or \code{"fitfnMk"}. In the case of \code{density.mcmcMk} an object of class \code{"density.mcmcMk"}.
@@ -90,7 +90,7 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{make.simmap}}
+	\code{\link[ape]{ace}}, \code{\link{make.simmap}}, \code{\link{simmap}}
 }
 \examples{
 ## load tree and data from Revell & Collar (2009)

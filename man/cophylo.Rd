@@ -38,7 +38,7 @@ cotangleplot(tr1, tr2, type=c("cladogram","phylogram"),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{cophyloplot}}, \code{\link{plotSimmap}}
+	\code{\link[ape]{cophyloplot}}, \code{\link{plotSimmap}}
 }
 \examples{
 ## load data from Lopez-Vaamonde et al. (2001)

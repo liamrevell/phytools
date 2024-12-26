@@ -17,7 +17,7 @@ optim.phylo.ls(D, stree=NULL, set.neg.to.zero=TRUE, fixed=FALSE,
 	Phylogenetic inference using the method of least-squares (Cavalli-Sforza & Edwards, 1967).
 }
 \details{
-	Function uses \code{\link{nni}} from the \pkg{phangorn} package (Schliep 2011) to conduct NNIs for topology estimation.
+	Function uses \code{\link[phangorn]{nni}} from the \pkg{phangorn} package (Schliep 2011) to conduct NNIs for topology estimation.
 	
 	Since topology optimization is performed using NNIs, convergence to the true least-squares topology is not guaranteed. It is consequently probably wise to start with a very good tree - such as a NJ tree.
 }
@@ -37,7 +37,7 @@ optim.phylo.ls(D, stree=NULL, set.neg.to.zero=TRUE, fixed=FALSE,
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{exhaustiveMP}}, \code{\link{nni}}
+	\code{\link{exhaustiveMP}}, \code{\link[phangorn]{nni}}
 }
 \keyword{phylogenetics}
 \keyword{phylogeny inference}

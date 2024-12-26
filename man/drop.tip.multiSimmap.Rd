@@ -15,7 +15,7 @@
 	This function drops or keeps one or multiple tips from all the trees of an object of class \code{"multiSimmap"}.	
 }
 \details{
-	Equivalent to \code{\link{drop.tip}} and \code{\link{keep.tip}} in \pkg{ape}.
+	Equivalent to \code{\link[ape]{drop.tip}} and \code{\link[ape]{keep.tip}} in \pkg{ape}.
 
 	This function merely wraps \code{\link{drop.tip.simmap}}.
 }
@@ -27,7 +27,7 @@
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{drop.tip}}, \code{\link{drop.tip.multiPhylo}}, \code{\link{drop.tip.simmap}}
+	\code{\link[ape]{drop.tip}}, \code{\link[ape]{drop.tip.multiPhylo}}, \code{\link{drop.tip.simmap}}, \code{\link[ape]{keep.tip}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

@@ -25,7 +25,7 @@ export.as.xml(file, trees, X)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{make.simmap}}, \code{\link{read.nexus}}, \code{\link{read.simmap}}, \code{\link{write.simmap}}
+	\code{\link{make.simmap}}, \code{\link[ape]{read.nexus}}, \code{\link{read.simmap}}, \code{\link{write.simmap}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

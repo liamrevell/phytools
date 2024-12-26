@@ -35,7 +35,7 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ace}}, \code{\link{anc.Bayes}}, \code{\link{fastAnc}}, \code{\link{optim}}
+	\code{\link[ape]{ace}}, \code{\link{anc.Bayes}}, \code{\link{ancr}} \code{\link{fastAnc}}, \code{\link{optim}}
 }
 \examples{
 ## load data from Garland et al. (1992)

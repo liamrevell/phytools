@@ -13,7 +13,7 @@ plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE,
 	\item{piecol}{a named vector containing the colors for the posterior probabilities plotted as pie charts at internal nodes.}
 	\item{tipcol}{a string indicating  whether the tip colors should be based on the input data (\code{"input"}) or sampled tip liabilities (\code{"estimated"}). These will only differ if there is uncertainty in the tip states.}
 	\item{legend}{logical value or text to be plotted in the legend.}
-	\item{...}{other arguments to be passed to \code{\link{plot.phylo}} - \code{label.offset} should be >0 so that tip labels and species names do not overlap.}
+	\item{...}{other arguments to be passed to \code{\link[ape]{plot.phylo}} - \code{label.offset} should be >0 so that tip labels and species names do not overlap.}
 }
 \description{
 	Plots estimated posterior probabilities at nodes under the threshold model.
@@ -33,7 +33,7 @@ plotThresh(tree, x, mcmc, burnin=NULL, piecol, tipcol="input", legend=TRUE,
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{ancThresh}}, \code{\link{plot.phylo}}
+	\code{\link{ancThresh}}, \code{\link[ape]{plot.phylo}}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

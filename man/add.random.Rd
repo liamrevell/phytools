@@ -19,7 +19,7 @@ add.random(tree, n=NULL, tips=NULL, edge.length=NULL, order=c("random","input"))
 	
 	The probability that at new tip is added along any branch is directly proportional to the length of the branch.
 
-	Note that sometimes the resultant tree plotted with \code{\link{plot.phylo}} or \code{\link{plotSimmap}} may display with branches crossing. If so, the tree can be 'untangled' using \code{\link{untangle}}.
+	Note that sometimes the resultant tree plotted with \code{\link[ape]{plot.phylo}} or \code{\link{plotSimmap}} may display with branches crossing. If so, the tree can be 'untangled' using \code{\link{untangle}}.
 }
 \value{
 	An object of class \code{"phylo"}.

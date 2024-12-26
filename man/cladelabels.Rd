@@ -36,7 +36,7 @@ arc.cladelabels(tree=NULL, text, node=NULL, ln.offset=1.02,
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{nodelabels}}
+	\code{\link[ape]{nodelabels}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}

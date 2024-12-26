@@ -19,7 +19,7 @@ getCladesofSize(tree, clade.size=2)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
-	\code{\link{extract.clade}}, \code{\link{getDescendants}}
+	\code{\link[ape]{extract.clade}}, \code{\link{getDescendants}}
 }
 \keyword{phylogenetics}
 \keyword{utilities}
