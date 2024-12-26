@@ -140,7 +140,6 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 				lty<-setNames(lty,nn)
 			}
 		}
-		print(lty)
 		for(i in 1:nrow(H)){
 			y<-H[i,1]
 			m<-diff(X[i,])/diff(H[i,])
