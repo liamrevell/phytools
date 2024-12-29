@@ -82,7 +82,7 @@ densityMap<-function(trees,res=100,fsize=NULL,ftype=NULL,lwd=3,check=FALSE,legen
 
 ## S3 plot method for objects of class "densityMap"
 ## also used internally by plot.contMap
-## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020, 2022, 2023
+## written by Liam J. Revell 2012, 2013, 2014, 2015, 2016, 2020, 2022, 2023, 2024
 
 plot.densityMap<-function(x,...){
 	if(inherits(x,"densityMap")){
@@ -222,6 +222,7 @@ plot.densityMap<-function(x,...){
 					prompt=FALSE,
 					x=mean(par()$usr[1:2])-0.5*legend,
 					y=par()$usr[3]+0.1*diff(par()$usr[3:4]),
+					lwd=lwd[2],
 					fsize=fsize[2])
 			} else {
 				add.color.bar(legend,cols,
