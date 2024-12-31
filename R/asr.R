@@ -467,7 +467,8 @@ ancr.fitMk<-function(object,...){
 			if(hasArg(trace)) trace<-list(...)$trace
 			else trace<-0
 			if(trace>=1) cat("Trying \"local\" estimation....\n")
-			result<-marginal_local(object,tips=tips,parallel=parallel,trace=trace)
+			result<-marginal_local(object,tips=tips,parallel=parallel,
+				trace=trace,...)
 		}
 	} else if(type=="joint"){
 		if(hasArg(tol)) tol<-list(...)$tol
