@@ -1,5 +1,99 @@
 ## functions to do the pruning algorithm and reconstruct ancestral states
 
+marginal_local<-function(object,tips=FALSE,parallel=FALSE,...){
+	if(hasArg(trace)) trace<-list(...)$trace
+	else trace<-0
+	tree<-object$tree
+	x<-object$data
+	model<-object$index.matrix
+	model[is.na(model)]<-0
+	pi<-if(object$root.prior=="stationary") "estimated" else
+		if(object$root.prior=="flat") "equal" else
+		if(object$root.prior=="nuisance") "fitzjohn" else
+		if(object$root.prior=="given") object$pi
+	k<-ncol(x)
+	ace<-if(tips==FALSE) matrix(NA,tree$Nnode,ncol(x),
+			dimnames=list(1:tree$Nnode+Ntip(tree),colnames(x))) else
+		matrix(NA,Ntip(tree)+tree$Nnode,ncol(x),
+			dimnames=list(c(tree$tip.label,1:tree$Nnode+Ntip(tree)),
+			colnames(x)))
+	xx<-rbind(x,rep(0,ncol(x)))
+	rownames(xx)[nrow(xx)]<-"node"
+	nodes<-if(tips) 1:(Ntip(tree)+tree$Nnode) else 1:tree$Nnode+Ntip(tree)
+	if(!parallel){
+		for(i in 1:length(nodes)){
+			if(trace>=1){
+				cat(paste("Working on node",nodes[i],"...\n"))
+				flush.console()
+			}
+			logL<-setNames(rep(NA,length(levels(x))),levels(x))
+			tt<-bind.tip(tree,"node",edge.length=0,where=nodes[i])
+			if(nodes[i]==(Ntip(tree)+1)&&is.numeric(pi)&&(sum(pi==0)==(k-1))){
+				logL[which(pi!=0)]<-logLik(object)
+				logL[which(pi==0)]<--Inf
+			} else if(nodes[i]<=Ntip(tree)&&sum(xx[i,]==0)==(k-1)){
+				logL[which(xx[i,]!=0)]<-logLik(object)
+				logL[which(xx[i,]==0)]<--Inf
+			} else {
+				for(j in 1:ncol(x)){
+					xx["node",j]<-1
+					fit<-fitMk(tt,xx,model=model,pi=pi,lik.func="pruning")
+					logL[j]<-logLik(fit)-log(1/k)
+					xx["node",]<-0
+				}
+			}
+			if(nodes[i]==(Ntip(tree)+1)){ 
+				lnL<-log(sum((1/k)*exp(logL)))
+				attr(lnL,"df")<-max(model)
+			}
+			ace[i,]<-exp(logL)/sum(exp(logL))
+		}
+	} else {
+		if(hasArg(ncores)) ncores<-list(...)$ncores
+		else ncores<-min(nrow(object$tree$edge),detectCores()-1)
+		if(trace>0){
+			cat(paste("Opened cluster with",ncores,"cores.\n"))
+			cat("Running optimization iterations in parallel.\n")
+			cat("Please wait....\n")
+			flush.console()
+		}
+		mc<-makeCluster(ncores,type="PSOCK")
+		registerDoParallel(cl=mc)
+		lnL<-foreach(i=1:length(nodes))%dopar%{
+			logL<-setNames(rep(NA,length(levels(x))),levels(x))
+			tt<-phytools::bind.tip(tree,"node",edge.length=0,where=nodes[i])
+			if(nodes[i]==(ape::Ntip(tree)+1)&&is.numeric(pi)&&(sum(pi==0)==(k-1))){
+				logL[which(pi!=0)]<-logLik(object)
+				logL[which(pi==0)]<--Inf
+			} else if(nodes[i]<=ape::Ntip(tree)&&sum(xx[i,]==0)==(k-1)){
+				logL[which(xx[i,]!=0)]<-logLik(object)
+				logL[which(xx[i,]==0)]<--Inf
+			} else {
+				for(j in 1:ncol(x)){
+					xx["node",j]<-1
+					fit<-phytools::fitMk(tt,xx,model=model,pi=pi,lik.func="pruning")
+					logL[j]<-logLik(fit)-log(1/k)
+					xx["node",]<-0
+				}
+			}
+			logL
+		}
+		stopCluster(mc)
+		ace[]<-t(sapply(lnL,function(x) exp(x)/sum(exp(x))))
+		lnL<-log(sum((1/k)*exp(lnL[[1]])))
+		attr(lnL,"df")<-max(model)
+	}
+	result<-list(
+		ace=ace,
+		logLik=lnL
+	)
+	attr(result,"type")<-c("marginal","local")
+	attr(result,"tree")<-tree
+	attr(result,"data")<-x
+	class(result)<-"ancr"
+	result
+}
+
 joint_asr<-function(q,tree,X,pi,model=NULL,tips=FALSE,tol=1e-12){
 	tol<-tol*max(nodeHeights(tree))
 	tipn<-1:Ntip(tree)
@@ -98,7 +192,7 @@ plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
 		} else args.plotTree$offset<-2
 	}
 	do.call(plotTree,args.plotTree)
-	if(TYPE=="marginal"){
+	if("marginal"%in%TYPE){
 		if(nrow(x$ace)==Nnode(TREE)){
 			args.nodelabels$pie<-x$ace
 			data<-attr(x,"data")
@@ -106,7 +200,7 @@ plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
 			args.nodelabels$pie<-x$ace[1:Nnode(TREE)+Ntip(TREE),,drop=FALSE]
 			data<-x$ace[1:Ntip(TREE),,drop=FALSE]
 		} else cat("Warning: wrong number of rows in input object.\n\n")
-	} else if(TYPE=="joint"){
+	} else if("joint"%in%TYPE){
 		if(length(x$ace)==Nnode(TREE)){
 			data<-attr(x,"data")
 			args.nodelabels$pie<-to.matrix(x$ace,colnames(data))
@@ -126,7 +220,7 @@ plot.ancr<-function(x,args.plotTree=list(...),args.nodelabels=list(...),...){
 			args.nodelabels$cex<-min(c(0.5*min(par()$pin)/sqrt(Ntip(TREE)),0.5))
 		}
 	}
-	k<-if(TYPE=="marginal") ncol(x$ace) else ncol(attr(x,"data"))
+	k<-if("marginal"%in%TYPE) ncol(x$ace) else ncol(attr(x,"data"))
 	if(is.null(args.nodelabels$piecol)){
 		args.nodelabels$piecol<-palette.colors(k,"Polychrome 36",recycle=TRUE)
 		if(k>36) 
@@ -183,8 +277,10 @@ logLik.ancr<-function(object,...){
 print.ancr<-function(x,digits=6,printlen=6,...){
 	Nnode<-Nnode(attr(x,"tree"))
 	if(!is.null(printlen)) if(printlen>Nnode) printlen<-Nnode
-	if(attr(x,"type")=="marginal"){
-		cat("Marginal ancestral state estimates:\n")
+	if("marginal"%in%attr(x,"type")){
+		if("local"%in%attr(x,"type")) 
+			cat("Marginal ancestral state estimates\n  (local method):\n")
+		else cat("Marginal ancestral state estimates:\n")
 		if (is.null(printlen)) 
 			print(round(x$ace,digits))
 		else {
@@ -194,7 +290,7 @@ print.ancr<-function(x,digits=6,printlen=6,...){
 			print(round(x$ace[ii,],digits))
 			cat("...\n")
 		}
-	} else if(attr(x,"type")=="joint"){
+	} else if("joint"%in%attr(x,"type")){
 		cat("Joint ancestral state estimates:\n")
 		tmp<-data.frame(state=x$ace)
 		if(is.null(printlen)) print(tmp)
@@ -326,6 +422,8 @@ ancr.fitMk<-function(object,...){
 	else expm.method<-"Higham08.b"
 	if(hasArg(parallel)) parallel<-list(...)$parallel
 	else parallel<-FALSE ## only for lik.func="eigen"
+	if(hasArg(local)) local<-list(...)$local
+	else local<-FALSE
 	if(lik.func=="eigen"){
 		QQ<-object$index.matrix
 		diag(QQ)<--rowSums(QQ)
@@ -338,32 +436,39 @@ ancr.fitMk<-function(object,...){
 	model[is.na(model)]<-0
 	pi<-object$pi
 	if(type=="marginal"){
-		if(lik.func=="pruning"){
-			plik<-pruning(q,tree,x,model=model,pi=pi,
-				return="conditional",expm.method=expm.method)
-		} else if(lik.func=="parallel"){
-			plik<-parallel_pruning(q,tree,x,model=model,pi=pi,
-				return="conditional",expm.method=expm.method)
-		} else if(lik.func=="eigen"){
-			plik<-eigen_pruning(q,tree,x,eQQ,pi=pi,return="conditional")
+		if(!local){
+			if(lik.func=="pruning"){
+				plik<-pruning(q,tree,x,model=model,pi=pi,
+					return="conditional",expm.method=expm.method)
+			} else if(lik.func=="parallel"){
+				plik<-parallel_pruning(q,tree,x,model=model,pi=pi,
+					return="conditional",expm.method=expm.method)
+			} else if(lik.func=="eigen"){
+				plik<-eigen_pruning(q,tree,x,eQQ,pi=pi,return="conditional")
+			}
+			ace<-marginal_asr(q,tree,plik,model,tips,
+				parallel=if((lik.func=="parallel")||parallel) TRUE else FALSE,
+				expm.method=expm.method,
+				eigen=if(lik.func=="eigen") TRUE else FALSE)
+			result<-if(lik.func=="parallel") list(ace=ace,
+				logLik=parallel_pruning(q,tree,x,model=model,pi=pi,
+				expm.method=expm.method)) else 
+				if(lik.func=="pruning") list(ace=ace,logLik=pruning(q,
+				tree,x,model=model,pi=pi,expm.method=expm.method)) else 
+				if(lik.func=="eigen") list(ace=ace,
+				logLik=eigen_pruning(q,tree,x,eigenQ=eQQ))
+			if(lik.func=="parallel") stopCluster(mc)
+			attr(result$logLik,"df")<-max(model)
+			attr(result,"type")<-c("marginal","global")
+			attr(result,"tree")<-tree
+			attr(result,"data")<-x
+			class(result)<-"ancr"
+		} else {
+			if(hasArg(trace)) trace<-list(...)$trace
+			else trace<-0
+			if(trace>=1) cat("Trying \"local\" estimation....\n")
+			result<-marginal_local(object,tips=tips,parallel=parallel,trace=trace)
 		}
-		ace<-marginal_asr(q,tree,plik,model,tips,
-			parallel=if((lik.func=="parallel")||parallel) TRUE else FALSE,
-			expm.method=expm.method,
-			eigen=if(lik.func=="eigen") TRUE else FALSE)
-		result<-if(lik.func=="parallel") list(ace=ace,
-			logLik=parallel_pruning(q,tree,x,model=model,pi=pi,
-			expm.method=expm.method)) else 
-			if(lik.func=="pruning") list(ace=ace,logLik=pruning(q,
-			tree,x,model=model,pi=pi,expm.method=expm.method)) else 
-			if(lik.func=="eigen") list(ace=ace,
-			logLik=eigen_pruning(q,tree,x,eigenQ=eQQ))
-		if(lik.func=="parallel") stopCluster(mc)
-		attr(result$logLik,"df")<-max(model)
-		attr(result,"type")<-"marginal"
-		attr(result,"tree")<-tree
-		attr(result,"data")<-x
-		class(result)<-"ancr"
 	} else if(type=="joint"){
 		if(hasArg(tol)) tol<-list(...)$tol
 		else tol<-1e-12
