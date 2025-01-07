@@ -32,16 +32,23 @@ phylomorphospace3d(tree, X, A=NULL, label=TRUE, control=list(),
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+## load data
 data(anoletree)
 data(anole.data)
+
+## run phylogenetic PCA
 anole.pca<-phyl.pca(anoletree,anole.data)
+
 \dontrun{
+## create dynamic plot using rgl
 phylomorphospace3d(anoletree,scores(anole.pca)[,1:3],
     control=list(spin=FALSE))}
-par(cex=0.5)
+
+## create static plot
+par(cex=0.5) ## adjust font size
 phylomorphospace3d(anoletree,scores(anole.pca)[,1:3],
     method="static",angle=-30)
-par(cex=1)
+par(cex=1) ## reset to default
 }
 \seealso{
 	\code{\link{fancyTree}}, \code{\link{phenogram}}, \code{\link{phylomorphospace}}

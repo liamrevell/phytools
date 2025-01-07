@@ -23,13 +23,19 @@ add.arrow(tree=NULL, tip, ...)
 	\code{\link[ape]{nodelabels}}
 }
 \examples{
-## show arrows with a black outline
+## load tree
 data(anoletree)
+
+## plot tree
 plotTree(anoletree,type="fan",fsize=0.7,ftype="i")
+
+## add lwd=5 arrows in black
 add.arrow(anoletree,tip=c("cuvieri","krugi",
     "pulchellus","poncensis","stratulus",
     "evermanni","cooki","cristatellus",
     "gundlachi","occultus"),lwd=5,arrl=1)
+
+## overlay thinner arrows to create outline effect
 add.arrow(anoletree,tip="cuvieri",col="green",
     lwd=3,arrl=1)
 add.arrow(anoletree,tip=c("krugi","pulchellus",
@@ -40,10 +46,14 @@ add.arrow(anoletree,tip=c("cooki","cristatellus",
     "gundlachi"),col="brown",lwd=3,arrl=1)
 add.arrow(anoletree,tip="occultus",col="darkgrey",
     lwd=3,arrl=1)
+	
+## add legend
 legend(x="topleft",c("crown-giant","grass-bush","trunk-crown","trunk-ground",
     "twig"),pch=22,pt.bg=c("green","#E4D96F","darkgreen",
     "brown","darkgrey"),cex=0.9,
     pt.cex=2,title="PR ecomorphs",bty="n")
+	
+## reset plotting parameters
 par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
 }
 \keyword{phylogenetics}

@@ -40,16 +40,23 @@ anc.Bayes(tree, x, ngen=10000, control=list(), ...)
 \examples{
 ## set seed
 set.seed(77)
+
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## extract character of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
     rownames(mammal.data)))
+
 ## run MCMC (should be run at least 1e6 generations)
 mcmc<-anc.Bayes(mammal.tree,ln.bodyMass,
     ngen=50000)
-print(mcmc,printlen=20) ## estimates
+
+## print object to review estimates
+print(mcmc,printlen=20)
+
+## plot likelihood trace and root density
 par(mfrow=c(2,1))
 plot(mcmc,bty="l",main="Likelihood-profile from MCMC",
     font.main=3) ## likelihood-profile
@@ -57,7 +64,9 @@ plot(density(mcmc,what=Ntip(mammal.tree)+1,
     burnin=20000),bty="l",
     main="Posterior density for root state of log(body mass)",
     font.main=3)
-par(mfrow=c(1,1)) ## reset par to default
+	
+## reset par to default
+par(mfrow=c(1,1))
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

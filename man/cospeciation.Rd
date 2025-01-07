@@ -42,10 +42,15 @@ cospeciation(t1, t2, distance=c("RF","SPR"),
 ## load data from Lopez-Vaamonde et al. (2001)
 data(wasp.trees)
 data(wasp.data)
+
 ## test for cospeciation
 wasp.cosp<-cospeciation(wasp.trees[[1]],wasp.trees[[2]],
     assoc=wasp.data)
+
+## print results
 print(wasp.cosp)
+
+## plot null distribution & test statistic
 plot(wasp.cosp)
 title(main=paste("Simulated distribution of RF distances\n",
     "between unassociated trees"),font.main=3)

@@ -9,8 +9,8 @@ hide.hidden(object, ...)
 \method{plot}{ancr}(x, args.plotTree=list(...), args.nodelabels=list(...), ...)
 }
 \arguments{
-	\item{object}{fitted M\emph{k} model (presently object of class \code{"fitMk"}, \code{"fitpolyMk"}, and \code{"fitHRM"}), or a set of models in the form of a table from \code{anova} comparison. For \code{hide.hidden}, object of class \code{"ancr"}.}
-	\item{...}{optional arguments.}
+	\item{object}{fitted model (presently object of class \code{"bounded_bm"}, \code{"fitgammaMk"}, \code{"fitHRM"}, \code{"fitMk"}, \code{"fitpolyMk"}, \code{"fitThresh"}, or \code{"fitmultiBM"}), or a set of models in the form of a table from \code{anova} comparison. For \code{hide.hidden}, an object of class \code{"ancr"}.}
+	\item{...}{optional arguments. Depending on the input object class, may include \code{type} (whether to undertake marginal or joint estimation, defaults to \code{type="marginal"}) and \code{local} (whether to do global or local estimation, following Pagel 1999, defaults to \code{local=FALSE}).}
 	\item{x}{in the case of \code{plot.ancr}, an object of class \code{"ancr"}.}
 	\item{args.plotTree}{arguments to be passed to \code{\link{plotTree}}, in a list.}
 	\item{args.nodelabels}{arguments to be passed to \code{\link[ape]{nodelabels}}, in a list.}
@@ -28,7 +28,9 @@ hide.hidden(object, ...)
 	If the input object is a set of models (in the form of an \code{anova} table), then \code{ancr} will compute model-averaged marginal ancestral states (for \code{type="marginal"}, unless the optional argument \code{weighted=FALSE}, in which case only the best-supported model is used.
 }
 \value{
-	An object of class \code{"ancr"}. In the case of \code{type="marginal"}, this object consists of a matrix of marginal (empirical Bayes) probabilities and a likelihood. In the case of \code{type="joint"}, the object contains a set of most-likely internal node states stored in a data frame.
+	An object of class \code{"ancr"}.
+	
+	For most input obect types, in the case of \code{type="marginal"}, this object consists of a matrix of marginal (empirical Bayes) probabilities and a likelihood. In the case of \code{type="joint"}, the object contains a set of most-likely internal node states stored in a data frame.
 }
 \references{
 	Pagel, M. (1999) The Maximum Likelihood approach to reconstructing ancestral character states of discrete characters on phylogenies. \emph{Systematic Biology}, \bold{3}, 612-622.
@@ -43,39 +45,48 @@ hide.hidden(object, ...)
 ## load tree and data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract discrete character (feeding mode)
 fmode<-setNames(sunfish.data$feeding.mode,
-  rownames(sunfish.data))
+    rownames(sunfish.data))
+
 ## fit ARD model
 ard_fmode<-fitMk(sunfish.tree,fmode,model="ARD",
-  pi="fitzjohn")
+    pi="fitzjohn")
+
 ## compute ancestral states
 anc_fmode<-ancr(ard_fmode)
+
 ## plot the results
 par(mfrow=c(2,1))
 cols<-setNames(c("blue","red"),levels(fmode))
 plot(anc_fmode,
-  args.plotTree=list(lwd=2,direction="upwards",
-    mar=c(0.1,1.1,2.1,1.1),fsize=0.8),
-  args.nodelabels=list(piecol=cols),
-  args.tiplabels=list(cex=0.3),
-  legend="bottomright")
+    args.plotTree=list(lwd=2,direction="upwards",
+        mar=c(0.1,1.1,2.1,1.1),fsize=0.8),
+    args.nodelabels=list(piecol=cols),
+    args.tiplabels=list(cex=0.3),
+    legend="bottomright")
 mtext("a) marginal states under ARD model",adj=0)
+
 ## fit ER model
 er_fmode<-fitMk(sunfish.tree,fmode,model="ER",
-  pi="fitzjohn")
+    pi="fitzjohn")
+
 ## compare models
 aov_fmode<-anova(er_fmode,ard_fmode)
+
 ## compute model-averaged ancestral states
 anc_fmode_model.averaged<-ancr(aov_fmode)
 plot(anc_fmode_model.averaged,
-  args.plotTree=list(lwd=2,direction="upwards",
-    mar=c(0.1,1.1,2.1,1.1),fsize=0.8),
-  args.nodelabels=list(piecol=cols),
-  args.tiplabels=list(cex=0.3),
-  legend="bottomright")
+    args.plotTree=list(lwd=2,direction="upwards",
+        mar=c(0.1,1.1,2.1,1.1),fsize=0.8),
+    args.nodelabels=list(piecol=cols),
+    args.tiplabels=list(cex=0.3),
+    legend="bottomright")
 mtext("b) marginal states model-averaging ER & ARD models",
-  adj=0)
+    adj=0)
+
+## reset par to default
 par(mar=c(5.1,4.1,4.1,2.1),mfrow=c(1,1))
 }
 \keyword{ancestral states}

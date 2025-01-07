@@ -33,9 +33,11 @@ fastAnc(tree, x, vars=FALSE, CI=FALSE, ...)
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## extract character of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
     rownames(mammal.data)))
+
 ## estimate ancestral body sizes
 fit.BM<-fastAnc(mammal.tree,ln.bodyMass,CI=TRUE)
 print(fit.BM,printlen=10)

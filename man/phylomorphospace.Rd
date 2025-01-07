@@ -44,15 +44,18 @@ project.phylomorphospace(tree, X, nsteps=200, sleep=0,
 ## load tree & data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## set colors for mapped discrete character
 cols<-setNames(c("blue","red"),
     levels(sunfish.data$feeding.mode))
+
+## graph phylomorphospace
 phylomorphospace(sunfish.tree,sunfish.data[,3:2],
     colors=cols,bty="l",ftype="off",node.by.map=TRUE,
     node.size=c(0,1.2),xlab="relative buccal length",
     ylab="relative gape width")
 title(main="Phylomorphospace of buccal morphology in Centrarchidae",
-    font.main=3)	
+    font.main=3)
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

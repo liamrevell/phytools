@@ -27,16 +27,28 @@ plotTree.lollipop(tree, x, args.plotTree=list(), args.lollipop=list(), ...)
 	\code{\link{phylo.heatmap}}, \code{\link{plotTree.barplot}}
 }
 \examples{
+## load tree
 data(anoletree)
+
+## convert to simple "phylo" object
 anole_tree<-as.phylo(anoletree)
+
+## load trait data
 data(anole.data)
+
+## create new data frame with size &
+## residuals of other traits
 anole_data<-cbind(phyl.resid(anole_tree,
-  x=as.matrix(anole.data[,"SVL",drop=FALSE]),
-  Y=as.matrix(anole.data[,c(6,4,2)]))$resid,
-  exp(anole.data[,"SVL",drop=FALSE]))
+    x=as.matrix(anole.data[,"SVL",drop=FALSE]),
+    Y=as.matrix(anole.data[,c(6,4,2)]))$resid,
+    exp(anole.data[,"SVL",drop=FALSE]))
+
+## create plot
 plotTree.lollipop(anole_tree,anole_data,
-  ylab=c("relative (TL)","relative (FLL)",
-    "relative (HL)","SVL"))
+    ylab=c("relative (TL)","relative (FLL)",
+        "relative (HL)","SVL"))
+
+## reset margins to default
 par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}

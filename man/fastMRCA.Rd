@@ -34,8 +34,12 @@ fastDist(tree, sp1, sp2)
 	\code{\link[ape]{getMRCA}}, \code{\link{findMRCA}}, \code{\link[ape]{mrca}}
 }
 \examples{
+## simulate 2000-tip tree
 tree<-pbtree(n=2000)
-anc<-fastMRCA(tree,"t1","t15")
+
+## find the MRCA of two randomly chosen tips
+tips<-sample(tree$tip.label,2)
+anc<-fastMRCA(tree,tips[1],tips[2])
 }
 \keyword{phylogenetics}
 \keyword{utilities}

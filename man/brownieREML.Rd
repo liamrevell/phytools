@@ -1,6 +1,6 @@
 \name{brownieREML}
 \alias{brownieREML}
-\title{REML version of brownie.lite}
+\title{REML version of \code{brownie.lite}}
 \usage{
 brownieREML(tree, x, maxit=2000, ...)
 }
@@ -40,12 +40,16 @@ brownieREML(tree, x, maxit=2000, ...)
 ## load data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract character of interest
 gape.width<-setNames(sunfish.data$gape.width,
     rownames(sunfish.data))
+
 ## fit model
 multiBM.reml<-brownieREML(sunfish.tree,
-	gape.width)
+    gape.width)
+
+## print fitted model
 print(multiBM.reml)
 }
 \keyword{phylogenetics}

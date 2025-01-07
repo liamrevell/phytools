@@ -26,14 +26,6 @@ tree.grow(..., res=200, direction="rightwards", ladderize=TRUE)
 \seealso{
 	\code{\link{pbtree}}
 }
-\examples{
-\dontrun{
-## to create a .gif with ImageMagick installed
-png(file="pbtree-%03d.png",width=1000,height=600,res=144)
-tree.grow(b=0.06,d=0.02,t=100)
-dev.off()
-system("ImageMagick convert -delay 5 -loop 0 *.png pbtree-anim.gif")}
-}
 \keyword{phylogenetics}
 \keyword{plotting}
 \keyword{comparative method}

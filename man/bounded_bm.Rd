@@ -11,10 +11,10 @@
 	\item{...}{optional arguments.}
 }
 \description{
-	Fits a bounded Brownian motion model using the discrete approximation of Boucher & Demery (2016).
+	Fits a bounded Brownian motion model using the discrete approximation of Boucher & Demery (2016), or the "wrapped" or circular model of Juhn et al. (In review).
 }
 \details{
-	Optional arguments.
+	Optional arguments include (but are not limited to): \code{parallel}, defaults to \code{parallel=FALSE}; \code{df}, to adjust the degrees of freedom of the model, depending on whether or not the bounds have been set from the observed data; \code{levs}, number of levels for the discretization (defaults to \code{levs=200}); and \code{wrapped}, logical indicating whether to fit the "circular" or wrapped model, instead of the standard bounded model (defaults to \code{wrapped=FALSE}).
 }
 \value{
 	An object of class \code{"bounded_bm"}.
@@ -29,6 +29,27 @@
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
 	\code{\link{fitMk}}, \code{\link{fitmultiBM}}, \code{\link{fitThresh}}
+}
+\examples{
+\dontrun{
+## load tree and data
+data(eel.tree)
+data(eel.data)
+
+## extract trait of interval
+maxTL<-setNames(eel.data$Max_TL_cm,
+    rownames(eel.data))
+
+## fit bounded model
+eel_bounded<-bounded_bm(eel.tree,maxTL,levs=200,
+    parallel=TRUE,lims=range(maxTL))
+
+## fit unbounded model
+eel_unbounded<-bounded_bm(eel.tree,maxTL,levs=200,
+    parallel=TRUE)
+
+## compare models using AIC
+AIC(eel_bounded,eel_unbounded)}
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

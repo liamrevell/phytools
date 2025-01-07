@@ -51,11 +51,14 @@ plotTree.boxplot(tree, x, args.plotTree=list(), args.boxplot=list(),
 ## load data from Mahler et al. (2010)
 data(anoletree)
 data(anole.data)
+
 ## extract overall body size (SVL)
 svl<-setNames(anole.data$SVL,rownames(anole.data))
+
 ## plotTree.wBars
 plotTree.wBars(anoletree,svl,type="fan",scal=0.5)
 par(mar=c(5.1,4.1,4.1,2.1))
+
 ## plotTree.barplot
 plotTree.barplot(anoletree,exp(svl),
     args.plotTree=list(fsize=0.5),
@@ -64,6 +67,7 @@ plotTree.barplot(anoletree,exp(svl),
 ## load vertebrate tree and data
 data(vertebrate.tree)
 data(vertebrate.data)
+
 ## plotTree.barplot
 options(scipen=4) ## change sci-notation
 par(cex.axis=0.8)

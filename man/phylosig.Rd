@@ -58,11 +58,13 @@ phylosig(tree, x, method="K", test=FALSE, nsim=1000, se=NULL, start=NULL,
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## extract characters of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
     rownames(mammal.data)))
 ln.homeRange<-log(setNames(mammal.data$homeRange,
     rownames(mammal.data)))
+
 ## compute phylogenetic signal K
 K.bodyMass<-phylosig(mammal.tree,ln.bodyMass,
     test=TRUE)
@@ -72,6 +74,7 @@ K.homeRange<-phylosig(mammal.tree,ln.homeRange,
     test=TRUE)
 print(K.homeRange)
 plot(K.homeRange)
+
 ## compute phylogenetic signal lambda
 lambda.bodyMass<-phylosig(mammal.tree,ln.bodyMass,
     method="lambda",test=TRUE)

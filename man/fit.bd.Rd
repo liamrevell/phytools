@@ -48,17 +48,23 @@ lik.bd(theta, t, rho=1, N=NULL)
 	\code{\link[ape]{birthdeath}}
 }
 \examples{
+## load tree
 data(salamanders)
+
 ## compute sampling fraction based on 55 species of Plethodon
 sampling.f<-Ntip(salamanders)/55
+
 ## fit birth-death model
 bd.fit<-fit.bd(salamanders,rho=sampling.f)
 print(bd.fit)
+
 ## fit Yule model
 yule.fit<-fit.yule(salamanders,rho=sampling.f)
 print(yule.fit)
+
 ## compare b-d and yule models
 anova(yule.fit,bd.fit)
+
 ## create a likelihood surface for b-d model
 ngrid<-100
 b<-seq(0.01,0.06,length.out=ngrid)

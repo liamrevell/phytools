@@ -36,7 +36,7 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 }
 \arguments{
 	\item{tree}{an object of class \code{"phylo"}. In the case of \code{fitmultiMk} an object of class \code{"simmap"} with a mapped discrete character.}
-	\item{x}{a vector (or numeric matrix) of tip values for species; \code{names(x)} should be the species names. In the case of \code{plot} and \code{density} methods, an object of the appropriate class.}
+	\item{x}{a vector (or numeric matrix) of tip values for species; \code{names(x)} (or \code{rownames(x)}) should be the species names. In the case of \code{plot} and \code{density} methods, an object of the appropriate class.}
 	\item{model}{model. See \code{make.simmap} or \code{ace} for details. For \code{fitfnMk} the only option is presently \code{model="polynomial"}.}
 	\item{fixedQ}{fixed value of transition matrix \code{Q}, if one is desired.}
 	\item{ordered}{for \code{fitpolyMk}, a logical value indicating whether or not the character should be treated as ordered. For now the function assumes alphanumerical order (i.e., numbers sorted by their initial and then successive digits followed by characters or character strings in alphabetical order).}
@@ -56,9 +56,9 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 	
 	\code{plot.fitMk} plots an object of class \code{"fitMk"} returned by \code{fitMk}. \code{plot.gfit} plots an object of class \code{"gfit"} from \pkg{geiger}'s \code{fitDiscrete} function. Both plots portray the fitted model using a graph of arrows connecting states.
 	
-	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree. It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree.
+	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree following Revell et al. (2024). It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree.
 	
-	The function \code{fitgammaMk} fits an M\emph{k} model in which the edge rates are assumed to have been sampled randomly from a \eqn{\Gamma} distribution with mean of 1.0 and shape parameter \eqn{\alpha}.
+	The function \code{fitgammaMk} fits an M\emph{k} model in which the edge rates are assumed to have been sampled randomly from a \eqn{\Gamma} distribution with mean of 1.0 and shape parameter \eqn{\alpha} (Revell and Harmon, In review).
 	
 	The function \code{fitfnMk} fit an ordered M\emph{k} model in which the backward and forward transition rates between adjacent levels of the trait vary according to a functional form. Presently that function form is an \emph{n}th degree polynomial, in which \code{degree} is set by the user (but defaults to \code{degree = 2}).
 	
@@ -87,6 +87,11 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 	
 	Revell, L. J. and L. J. Harmon (2022) \emph{Phylogenetic Comparative Methods in R}. Princeton University Press.
+	
+	Revell, L. J. and L. J. Harmon. In review. A discrete character evolution model for phylogenetic comparative biology with \eqn{\Gamma}-distributed rate heterogeneity among branches of the tree.
+	
+	Revell, L. J., K. P. Schliep, D. L. Mahler, and T. Ingram (2024) Testing for heterogeneous rates of discrete character evolution on phylogenies. \emph{Journal of Evolutionary Biology}, \bold{37}, 1591-1602.
+	
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
@@ -96,34 +101,43 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 ## load tree and data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract discrete character (feeding mode)
 fmode<-setNames(sunfish.data$feeding.mode,
     rownames(sunfish.data))
+
 ## fit "ER" model
 fit.ER<-fitMk(sunfish.tree,fmode,model="ER")
 print(fit.ER)
+
 ## fit "ARD" model
 fit.ARD<-fitMk(sunfish.tree,fmode,model="ARD")
 print(fit.ARD)
+
 ## compare the models
 AIC(fit.ER,fit.ARD)
 
 ## load tree and data from Benitez-Alvarez et al. (2000)
 data(flatworm.data)
 data(flatworm.tree)
+
 ## extract discrete character (habitat)
 habitat<-setNames(flatworm.data$Habitat,
     rownames(flatworm.data))
+
 ## fit polymorphic models "ER" and "transient"
 fitpoly.ER<-fitpolyMk(flatworm.tree,habitat,
     model="ER")
 fitpoly.transient<-fitpolyMk(flatworm.tree,habitat,
     model="transient")
+
 ## print fitted models
 print(fitpoly.ER)
 print(fitpoly.transient)
+
 ## compare model
 AIC(fitpoly.ER,fitpoly.transient)
+
 ## plot models
 par(mfrow=c(2,1))
 plot(fitpoly.ER)
@@ -131,6 +145,8 @@ mtext("a) ER polymorphic model",adj=0,line=1)
 plot(fitpoly.transient)
 mtext("b) Transient polymorphic model",adj=0,
      line=1)
+
+## reset par to default
 par(mfrow=c(1,1))
 }
 \keyword{phylogenetics}

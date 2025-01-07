@@ -42,13 +42,15 @@ phenogram(tree, x, fsize=1.0, ftype="reg", colors=NULL, axes=list(),
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## extract character of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
-  rownames(mammal.data)))
+    rownames(mammal.data)))
+
 ## plot traitgram
 phenogram(mammal.tree,ln.bodyMass,ftype="i",
-  spread.cost=c(1,0),fsize=0.7,color=palette()[4],
-  xlab="time (ma)",ylab="log(body mass)",las=1)
+    spread.cost=c(1,0),fsize=0.7,color=palette()[4],
+    xlab="time (ma)",ylab="log(body mass)",las=1)
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

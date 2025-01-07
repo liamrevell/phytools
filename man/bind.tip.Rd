@@ -30,33 +30,44 @@ bind.tip(tree, tip.label, edge.length=NULL, where=NULL, position=0,
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+## set seed
 set.seed(123)
+
+## subdivide plotting device
 par(mfrow=c(3,1))
+
 ## generate tree
 tree<-pbtree(b=0.1, n=10)
+
 ## plot original tree
 plotTree(tree,mar=c(2.1,0.1,2.1,0.1))
 axisPhylo()
 mtext("a)",adj=0)
+
 ## add an extant tip ("t_extant") sister to taxon 't5'
 ## with divergence time of 4.5 Ma
-node <- which(tree$tip.label=="t5")
-tree <- bind.tip(tree, tip.label="t_extant",
-  where=node, position=4.5)
-# plot to see the result
+node<-which(tree$tip.label=="t5")
+tree<-bind.tip(tree, tip.label="t_extant",
+    where=node, position=4.5)
+
+## re-plot to see the result
 plotTree(tree,mar=c(2.1,0.1,2.1,0.1))
 axisPhylo()
 mtext("b)",adj=0)
+
 ## add an extinct tip ("t_extinct") sister to 't2' with
 ## divergence time of 7.8 Ma and duration (edge length) of
 ## 3.3 Ma
-node <- which(tree$tip.label=="t2")
-tree <- bind.tip(tree, tip.label="t_extinct", where=node,
-  position=7.8, edge.length=3.3)
-## plot to see the result
+node<-which(tree$tip.label=="t2")
+tree<-bind.tip(tree, tip.label="t_extinct", where=node,
+    position=7.8, edge.length=3.3)
+
+## re-plot to see the result
 plotTree(tree,mar=c(2.1,0.1,2.1,0.1))
 axisPhylo()
 mtext("c)",adj=0)
+
+## reset par to default
 par(mar=c(5.1,4.1,4.1,2.1),mfrow=c(1,1))
 }
 \keyword{phylogenetics}

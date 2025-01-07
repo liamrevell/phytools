@@ -45,11 +45,14 @@ evolvcv.lite(tree, X, maxit=2000, tol=1e-10, ...)
 ## load data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
-## fit heirarchical common-structure models
+
+## fit hierarchical common-structure models
 sunfish.fit<-evolvcv.lite(sunfish.tree,
     sunfish.data[,2:3],models="all models")
+
 ## print fitted models
 print(sunfish.fit)
+
 ## compare models
 anova(sunfish.fit)
 }

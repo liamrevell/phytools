@@ -24,11 +24,38 @@ paste.tree(tr1, tr2)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+## create two random trees
 tr1<-rtree(10)
 tr2<-rtree(10)
-tr1$tip.label[1]<-"NA"
+
+## make one tip "sticky" by renaming it "NA"
+tr1$tip.label[sample(1:10,1)]<-"NA"
 tr2$root.edge<-0
+
+## paste the two trees together
 tr3<-paste.tree(tr1,tr2)
+
+## plot the results
+layout(matrix(c(1,1,2,2,4,3,3,4),2,4,byrow=TRUE))
+plotTree(tr1,direction="upwards",
+    mar=c(1.1,1.1,3.1,1.1))
+add.arrow(tree=tr1,tip=which(tr1$tip.label=="NA"),
+    hedl=0.2,arrl=0.2,offset=1)
+mtext("a) recipient tree",adj=0)
+plotTree(tr2,direction="upwards",plot=FALSE)
+pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+plotTree(tr2,direction="upwards",
+    mar=c(1.1,1.1,3.1,1.1),
+    ylim=c(-0.2,pp$y.lim[2]),add=TRUE)
+arrows(pp$xx[11],pp$yy[11],pp$xx[11],-0.2,
+    length=0.1,lwd=2)
+mtext("b) donor tree",adj=0)
+plotTree(tr3,direction="upwards",
+    mar=c(1.1,1.1,3.1,1.1))
+mtext("c) grafted tree",adj=0)
+
+## reset par to default
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{utilities}

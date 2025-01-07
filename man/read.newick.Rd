@@ -31,8 +31,18 @@ readNexus(file="", format=c("standard","raxml"))
 	\code{\link[ape]{read.nexus}}, \code{\link[ape]{read.tree}}
 }
 \examples{
-tree<-"((Human,Chimp),Gorilla),Monkey);"
+## create text Newick string
+tree<-"(((Human:7,Chimp:7):3,Gorilla:10):15,Monkey:25);"
+
+## parse string
 phy<-read.newick(text=tree)
+
+## create plot
+plotTree(phy,fsize=1.2,lwd=5,direction="downwards",
+    mar=c(2.1,5.1,2.1,1.1),ylim=c(25,-3.8))
+axis(2)
+title(ylab="time before present (ma)")
+
 }
 \keyword{phylogenetics}
 \keyword{input/output}

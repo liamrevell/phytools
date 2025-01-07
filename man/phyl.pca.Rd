@@ -57,9 +57,11 @@ as.prcomp(x, ...)
 ## load data from Mahler et al. (2010)
 data(anoletree)
 data(anole.data)
+
 ## run phylogenetic PCA
 anole.pca<-phyl.pca(anoletree,anole.data)
 print(anole.pca)
+
 ## plot results
 plot(anole.pca)
 biplot(anole.pca)

@@ -1,6 +1,6 @@
 \name{ansi_phylo}
 \alias{ansi_phylo}
-\title{Compute the parsimony score}
+\title{Graph a phylogeny using only ANSI characters}
 \usage{
 ansi_phylo(tree, vertical=c("|","-"), ...)
 }
@@ -23,8 +23,18 @@ ansi_phylo(tree, vertical=c("|","-"), ...)
 	\code{\link{plotTree}}, \code{\link{splinePhylogram}}
 }
 \examples{
+## load trees
 data(salamanders)
+data(sunfish.tree)
+
+## plot using defaults
 ansi_phylo(salamanders)
+
+## plot using special characters
+ansi_phylo(sunfish.tree,vertical="//",horizontal="*",
+    xlim=c(0,0.3),fsize=0.9)
+
+## reset par to default
 par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}

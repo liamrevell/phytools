@@ -32,11 +32,17 @@ fastBM(tree, a=0, mu=0, sig2=1, bounds=c(-Inf,Inf), internal=FALSE, nsim=1,
 	\code{\link{sim.corrs}}
 }
 \examples{
+## load example tree
+data(anoletree)
+
 ## simulate 10 characters on the Anolis tree 
 ## under Brownian motion
-data(anoletree)
 X<-fastBM(anoletree,nsim=10)
 head(X)
+
+## create a plot
+phylo.heatmap(anoletree,X,fsize=c(0.4,0.8,0.8),
+    standardize=TRUE,colors=terrain.colors(n=20))
 }
 \keyword{phylogenetics}
 \keyword{simulation}

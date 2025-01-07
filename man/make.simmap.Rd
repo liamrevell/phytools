@@ -61,26 +61,34 @@ simmap(object, ...)
 ## load tree and data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract discrete character (feeding mode)
 fmode<-setNames(sunfish.data$feeding.mode,
-  rownames(sunfish.data))
+    rownames(sunfish.data))
+  
 ## fit model
 er_model<-fitMk(sunfish.tree,fmode,model="ER",
-  pi="fitzjohn")
+    pi="fitzjohn")
+	
 ## do stochastic mapping
 sunfish_smap<-simmap(er_model)
+
 ## print a summary of the stochastic mapping
 summary(sunfish_smap)
+
 ## plot a posterior probabilities of ancestral states
 cols<-setNames(c("blue","red"),levels(fmode))
 plot(summary(sunfish_smap),colors=cols,ftype="i")
 legend("topleft",c("non-piscivorous","piscivorous"),
-  pch=21,pt.bg=cols,pt.cex=2)
+    pch=21,pt.bg=cols,pt.cex=2)
 par(mar=c(5.1,4.1,4.1,2.1),las=1)
+
 ## plot posterior density on the number of changes
 plot(density(sunfish_smap),bty="l")
 title(main="Posterior distribution of changes of each type",
-  font.main=3)}
+    font.main=3)
+## reset par to default
+par(las=0)}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

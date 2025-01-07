@@ -32,15 +32,21 @@ edge.widthMap(tree, x, ...)
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## extract character of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
     rownames(mammal.data)))
+
 ## create "edge.widthMap" object
 mammal.ewMap<-edge.widthMap(mammal.tree,ln.bodyMass,
     min.width=0.05)
+
 ## plot it
-plot(mammal.ewMap,legend="log(body mass)")
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+plot(mammal.ewMap,legend="log(body mass)",
+    color=palette()[4])
+
+## reset margins to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

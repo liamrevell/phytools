@@ -69,25 +69,28 @@ fancyTree(tree,type="extinction")
 data(sunfish.tree)
 data(sunfish.data)
 fancyTree(sunfish.tree,type="traitgram3d",
-  X=sunfish.data[,2:3],
-  control=list(spin=FALSE))}
+    X=sunfish.data[,2:3],
+    control=list(spin=FALSE))}
 	
 ## plot with dropped tips
 tree<-pbtree(n=30)
 tips<-sample(tree$tip.label)[1:10]
 pruned<-fancyTree(tree,type="droptip",tip=tips)
-par(mfrow=c(1,1)) ## reset mfrow to default
+
+## reset par to default
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
 
 \dontrun{
 ## plot 95-percent CI phenogram
 data(mammal.tree)
 data(mammal.data)
 bodyMass<-setNames(mammal.data$bodyMass,
-  rownames(mammal.data))
+    rownames(mammal.data))
 fancyTree(mammal.tree,type="phenogram95",x=bodyMass,
-  fsize=0.7,ftype="i")}
+    fsize=0.7,ftype="i")}
 
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset mar to defaults
+## reset mar to defaults
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}

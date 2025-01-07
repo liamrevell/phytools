@@ -43,13 +43,17 @@ threshBayes(tree, X, types=NULL, ngen=10000, control=list(), ...)
 ## load data
 data(bonyfish.tree)
 data(bonyfish.data)
+
 ## run MCMC
 mcmc<-threshBayes(bonyfish.tree,bonyfish.data,
     ngen=100000,plot=FALSE)
+
 ## visualize summary of MCMC
 plot(mcmc)
+
 ## reset par
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
+
 ## graph posterior density of correlation
 plot(density(mcmc,bw=0.1))}
 }

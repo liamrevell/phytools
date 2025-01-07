@@ -37,15 +37,19 @@ bmPlot(tree, type="BM", anc=0, sig2=1/1000, ngen=1000, ...)
 	\code{\link{fastBM}}, \code{\link{pbtree}}, \code{\link{phenogram}}, \code{\link{threshBayes}}
 }
 \examples{
+## set seed
 set.seed(999)
+
 ## plot BM simulation on 12 taxon tree
 tree<-pbtree(n=12)
 par(mfrow=c(1,2),mar=c(5.1,4.1,4.1,0.1))
 x<-bmPlot(tree,bty="l")
 plotTree(tree,direction="upwards",
     mar=c(5.1,0.1,4.1,1.1),ftype="off")
+
 ## reset par to default values
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
+
 ## plot simulation of a threshold character
 par(mfrow=c(1,2),mar=c(5.1,4.1,4.1,0.1))
 tt<-bmPlot(tree,type="threshold",thresholds=c(0,1,2),
@@ -54,6 +58,7 @@ plot(tt$tree,direction="upwards",
     mar=c(5.1,0.1,4.1,1.1),ftype="off",
     colors=setNames(c("black","red","blue"),
     letters[1:3]),lwd=3)
+
 ## reset par to default values
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
 }

@@ -26,11 +26,17 @@ genSeq(tree, l=1000, Q=NULL, rate=1, format="DNAbin", ...)
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \examples{
+## load tree
 data(mammal.tree)
+
+## rescale edge lengths
 mammal.tree$edge.length<-mammal.tree$edge.length/
-    max(nodeHeights(mammal.tree))*0.2 ## rescale tree
+    max(nodeHeights(mammal.tree))*0.2
+
 ## simulate gamma rate heterogeneity
 gg<-rgamma(n=100,shape=0.25,rate=0.25)
+
+## simulate DNA sequences with rate heterogeneity
 dna<-genSeq(mammal.tree,l=100,rate=gg)
 }
 \keyword{phylogenetics}

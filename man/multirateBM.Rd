@@ -45,19 +45,24 @@ multirateBM(tree, x, method=c("ML","REML"),
 ## load data
 data(sunfish.tree)
 data(sunfish.data)
+
 ## convert from "simmap" to "phylo"
 sunfish.tree<-as.phylo(sunfish.tree)
+
 ## extract character of interest
 gw<-setNames(sunfish.data$gape.width,
     rownames(sunfish.data))
+
 ## run penalized-likelihood optimization
 ## lambda=0.1 is arbitrary
 fitBM<-multirateBM(sunfish.tree,gw,
     lambda=0.01)
+
 ## print and plot the results
 print(fitBM)
 plot(fitBM,ftype="i",fsize=0.8,lwd=6,
     outline=TRUE)
+
 ## reset par
 par(mar=c(5.1,4.1,4.1,2.1))}
 }

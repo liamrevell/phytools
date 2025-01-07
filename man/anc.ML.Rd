@@ -41,11 +41,15 @@ anc.ML(tree, x, maxit=2000, model=c("BM","OU","EB"), ...)
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## extract character of interest
 ln.bodyMass<-log(setNames(mammal.data$bodyMass,
     rownames(mammal.data)))
+
 ## estimate ancestral state under BM model
 fit.BM<-anc.ML(mammal.tree,ln.bodyMass)
+
+## print results
 print(fit.BM)
 }
 \keyword{ancestral states}

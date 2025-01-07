@@ -28,32 +28,43 @@ plotFanTree.wTraits(tree, X, type=c("arc","fan"), ...)
 	\code{\link{dotTree}}, \code{\link{phylo.heatmap}}
 }
 \examples{
-data("liolaemid.data")
-data("liolaemid.tree")
-liolaemid.data[liolaemid.tree$tip.label,]->liolaemid.data
+## load data
+data(liolaemid.data)
+data(liolaemid.tree)
+
+## subsample data to species in the tree
+liolaemid.data<-liolaemid.data[liolaemid.tree$tip.label,]
+
+## set colors for plotting
 colors<-list(
-  c("blue","white","red"),
-  terrain.colors(n=10),
-  setNames(c("#F0EAD6","#DF536B"),c("O","V")))
+    c("blue","white","red"),
+    terrain.colors(n=10),
+    setNames(c("#F0EAD6","#DF536B"),c("O","V")))
+
+## plot fan tree with traits
 cols<-plotFanTree.wTraits(liolaemid.tree,
-  liolaemid.data[,3:1],lwd=12,colors=colors,ftype="off",
-  spacer=0)
+    liolaemid.data[,3:1],lwd=12,colors=colors,ftype="off",
+    spacer=0)
+
+## add legends
 legend(x=0,y=0.7*max(nodeHeights(liolaemid.tree)),
-  names(colors[[3]]),lwd=8,col=colors[[3]],
-  title="parity mode",bty="n",xjust=0.5,yjust=0.5)
+    names(colors[[3]]),lwd=8,col=colors[[3]],
+    title="parity mode",bty="n",xjust=0.5,yjust=0.5)
 add.color.bar(1.5*max(nodeHeights(liolaemid.tree)),cols[[2]],
-  title="maximum altitude (m)",
-  lims=range(liolaemid.data[,2]),digits=2,prompt=FALSE,
-  x=-0.75*max(nodeHeights(liolaemid.tree)),
-  y=0.2*max(nodeHeights(liolaemid.tree)),subtitle="",
-  lwd=8,outline=FALSE)
+    title="maximum altitude (m)",
+    lims=range(liolaemid.data[,2]),digits=2,prompt=FALSE,
+    x=-0.75*max(nodeHeights(liolaemid.tree)),
+    y=0.2*max(nodeHeights(liolaemid.tree)),subtitle="",
+    lwd=8,outline=FALSE)
 add.color.bar(1.5*max(nodeHeights(liolaemid.tree)),cols[[1]],
-  title="environmental temp.",
-  lims=range(liolaemid.data[,3]),digits=2,prompt=FALSE,
-  x=-0.75*max(nodeHeights(liolaemid.tree)),
-  y=-0.15*max(nodeHeights(liolaemid.tree)),subtitle="",
-  lwd=8,outline=FALSE)
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+    title="environmental temp.",
+    lims=range(liolaemid.data[,3]),digits=2,prompt=FALSE,
+    x=-0.75*max(nodeHeights(liolaemid.tree)),
+    y=-0.15*max(nodeHeights(liolaemid.tree)),subtitle="",
+    lwd=8,outline=FALSE)
+
+## reset margins to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}

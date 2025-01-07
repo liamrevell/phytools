@@ -33,19 +33,26 @@ phylo.to.map(tree, coords, rotate=TRUE, ...)
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \examples{
-## generally recommend using higher resolution map
-## e.g., from mapdata package
+## load data
 data(tortoise.tree)
 data(tortoise.geog)
+
+## create "phylo.to.map" object
 tortoise.phymap<-phylo.to.map(tortoise.tree,
-  tortoise.geog,plot=FALSE,direction="rightwards",
-  regions="Ecuador")
+    tortoise.geog,plot=FALSE,direction="rightwards",
+    regions="Ecuador")
+  
+## plot object
 plot(tortoise.phymap,direction="rightwards",pts=FALSE,
-  xlim=c(-92.25,-89.25),ylim=c(-1.8,0.75),ftype="i",
-  fsize=0.8,lty="dashed",map.bg="lightgreen",
-  colors="slategrey")
+    xlim=c(-92.25,-89.25),ylim=c(-1.8,0.75),ftype="i",
+    fsize=0.8,lty="dashed",map.bg="lightgreen",
+    colors="slategrey")
+  
 ## reset margins
 par(mar=c(5.1,4.1,4.1,2.1))
+
+## note: generally recommend using higher resolution map
+## e.g., from mapdata package
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}

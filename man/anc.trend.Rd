@@ -38,12 +38,15 @@ tree<-rtree(n=26,tip.label=LETTERS)
 x<-fastBM(tree,mu=4,internal=TRUE)
 a<-x[as.character(1:tree$Nnode+Ntip(tree))]
 x<-x[tree$tip.label]
+
 ## fit no trend model
 fit.bm<-anc.ML(tree,x,model="BM")
 print(fit.bm)
+
 ## fit trend model
 fit.trend<-anc.trend(tree,x)
 print(fit.trend)
+
 ## compare trend vs. no-trend models & estimates
 AIC(fit.bm,fit.trend)
 layout(matrix(c(3,4,1,2,5,6),3,2,byrow=TRUE),
@@ -68,6 +71,8 @@ plot(a,fit.trend$ace,pch=19,
     cex.main=1.2,bty="l",cex=1.5,
     xlim=xlim,ylim=ylim)
 lines(xlim,ylim,lty="dotted")
+
+## reset par to defaults
 par(mfrow=c(1,1))
 }
 \keyword{ancestral states}

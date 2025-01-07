@@ -31,9 +31,11 @@ pscore(tree, x, ...)
 ## load tree and data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract discrete character (feeding mode)
 fmode<-setNames(sunfish.data$feeding.mode,
     rownames(sunfish.data))
+
 ## compute the parsimony score
 pscore(sunfish.tree,fmode)
 }

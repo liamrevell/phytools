@@ -46,15 +46,21 @@ ancThresh(tree, x, ngen=100000, sequence=NULL, method="mcmc",
 ## load data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract character of interest
 fmode<-setNames(sunfish.data$feeding.mode,
     rownames(sunfish.data))
+
 ## run MCMC
 mcmc<-ancThresh(sunfish.tree,fmode,ngen=1000000)
+
 ## plot results
 plot(mcmc,mar=c(0.1,0.1,4.1,0.1))
 title(main="Posterior probabilities for node states",
-    font.main=3)}
+    font.main=3)
+
+## reset par to default
+par(mar=c(5.1,4.1,4.1,2.1))}
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

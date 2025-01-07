@@ -34,12 +34,16 @@ dot.legend(x, y, min, max, Ntip, length=5, prompt=FALSE, method="plotTree",
 ## load data from Garland et al. (1992)
 data(mammal.tree)
 data(mammal.data)
+
 ## log-transform trait data
 log.mammal<-log(mammal.data)
+
 ## plot dotTree
 dotTree(mammal.tree,log.mammal,fsize=0.7,
     standardize=TRUE,length=10)
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+
+## reset margins to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \keyword{phylogenetics}

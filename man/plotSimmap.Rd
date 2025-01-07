@@ -67,10 +67,15 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\code{\link{densityMap}}, \code{\link{make.simmap}}, \code{\link{read.simmap}} 
 }
 \examples{
+## load tree with mapped character
 data(anoletree)
+
+## set colors for regims
 cols<-setNames(c("green","#E4D96F","darkgreen",
     "brown","black","darkgrey"),
     c("CG","GB","TC","TG","Tr","Tw"))
+
+## create plot
 plot(anoletree,cols,fsize=0.5,ftype="i",outline=TRUE,
     lwd=3,ylim=c(0,Ntip(anoletree)),
     mar=c(0.1,0.1,1.1,0.1))
@@ -78,7 +83,9 @@ add.simmap.legend(colors=cols,prompt=FALSE,x=0,y=-0.5,
     vertical=FALSE)
 title(main="Caribbean ecomorphs of anoles",font.main=3,
     line=0)
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+	
+## reset margins to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

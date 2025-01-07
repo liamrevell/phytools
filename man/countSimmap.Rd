@@ -19,9 +19,11 @@ countSimmap(tree, states=NULL, message=TRUE)
 	A list with up to three elements: \code{N} is an integer value giving the total number of character changes on the tree; \code{Tr} gives the number of of transitions between row and column states (or a matrix containing both \code{N} and the transitions between states, in rows, for an object of class \code{"multiPhylo"}); and (optionally) \code{message} contains an explanatory message about the function  output.
 }
 \examples{
-## load data from Revell & Collar (2009)
+## load anole tree with ecomorphs mapped
 data(anoletree)
 anoletree
+
+## countSimmap
 countSimmap(anoletree)
 }
 \references{

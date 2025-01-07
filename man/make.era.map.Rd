@@ -23,10 +23,17 @@ make.era.map(tree, limits, ...)
 	\code{\link{make.simmap}}, \code{\link{read.simmap}}, \code{\link{plotSimmap}}
 }
 \examples{
+## simulate tree with total depth of 100
 tree<-pbtree(n=1000,scale=100)
+
+## subdivide into mapped eras
 tree<-make.era.map(tree,c(0,25,50,75))
+
+## create graph of mapped tree
 plot(tree,ftype="off",lwd=1)
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default
+
+## reset margins to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{comparative method}

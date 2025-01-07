@@ -32,9 +32,11 @@ nodeheight(tree, node, ...)
 \examples{
 ## load tree
 data(vertebrate.tree)
+
 ## compute height of all nodes
 H<-nodeHeights(vertebrate.tree)
 print(H)
+
 ## compute total tree depth
 max(H)
 }

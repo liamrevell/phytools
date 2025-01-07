@@ -31,9 +31,13 @@ allFurcTrees(n, tip.label=NULL, to.plot=TRUE)
 ## compute & plot all bi- and multifurcating
 ## trees for six taxa
 trees<-allFurcTrees(n=6)
+
+## plot trees
 par(mfrow=c(16,15))
 nulo<-sapply(trees,plot,type="unrooted",
     no.margin=TRUE)
+
+## reset par
 par(mfrow=c(1,1))
 }
 \keyword{phylogenetics}

@@ -29,14 +29,20 @@ geo.palette()
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
 \examples{
+## load tree
 data(anoletree)
+
 ## rescale tree to 50 ma total depth
 anoletree<-rescale(anoletree,model="depth",depth=50)
+
 ## plot phylogeny
 plotTree(anoletree,ylim=c(-0.16,1)*Ntip(anoletree),
-  ftype="i",lwd=1,fsize=0.5)
+    ftype="i",lwd=1,fsize=0.5)
+
 ## add geological color legend
 obj<-geo.legend()
+
+## reset par to default
 par(mar=c(5.1,4.1,4.1,2.1))
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}

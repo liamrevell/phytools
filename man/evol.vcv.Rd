@@ -45,6 +45,7 @@ evol.vcv(tree, X, maxit=2000, vars=FALSE, ...)
 ## load data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## fit multi-correlation model
 sunfish.fit<-evol.vcv(sunfish.tree,sunfish.data[,2:3])
 print(sunfish.fit)

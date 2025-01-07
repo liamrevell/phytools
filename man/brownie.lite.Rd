@@ -50,12 +50,16 @@ brownie.lite(tree, x, maxit=2000, test="chisq", nsim=100, se=NULL, ...)
 ## load data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract character of interest
 buccal.length<-setNames(sunfish.data$buccal.length,
     rownames(sunfish.data))
+
 ## fit model
 multiBM.fit<-brownie.lite(sunfish.tree,
     buccal.length)
+
+## print fitted model
 print(multiBM.fit)
 }
 \keyword{phylogenetics}

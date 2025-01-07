@@ -1,6 +1,6 @@
 \name{gammatest}
 \alias{gammatest}
-\title{Gamma test of Pybus & Harvey (2000)}
+\title{\eqn{\gamma} test of Pybus & Harvey (2000)}
 \usage{
 gammatest(x)
 }
@@ -25,7 +25,10 @@ gammatest(x)
 	\code{\link{ltt}}, \code{\link{mccr}}
 }
 \examples{
+## load tree
 data(darter.tree)
+
+## run gammatest on "ltt" object
 gammatest(ltt(darter.tree,plot=FALSE))
 }
 \keyword{phylogenetics}

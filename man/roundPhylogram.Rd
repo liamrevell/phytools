@@ -41,15 +41,20 @@ splinePhylogram(tree, ...)
 \examples{
 ## load mammal.tree
 data(mammal.tree)
+
 ## plot using roundPhylogram
 roundPhylogram(compute.brlen(mammal.tree),
     fsize=0.8,ftype="i")
+
 ## load anoletree
 data(anoletree)
+
 ## plot using sigmoidPhylogram
 sigmoidPhylogram(anoletree,fsize=0.6,
     ftype="i",direction="upwards")
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margin to default
+
+## reset margin to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{phylogenetics}
 \keyword{plotting}

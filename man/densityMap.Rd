@@ -46,22 +46,32 @@ densityMap(trees, res=100, fsize=NULL, ftype=NULL, lwd=3, check=FALSE,
 	\code{\link{make.simmap}}, \code{\link{plotSimmap}}, \code{\link{read.simmap}}
 }
 \examples{
-\dontrun{
 ## load tree and data from Revell & Collar (2009)
 data(sunfish.tree)
 data(sunfish.data)
+
 ## extract discrete character (feeding mode)
 fmode<-setNames(sunfish.data$feeding.mode,
-     rownames(sunfish.data))
+    rownames(sunfish.data))
+	 
+## fit discrete character models
+sunfish_er<-fitMk(sunfish.tree,fmode,model="ER")
+
 ## do stochastic mapping
-smap.trees<-make.simmap(sunfish.tree,fmode,model="ER",
-     nsim=100)
+smap.trees<-simmap(sunfish_er)
+
 ## compute "densityMap" object
 sunfish.dmap<-densityMap(smap.trees,plot=FALSE,
-	res=50) ## res should be higher
+    res=100)
+	
+## re-color
+sunfish.dmap<-setMap(sunfish.dmap,hcl.colors(n=10))
+
 ## plot density map
 plot(sunfish.dmap,lwd=5,outline=TRUE)
-par(mar=c(5.1,4.1,4.1,2.1)) ## reset margins to default}
+
+## reset margins to default
+par(mar=c(5.1,4.1,4.1,2.1))
 }
 \keyword{ancestral states}
 \keyword{phylogenetics}

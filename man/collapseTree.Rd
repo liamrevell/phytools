@@ -28,8 +28,14 @@ collapseTree(tree, ...)
 }
 \examples{
 \dontrun{
+## load phylogeny
 data(liolaemid.tree)
-pruned<-collapseTree(liolaemid.tree,fsize=0.5)}
+
+## run collapseTree
+pruned<-collapseTree(liolaemid.tree,fsize=0.5)
+
+## reset par to default
+par(mar=c(5.1,4.1,4.1,2.1))}
 }
 \keyword{phylogenetics}
 \keyword{plotting}

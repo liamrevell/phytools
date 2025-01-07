@@ -64,22 +64,35 @@ mccr(obj, rho=1, nsim=100, ...)
 	\code{\link{gammatest}}, \code{\link{ltt95}}
 }
 \examples{
-## LTT plots
+## set seed
 set.seed(99)
+
+## simulate set of random trees
 trees<-pbtree(n=100,scale=100,nsim=10)
+
+## create "multiLTT" object
 obj<-ltt(trees,plot=FALSE)
+
+## plot "multiLTT" object
 plot(obj,log="y",log.lineages=FALSE,
     bty="l")
 title(main="LTT plots for 10 pure-birth trees",
     font.main=3)
+
+## simulate single tree
 tree<-pbtree(b=1,d=0.25,t=4)
+
+## graph LTT with superimposed tree
 obj<-ltt(tree,gamma=FALSE,show.tree=TRUE,
-    bty="l")
+    bty="l",lwd=2)
 title(main="LTT plot with superimposed tree",
     font.main=3)
 obj
-## GTT plot
+
+## load dataset
 data(anoletree)
+
+## create gamma-through-time plot
 anole.gtt<-gtt(anoletree,n=40)
 plot(anole.gtt)
 }
