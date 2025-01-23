@@ -5,7 +5,7 @@ export(anc.trend, ancr, ancThresh, ansi_phylo, applyBranchLengths, arc.cladelabe
 export(as.prcomp, as.princomp, as.Qmatrix, ave.rates, averageTree)
 export(backbone.toPhylo, bd, bmPlot, bind.tip, bind.tree.simmap, biplot.phyl.pca)
 export(bounded_bm, branching.diffusion, brownie.lite, brownieREML)
-export(cladelabels, coef.phyl.RMA, collapse.to.star, collapseTree, compare.chronograms)
+export(cladebox, cladelabels, coef.phyl.RMA, collapse.to.star, collapseTree, compare.chronograms)
 export(consensus.edges, contMap, cophylo, countSimmap, compute.mr, cotangleplot, cospeciation)
 export(ctt)
 export(density.anc.Bayes, density.multiSimmap, densityMap, densityTree, describe.simmap)

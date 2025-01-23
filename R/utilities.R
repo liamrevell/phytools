@@ -672,23 +672,6 @@ get.asp<-function(){
 	## just space holding for now	
 # }
 
-## draw a box around a clade
-## written by Liam J. Revell 2017
-
-cladebox<-function(tree,node,color=NULL,...){
-	if(is.null(color)) color<-make.transparent("yellow",0.2)
-	obj<-get("last_plot.phylo",envir=.PlotPhyloEnv)
-	h<-max(nodeHeights(tree))
-	parent<-tree$edge[which(tree$edge[,2]==node),1]
-	x0<-max(c(obj$xx[node]+obj$xx[parent])/2,obj$xx[node]-0.05*h)
-	x1<-obj$x.lim[2]
-	dd<-getDescendants(tree,node)
-	y0<-min(range(obj$yy[dd]))-0.5
-	y1<-max(range(obj$yy[dd]))+0.5
-	polygon(c(x0,x1,x1,x0),c(y0,y0,y1,y1),col=color,
-		border=0)
-}
-
 ## draw tip labels as linking lines to text
 ## written by Liam J. Revell 2017
 
