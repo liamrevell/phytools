@@ -1,6 +1,6 @@
 ## function fits Pagel '94 model of correlated evolution of two binary characters
 ## uses fitMk, ape::ace, or geiger::fitDiscrete internally
-## written by Liam J. Revell 2014, 2015, 2016, 2020, 2022, 2023
+## written by Liam J. Revell 2014, 2015, 2016, 2020, 2022, 2023, 2025
 
 anova.fitPagel<-function(object,...){
 	fits<-list(...)
@@ -143,7 +143,10 @@ fitPagel<-function(tree,x,y,method="fitMk",model="ARD",dep.var="xy",...){
 		data=xy,
 		method=method,
 		dep.var=dep.var,
-		model=model)
+		model=model,
+		mk_fits=list(
+			independent=fit.iQ,
+			dependent=fit.dQ))
 	class(obj)<-"fitPagel"
 	obj
 }
