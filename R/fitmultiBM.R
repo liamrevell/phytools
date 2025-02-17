@@ -26,13 +26,16 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		detectCores()-1
 	## continuous character
 	x<-x[tree$tip.label]
-	lims<-expand.range(x)
+	if(hasArg(lims)) lims<-list(...)$lims
+	else lims<-expand.range(x)
 	dd<-diff(lims)
 	tol<-1e-8*dd/levs
 	bins<-cbind(seq(from=lims[1]-tol,by=(dd+2*tol)/levs,
 		length.out=levs),seq(to=lims[2]+tol,by=(dd+2*tol)/levs,
 			length.out=levs))
 	X<-to_binned(x,bins)
+	if(hasArg(wrapped)) wrapped<-list(...)$wrapped
+	else wrapped<-FALSE
 	## discrete character
 	if(!is.null(y)){
 		if(is.matrix(y)){
@@ -77,7 +80,13 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	for(i in 1:(levs-1)){
 		for(j in 0:(ncol(y)-1)){
 			cmodel[i+j*levs,i+1+j*levs]<-
-				cmodel[i+1+j*levs,i+j*levs]<-(j+1)
+				cmodel[i+1+j*levs,i+j*levs]<-(j+1)				
+		}
+	}
+	if(wrapped){
+		for(i in 0:(ncol(y)-1)){
+			cmodel[1+i*levs,(i+1)*levs]<-
+				cmodel[(i+1)*levs,1+i*levs]<-(i+1)
 		}
 	}
 	state_ind<-setNames(1:ncol(y),colnames(y))
@@ -215,14 +224,25 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		list(...)$plot_model else FALSE
 	## graph model (optional)
 	if(plot_model){
+		if(hasArg(asp)) asp<-list(...)$asp
+		else asp<-1
+		if(hasArg(mar)) mar<-list(...)$mar
+		else mar<-c(1.1,1.1,4.1,1.1)
+		if(hasArg(title)) title<-list(...)$title
+		else title<-TRUE
 		plot.new()
 		dev.hold()
-		par(mar=c(1.1,1.1,4.1,1.1))
-		cols<-setNames(c("#f9f9f7",sample(rainbow(n=max(model)))),
-			0:max(model))
+		par(mar=mar)
+		if(hasArg(cols)){ 
+			cols<-list(...)$cols
+			cols<-setNames(cols,0:max(model))
+		} else {
+			cols<-setNames(c("#f9f9f7",sample(rainbow(n=max(model)))),
+				0:max(model))
+		}
 		plot.window(xlim=c(-0.05*ncol(model),1.1*ncol(model)),
 			ylim=c(nrow(model),-0.05*nrow(model)),
-			asp=1)
+			asp=asp)
 		for(i in 1:nrow(model)){
 			for(j in 1:ncol(model)){
 				polygon(x=c(i-1,i,i,i-1),y=c(j-1,j-1,j,j),
@@ -242,7 +262,7 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 				y=mean(c(0,levs)+(i-1)*levs),
 				rownames(qmodel)[i],srt=90)
 		}
-		title("structure of discretized model",font.main=3)
+		if(title) title("structure of discretized model",font.main=3)
 		lp<-legend(x=ncol(model)/2,y=1.05*nrow(model),
 			legend=names(cols),pch=15,col=cols,bty="n",xpd=TRUE,
 			horiz=TRUE,plot=FALSE,cex=0.8)
