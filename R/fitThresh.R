@@ -214,7 +214,7 @@ lik_thresh<-function(threshold,pw,fixed_threshold,
 	k<-ncol(Y)
 	if(hasArg(pi)) pi<-list(...)$pi
 	else pi<-rep(1/k,k)
-	if(pi%in%c("flat","uniform")) pi<-rep(1/k,k)
+	if(pi[1]%in%c("flat","uniform")) pi<-rep(1/k,k)
 	L<-rbind(Y[pw$tip.label,],
 		matrix(0,pw$Nnode,k,
 			dimnames=list(1:pw$Nnode+Ntip(pw))))
