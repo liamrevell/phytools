@@ -6,6 +6,8 @@ plot.fitgammaMk<-function(x,...){
 	else digits<-3
 	if(hasArg(colors)) colors<-list(...)$colors
 	else colors<-c("yellow","red")
+	if(hasArg(title)) title<-list(...)$title
+	else title<-"relative edge rate"
 	if(is.null(x$marginal)){
 		stop("missing marginal likelihoods.")
 	} else {
@@ -15,6 +17,7 @@ plot.fitgammaMk<-function(x,...){
 		cols<-setNames(colorRampPalette(colors)(101),
 			0:100)
 		args<-list(...)
+		args$title<-NULL
 		if(is.null(args$type)) args$type<-"phylogram"
 		if(is.null(args$direction)) args$direction<-"rightwards"
 		if(is.null(args$fsize)){
@@ -55,7 +58,7 @@ plot.fitgammaMk<-function(x,...){
 			rep(-0.25*h+LWD*15/2+0.02*h,nticks))
 		for(i in 1:nrow(Y)) lines(X[i,],Y[i,])
 		add.color.bar(Nt-2/40*Nt-1,cols,
-			title="relative edge rate",
+			title=title,
 			lims=NULL,digits=3,
 			direction="upwards",
 			subtitle="",lwd=15,
