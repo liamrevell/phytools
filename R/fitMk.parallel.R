@@ -63,8 +63,8 @@ fitMk.parallel<-function(tree,x,model="SYM",ncores=1,...){
 		log(q.init),
 		loglik,lik=unfitted$lik,
 		index.matrix=unfitted$index.matrix,
-		lower=min.q,
-		upper=max.q,
+		lower=log(min.q),
+		upper=log(max.q),
 		parallel=list(cl=cl,forward=FALSE,
 		loginfo=TRUE)
 	)
