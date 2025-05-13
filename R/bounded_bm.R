@@ -11,6 +11,13 @@ to_binned<-function(x,bins){
 bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(wrapped)) wrapped<-list(...)$wrapped
 	else wrapped<-FALSE
+	if(hasArg(absorbing)) absorbing<-list(...)$absorbing
+	else absorbing<-FALSE
+	if(wrapped&&absorbing){
+		cat("wrapped = TRUE and absorbing = TRUE not permitted.\n")
+		cat("Setting absorbing = FALSE.\n\n")
+		absorbing<-FALSE
+	}
 	if(hasArg(bins)) bins<-list(...)$bins
 	else bins<-NULL
 	if(is.null(lims)){ 
@@ -34,7 +41,8 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"R_Eigen"
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
-	else lik.func<-"eigen"
+	else lik.func<-if(absorbing) "pruning" else "eigen"
+	if(absorbing&&lik.func=="eigen") lik.func<-"pruning"
 	if(hasArg(parallel)) parallel<-list(...)$parallel
 	else parallel<-FALSE
 	if(hasArg(root)) root=list(...)$root
@@ -59,6 +67,7 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	MODEL<-matrix(0,levs,levs,dimnames=list(1:levs,1:levs))
 	for(i in 1:(levs-1)) MODEL[i,i+1]<-MODEL[i+1,i]<-1
 	if(wrapped) MODEL[1,levs]<-MODEL[levs,1]<-1
+	else if(absorbing) MODEL[1,2]<-MODEL[levs,levs-1]<-0
 	max.q=(1/2)*max.sigsq*(levs/dd)^2
 	if(lik.func%in%c("pruning","parallel")){
 		q.init<-runif(n=1,0,2)*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
@@ -144,6 +153,7 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	} else ci_sigsq<-NULL
 	object<-list(
 		wrapped=wrapped,
+		absorbing=absorbing,
 		sigsq=sigsq,
 		CI=ci_sigsq,
 		x0=x0,
@@ -214,7 +224,10 @@ print.bounded_bm<-function(x,digits=6,...){
 		"	a discretization with k =",
 		x$ncat,"levels.\n"))
 	if(x$wrapped) cat("\nWrapped (i.e., circular) model.\n\n")
-	if(!x$wrapped) cat("\nUnwrapped (i.e., bounded) model\n\n")
+	if(!x$wrapped){ 
+		cat("\nUnwrapped (i.e., bounded) model\n\n")
+		if(x$absorbing) cat("\nAborbing bounded model\n\n")
+	}
 	cat(paste("Set or estimated bounds: [",round(x$bounds[1],digits),
 		",",round(x$bounds[2],digits),"]\n\n"))
 	cat("Fitted model parameters:\n")
