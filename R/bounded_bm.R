@@ -225,8 +225,8 @@ print.bounded_bm<-function(x,digits=6,...){
 		x$ncat,"levels.\n"))
 	if(x$wrapped) cat("\nWrapped (i.e., circular) model.\n\n")
 	if(!x$wrapped){ 
-		cat("\nUnwrapped (i.e., bounded) model\n\n")
-		if(x$absorbing) cat("\nAborbing bounded model\n\n")
+		if(!x$absorbing) cat("\nUnwrapped (i.e., bounded) model\n\n")
+		if(x$absorbing) cat("\nAbsorbing bounded model\n\n")
 	}
 	cat(paste("Set or estimated bounds: [",round(x$bounds[1],digits),
 		",",round(x$bounds[2],digits),"]\n\n"))
