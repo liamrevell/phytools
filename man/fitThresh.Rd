@@ -1,20 +1,25 @@
 \name{fitThresh}
 \alias{fitThresh}
-\title{Fits multi-state threshold model using the discrete approximation}
+\alias{fitsemiThresh}
+\title{Fits binary, multi-state, and semi-threshold models using the discrete approximation}
 \usage{
 fitThresh(tree, x, sequence=NULL, ...)
+fitsemiThresh(tree, x, threshold=c(0,1), ...)
 }
 \arguments{
 	\item{tree}{object of class \code{"phylo"}.}
 	\item{x}{a named vector.}
 	\item{sequence}{assumed ordering of the discrete character state. If not supplied and then alphanumeric order is assumed.}
+	\item{threshold}{for \code{fitsemiThresh}, thresholds for the semi-threshold trait.}
 	\item{...}{optional arguments. Optional arguments include \code{levs} (the number of levels for the discrete approximation, defaults to \code{levs=200}), \code{root} (a root prior assumption, defaults to \code{root="fitzjohn"} which involves treating the root like a nuisance parameter), and \code{rand_start} (defaults to \code{rand_start=TRUE}).}
 }
 \description{
-	This function uses the discrete approximation of Boucher and Demery (2016) to fit a multi-state discrete character threshold model following Felsenstein (2012; Revell 2014).
+	\code{fitThresh} uses the discrete approximation of Boucher and Demery (2016) to fit a binary or multi-state discrete character threshold model following Felsenstein (2012; Revell 2014).
+	
+	\code{fitsemiThresh} uses the discrete approximation of Boucher and Demery (2016) to fit a semi-threshold model in which liability is observed on some interval, but unobserved outside of it.
 }
 \value{
-	An object of class \code{"fitThresh"}.
+	An object of class \code{"fitThresh"} or \code{"fitsemiThresh"}.
 }
 \references{
 	Boucher, F. C., and V. Demery (2016) Inferring bounded evolution in phenotypic characters from phylogenetic comparative data. \emph{Systematic Biology}, \bold{65}, 651-661.
