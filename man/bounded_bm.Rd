@@ -11,7 +11,7 @@
 	\item{...}{optional arguments.}
 }
 \description{
-	Fits a bounded Brownian motion model using the discrete approximation of Boucher & Demery (2016), or the "wrapped" or circular model of Juhn et al. (In review).
+	Fits a bounded Brownian motion model using the discrete approximation of Boucher & Demery (2016), or the "wrapped" or circular model of Martinet et al. (In revision).
 }
 \details{
 	Optional arguments include (but are not limited to): \code{parallel}, defaults to \code{parallel=FALSE}; \code{df}, to adjust the degrees of freedom of the model, depending on whether or not the bounds have been set from the observed data; \code{levs}, number of levels for the discretization (defaults to \code{levs=200}); and \code{wrapped}, logical indicating whether to fit the "circular" or wrapped model, instead of the standard bounded model (defaults to \code{wrapped=FALSE}).
@@ -22,7 +22,7 @@
 \references{
 	Boucher, F. C., and V. Demery (2016) Inferring bounded evolution in phenotypic characters from phylogenetic comparative data. \emph{Systematic Biology}, \bold{65}, 651-661.
 	
-	Juhn, M., K. Martinet, F. Boucher, A. Schultz, L. Harmon, K. Burns, and M. Alfaro (In review) A wrapped Brownian motion model for the evolution of color.
+	Martinet, K. M., M. S. Juhn, F. C. Boucher, L. J. Harmon, L. J. Revell, S. I. A. Foerster, A. J. Shultz, K. Burns, M. E. Alfaro. (In revision) A wrapped Brownian motion model for traits on a circular scale. 
 	
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
 }
