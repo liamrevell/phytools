@@ -82,6 +82,86 @@ logLik.fitgammaMk<-function(object,...){
 
 gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,
 	expm.method="Higham08.b",...){
+	## nrates is not actually used except for marginal=TRUE
+	## get parameters
+	q<-par[1:(length(par)-1)]
+	alpha<-par[length(par)]
+	if(hasArg(fn_min)) fn_min<-list(...)$fn_min
+	else fn_min<--Inf
+	if(hasArg(marginal)) marginal<-list(...)$marginal
+	else marginal<-FALSE
+	if(marginal){
+		if(hasArg(edge)) edge<-list(...)$edge
+		else marginal<-FALSE
+		if(hasArg(rate)) rate<-list(...)$rate
+		else marginal<-FALSE
+		if(median){
+			r<-qgamma(seq(1/(2*nrates),1,by=1/nrates),alpha,alpha)
+			r<-r/mean(r)
+		} else {
+			cat("This does not work yet.\n")
+		}
+	}
+	if(hasArg(return)) return<-list(...)$return
+	else return<-"likelihood"
+	pw<-if(!is.null(attr(tree,"order"))&&
+		attr(tree,"order")=="postorder") tree else 
+		reorder(tree,"postorder")
+	k<-ncol(x)
+	if(is.null(model)){
+		model<-matrix(1,k,k)
+		diag(model)<-0
+	}
+	if(hasArg(pi)) pi<-list(...)$pi
+	else pi<-rep(1/k,k)
+	Q<-matrix(0,k,k)
+	Q[]<-c(0,q)[model+1]
+	diag(Q)<--rowSums(Q)
+	L<-rbind(x[pw$tip.label,],
+		matrix(0,pw$Nnode,k,
+		dimnames=list(1:pw$Nnode+Ntip(pw))))
+	nn<-unique(pw$edge[,1])
+	pp<-vector(mode="numeric",length=length(nn))
+	root<-min(nn)
+	calcP<-function(alpha,Q,t){
+		I<-diag(1,nrow(Q))
+		S<-I-t*Q/alpha
+		e<-eigen(S)
+		e$vectors%*%diag(e$values^(-alpha))%*%solve(e$vectors)
+	}
+	for(i in 1:length(nn)){
+		ee<-which(pw$edge[,1]==nn[i])
+		PP<-matrix(NA,length(ee),k)
+		for(j in 1:length(ee)){
+			if(marginal){
+				if(pw$edge[ee[j],2]==edge){ 
+					ind<-rate
+					P<-Reduce("+",lapply(r[ind],
+						function(rr,nr,Q,edge) expm(Q*rr*edge,
+						method=expm.method)/nr,
+						nr=nrates,Q=Q,edge=pw$edge.length[ee[j]]))
+				} else P<-calcP(alpha,Q,pw$edge.length[ee[j]])
+			} else P<-calcP(alpha,Q,pw$edge.length[ee[j]])
+			PP[j,]<-P%*%L[pw$edge[ee[j],2],]
+		}
+		L[nn[i],]<-apply(PP,2,prod)
+		if(nn[i]==root){
+			if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
+			L[nn[i],]<-pi*L[nn[i],]
+		}
+		pp[i]<-sum(L[nn[i],])
+		L[nn[i],]<-L[nn[i],]/pp[i]
+	}
+	prob<-sum(log(pp))
+	if(return=="likelihood") 
+		if(is.na(prob)||is.nan(prob)) 
+			return(fn_min) else return(prob)
+	else if(return=="conditional") L
+	else if(return=="pi") pi
+}
+
+old.gamma_pruning<-function(par,nrates=4,tree,x,model=NULL,median=TRUE,
+	expm.method="Higham08.b",...){
 	if(hasArg(fn_min)) fn_min<-list(...)$fn_min
 	else fn_min<--Inf
 	if(hasArg(marginal)) marginal<-list(...)$marginal
