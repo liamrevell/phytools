@@ -317,6 +317,7 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 		expm.method=expm.method,logscale=TRUE,max.q=max.q,
 		q.init=q.init)
 	lik<-logLik(mk_fit)-Ntip(tree)*log(dd/levs)
+	attr(lik,"df")<-4
 	x0<-sum(mk_fit$pi*rowMeans(bins))
 	sigsq<-2*mk_fit$rates*(dd/levs)^2
 	object<-list(
@@ -349,3 +350,5 @@ print.fitsemiThresh<-function(x,digits=6,...){
 	else if(x$at_bounds) cat("Optimization may be at bounds.\n\n")
 	else cat("R thinks optimization may not have converged.\n\n")
 }
+
+logLik.fitsemiThresh<-function(object,...) object$logLik

@@ -299,6 +299,7 @@ S3method(Ntip, cophylo)
 S3method(Nnode, cophylo)
 S3method(Nedge, cophylo)
 S3method(print, fitsemiThresh)
+S3method(logLik, fitsemiThresh)
 
 ## default methods
 S3method(ancr, default)
