@@ -1,6 +1,6 @@
 Package: phytools
-Version: 2.4-15
-Date: 2025-05-19
+Version: 2.4-16
+Date: 2025-05-22
 Title: Phylogenetic Tools for Comparative Biology (and Other Things)
 Authors@R: person(given = c("Liam", "J."),
 	family = "Revell",
