@@ -221,7 +221,7 @@ eigen_pruning<-function(q,tree,x,eigenQ,...){
 
 print.bounded_bm<-function(x,digits=6,...){
 	cat(paste("Object of class \"bounded_bm\" based on\n",
-		"	a discretization with k =",
+		"  a discretization with k =",
 		x$ncat,"levels.\n"))
 	if(x$wrapped) cat("\nWrapped (i.e., circular) model.\n\n")
 	if(!x$wrapped){ 

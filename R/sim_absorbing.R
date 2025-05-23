@@ -18,6 +18,10 @@ sim.absorbing<-function(tree,x0=0,sig2=1,
 	else plot=TRUE
 	if(hasArg(reflective)) reflective<-list(...)$reflective
 	else reflective<-FALSE
+	if(!reflective){
+		if(hasArg(semithreshold)) semithreshold<-list(...)$semithreshold
+		else semithreshold<-FALSE
+	} else semithreshold<-FALSE
 	tree<-reorder(tree,"cladewise")
 	ll<-max(nodeHeights(tree))
 	tt<-map.to.singleton(make.era.map(tree,
@@ -29,8 +33,10 @@ sim.absorbing<-function(tree,x0=0,sig2=1,
 	for(i in 1:nrow(tt$edge)){
 		X[i,2]<-X[i,1]+delta_x[i]
 		if(!reflective){
-			if(X[i,2]<=bounds[1]) X[i,2]<--Inf
-			else if(X[i,2]>=bounds[2]) X[i,2]<-Inf
+			if(!semithreshold){
+				if(X[i,2]<=bounds[1]) X[i,2]<--Inf
+				else if(X[i,2]>=bounds[2]) X[i,2]<-Inf
+			}
 		} else {
 			while(X[i,2]<=bounds[1]||X[i,2]>=bounds[2]){
 				if(X[i,2]<=bounds[1]) X[i,2]<-2*bounds[1]-X[i,2]
@@ -45,11 +51,24 @@ sim.absorbing<-function(tree,x0=0,sig2=1,
 	ii<-which(X==Inf)
 	if(length(ii)>0) X[ii]<-bounds[2]
 	if(plot){
-		LIMS<-vector()
-		LIMS[1]<-if(bounds[1]==-Inf) min(X) else bounds[1]
-		LIMS[2]<-if(bounds[2]==Inf) max(X) else bounds[2]
+		if(!semithreshold){
+			LIMS<-vector()
+			LIMS[1]<-if(bounds[1]==-Inf) min(X) else bounds[1]
+			LIMS[2]<-if(bounds[2]==Inf) max(X) else bounds[2]
+		} else LIMS<-bounds
 		hh<-hcl.colors(n=201)
-		edge_col<-hh[floor(200*((X[,1]-LIMS[1])/diff(LIMS)))+1]
+		if(!semithreshold){
+			edge_col<-hh[floor(200*((X[,1]-LIMS[1])/diff(LIMS)))+1]
+			lwd<-rep(3,length(edge_col))
+		} else {
+			ii<-floor(200*((X[,1]-LIMS[1])/diff(LIMS)))+1
+			lwd<-rep(3,length(ii))
+			lwd[ii<1]<-1
+			lwd[ii>201]<-1
+			ii[ii<1]<-1
+			ii[ii>201]<-201
+			edge_col<-hh[ii]
+		}	
 		par(mfrow=c(2,1))
 		par(mar=c(0.1,4.1,1.1,1.1))
 		plot(tt,edge.color=edge_col,show.tip.label=FALSE,
@@ -66,7 +85,7 @@ sim.absorbing<-function(tree,x0=0,sig2=1,
 			las=1)
 		H<-nodeHeights(tt)
 		for(i in 1:nrow(tt$edge))
-			lines(H[i,],X[i,],col=edge_col[i],lwd=3)
+			lines(H[i,],X[i,],col=edge_col[i],lwd=lwd[i])
 		bcols<-hcl.colors(2)
 		if(is.finite(bounds[1])){
 			lines(c(0,max(nodeHeights(tree))),
@@ -82,6 +101,10 @@ sim.absorbing<-function(tree,x0=0,sig2=1,
 			text(0.1*max(nodeHeights(tree)),bounds[2],
 				"upper bound",pos=1)
 		}
+	}
+	if(semithreshold){
+		X[X<bounds[1]]<-bounds[1]
+		X[X>bounds[2]]<-bounds[2]
 	}
 	setNames(sapply(X=1:Ntip(tt),
 		FUN=function(i,x,e) X[which(e[,2]==i),2],

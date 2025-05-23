@@ -248,6 +248,18 @@ lik_thresh<-function(threshold,pw,fixed_threshold,
 	else if(return=="pi") pi
 }
 
+## expected disparity (very crude)
+
+expected_disparity<-function(tree,x,bounds,frac){
+	y<-x[!(x%in%c(bounds))]
+	if(length(y)==0) y<-x
+	pic_y<-pic(y,keep.tip(multi2di(tree),names(y)))
+	s2<-mean(sort(pic_y,
+		decreasing=FALSE)[1:ceiling(frac*length(pic_y))]^2)
+	C<-vcv(tree)
+	s2*(1/Ntip(tree)*tr(C)-1/(Ntip(tree)^2)*sum(C))
+}
+
 fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-0
@@ -263,25 +275,26 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 	if(hasArg(expm.method)) expm.method<-list(...)$expm.method
 	else expm.method<-"R_Eigen"
 	if(hasArg(p)) p<-list(...)$p
-	else p<-4
+	else p<-3
 	C<-vcv(tree)
 	N<-Ntip(tree)
 	## continuous character
 	x<-x[tree$tip.label]
+	v<-sqrt(expected_disparity(tree,x,threshold,frac=0.1))
 	if(is.null(threshold)){
 		threshold<-range(x)
-		LIMS<-expand.range(threshold,p=p)
+		LIMS<-mean(range(x))+c(-p*v,p*v)
 	} else if(threshold[1]==-Inf&&threshold[2]==Inf){
-		LIMS<-expand.range(range(x),p=p)
+		LIMS<-mean(range(x))+c(-p*v,p*v)
 		threshold<-LIMS
 	} else if(threshold[2]==Inf){
-		LIMS<-expand.range(c(threshold[1],max(x)),p=p)
+		LIMS<-mean(range(x))+c(-p*v,p*v)
 		threshold[2]<-LIMS[2]
 	} else if(threshold[1]==-Inf){
-		LIMS<-expand.range(c(min[x],threshold[2]),p=p)
+		LIMS<-mean(range(x))+c(-p*v,p*v)
 		threshold[1]<-LIMS[1]
 	} else {
-		LIMS<-expand.range(threshold,p=p)
+		LIMS<-mean(range(threshold))+c(-p*v,p*v)
 	}
 	dd<-diff(LIMS)
 	tol<-1e-8*dd/levs
@@ -324,6 +337,7 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 		sigsq=sigsq,
 		x0=x0,
 		threshold=threshold,
+		lims=LIMS,
 		ncat=levs,
 		logLik=lik,
 		opt_results=mk_fit$opt_results,
@@ -335,9 +349,10 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 
 print.fitsemiThresh<-function(x,digits=6,...){
 	cat(paste("Object of class \"fitsemiThresh\" based on\n",
-		"	a discretization with k =",
-		x$ncat,"levels.\n"))
-	cat(paste("Set or estimated thresholds: [",round(x$threshold[1],digits),
+		"  a discretization with k =",
+		x$ncat,"levels on the interval [",round(x$lims[1],digits),
+		",",round(x$lims[2],digits),"].\n"))
+	cat(paste("\nSet or estimated thresholds: [",round(x$threshold[1],digits),
 		",",round(x$threshold[2],digits),"]\n\n"))
 	cat("Fitted model parameters:\n")
 	if(is.null(x$CI)) cat(paste("  sigsq:",round(x$sigsq,6),"\n"))
