@@ -254,8 +254,8 @@ expected_disparity<-function(tree,x,bounds,frac){
 	y<-x[!(x%in%c(bounds))]
 	if(length(y)==0) y<-x
 	pic_y<-pic(y,keep.tip(multi2di(tree),names(y)))
-	s2<-mean(sort(pic_y,
-		decreasing=FALSE)[1:ceiling(frac*length(pic_y))]^2)
+	s2<-mean(sort(abs(pic_y),
+		decreasing=TRUE)[1:ceiling(frac*length(pic_y))]^2)
 	C<-vcv(tree)
 	s2*(1/Ntip(tree)*tr(C)-1/(Ntip(tree)^2)*sum(C))
 }
@@ -276,6 +276,8 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 	else expm.method<-"R_Eigen"
 	if(hasArg(p)) p<-list(...)$p
 	else p<-3
+	if(hasArg(fixed_sigsq)) fixed_sigsq<-list(...)$fixed_sigsq
+	else fixed_sigsq<-NULL
 	C<-vcv(tree)
 	N<-Ntip(tree)
 	## continuous character
@@ -326,13 +328,28 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 	if(hasArg(max.sigsq)) max.sigsq<-list(...)$max.sigsq
 	else max.sigsq<-2*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])
 	max.q=(1/2)*max.sigsq*(levs/dd)^2
-	mk_fit<-fitMk(tree,X,model=MODEL,pi=pi,lik.func=lik.func,
-		expm.method=expm.method,logscale=TRUE,max.q=max.q,
-		q.init=q.init)
-	lik<-logLik(mk_fit)-Ntip(tree)*log(dd/levs)
-	attr(lik,"df")<-4
-	x0<-sum(mk_fit$pi*rowMeans(bins))
-	sigsq<-2*mk_fit$rates*(dd/levs)^2
+	if(is.null(fixed_sigsq)){
+		mk_fit<-fitMk(tree,X,model=MODEL,pi=pi,lik.func=lik.func,
+			expm.method=expm.method,logscale=TRUE,max.q=max.q,
+			q.init=q.init)
+		nn<-Ntip(tree)-sum(x%in%threshold)
+		lik<-logLik(mk_fit)-nn*log(dd/levs)
+		attr(lik,"df")<-4
+		x0<-sum(mk_fit$pi*rowMeans(bins))
+		sigsq<-2*mk_fit$rates*(dd/levs)^2
+	} else {
+		nn<-Ntip(tree)-sum(x%in%threshold)
+		lik<-phytools:::pruning(q=fixed_sigsq*(levs/dd)^2,
+			tree=reorder(tree,"pruningwise"),x=X,model=MODEL,
+			pi=root)
+		lik<-lik-nn*log(dd/levs)
+		attr(lik,"df")<-4
+		x0<-sum(phytools:::pruning(q=fixed_sigsq*(levs/dd)^2,
+			tree=reorder(tree,"pruningwise"),x=X,model=MODEL,
+			pi=root,return="pi")*rowMeans(bins))
+		sigsq<-fixed_sigsq
+		mk_fit<-list(opt_results=list(convergence=0))
+	}	
 	object<-list(
 		sigsq=sigsq,
 		x0=x0,
