@@ -127,19 +127,10 @@ phenogram<-function(tree,x,fsize=1.0,ftype="reg",colors=NULL,axes=list(),add=FAL
 			}
 		}
 	} else {
-		if(is.null(colors)){
-			nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
-			colors<-setNames(palette()[1:length(nn)],nn)
-		}
-		if(length(lty)==1){
-			nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
-			lty<-setNames(rep(lty,length(nn)),nn)
-		} else {
-			if(is.null(names(lty))){
-				nn<-sort(unique(c(getStates(tree,"tips"),getStates(tree,"nodes"))))
-				lty<-setNames(lty,nn)
-			}
-		}
+		nn<-sort(unique(unlist(sapply(tree$maps,names))))
+		if(is.null(colors)) colors<-setNames(palette()[1:length(nn)],nn)
+		if(length(lty)==1) lty<-setNames(rep(lty,length(nn)),nn)
+		else if(is.null(names(lty))) lty<-setNames(lty,nn)
 		for(i in 1:nrow(H)){
 			y<-H[i,1]
 			m<-diff(X[i,])/diff(H[i,])
