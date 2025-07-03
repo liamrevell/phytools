@@ -339,12 +339,12 @@ fitsemiThresh<-function(tree,x,threshold=c(0,1),...){
 		sigsq<-2*mk_fit$rates*(dd/levs)^2
 	} else {
 		nn<-Ntip(tree)-sum(x%in%threshold)
-		lik<-phytools:::pruning(q=fixed_sigsq*(levs/dd)^2,
+		lik<-pruning(q=fixed_sigsq*(levs/dd)^2,
 			tree=reorder(tree,"pruningwise"),x=X,model=MODEL,
 			pi=root)
 		lik<-lik-nn*log(dd/levs)
 		attr(lik,"df")<-4
-		x0<-sum(phytools:::pruning(q=fixed_sigsq*(levs/dd)^2,
+		x0<-sum(pruning(q=fixed_sigsq*(levs/dd)^2,
 			tree=reorder(tree,"pruningwise"),x=X,model=MODEL,
 			pi=root,return="pi")*rowMeans(bins))
 		sigsq<-fixed_sigsq
