@@ -2,21 +2,24 @@
 \alias{bmPlot}
 \alias{sim.absorbing}
 \alias{sim.reflective}
+\alias{sim.multiTrend}
 \title{Simulates and visualizes continuous trait evolution on a phylogeny}
 \usage{
 bmPlot(tree, type="BM", anc=0, sig2=1/1000, ngen=1000, ...)
 sim.absorbing(tree, x0=0, sig2=1, bounds=c(-Inf,Inf), nsteps=1000, ...)
 sim.reflective(tree, x0=0, sig2=1, bounds=c(-Inf,Inf), nsteps=1000, ...)
+sim.multiTrend(tree, x0=0, sig2=1, mu=0, ...)
 }
 \arguments{
-	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"}.}
+	\item{tree}{a phylogenetic tree as an object of class \code{"phylo"} or \code{"simmap"}.}
 	\item{type}{the type of plot to create in \code{bmPlot}. See Description.}
 	\item{anc}{the ancestral value for the root node in \code{bmPlot}.}
 	\item{sig2}{the BM rate (variance of the stochastic diffusion process), \eqn{\sigma^2}.}
 	\item{ngen}{number of generations for the simulation: will rescale the tree to this total length in \code{bmPlot}.}
-	\item{x0}{the ancestral value of the root node in \code{sim.absorbing}.}
+	\item{x0}{the ancestral value of the root node in \code{sim.absorbing}, \code{sim.reflective}, and \code{sim.multiTrend}.}
 	\item{bounds}{absorbing or reflecting bounds in \code{sim.absorbing}. If \code{bounds=c(-Inf,Inf)} then the simulated process is unbounded.}
 	\item{nsteps}{in \code{sim.absorbing}, the number of steps for the time discretization required for forward-in-time simulation.}
+	\item{mu}{scalar or vector of mean trend for \code{sim.multiTrend}.}
 	\item{...}{arguments to be passed to different methods.}
 }
 \description{
@@ -25,6 +28,8 @@ sim.reflective(tree, x0=0, sig2=1, bounds=c(-Inf,Inf), nsteps=1000, ...)
 	\code{sim.absorbing} uses time discretization as well, but to conduct a simulation of either unbounded Brownian motion (if \code{bounds=c(-Inf,Inf)}), reflective bounded Brownian motion (if \code{reflective=TRUE}), or bounded Brownian motion with absorbing bounds.
 	
 	\code{sim.reflective} is a synonym for \code{sim.absorbing}, but with the optional argument \code{reflective=TRUE} by default.
+	
+	\code{sim.multiTrend} takes a \code{"simmap"} or \code{"phylo"} object as input and simulates trended Brownian motion on the tree, including for multiple trends depending on the mapped trait value.
 }
 \details{
 	\code{bmPlot} will first rescale and round the branch lengths to integer length, if they are not already in integer values. If integer branch lengths are provided, the user should also set \code{ngen} to be equal to the total height of the tree in generations (and thus avoid rescaling). For \code{type="threshold"} the visualization is of the threshold model (Felsenstein 2012), in which the evolving character is liability and the segments of evolution are colored by their value for the threshold trait. If \code{type="threshold"} is used, the function requires at least one addition input: \code{thresholds}, a vector containing the ordered thresholds between states. The user can also provide the colors for plotting in \code{colors}. Note that one more color than threshold should be provided as one threshold implies two states; two thresholds, three states; etc. If no value for \code{colors} is provided, the function will recycle a set of four colors up to the number of times required by \code{thresholds}. Finally, the optional argument \code{return.tree=TRUE} will tell the function to return a list with the tip and note states and an object of class \code{"phylo"} with (for \code{type="threshold"}), the state for the threshold model through time mapped on the branches of the tree in discrete time.
