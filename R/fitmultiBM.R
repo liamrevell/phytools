@@ -292,7 +292,8 @@ fitmultiBM<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 			expm.method=if(isSymmetric(model)) "R_Eigen" else 
 				"Higham08.b",
 			pi=pi,logscale=logscale,q.init=q.init,
-			opt.method=opt.method,max.q=max.q)
+			opt.method=opt.method,max.q=max.q,
+			ncores=ncores)
 	} else {
 		QQ<-model
 		diag(QQ)<--rowSums(QQ)
