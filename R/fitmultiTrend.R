@@ -290,7 +290,8 @@ fitmultiTrend<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 		expm.method=if(isSymmetric(model)) "R_Eigen" else 
 			"Higham08.b",
 		pi=pi,logscale=logscale,q.init=q.init,
-		opt.method=opt.method,max.q=max.q)
+		opt.method=opt.method,max.q=max.q,
+		ncores=ncores)
 	sig2<-(fit$rates[1:(max(cmodel)/2)]+
 		fit$rates[1:(max(cmodel)/2)+max(cmodel)/2])*delta^2
 	mu<-(fit$rates[1:(max(cmodel)/2)]-
@@ -417,7 +418,7 @@ sim.multiTrend<-function(tree,x0=0,sig2=1,mu=0,...){
 		for(i in 1:length(tt$maps)) 
 			tt$maps[[i]]<-setNames(tt$maps[[i]],
 				names(tt$edge.length)[i])
-		phenogram(tt,xx,ftype="off",colors=edge_col)
+		phenogram(tt,xx,ftype="off",colors=edge_col,lwd=1)
 	}
 	setNames(
 		sapply(1:Ntip(tt),
