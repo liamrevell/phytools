@@ -58,7 +58,7 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 	
 	The function \code{fitmultiMk} fits an M\emph{k} model in which the transition rates between character states are allowed to vary depending on the mapped state of a discrete character on the tree following Revell et al. (2024). It can be combined with, for example, \code{\link{paintSubTree}} to test hypotheses about how the process of discrete character evolution for \code{x} varies between different parts of the tree.
 	
-	The function \code{fitgammaMk} fits an M\emph{k} model in which the edge rates are assumed to have been sampled randomly from a \eqn{\Gamma} distribution with mean of 1.0 and shape parameter \eqn{\alpha} (Revell and Harmon, In review).
+	The function \code{fitgammaMk} fits an M\emph{k} model in which the edge rates are assumed to have been sampled randomly from a \eqn{\Gamma} distribution with mean of 1.0 and shape parameter \eqn{\alpha} (Revell, May, and Harmon, In review).
 	
 	The function \code{fitfnMk} fit an ordered M\emph{k} model in which the backward and forward transition rates between adjacent levels of the trait vary according to a functional form. Presently that function form is an \emph{n}th degree polynomial, in which \code{degree} is set by the user (but defaults to \code{degree = 2}).
 	
@@ -88,7 +88,7 @@ fitfnMk(tree, x, model="polynomial", degree=2, ...)
 	
 	Revell, L. J. and L. J. Harmon (2022) \emph{Phylogenetic Comparative Methods in R}. Princeton University Press.
 	
-	Revell, L. J. and L. J. Harmon. In review. A discrete character evolution model for phylogenetic comparative biology with \eqn{\Gamma}-distributed rate heterogeneity among branches of the tree.
+	Revell, L. J., (M. May), and L. J. Harmon. In review. A discrete character evolution model for phylogenetic comparative biology with \eqn{\Gamma}-distributed rate heterogeneity among branches of the tree.
 	
 	Revell, L. J., K. P. Schliep, D. L. Mahler, and T. Ingram (2024) Testing for heterogeneous rates of discrete character evolution on phylogenies. \emph{Journal of Evolutionary Biology}, \bold{37}, 1591-1602.
 	

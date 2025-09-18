@@ -34,12 +34,12 @@ sim.multiTrend(tree, x0=0, sig2=1, mu=0, ...)
 \details{
 	\code{bmPlot} will first rescale and round the branch lengths to integer length, if they are not already in integer values. If integer branch lengths are provided, the user should also set \code{ngen} to be equal to the total height of the tree in generations (and thus avoid rescaling). For \code{type="threshold"} the visualization is of the threshold model (Felsenstein 2012), in which the evolving character is liability and the segments of evolution are colored by their value for the threshold trait. If \code{type="threshold"} is used, the function requires at least one addition input: \code{thresholds}, a vector containing the ordered thresholds between states. The user can also provide the colors for plotting in \code{colors}. Note that one more color than threshold should be provided as one threshold implies two states; two thresholds, three states; etc. If no value for \code{colors} is provided, the function will recycle a set of four colors up to the number of times required by \code{thresholds}. Finally, the optional argument \code{return.tree=TRUE} will tell the function to return a list with the tip and note states and an object of class \code{"phylo"} with (for \code{type="threshold"}), the state for the threshold model through time mapped on the branches of the tree in discrete time.
 	
-	Optional arguments in \code{sim.absorbing} include \code{reflective}, which defaults to \code{reflective=FALSE}. This function uses discretization to conduct a forward-in-time simulation, but does not rescale the tree. \code{sim.reflective} calls \code{sim.absorbing} internally, but with the optional argument \code{reflective=TRUE} by default.
+	Optional arguments in \code{sim.absorbing} include \code{reflective}, which defaults to \code{reflective=FALSE}. This function uses discretization to conduct a forward-in-time simulation, but does not rescale the tree. \code{sim.reflective} calls \code{sim.absorbing} internally, but with the optional argument \code{reflective} set to \code{TRUE} by default.
 }
 \value{
 	\code{bmPlot} conducts and plots discrete time Brownian simulation and returns a vector containing the simulated states at internal nodes and tips of the tree. It also returns, by default (although this can be turned off) a tree with the branch lengths in discrete time and with a mapped discrete character (for \code{type="threshold"}).
 	
-	\code{sim.absorbing} returns a named vector of numeric values containing tip states.
+	\code{sim.absorbing}, \code{sim.reflective}, and \code{sim.multiTrend} return named vectors of numeric values containing the tip states.
 }
 \references{
 	Felsenstein, J. (2012) A comparative method for both discrete and continuous characters using the threshold model. \emph{American Naturalist}, \bold{179}, 145-156.

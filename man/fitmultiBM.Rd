@@ -15,10 +15,10 @@ fitmultiTrend(tree, x, y=NULL, model="ER", ncat=1, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	Fits a multi-rate (or multi-trend) discrete-state-dependent Brownian motion model using the discrete approximation of Boucher & Demery (2016).
+	Fits a multi-rate (or multi-trend) discrete-state-dependent Brownian motion model using the discretized diffusion approximation of Boucher & Demery (2016).
 }
 \details{
-	\code{fitmultiBM} uses the discrete approximation of Boucher & Demery (2016) to fit a model in which the rate of Brownian evolution of a continuous trait (in \code{x}) depends on the state of a discrete character (in \code{y}), where the discrete and continuous character are modeled jointly. If, in fact, the rates of evolution of \code{x} depend on the state of \code{y}, this will lead to more accurate model parameter estimates than when the discrete and continuous characters are separately modeled.
+	\code{fitmultiBM} uses the discretiszed diffusion approximation of Boucher & Demery (2016) to fit a model in which the rate of Brownian evolution of a continuous trait (in \code{x}) depends on the state of a discrete character (in \code{y}), where the discrete and continuous character are modeled jointly. If, in fact, the rates of evolution of \code{x} depend on the state of \code{y}, this will lead to more accurate model parameter estimates than when the discrete and continuous characters are separately modeled.
 	
 	\code{fitmultiTrend} fits the same model, but in which the mean of the Brownian process, and not only its rate, vary as a function of the character \code{y}.
 	

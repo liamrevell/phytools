@@ -1,7 +1,7 @@
 \name{fitThresh}
 \alias{fitThresh}
 \alias{fitsemiThresh}
-\title{Fits binary, multi-state, and semi-threshold models using the discrete approximation}
+\title{Fits binary, multi-state, and semi-threshold models using the discretized diffusion approximation}
 \usage{
 fitThresh(tree, x, sequence=NULL, ...)
 fitsemiThresh(tree, x, threshold=c(0,1), ...)
@@ -14,9 +14,9 @@ fitsemiThresh(tree, x, threshold=c(0,1), ...)
 	\item{...}{optional arguments. Optional arguments include \code{levs} (the number of levels for the discrete approximation, defaults to \code{levs=200}), \code{root} (a root prior assumption, defaults to \code{root="fitzjohn"} which involves treating the root like a nuisance parameter), and \code{rand_start} (defaults to \code{rand_start=TRUE}).}
 }
 \description{
-	\code{fitThresh} uses the discrete approximation of Boucher and Demery (2016) to fit a binary or multi-state discrete character threshold model following Felsenstein (2012; Revell 2014).
+	\code{fitThresh} uses the discretized diffusion approximation of Boucher and Demery (2016) to fit a binary or multi-state discrete character threshold model following Felsenstein (2012; Revell 2014).
 	
-	\code{fitsemiThresh} uses the discrete approximation of Boucher and Demery (2016) to fit a semi-threshold model in which liability is observed on some interval, but unobserved outside of it.
+	\code{fitsemiThresh} uses the discretized diffusion approximation to fit a semi-threshold model in which liability is observed on some interval, but unobserved outside of it.
 }
 \value{
 	An object of class \code{"fitThresh"} or \code{"fitsemiThresh"}.

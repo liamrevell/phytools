@@ -10,7 +10,7 @@
 	
 	The complete list of functions can be displayed with \code{library(help=phytools)}.
 	
-	The \pkg{phytools} development page is \url{https://github.com/liamrevell/phytools/}. More information on \pkg{phytools} can also be found at \url{http://blog.phytools.org} or \url{http://www.phytools.org}.
+	The \pkg{phytools} development page is \url{https://github.com/liamrevell/phytools/}. More information on \pkg{phytools} can also be found at \url{https://blog.phytools.org} or \url{http://www.phytools.org}.
 	
 	If you use \pkg{phytools} (or other packages that depend on \pkg{phytools}) in a publication, please \emph{cite it}.
 	

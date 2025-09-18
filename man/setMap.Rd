@@ -13,7 +13,7 @@ setMap(x, ...)
 \method{setMap}{multirateBM_plot}(x, ...)
 }
 \arguments{
-	\item{x}{an object of class \code{"contMap"}, \code{"densityMap"}, \code{"phyloScattergram"}, or \code{"multirateBM_plot"}.}
+	\item{x}{an object of various special types containing a phylogenetic tree. See Description for more details.}
 	\item{...}{arguments to be passed to \code{\link{colorRampPalette}}. Also, the argument \code{invert} which (if \code{invert=TRUE}) will just flip the current color ramp.}
 }
 \description{

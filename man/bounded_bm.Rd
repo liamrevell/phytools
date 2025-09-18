@@ -11,7 +11,7 @@
 	\item{...}{optional arguments.}
 }
 \description{
-	Fits a bounded Brownian motion model using the discrete approximation of Boucher & Demery (2016), or the "wrapped" or circular model of Martinet et al. (In revision).
+	Fits a bounded Brownian motion model using the discretized diffusion approximation of Boucher & Demery (2016), or the "wrapped" or circular model of Martinet et al. (In revision).
 }
 \details{
 	Optional arguments include (but are not limited to): \code{parallel}, defaults to \code{parallel=FALSE}; \code{df}, to adjust the degrees of freedom of the model, depending on whether or not the bounds have been set from the observed data; \code{levs}, number of levels for the discretization (defaults to \code{levs=200}); and \code{wrapped}, logical indicating whether to fit the "circular" or wrapped model, instead of the standard bounded model (defaults to \code{wrapped=FALSE}).

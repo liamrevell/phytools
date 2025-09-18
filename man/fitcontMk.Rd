@@ -12,10 +12,10 @@ fitcontMk(tree, x, y, model="sigmoidal", ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	Fits a model where the rate of evolution of a binary trait depends on the value of a continuous character using the discrete approximation of Boucher & Demery (2016).
+	Fits a model where the rate of evolution of a binary trait depends on the value of a continuous character using the discretized diffusion approximation of Boucher & Demery (2016).
 }
 \details{
-	\code{fitmultiBM} uses the discrete approximation of Boucher & Demery (2016) to fit a model where the rate of evolution of a binary trait (in \code{x}) depends on the state of a continuous trait (in \code{y}), where the discrete and continuous character are modeled jointly. In some ways this is philosophically equivalent to the binary trait correlation method of Pagel (1994), but where one of the traits is continuously-valued.
+	\code{fitcontMk} uses the discretized diffusion approximation of Boucher & Demery (2016) to fit a model where the rate of evolution of a binary trait (in \code{x}) depends on the state of a continuous trait (in \code{y}), where the discrete and continuous character are modeled jointly. In some ways this is philosophically equivalent to the binary trait correlation method of Pagel (1994), but where one of the traits is continuously-valued.
 	
 	Optional arguments include \code{parallel} (whether to distribute matrix exponentiation across nodes, which defaults to \code{parallel=TRUE}), \code{levs} (the number of levels for the discrete approximation, which defaults to \code{levs=100}), and \code{plot_model} (a logical indicating whether or not to graph the model while optimizing (which defaults to \code{plot_model=FALSE}).
 }

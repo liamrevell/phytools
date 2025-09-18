@@ -40,7 +40,7 @@ plotSimmap(tree, colors=NULL, fsize=1.0, ftype="reg", lwd=2, pts=FALSE,
 	\item{asp}{aspect ratio. See \code{\link{plot.window}}.}
 	\item{outline}{logical value indicating whether or not to draw a black outline around the plotted edges of the tree.}
 	\item{plot}{logical value indicating whether or not to actually plot the tree. (See equivalent argument in \code{\link[ape]{plot.phylo}}.)}
-	\item{underscore}{logical value indicating whether to plot the underscore character, \code{"_"} (if \code{underscore=TRUE}) or substitute for a space. Defaults to \code{underscore=FALSE}.}
+	\item{underscore}{logical value indicating whether to plot the underscore character, \code{"_"}, or substitute for a space. Defaults to \code{underscore=FALSE}.}
 	\item{arc_height}{for \code{type="arc"} trees, the height of the arc in units of total tree depth.}
 	\item{x}{for S3 plotting method, object of class \code{"simmap"} or \code{"multiSimmap"}.}
 	\item{...}{for S3 plotting method, other arguments to be passed to \code{\link{plotSimmap}}.}
