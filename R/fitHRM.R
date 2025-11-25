@@ -1,16 +1,35 @@
 ## this function fits a hidden-rates model (Beaulieu et al. 2013)
-## written by Liam J. Revell 2020, 2021, 2023, 2024
+## written by Liam J. Revell 2020, 2021, 2023, 2024, 2025
 
 anova.fitHRM<-function(object,...) anova.fitMk(object,...)
 
 fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-0
-	if(!is.factor(x)) x<-setNames(as.factor(x),names(x))
-	k<-length(levels(x))
+	if(is.matrix(x)){
+		XX<-x[tree$tip.label,]
+	} else {
+		if(!is.factor(x))
+			x<-setNames(as.factor(x),names(x))
+		XX<-to.matrix(x,levels(x))[tree$tip.label,]
+	}
+	k<-ncol(XX)
+	if(length(ncat)==1) ncat<-rep(ncat,k)
+	X<-matrix(NA,nrow(XX),sum(ncat),dimnames=list(rownames(XX)))
+	ii<-1
+	cols<-nn<-vector()
+	for(i in 1:ncol(XX)){
+		for(j in 1:ncat[i]){ 
+			X[,ii]<-XX[,i]
+			nn[ii]<-paste(colnames(XX)[i],"_R",j,sep="")
+			cols[ii]<-paste(colnames(XX)[i],paste(rep("*",j-1),
+				collapse=""),sep="")
+			ii<-ii+1
+		}
+	}
+	colnames(X)<-nn
 	if(hasArg(niter)) niter<-list(...)$niter
 	else niter<-10
-	if(length(ncat)==1) ncat<-rep(ncat,k)
 	if(hasArg(quiet)) quiet<-list(...)$quiet
 	else quiet<-FALSE
 	if(hasArg(parallel)) parallel<-list(...)$parallel
@@ -28,20 +47,6 @@ fitHRM<-function(tree,x,model="ARD",ncat=2,...){
 		cat("The \"umbral\" and corHMM models are inconsistent. Setting \"corHMM_model=FALSE\".\n")
 		corHMM_model<-FALSE
 	}
-	XX<-to.matrix(x,levels(x))
-	X<-matrix(NA,nrow(XX),sum(ncat),dimnames=list(rownames(XX)))
-	ii<-1
-	cols<-nn<-vector()
-	for(i in 1:ncol(XX)){
-		for(j in 1:ncat[i]){ 
-			X[,ii]<-XX[,i]
-			nn[ii]<-paste(colnames(XX)[i],"_R",j,sep="")
-			cols[ii]<-paste(colnames(XX)[i],paste(rep("*",j-1),
-				collapse=""),sep="")
-			ii<-ii+1
-		}
-	}
-	colnames(X)<-nn
 	MODEL<-model
 	model<-matrix(0,ncol(X),ncol(X),dimnames=list(colnames(X),
 		colnames(X)))
