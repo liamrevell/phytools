@@ -115,8 +115,8 @@ plot.fastAnc<-function(x,...){
   ace <- if(!is.list(x)) x[1:length(x)] else x$ace[1:length(x$ace)]
   x_range<-range(c(attr(x,"data"),ace))
   tip.cols<-gradient[round((attr(x,"data")[attr(x,"tree")$tip.label]-
-      x_range[1])/diff(x_range)*100)]
-  node.cols<-gradient[round((ace-x_range[1])/diff(x_range)*100)]
+      x_range[1])/diff(x_range)*100)+1]
+  node.cols<-gradient[round((ace-x_range[1])/diff(x_range)*100)+1]
   points(pp$xx,pp$yy,col=c(tip.cols,node.cols),pch=16,
     cex=c(rep(tip.cex,Ntip(attr(x,"tree"))),
       rep(node.cex,Nnode(attr(x,"tree")))))
