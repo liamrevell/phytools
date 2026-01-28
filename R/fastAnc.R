@@ -72,17 +72,19 @@ print.fastAnc<-function(x,digits=6,printlen=NULL,...){
 	} else {
 		Nnode<-length(x$ace)
 		if(is.null(printlen)||printlen>=Nnode) print(round(x$ace,digits))
-		else printDotDot(x$ace,digits,printlen)
+		else printDotDot(x$ace[1:length(x$ace)],digits,printlen)
 		if(!is.null(x$var)){
 			cat("\nVariances on ancestral states:\n")
-			if(is.null(printlen)||printlen>=Nnode) print(round(x$var,digits))
-			else printDotDot(x$var,digits,printlen)
+			if(is.null(printlen)||printlen>=Nnode) 
+				print(round(x$var[1:length(x$var)],digits))
+			else printDotDot(x$var[1:length(x$var)],digits,printlen)
 		}
 		if(!is.null(x$CI95)){
 			cat("\nLower & upper 95% CIs:\n")
 			colnames(x$CI95)<-c("lower","upper")
-			if(is.null(printlen)||printlen>=Nnode) print(round(x$CI95,digits))
-			else printDotDot(x$CI95,digits,printlen)
+			if(is.null(printlen)||printlen>=Nnode) 
+				print(round(x$CI95[1:nrow(x$CI95),],digits))
+			else printDotDot(x$CI95[1:nrow(x$CI95),],digits,printlen)
 		}
 	}
 	cat("\n")
