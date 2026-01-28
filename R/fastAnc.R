@@ -1,5 +1,5 @@
 ## function does fast estimation of ML ancestral states using ace
-## written by Liam J. Revell 2012, 2013, 2015, 2019, 2020, 2021, 2023
+## written by Liam J. Revell 2012, 2013, 2015, 2019, 2020, 2021, 2023, 2026
 
 fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	if(!inherits(tree,"phylo")) stop("tree should be object of class \"phylo\".")
@@ -55,16 +55,20 @@ fastAnc<-function(tree,x,vars=FALSE,CI=FALSE,...){
 	}
 	if(length(obj)==1) obj<-obj$ace
 	class(obj)<-"fastAnc"
+	attr(obj,"tree")<-tree
+	attr(obj,"data")<-x
 	obj
 }
 
 ## print method for "fastAnc"
-## written by Liam J. Revell 2015
+## written by Liam J. Revell 2015, 2026
 print.fastAnc<-function(x,digits=6,printlen=NULL,...){
 	cat("Ancestral character estimates using fastAnc:\n")
 	if(!is.list(x)){ 
-		if(is.null(printlen)||printlen>=length(x)) print(round(unclass(x),digits)) 
-		else printDotDot(unclass(x),digits,printlen)
+		if(is.null(printlen)||printlen>=length(x)) 
+			print(round(unclass(x[1:length(x)]),digits)) 
+		else printDotDot(unclass(x[1:length(x)]),digits,
+			printlen)
 	} else {
 		Nnode<-length(x$ace)
 		if(is.null(printlen)||printlen>=Nnode) print(round(x$ace,digits))
@@ -97,4 +101,47 @@ printDotDot<-function(x,digits,printlen){
 		x<-as.data.frame(rbind(round(x[1:printlen,],digits),c("....","....")))
 		print(x)
 	}
+}
+
+## S3 plot method for fastAnc object class
+plot.fastAnc<-function(x,...){
+  plotTree(attr(x,"tree"),...)
+  if(hasArg(tip.cex)) tip.cex<-list(...)$tip.cex
+  else tip.cex<-1
+  if(hasArg(node.cex)) node.cex<-list(...)$node.cex
+  else node.cex<-1.5
+  pp<-get("last_plot.phylo",envir=.PlotPhyloEnv)
+  gradient<-hcl.colors(n=101)
+  ace <- if(!is.list(x)) x[1:length(x)] else x$ace[1:length(x$ace)]
+  x_range<-range(c(attr(x,"data"),ace))
+  tip.cols<-gradient[round((attr(x,"data")[attr(x,"tree")$tip.label]-
+      x_range[1])/diff(x_range)*100)]
+  node.cols<-gradient[round((ace-x_range[1])/diff(x_range)*100)]
+  points(pp$xx,pp$yy,col=c(tip.cols,node.cols),pch=16,
+    cex=c(rep(tip.cex,Ntip(attr(x,"tree"))),
+      rep(node.cex,Nnode(attr(x,"tree")))))
+  if(hasArg(legend)) legend<-list(...)$legend
+  else legend<-"topleft"
+  if(legend!=FALSE){
+    h<-diff(par()$usr[1:2])*0.4
+    if(legend=="topleft"){
+      x.pos<-par()$usr[1]+0.1*h
+      y.pos<-par()$usr[4]-0.05*diff(par()$usr[3:4])
+    } else if(legend=="bottomleft"){
+      x.pos<-par()$usr[1]+0.1*h
+      y.pos<-par()$usr[3]+0.05*diff(par()$usr[3:4])
+    } else if(legend=="topright"){
+      x.pos<-par()$usr[2]-h
+      y.pos<-par()$usr[4]-0.05*diff(par()$usr[3:4])
+    } else if(legend=="bottomright"){
+      x.pos<-par()$usr[2]-h
+      y.pos<-par()$usr[3]+0.05*diff(par()$usr[3:4])
+    }
+    if(hasArg(title)) title<-list(...)$title
+    else title<-"trait value"
+    add.color.bar(0.75*h,gradient,
+      title=title,lims=x_range,digits=3,prompt=FALSE,
+      lwd=6,outline=FALSE,x=x.pos,y=y.pos,subtitle="",
+	  fsize=0.8)
+  }
 }

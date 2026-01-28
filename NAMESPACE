@@ -304,6 +304,7 @@ S3method(logLik, fitsemiThresh)
 S3method(print, fitmultiTrend)
 S3method(print, fitcontMk)
 S3method(plot, fitcontMk)
+S3method(plot, fastAnc)
 
 ## default methods
 S3method(ancr, default)

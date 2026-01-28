@@ -234,25 +234,37 @@ plot.fitcontMk<-function(x,...){
 	xx<-seq(x$bounds[1],x$bounds[2],length.out=100)
 	q.f<-x$q01[1]+(x$q01[2]-x$q01[1])/(1+exp(-x$B[1]*(xx-x$M[1])))
 	q.b<-x$q10[1]+(x$q10[2]-x$q10[1])/(1+exp(-x$B[2]*(xx-x$M[2])))
-	par(mfrow=c(2,1),mar=c(5.1,4.1,1.1,1.1))
-	ylab<-bquote(q(.(x$states[1])*"\u2192"*.(x$states[2])))
+	if(hasArg(mfrow)) mfrow<-list(...)$mfrow
+	else if(hasArg(mfcol)) mfrow<-list(...)$mfcol
+	else mfrow<-mfcol<-c(2,1)
+	if(hasArg(mar)) mar<-list(...)$mar
+	else mar<-c(5.1,4.1,1.1,1.1)
+	par(mfrow=mfrow,mar=mar)
+	if(hasArg(ylab)) ylab<-list(...)$ylab
+	else {
+		ylab<-list()
+		ylab[[1]]<-bquote(q(.(x$states[1])*"\u2192"*.(x$states[2])))
+		ylab[[2]]<-bquote(q(.(x$states[2])*"\u2192"*.(x$states[1])))
+	}
+	if(length(ylab)<2) ylab<-c(ylab,ylab)
 	usr<-list()
 	mfg<-list()
+	if(hasArg(ylim)) ylim<-list(...)$ylim
+	else ylim<-c(0,max(c(x$q01,x$q10)))
 	plot(xx,q.f,type="l",
 		xlab="continuous trait",
-		ylab=ylab,
+		ylab=ylab[[1]],
 		las=1,bty="n",cex.axis=0.6,
-		ylim=c(0,max(c(x$q01,x$q10))))
+		ylim=ylim)
 	usr[[1]]<-par()$usr
 	mfg[[1]]<-par()$mfg
 	box(col="grey")
 	grid()
-	ylab<-bquote(q(.(x$states[2])*"\u2192"*.(x$states[1])))
 	plot(xx,q.b,type="l",
 		xlab="continuous trait",
-		ylab=ylab,
+		ylab=ylab[[2]],
 		las=1,bty="n",cex.axis=0.6,
-		ylim=c(0,max(c(x$q01,x$q10))))
+		ylim=ylim)
 	usr[[2]]<-par()$usr
 	mfg[[2]]<-par()$mfg
 	box(col="grey")
