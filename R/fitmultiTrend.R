@@ -401,6 +401,7 @@ sim.multiTrend<-function(tree,x0=0,sig2=1,mu=0,...){
 		if(length(ii)>0) X[ii,1]<-X[i,2]
 	}
 	if(plot){
+		if(hasArg(lwd)) lwd<-list(...)$lwd
 		xx<-c(
 			sapply(1:Ntip(tt),
 			function(ii,ee,x) x[which(ee[,2]==ii),2],
@@ -418,7 +419,7 @@ sim.multiTrend<-function(tree,x0=0,sig2=1,mu=0,...){
 		for(i in 1:length(tt$maps)) 
 			tt$maps[[i]]<-setNames(tt$maps[[i]],
 				names(tt$edge.length)[i])
-		phenogram(tt,xx,ftype="off",colors=edge_col,lwd=1)
+		phenogram(tt,xx,ftype="off",colors=edge_col,lwd=lwd)
 	}
 	setNames(
 		sapply(1:Ntip(tt),
