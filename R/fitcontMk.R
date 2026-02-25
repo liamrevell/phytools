@@ -234,12 +234,17 @@ plot.fitcontMk<-function(x,...){
 	xx<-seq(x$bounds[1],x$bounds[2],length.out=100)
 	q.f<-x$q01[1]+(x$q01[2]-x$q01[1])/(1+exp(-x$B[1]*(xx-x$M[1])))
 	q.b<-x$q10[1]+(x$q10[2]-x$q10[1])/(1+exp(-x$B[2]*(xx-x$M[2])))
-	if(hasArg(mfrow)) mfrow<-list(...)$mfrow
-	else if(hasArg(mfcol)) mfrow<-list(...)$mfcol
-	else mfrow<-mfcol<-c(2,1)
+	if(hasArg(add)) add<-list(...)$add
+	else add<-FALSE
+	if(!add){
+		if(hasArg(mfrow)) mfrow<-list(...)$mfrow
+		else if(hasArg(mfcol)) mfrow<-list(...)$mfcol
+		else mfrow<-mfcol<-c(2,1)
+		par(mfrow=mfrow)
+	}
 	if(hasArg(mar)) mar<-list(...)$mar
 	else mar<-c(5.1,4.1,1.1,1.1)
-	par(mfrow=mfrow,mar=mar)
+	par(mar=mar)
 	if(hasArg(ylab)) ylab<-list(...)$ylab
 	else {
 		ylab<-list()
@@ -249,13 +254,15 @@ plot.fitcontMk<-function(x,...){
 	if(length(ylab)<2) ylab<-c(ylab,ylab)
 	usr<-list()
 	mfg<-list()
+	if(hasArg(xlim)) xlim<-list(...)$xlim
+	else xlim<-range(xx)
 	if(hasArg(ylim)) ylim<-list(...)$ylim
 	else ylim<-c(0,max(c(x$q01,x$q10)))
 	plot(xx,q.f,type="l",
 		xlab="continuous trait",
 		ylab=ylab[[1]],
 		las=1,bty="n",cex.axis=0.6,
-		ylim=ylim)
+		xlim=xlim,ylim=ylim)
 	usr[[1]]<-par()$usr
 	mfg[[1]]<-par()$mfg
 	box(col="grey")
@@ -264,7 +271,7 @@ plot.fitcontMk<-function(x,...){
 		xlab="continuous trait",
 		ylab=ylab[[2]],
 		las=1,bty="n",cex.axis=0.6,
-		ylim=ylim)
+		xlim=xlim,ylim=ylim)
 	usr[[2]]<-par()$usr
 	mfg[[2]]<-par()$mfg
 	box(col="grey")
