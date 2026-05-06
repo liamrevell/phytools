@@ -14,7 +14,7 @@
 	Fits a bounded Brownian motion model using the discretized diffusion approximation of Boucher & Demery (2016), or the "wrapped" or circular model of Martinet et al. (In revision).
 }
 \details{
-	Optional arguments include (but are not limited to): \code{parallel}, defaults to \code{parallel=FALSE}; \code{df}, to adjust the degrees of freedom of the model, depending on whether or not the bounds have been set from the observed data; \code{levs}, number of levels for the discretization (defaults to \code{levs=200}); and \code{wrapped}, logical indicating whether to fit the "circular" or wrapped model, instead of the standard bounded model (defaults to \code{wrapped=FALSE}).
+	Optional arguments include (but are not limited to): \code{parallel}, defaults to \code{parallel=FALSE}; \code{df}, to adjust the degrees of freedom of the model, depending on whether or not the bounds have been set from the observed data; \code{levs}, number of levels for the discretization (defaults to \code{levs=200}); \code{wrapped}, logical indicating whether to fit the "circular" or wrapped model, instead of the standard bounded model (defaults to \code{wrapped=FALSE}); and \code{double_boundary}, a logical value indicating whether or not to double the boundary rate (defaults to \code{double_boundary=FALSE}: doubling the boundary rate is technically more accurate, but is much less computationally efficient and both options converge as the number of discretization bins, \code{levs}, is increased).
 }
 \value{
 	An object of class \code{"bounded_bm"}.

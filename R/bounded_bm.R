@@ -1,5 +1,5 @@
 ## bounded Brownian model based on Boucher & Demery 2016 and
-## wrapped (circular) Brownian model based on Juhn et al. (in review)
+## wrapped (circular) Brownian model based on Martinet et al. (in review)
 
 to_binned<-function(x,bins){
 	xx<-setNames(
@@ -13,6 +13,10 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	else wrapped<-FALSE
 	if(hasArg(absorbing)) absorbing<-list(...)$absorbing
 	else absorbing<-FALSE
+	if((!wrapped)&&(!absorbing)){
+		if(hasArg(double_boundary)) double_boundary<-list(...)$double_boundary
+		else double_boundary<-FALSE
+	} else double_boundary<-FALSE
 	if(wrapped&&absorbing){
 		cat("wrapped = TRUE and absorbing = TRUE not permitted.\n")
 		cat("Setting absorbing = FALSE.\n\n")
@@ -20,6 +24,9 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	}
 	if(hasArg(bins)) bins<-list(...)$bins
 	else bins<-NULL
+	if(hasArg(bounds)) bounds<-list(...)$bounds
+	else bounds<-NULL
+	if(is.null(lims)) lims<-bounds
 	if(is.null(lims)){ 
 		lims<-expand.range(x,p=2)
 		df<-2
@@ -43,8 +50,10 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
 	else lik.func<-if(absorbing) "pruning" else "eigen"
 	if(absorbing&&lik.func=="eigen") lik.func<-"pruning"
+	if(double_boundary&&lik.func=="eigen") lik.func<-"pruning"
 	if(hasArg(parallel)) parallel<-list(...)$parallel
 	else parallel<-FALSE
+	if(double_boundary) parallel<-FALSE
 	if(hasArg(root)) root=list(...)$root
 	else root<-"mle"
 	if(root=="nuisance") pi<-"fitzjohn"
@@ -72,13 +81,50 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	if(lik.func%in%c("pruning","parallel")){
 		q.init<-runif(n=1,0,2)*(1/2)*mean(sort(pic_x^2,decreasing=TRUE)[1:nn])*
 			(levs/dd)^2
-		fit<-fitMk(tree,X,model=MODEL,lik.func=lik.func,pi=pi,
-			expm.method=expm.method,logscale=TRUE,max.q=max.q,
-			q.init=q.init)
+		if(!double_boundary){
+			fit<-fitMk(tree,X,model=MODEL,lik.func=lik.func,pi=pi,
+				expm.method=expm.method,logscale=TRUE,max.q=max.q,
+				q.init=q.init)
+		} else {
+			MODEL[1,2]<-MODEL[levs,levs-1]<-2
+			pw<-reorder(tree,"pruningwise")
+			if(lik.func=="parallel"){
+				if(hasArg(ncores)) ncores<-list(...)$ncores
+				else ncores<-detectCores()-2
+				mc<-makeCluster(ncores,type="PSOCK")
+				registerDoParallel(cl=mc)
+			}
+			LIK<-function(q,tree,x,model,expm.method,pi){
+				if(lik.func=="parallel"){
+					obj<-parallel_pruning(c(q,2*q),tree=tree,x=X,
+						model=model,expm.method=expm.method,
+						pi=pi)
+				} else {
+					obj<-pruning(c(q,2*q),tree=tree,x=X,
+						model=model,expm.method=expm.method,
+						pi=pi)
+				}	
+				return(obj)
+			}
+			fit<-optimize(LIK,c(tol,max.q),tree=pw,x=X,model=MODEL,
+				expm.method=expm.method,pi=pi,maximum=TRUE)
+			if(lik.func=="parallel") stopCluster(cl=mc)
+			fit<-list(
+				logLik=fit$objective,
+				rates=c(fit$maximum,2*fit$maximum),
+				index.matrix=MODEL,
+				states=colnames(X),
+				pi=pruning(c(fit$maximum,2*fit$maximum),
+					pw,X,model=MODEL,pi=pi,
+					return="pi"),
+				method="optimize",
+				root.prior=if(pi[1]=="fitzjohn") "nuisance" else pi,
+				opt_results=list(convergence=0),
+				data=X,
+				tree=pw)
+			class(fit)<-"fitMk"
+		}
 	} else if(lik.func=="eigen"){
-		QQ<-MODEL
-		diag(QQ)<--rowSums(MODEL)
-		eQQ<-eigen(QQ)
 		pw<-reorder(tree,"postorder")
 		if(parallel){
 			if(hasArg(ncores)) ncores<-list(...)$ncores
@@ -86,6 +132,9 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 			mc<-makeCluster(ncores,type="PSOCK")
 			registerDoParallel(cl=mc)
 		}
+		QQ<-MODEL
+		diag(QQ)<--rowSums(MODEL)
+		eQQ<-eigen(QQ)
 		fit<-optimize(eigen_pruning,c(tol,max.q),tree=pw,
 			x=X,eigenQ=eQQ,parallel=parallel,pi=pi,maximum=TRUE)
 		fit<-list(
@@ -105,7 +154,7 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 	lik<-logLik(fit)-Ntip(tree)*log(dd/levs)
 	attr(lik,"df")<-df
 	class(lik)<-"logLik"
-	sigsq<-2*fit$rates*(dd/levs)^2
+	sigsq<-2*fit$rates[1]*(dd/levs)^2
 	ff<-if(lik.func%in%c("pruning","parallel","eigen")) lik.func else "pruning"
 	x0<-sum(ancr(fit,lik.func=ff,expm.method=expm.method,parallel=parallel)$ace[1,]*
 		rowMeans(bins))
@@ -119,8 +168,13 @@ bounded_bm<-function(tree,x,lims=NULL,...){
 		if(x0=="nuisance") pi<-"fitzjohn"
 		else if(is.numeric(x0)) pi<-to_binned(x0,bins)[1,]
 		if(lik.func=="pruning"){
-			lnL<-pruning(q,tree,X,MODEL,pi=pi,expm.method=expm.method)-
-				Ntip(tree)*log(dd/levs)
+			if(double_boundary){
+				lnL<-pruning(c(q,2*q),tree,X,MODEL,pi=pi,expm.method=expm.method)-
+					Ntip(tree)*log(dd/levs)
+			} else {
+				lnL<-pruning(q,tree,X,MODEL,pi=pi,expm.method=expm.method)-
+					Ntip(tree)*log(dd/levs)
+			}
 		} else if(lik.func=="parallel"){
 			if(!exists("ncores")) ncores<-min(nrow(tree$edge),detectCores()-1)
 			mc<-makeCluster(ncores,type="PSOCK")
