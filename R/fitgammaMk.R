@@ -488,8 +488,8 @@ print.fitgammaMk<-function(x,digits=6,...){
 	diag(Q)<--rowSums(Q)
 	colnames(Q)<-rownames(Q)<-x$states
 	print(round(Q,digits))
-	cat(paste("\nFitted (or set) value of alpha rate heterogeneity\n(with",
-		x$nrates,"rate categories):",round(x$alpha,digits)))
+	cat(paste("\nFitted (or set) value of alpha rate heterogeneity:\n",
+		round(x$alpha,digits),sep=""))
 	cat("\n\nFitted (or set) value of pi:\n")
 	print(round(x$pi,digits))
 	cat(paste("due to treating the root prior as (a) ",x$root.prior,".\n",
