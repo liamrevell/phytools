@@ -1,10 +1,12 @@
 \name{fitmultiBM}
 \alias{fitmultiBM}
 \alias{fitmultiTrend}
-\title{Fits multi-rate (or multi-trend) discrete character dependent continuous trait evolution}
+\alias{fitmultiOU}
+\title{Fits multi-rate (or multi-trend, or multi-regime) discrete character dependent continuous trait evolution}
 \usage{
 fitmultiBM(tree, x, y=NULL, model="ER", ncat=1, ...)
 fitmultiTrend(tree, x, y=NULL, model="ER", ncat=1, ...)
+fitmultiOU(tree, x, y=NULL, model="ER", ncat=1, ...)
 }
 \arguments{
 	\item{tree}{object of class \code{"phylo"}.}
@@ -15,22 +17,26 @@ fitmultiTrend(tree, x, y=NULL, model="ER", ncat=1, ...)
 	\item{...}{optional arguments.}
 }
 \description{
-	Fits a multi-rate (or multi-trend) discrete-state-dependent Brownian motion model using the discretized diffusion approximation of Boucher & Demery (2016).
+	Fits a multi-rate (or multi-trend or multi-regime)) discrete-state-dependent Brownian motion model using the discretized diffusion approximation of Boucher & Demery (2016).
 }
 \details{
 	\code{fitmultiBM} uses the discretiszed diffusion approximation of Boucher & Demery (2016) to fit a model in which the rate of Brownian evolution of a continuous trait (in \code{x}) depends on the state of a discrete character (in \code{y}), where the discrete and continuous character are modeled jointly. If, in fact, the rates of evolution of \code{x} depend on the state of \code{y}, this will lead to more accurate model parameter estimates than when the discrete and continuous characters are separately modeled.
 	
 	\code{fitmultiTrend} fits the same model, but in which the mean of the Brownian process, and not only its rate, vary as a function of the character \code{y}.
 	
+	Finally, \code{fitmultiOU} fits the same model, but where the optimum of an Ornstein-Uhlenbeck varies as a function of the character \code{y}. As of writing this documentation, this method is not yet fully developed and may not work correctly for \code{y=NULL} or \code{nullmodel=TRUE}.
+	
 	Optional arguments include \code{parallel} (whether to distribute matrix exponentiation across nodes, which defaults to \code{parallel=FALSE}), \code{levs} (the number of levels for the discrete approximation, which defaults to \code{levs=100}), \code{nullmodel} (a logical indicating whether or not to fit a null model without state-dependent continuous trait evolution, which defaults to \code{nullmodel=FALSE}), and \code{plot_model} (a logical indicating whether or not to graph the discretized model prior to fitting, which defaults to \code{plot_model=FALSE}).
 }
 \value{
-	An object of class \code{"fitmultiBM"} or \code{"fitmultiTrend"}.
+	An object of class \code{"fitmultiBM"}, \code{"fitmultiTrend"}, or \code{"fitmultiBM"}.
 }
 \references{
 	Boucher, F. C., and V. Demery (2016) Inferring bounded evolution in phenotypic characters from phylogenetic comparative data. \emph{Systematic Biology}, \bold{65}, 651-661.
 		
 	Revell, L. J. (2024) phytools 2.0: an updated R ecosystem for phylogenetic comparative methods (and other things). \emph{PeerJ}, \bold{12}, e16505.
+	
+	Revell, L. J., L. R. V. Alencar, M. E. Alfaro, J. Dain, N. J. Hill, M. Jones, K. M. Martinet, V. Romero-Alarcon, and L. J. Harmon (2026) Unlocking a flexible set of phylogenetic models for discrete and continuous trait evolution using discretized stochastic diffusion. \emph{bioRxiv}.
 }
 \author{Liam Revell \email{liam.revell@umb.edu}}
 \seealso{
