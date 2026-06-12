@@ -305,6 +305,7 @@ S3method(print, fitmultiTrend)
 S3method(print, fitcontMk)
 S3method(plot, fitcontMk)
 S3method(plot, fastAnc)
+S3method(print, fitmultiOU)
 
 ## default methods
 S3method(ancr, default)
