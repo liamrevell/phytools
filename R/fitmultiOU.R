@@ -331,9 +331,16 @@ fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
     )
   }
   ## fit model
-  cat(c("iter",paste("the[",colnames(y),"]",sep=""),
-    "alpha","sigsq",paste("q[",1:max(qmodel),"]",sep=""),
-    "log(L)\n"),sep="\t")
+  if(trace>0){
+    if(null_model){
+      cat(c("iter","theta","alpha","sigsq",
+        paste("q[",1:max(qmodel),"]",sep=""),"log(L)\n"),sep="\t")
+    } else {
+      cat(c("iter",paste("the[",colnames(y),"]",sep=""),
+        "alpha","sigsq",paste("q[",1:max(qmodel),"]",sep=""),
+        "log(L)\n"),sep="\t")
+    }
+  }
   ct<-0
 	fit<-optim(init,lik.mou,method="Nelder-Mead",
 	  control=list(trace=0,maxit=maxit))
