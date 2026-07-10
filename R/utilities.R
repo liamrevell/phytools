@@ -1903,7 +1903,13 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 	} else pp<-position
 	if(is.null(edge.length)&&is.ultrametric(tree)){
 		H<-nodeHeights(tree)
-		if(where==(Ntip(tree)+1)) edge.length<-max(H)
+		if(where==(Ntip(tree)+1)){
+			edge.length<-max(H)
+			# if adding tip as outgroup that diverged before ingroup MRCA, need to take into account new root height
+			if(position>0){
+				edge.length<-edge.length+position
+			}
+		}
 		else edge.length<-max(H)-H[tree$edge[,2]==where,2]+position
 	}
 	tip<-list(edge=matrix(c(2,1),1,2),
@@ -1911,6 +1917,14 @@ bind.tip<-function(tree,tip.label,edge.length=NULL,where=NULL,position=0,interac
 		edge.length=edge.length,
 		Nnode=1)
 		class(tip)<-"phylo"
+	# if attaching tip creates new root, add root edge to attach to
+	if(where==(Ntip(tree)+1)&&position>0){
+		if(is.null(tree$root.edge)){
+			tree$root.edge<-position
+			pp<-position
+			where<-"root"
+		}
+	}
 	obj<-bind.tree(tree,tip,where=where,position=pp)
 	if(where<=Ntip(tree)&&position==0){
 		nn<-obj$edge[which(obj$edge[,2]==which(obj$tip.label==tip$tip.label)),1]
