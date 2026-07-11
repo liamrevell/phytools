@@ -302,6 +302,8 @@ fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	  if(length(theta)==1){
 	    pi<-rep(0,length(xi))
 	    pi[which.min((theta-xi)^2)]<-1
+	    pi<-rep(pi,ncol(y))
+	    pi<-pi/sum(pi)
 	  }
 	  if(lik.func=="pruning")
 	    lnL<-pruning(qq,tree,XX,model=model,pi=pi)-Ntip(tree)*log(delta)
