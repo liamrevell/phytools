@@ -2,6 +2,7 @@
 ## model using the discrete approximation of Boucher & Demery (2016)
 
 fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
+  tmodel<-model
 	if(hasArg(trace)) trace<-list(...)$trace
 	else trace<-1
 	if(hasArg(maxit)) maxit<-list(...)$maxit
@@ -9,7 +10,9 @@ fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
   if(hasArg(logscale)) logscale<-list(...)$logscale
 	else logscale<-TRUE
 	if(hasArg(rand_start)) rand_start<-list(...)$rand_start
-	else rand_start<-TRUE
+	else rand_start<-FALSE
+	if(hasArg(smart_start)) smart_start<-list(...)$smart_start
+	else smart_start<-TRUE
 	levs<-if(hasArg(levs)) list(...)$levs else 100
 	parallel<-if(hasArg(parallel)) list(...)$parallel else 
 		FALSE
@@ -322,18 +325,38 @@ fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
     init<-list(...)$init
     init<-c(init[1:m],log(init[(m+1):length(init)]))
   } else {
-    init<-c(
-      runif(n=m,min=min(x),max=max(x)), #theta
-      runif(n=1,
-        min=log(log(2)/max(nodeHeights(tree))),
-        max=log(10*log(2)/max(nodeHeights(tree)))), #alpha
-      runif(n=1,
-        min=log(0.1*var(x)/max(nodeHeights(tree))),
-        max=log(10*var(x)/max(nodeHeights(tree)))), #sigsq
-      runif(n=max(qmodel),
-        min=log(1/sum(tree$edge.length)),
-        max=log(100/sum(tree$edge.length))) #q
-    )
+    if(smart_start){
+      wm<-colnames(y)[apply(y,1,which.max)]
+      mkm<-fitMk(tree,y,model=tmodel)
+      init<-c(
+        sapply(colnames(y),
+          function(ii,x,wm) mean(x[which(wm==ii)]),
+            x=x,wm=wm), #theta
+        log(log(2)/max(nodeHeights(tree))), #alpha
+        log(var(x)/max(nodeHeights(tree))), #sigsq
+        log(mkm$rates)) # q
+      if(rand_start){
+        ## perturb
+        init<-init*c(
+          runif(n=ncol(y),min=0,max=2), #theta
+          runif(n=2,min=0.5,max=2), #alpha & sigsq
+          runif(n=length(mkm$rates),min=0.5,max=2)) #q
+      }
+    } else {
+      ## if neither smart_start nor init, default to random
+      init<-c(
+        runif(n=m,min=min(x),max=max(x)), #theta
+        runif(n=1,
+          min=log(log(2)/max(nodeHeights(tree))),
+          max=log(10*log(2)/max(nodeHeights(tree)))), #alpha
+        runif(n=1,
+          min=log(0.1*var(x)/max(nodeHeights(tree))),
+          max=log(10*var(x)/max(nodeHeights(tree)))), #sigsq
+        runif(n=max(qmodel),
+          min=log(1/sum(tree$edge.length)),
+          max=log(100/sum(tree$edge.length))) #q
+      )
+    }
   }
   ## fit model
   if(trace>0){
