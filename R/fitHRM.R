@@ -285,6 +285,6 @@ as.Qmatrix.corhmm<-function(x,...){
 	Q<-x$solution
 	Q[is.na(Q)]<-0
 	diag(Q)<--rowSums(Q)
-	class(Q)<-"Qmatrix"
+	class(Q)<-c("Qmatrix","matrix")
 	Q
 }

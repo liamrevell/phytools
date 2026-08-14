@@ -1,6 +1,6 @@
 ## optimizing, graphing, and analyzing extended Mk model for discrete
 ## character evolution
-## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022, 2023)
+## written by Liam J. Revell (updates in 2015, 2016, 2019, 2020, 2021, 2022, 2023, ...)
 ## likelihood function (with pruning) adapted from ape::ace (Paradis et al. 2013)
 ## lik.func="pruning" uses phytools::pruning to compute likelihood instead
 
@@ -752,7 +752,7 @@ as.Qmatrix.matrix<-function(x, ...){
 		warning("\"matrix\" object does not appear to contain a valid Q matrix.\n")
 	} else {
 		diag(x)<--rowSums(x)
-		class(x)<-"Qmatrix"
+		class(x)<-c("Qmatrix","matrix")
 		return(x)
 	}
 }
@@ -762,7 +762,7 @@ as.Qmatrix.fitMk<-function(x,...){
 	Q[]<-c(0,x$rates)[x$index.matrix+1]
 	rownames(Q)<-colnames(Q)<-x$states
 	diag(Q)<--rowSums(Q,na.rm=TRUE)
-	class(Q)<-"Qmatrix"
+	class(Q)<-c("Qmatrix","matrix")
 	Q
 }
 
@@ -773,7 +773,7 @@ as.Qmatrix.ace<-function(x, ...){
 		Q[]<-c(0,x$rates)[x$index.matrix+1]
 		rownames(Q)<-colnames(Q)<-colnames(x$lik.anc)
 		diag(Q)<--rowSums(Q,na.rm=TRUE)
-		class(Q)<-"Qmatrix"
+		class(Q)<-c("Qmatrix","matrix")
 		return(Q)
 	} else cat("\"ace\" object does not appear to contain a Q matrix.\n")
 }
