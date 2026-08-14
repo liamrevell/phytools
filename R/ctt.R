@@ -1,7 +1,10 @@
-## computing the mean number of character changes through time from a set of stochastic map trees
-## written by Liam J. Revell 2017, 2020, 2025
+## computing the mean number of character changes through time from 
+## a set of stochastic map trees
+## written by Liam J. Revell 2017, 2020, 2025, 2026
 
 ctt<-function(trees,segments=20,...){
+  if(hasArg(tol)) tol<-list(...)$tol
+  else tol<-1e-6
 	if(!(inherits(trees,"multiSimmap")))
 		stop("trees should be an object of class \"multiSimmap\".")
 	tree<-as.phylo(trees[[1]])
@@ -30,7 +33,7 @@ ctt<-function(trees,segments=20,...){
 			edge.length[i]<-edge.length[i]+
 				LTT[ii,1]*(min(segs[i,2],LTT[ii,3])-
 				max(segs[i,1],LTT[ii,2]))
-			if(LTT[ii,3]>=segs[i,2]) done.seg<-TRUE
+			if(LTT[ii,3]>=(segs[i,2]-tol*h)) done.seg<-TRUE
 			if(LTT[ii,3]<=segs[i,2]) ii<-if(ii<nrow(LTT)) ii+1 else ii
 		}
 	}
