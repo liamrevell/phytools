@@ -1,6 +1,6 @@
 ## function for computing phylogenetic signal by the lambda (Pagel 1999)
 ## or K (Blomberg et al. 2003) methods
-## written by Liam J. Revell 2011/2012, 2019, 2020, 2021, 2023
+## written by Liam J. Revell 2011/2012, 2019, 2020, 2021, 2023, ...
 
 phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
 	se=NULL,start=NULL,control=list(),niter=10){
@@ -95,7 +95,7 @@ phylosig<-function(tree,x,method="K",test=FALSE,nsim=1000,
 					if(simK[i]>=K) P<-P+1/nsim 
 					o<-sample(1:n)
 					simX<-x[o]
-					M<-diag(se[o]^2) # randomize x & errors
+					M<-diag(diag(M)[o]^2) # randomize x & errors
 				}
 				object<-list(K=as.numeric(K),P=P,sim.K=simK,
 					sig2=as.numeric(sig2),logL=res$objective,
