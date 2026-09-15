@@ -16,7 +16,11 @@ fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	levs<-if(hasArg(levs)) list(...)$levs else 100
 	parallel<-if(hasArg(parallel)) list(...)$parallel else 
 		FALSE
-	lik.func<-if(parallel) "parallel" else "pruning"
+	if(hasArg(lik.func)) lik.func<-list(...)$lik.func
+	else{
+	  lik.func<-if(parallel) "parallel" else "pruning"
+	}
+	if(lik.func%in%c("pruning","action-based")) parallel<-FALSE
 	if(hasArg(opt.method)) opt.method<-list(...)$opt.method
 	else opt.method<-"nlminb"
 	null_model<-if(hasArg(null_model)) list(...)$null_model else
@@ -312,6 +316,8 @@ fitmultiOU<-function(tree,x,y=NULL,model="ER",ncat=1,...){
 	    lnL<-pruning(qq,tree,XX,model=model,pi=pi)-Ntip(tree)*log(delta)
 	  else if(lik.func=="parallel")
 	    lnL<-parallel_pruning(qq,tree,XX,model=model,pi=pi)-Ntip(tree)*log(delta)
+	  else if(lik.func=="action-based")
+	    lnL<-ab_pruning(qq,tree,XX,model=model,pi=pi)-Ntip(tree)*log(delta)
 	  if(trace>0) if(ct%%100==0){
 	    cat(paste(c(ct, sprintf("%.4f", c(theta, alpha, sigsq, q, lnL))),
 	      collapse = "\t"),

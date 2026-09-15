@@ -133,7 +133,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		if(hasArg(smart_start)) smart_start<-list(...)$smart_start
 		else smart_start<-FALSE
 		if(hasArg(q.init)) q.init<-list(...)$q.init
-		else q.init<-length(unique(x))/sum(tree$edge.length)
+		else {
+		  q.init<-if(is.matrix(x)) sum(colSums(x)>0)/sum(tree$edge.length) else
+		    length(unique(x))/sum(tree$edge.length)
+		}
 		if(hasArg(rand_start)) rand_start<-list(...)$rand_start
 		else rand_start<-FALSE
 		if(hasArg(min.q)) min.q<-list(...)$min.q
@@ -211,7 +214,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 			Q<-fixedQ
 		}
 		index.matrix<-rate
-		if(lik.func%in%c("pruning","parallel")){
+		if(lik.func%in%c("pruning","parallel","action-based")){
 			MODEL<-rate
 			MODEL[is.na(MODEL)]<-0
 			diag(MODEL)<-0
@@ -284,6 +287,14 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 						optim(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,pi=pi,
 							expm.method=expm.method),method="L-BFGS-B",lower=rep(min.q,k),
 							upper=rep(max.q,k))
+				} else if(lik.func=="action-based") {
+				  fit<-if(logscale)
+				    optim(q.init,function(p) -ab_pruning(exp(p),tree=pw,x=x,model=MODEL,pi=pi,
+				      expm.method=expm.method),method="L-BFGS-B",lower=rep(log(min.q),k),
+				      upper=rep(log(max.q),k)) else
+				    optim(q.init,function(p) -ab_pruning(p,tree=pw,x=x,model=MODEL,pi=pi,
+				      expm.method=expm.method),method="L-BFGS-B",lower=rep(min.q,k),
+				      upper=rep(max.q,k))
 				} else if(lik.func=="parallel") {
 					mc<-makeCluster(ncores,type="PSOCK")
 					registerDoParallel(cl=mc)
@@ -302,6 +313,9 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				else if(lik.func=="pruning")
 					fit<-list(objective=-pruning(q.init,pw,x,MODEL,pi=pi,expm.method=expm.method),
 						par=q.init)
+				else if(lik.func=="ab_pruning")
+				  fit<-list(objective=-ab_pruning(q.init,pw,x,MODEL,pi=pi,expm.method=expm.method),
+				    par=q.init)
 				else if(lik.func=="parallel"){
 					mc<-makeCluster(ncores,type="PSOCK")
 					registerDoParallel(cl=mc)
@@ -322,6 +336,13 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 							upper=rep(log(max.q),k)) else
 						nlminb(q.init,function(p) -pruning(p,tree=pw,x=x,model=MODEL,
 							pi=pi,expm.method=expm.method),lower=rep(0,k),upper=rep(max.q,k))
+				} else if(lik.func=="action-based") {
+				  fit<-if(logscale)
+				    nlminb(q.init,function(p) -ab_pruning(exp(p),tree=pw,x=x,model=MODEL,
+				      pi=pi,expm.method=expm.method),lower=rep(log(min.q),k),
+				      upper=rep(log(max.q),k)) else
+				    nlminb(q.init,function(p) -ab_pruning(p,tree=pw,x=x,model=MODEL,
+				      pi=pi,expm.method=expm.method),lower=rep(0,k),upper=rep(max.q,k))
 				} else if(lik.func=="parallel"){
 					mc<-makeCluster(ncores,type="PSOCK")
 					registerDoParallel(cl=mc)
@@ -363,7 +384,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 				fit<--lik(Q,pi=pi)
 				if(pi[1]=="fitzjohn") pi<-setNames(lik(Q,FALSE,pi=pi,output.pi=TRUE),
 					states)
-			} else if(lik.func%in%c("pruning","parallel")){
+			} else if(lik.func%in%c("pruning","parallel","action-based")){
 				q<-Q[sapply(1:k,function(x,y) which(x==y),index.matrix)]
 				if(lik.func=="pruning"){
 					fit<-pruning(q,pw,x,model=MODEL,expm.method=expm.method,pi=pi)
@@ -371,6 +392,12 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 						pi="fitzjohn",expm.method=expm.method,return="pi"),states)
 					else if(pi[1]=="mle") pi<-setNames(pruning(q,tree=pw,x=x,model=MODEL,
 						pi="mle",expm.method=expm.method,return="pi"),states)
+				} else if(lik.func=="action-based") {
+				  fit<-ab_pruning(q,pw,x,model=MODEL,expm.method=expm.method,pi=pi)
+				  if(pi[1]=="fitzjohn") pi<-setNames(ab_pruning(q,tree=pw,x=x,model=MODEL,
+				    pi="fitzjohn",expm.method=expm.method,return="pi"),states)
+				  else if(pi[1]=="mle") pi<-setNames(ab_pruning(q,tree=pw,x=x,model=MODEL,
+				    pi="mle",expm.method=expm.method,return="pi"),states)
 				} else if(lik.func=="parallel"){
 					mc<-makeCluster(ncores,type="PSOCK")
 					registerDoParallel(cl=mc)
@@ -394,7 +421,7 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 		if(lik.func=="lik")
 			lik.f<-function(q) -lik(q,output.liks=FALSE,
 				pi=if(root.prior=="nuisance") "fitzjohn" else pi)
-		else if(lik.func%in%c("pruning","parallel")) {
+		else if(lik.func%in%c("pruning","parallel","action-based")) {
 			lik.f<-function(q){
 				q<-sapply(1:max(MODEL), function(ind,q,MODEL) q[which(MODEL==ind)],
 					q=q,MODEL=MODEL)
@@ -402,6 +429,10 @@ fitMk<-function(tree,x,model="SYM",fixedQ=NULL,...){
 					pruning(q,tree=pw,x=x,model=MODEL,
 						pi=if(root.prior=="nuisance") "fitzjohn" else pi,
 						expm.method=expm.method)
+				} else if(lik.func=="action-based") {
+				  ab_pruning(q,tree=pw,x=x,model=MODEL,
+				    pi=if(root.prior=="nuisance") "fitzjohn" else pi,
+				    expm.method=expm.method)
 				} else if(lik.func=="parallel"){
 					parallel_pruning(q,tree=pw,x=x,model=MODEL,
 						pi=if(root.prior=="nuisance") "fitzjohn" else pi,
