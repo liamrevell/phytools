@@ -702,12 +702,10 @@ parallel_pruning<-function(q,tree,x,model=NULL,...){
 	else if(return=="pi") pi
 }
 
+## action-based pruning
 ab_pruning<-function(q,tree,x,model=NULL,...){
-  ## cat("computing using action-based method...\n")
   if(hasArg(return)) return<-list(...)$return
   else return<-"likelihood"
-  if(hasArg(expm.method)) expm.method<-list(...)$expm.method
-  else expm.method<-"Higham08.b"
   pw<-if(!is.null(attr(tree,"order"))&&
       attr(tree,"order")=="postorder") tree else 
         reorder(tree,"postorder")
@@ -728,27 +726,38 @@ ab_pruning<-function(q,tree,x,model=NULL,...){
   nn<-unique(pw$edge[,1])
   pp<-vector(mode="numeric",length=length(nn))
   root<-min(nn)
+  bad<-function(){
+    if(return=="likelihood") -Inf
+    else if(return=="conditional") L
+    else if(return=="pi") rep(NA_real_,k)
+  }
   for(i in 1:length(nn)){
     ee<-which(pw$edge[,1]==nn[i])
     PP<-matrix(NA,length(ee),k)
     for(j in 1:length(ee)){
       PP[j,]<-expm::expAtv(Q,
         L[pw$edge[ee[j],2],],
-        t=pw$edge.length[ee[j]])$eAtv
+        t=pw$edge.length[ee[j]],
+        m.max=100,mxrej=100)$eAtv
     }
-    L[nn[i],]<-apply(PP,2,prod)
+    PP[PP<0]<-0
+    logL<-colSums(log(PP))
+    m<-max(logL)
+    if(!is.finite(m)) return(bad())
+    L[nn[i],]<-exp(logL-m)
     if(nn[i]==root){
-      if(pi[1]=="fitzjohn") pi<-L[nn[i],]/sum(L[nn[i],])
-      else if(pi[1]=="mle") pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
+      if(pi[1]=="fitzjohn")
+        pi<-L[nn[i],]/sum(L[nn[i],])
+      else if(pi[1]=="mle")
+        pi<-as.numeric(L[nn[i],]==max(L[nn[i],]))
       L[nn[i],]<-pi*L[nn[i],]
     }
-    pp[i]<-sum(L[nn[i],])
-    L[nn[i],]<-L[nn[i],]/pp[i]
+    pp[i]<-m+log(sum(L[nn[i],]))
+    L[nn[i],]<-L[nn[i],]/sum(L[nn[i],])
   }
-  prob<-sum(log(pp))
-  if(return=="likelihood") 
-    if(is.na(prob)||is.nan(prob)) 
-      return(-Inf) else return(prob)
+  prob<-sum(pp)
+  if(return=="likelihood")
+    if(!is.finite(prob)) return(-Inf) else return(prob)
   else if(return=="conditional") L
   else if(return=="pi") pi
 }
