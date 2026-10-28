@@ -14,7 +14,7 @@ consensus.edges<-function(trees,method=c("mean.edge","least.squares"),...){
 		M<-lapply(trees,function(x,y) rbind(matchLabels(y,x),
 			matchNodes(y,x)),y=tree)
 		nodes<-M[[1]][,1]
-		edge.length<-vector(mode="numeric",length=length(nodes))
+		edge.length<-vector(mode="numeric",length=length(nodes)-1)
 		for(i in 1:length(nodes)){
 			ii<-which(tree$edge[,2]==nodes[i])
 			n.absent<-0
